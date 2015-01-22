@@ -31,8 +31,8 @@ include("hmo.jl")
 const defaultopt = Option(2., 78., 1.8, 20.)
 
 #=
-	Computes the element properties, that is, centroid, normal, distance to 
-	origin and area.
+	Computes the element properties, that is, centroid, normal, distance to origin, and
+	area.
 
 	@param elem
 				Element of interest
@@ -55,8 +55,8 @@ function compute_props!{T}(elem::Element{T})
 end
 
 #=
-	Computes the molecular potential (and the normal derivative) of the given 
-	system of point charges in a structureless medium.
+	Computes the molecular potential (and the normal derivative) of the given system of
+	point charges in a structureless medium.
 
 	Note that the results are premultiplied by 4π!
 
@@ -85,7 +85,8 @@ function compute_singularpot{T}(elements::Vector{Element{T}}, charges::Vector{Ch
 end
 
 #=
-	Compute the regular part of the yukawa potential, that is, Yukawa minus Laplace.
+	Compute the regular part of the yukawa potential, that is, Yukawa minus Laplace:
+	e^[-√(εΣ/ε∞)/λ * |x-ξ|] / |x-ξ|  -  1 / |x-ξ|
 
 	Note that the result is premultiplied by 4π!
 
@@ -93,27 +94,25 @@ end
 				Integration variable
 	@param ξ
 				Observation point
-	@param normal
-				Not used (necessary to share parameter list with normal derivative)
 	@param opt
 				Constants to be used
 	@return T
 =#
-function compute_regularyukawapot{T}(x::Union(Vector{T}, DenseArray{T,1}), ξ::Vector{T}, normal::Vector{T}=(), opt::Option{T}=defaultopt)
+function compute_regularyukawapot{T}(x::Union(Vector{T}, DenseArray{T,1}), ξ::Vector{T}, opt::Option{T}=defaultopt)
 	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
-	vnorm = vecnorm(x-ξ)
+	rnorm = vecnorm(x-ξ)
 
 	# limit for |x-ξ| → 0
-	if vnorm <= 0
+	if rnorm <= 0
 		return -opt.yukawa
 	end
 
-	scalednorm = opt.yukawa * vnorm
+	scalednorm = opt.yukawa * rnorm
 
-	# guard to avoid cancellation
+	# guard against cancellation
 	if scalednorm < .1
 		# use alternating series to approximate
-		# e^(-x) -1 = Σ((-1)^i * x^i / i!) for i=1 to ∞
+		# e^(-c) - 1 = Σ((-c)^i / i!) for i=1 to ∞
 		term = -scalednorm
 		tolerance = 1e-16 * abs(term)
 		tsum = zero(T) 	# DON'T EVER USE 0 HERE! Time: x2, Memory: x3
@@ -125,23 +124,93 @@ function compute_regularyukawapot{T}(x::Union(Vector{T}, DenseArray{T,1}), ξ::V
 			tsum += term
 			term *= -scalednorm / (i+1)
 		end
-		return tsum
+		return tsum / rnorm
 	end
 
 	# no danger of cancellation
-	(exp(-scalednorm) - 1) / vnorm
+	(exp(-scalednorm) - 1) / rnorm
 end
+compute_regularyukawapot{T}(x::Union(Vector{T}, DenseArray{T,1}), ξ::Vector{T}, ::Vector{T}, opt::Option{T}=defaultopt) = compute_regularyukawapot(x, ξ, opt)
 
 #=
-	TODO
+	Compute the normal derivative of the regular part of the yukawa potential, that is, 
+	Yukawa minus Laplace:
+	d/dn [e^[-√(εΣ/ε∞)/λ * |x-ξ|] / |x-ξ|  -  1 / |x-ξ|]
+	= [1 - (1 + √(εΣ/ε∞)/λ * |x-ξ|)e^(√(εΣ/ε∞)/λ * |x-ξ|)] / |x-ξ|²   * (x-ξ)⋅n / |x-ξ|
+	= [1 - (1 + c)e^(-c)] / |x-ξ|²   * (x-ξ)⋅n / |x-ξ|
+	with c ≔ √(εΣ/ε∞)/λ * |x-ξ|
+
+	Note that the result is premultiplied by 4π!
+
+	@param x
+				Integration variable
+	@param ξ
+				Observation point
+	@param normal
+				Unit normal vector at x
+	@param opt
+				Constants to be used
+	@return T
 =#
 function compute_regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, opt::Option{T}=defaultopt)
 	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
-	0	
+	r = x - ξ
+	rnorm = vecnorm(r)
+
+	# limit for |x-ξ| → 0
+	if rnorm <= 0
+		return zero(T)
+	end
+
+	cosovernorm2 = ((r / rnorm) ⋅ normal) / rnorm / rnorm
+	scalednorm = opt.yukawa * rnorm
+
+	# guard against cancellation
+	if scalednorm < .1
+		# use alternating series to approximate
+		# 1 - (c+1)e^(-c) = Σ((-c)^i * (i-1) / i!) for i=2 to ∞
+		term = scalednorm * scalednorm / 2
+		tolerance = 1e-16 * abs(term)
+		tsum = zero(T)  # DON'T EVER USE 0 HERE!
+		for i in 2:16
+			if abs(term * (i-1)) <= tolerance
+				continue
+			end
+
+			tsum += term * (i-1)
+			term *= -scalednorm / i
+		end
+		return tsum * cosovernorm2
+	end
+
+	# no danger of cancellation
+	(1 - (1 + scalednorm) * exp(-scalednorm)) * cosovernorm2
 end
 
 #=
-	TODO
+	Compute the Dirichlet trace of the single layer potential or the essential part of the
+	double layer potential of Yukawa minus Laplace, depending on the function given. Use
+	the function aliases with "SingleLayer" or "DoubleLayer" as defined	below.
+
+	Please note, that, in the latter case, the relation of K (K^Y) to the full double layer
+	potential W (W^Y) is given by
+	[(γ₀ξ^{int} W)f](ξ) = [-1 + σ(ξ)]f(ξ) + [Kf](ξ)
+
+	This function uses a Radon cubature with seven points to generate the regular part of
+	the Yukawa potential matrix. References:
+
+	[1] V. I. Krilov. Priblizhennoe vichislenie integralov. Moskva, Nauka, 1967.
+	[2] J. Radon. Zur mechanischen Kubatur. Monatsh. für Math. 52(4): 286-300, 1948.
+
+	@param dest
+				Destination matrix
+	@param elements
+				List of all surface elements
+	@param f
+				compute_regularyukawapot or compute_regularyukawapot_dn for single or
+				double layer computation, respectively
+	@param opt
+				Constants to be used
 =#
 function compute_regularyukawacoll!_{T}(dest::Array{T,2}, elements::Vector{Element{T}}, f::Function, opt::Option{T}=defaultopt)
 	#=== MEMORY-CRITICAL CODE! ===#
@@ -246,7 +315,7 @@ function compute_cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{
 	#=
 		generate and apply V^Y - V
 	=#
-	#compute_regularyukawacoll!(DoubleLayer, buffer, elements)
+	compute_regularyukawacoll!(DoubleLayer, buffer, elements)
 
 	#
 	gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
@@ -278,7 +347,7 @@ function eye!{T}(m::DenseArray{T,2}, α::Number=one(T))
 	nothing
 end
 
-# Convenient aliases
+# Convenience aliases
 gemv!{T}(α::T, m::Union(Array{T,2}, DenseArray{T,2}), v::Vector{T}, dest::DenseArray{T,1}) = gemv!(α, m, v, one(T), dest)
 gemv!{T}(α::T, m::Union(Array{T,2}, DenseArray{T,2}), v::Vector{T}, β::T, dest::DenseArray{T,1}) = gemv!('N', α, m, v, β, dest)
 
