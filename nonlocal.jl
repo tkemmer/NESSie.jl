@@ -192,8 +192,8 @@ end
 	double layer potential of Yukawa minus Laplace, depending on the function given. Use
 	the function aliases with "SingleLayer" or "DoubleLayer" as defined	below.
 
-	Please note, that, in the latter case, the relation of K (K^Y) to the full double layer
-	potential W (W^Y) is given by
+	Please note, that, in the latter case, the relation of K (Kʸ) to the full double layer
+	potential W (Wʸ) is given by
 	[(γ₀ξ^{int} W)f](ξ) = [-1 + σ(ξ)]f(ξ) + [Kf](ξ)
 
 	This function uses a Radon cubature with seven points to generate the regular part of
@@ -296,33 +296,41 @@ function compute_cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{
 	copy!(β, umol)
 	scale!(β, -2π)
 
+
 	#=
-		generate and apply K^Y - K
+		generate and apply Kʸ-K
 	=#
 	buffer = Array(T, numelem, numelem)
-	compute_regularyukawacoll!(SingleLayer, buffer, elements)
+	compute_regularyukawacoll!(DoubleLayer, buffer, elements)
 
-	# β += (1-εΩ/εΣ)(K^Y - K)umol
+	# β += (1-εΩ/εΣ)(Kʸ-K)umol
 	gemv!(1-εΩ/εΣ, buffer, umol, β)
 
-	# m11 -= K^Y - K
+	# m11 -= Kʸ-K
 	axpy!(-1., buffer, m11)
 
-	# m13 += ε∞/εΣ * (K^Y - K)
+	# m13 += ε∞/εΣ * (Kʸ-K)
 	axpy!(ε∞/εΣ, buffer, m13)
+	
+
+	#=
+		generate and apply Vʸ-V
+	=#
+	compute_regularyukawacoll!(SingleLayer, buffer, elements)
+
+	# β += (εΩ/εΣ - εΩ/ε∞)(Vʸ-V)qmol
+	gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
+
+	# m12 += (εΩ/ε∞ - εΩ/εΣ)(Vʸ-V)
+	axpy!(εΩ * (1/ε∞ - 1/εΣ), buffer, m12)
 
 	
 	#=
-		generate and apply V^Y - V
+		generate and apply K
 	=#
-	compute_regularyukawacoll!(DoubleLayer, buffer, elements)
 
-	#
-	gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
-
-
-
-
+	# TODO
+	#…
 
 	#println([m11 m12 m13; m21 m22 m23; m31 m32 m33]) 
 	nothing
