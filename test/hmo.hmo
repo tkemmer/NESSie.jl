@@ -1,0 +1,23 @@
+# stuffing
+stuffing
+
+BEG_NODL_DATA
+	stuffing
+	x 1.0 2.0 3.0
+	x -2.00001 1.337 42.0
+END_NODL_DATA
+stuffing
+
+BEG_ELEM_DATA
+	stuffing
+	x x x 1 2 1
+	x x x 2 1 2
+END_ELEM_DATA
+stuffing
+
+BEG_CHARGE_DATA
+	stuffing
+	x 1.0 2.0 3.0
+	x -2.00001 1.337 42.0
+END_CHARGE_DATA
+
