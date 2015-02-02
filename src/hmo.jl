@@ -7,8 +7,10 @@
 				Data type T for return value
 	@return (Vector{Vector{T}}, Vector{Element{T}}, Vector{Charge{T}})
 =#
-function readhmo(stream::IOStream; dtype::DataType=Float64)
-	nodes = (); elements = (); charges = ()
+function readhmo(stream::IOStream; dtype::Union(Type{Float64},Type{Float32})=Float64)
+	nodes = Vector{dtype}[]
+	elements = Element{dtype}[]
+	charges = Charge{dtype}[]
     while !eof(stream)
         line = readline(stream)
         if line == "BEG_NODL_DATA\n"
@@ -36,11 +38,11 @@ end
 				Data type T for return value
 	@return Vector{Vector{T}}
 =#
-function readhmo_nodes(stream::IOStream, atstart::Bool=false; dtype::DataType=Float64)
+function readhmo_nodes(stream::IOStream, atstart::Bool=false; dtype::Union(Type{Float64},Type{Float32})=Float64)
 	nodes = Vector{dtype}[]
 	while !eof(stream)
 		line = readline(stream)
-		
+
 		# If not already at the starting position, skip all lines
 		# until we are.
 		if !atstart
@@ -74,11 +76,11 @@ end
 				Data type T for return value
 	@return Vector{Vector{T}}
 =#
-function readhmo_elements{T <: FloatingPoint}(stream::IOStream, nodes::Vector{Vector{T}}, atstart::Bool=false; dtype::DataType=T)
+function readhmo_elements{T <: Union(Float64,Float32)}(stream::IOStream, nodes::Vector{Vector{T}}, atstart::Bool=false; dtype::Union(Type{Float64},Type{Float32})=T)
 	elements = Element{dtype}[]
 	while !eof(stream)
 		line = readline(stream)
-		
+
 		# If not already at the starting position, skip all lines
 		# until we are.
 		if !atstart 
@@ -110,11 +112,11 @@ end
 				Data type T for return value
 	@return Vector{Charge{T}}
 =#
-function readhmo_charges(stream::IOStream, atstart::Bool=false; dtype::DataType=Float64)
+function readhmo_charges(stream::IOStream, atstart::Bool=false; dtype::Union(Type{Float64},Type{Float32})=Float64)
 	charges = Charge{dtype}[]
 	while !eof(stream)
 		line = readline(stream)
-		
+
 		# If not already at the starting position, skip all lines
 		# until we are.
 		if !atstart

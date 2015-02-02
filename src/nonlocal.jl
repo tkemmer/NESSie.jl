@@ -192,7 +192,7 @@ end
 	double layer potential of Yukawa minus Laplace, depending on the function given. Use
 	the function aliases with "SingleLayer" or "DoubleLayer" as defined	below.
 
-	Please note, that, in the latter case, the relation of K (Kʸ) to the full double layer
+	Please note that, in the latter case, the relation of K (Kʸ) to the full double layer
 	potential W (Wʸ) is given by
 	[(γ₀ξ^{int} W)f](ξ) = [-1 + σ(ξ)]f(ξ) + [Kf](ξ)
 
