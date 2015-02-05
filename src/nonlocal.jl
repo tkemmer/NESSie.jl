@@ -18,6 +18,7 @@ export
 	readhmo_charges,
 
 	# this file
+	eye!,
 	compute_props!,
 	compute_singularpot,
 	compute_regularyukawapot,
@@ -38,6 +39,13 @@ const defaultopt = Option(2., 78., 1.8, 20.)
 				Element of interest
 =#
 function compute_props!{T}(elem::Element{T})
+	# reject degenerate triangles
+	@assert begin
+				elem.v1 != elem.v2 &&
+				elem.v1 != elem.v3 &&
+				elem.v2 != elem.v3
+			end "Degenerate triangle $(elem)"
+
 	# compute centroid
 	elem.center = 3 \ (elem.v1 + elem.v2 + elem.v3)
 
@@ -212,7 +220,7 @@ end
 	@param opt
 				Constants to be used
 =#
-function compute_regularyukawacoll!_{T}(dest::Array{T,2}, elements::Vector{Element{T}}, f::Function, opt::Option{T}=defaultopt)
+function compute_regularyukawacoll!_{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, opt::Option{T}=defaultopt)
 	#=== MEMORY-CRITICAL CODE! ===#
 	numelem = length(elements)
 	@assert size(dest) == (numelem, numelem)
