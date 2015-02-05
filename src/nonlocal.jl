@@ -98,7 +98,7 @@ end
 				Constants to be used
 	@return T
 =#
-function compute_regularyukawapot{T}(x::Union(Vector{T}, DenseArray{T,1}), ξ::Vector{T}, opt::Option{T}=defaultopt)
+function compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=defaultopt)
 	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
 	rnorm = vecnorm(x-ξ)
 
@@ -130,7 +130,7 @@ function compute_regularyukawapot{T}(x::Union(Vector{T}, DenseArray{T,1}), ξ::V
 	# no danger of cancellation
 	(exp(-scalednorm) - 1) / rnorm
 end
-compute_regularyukawapot{T}(x::Union(Vector{T}, DenseArray{T,1}), ξ::Vector{T}, ::Vector{T}, opt::Option{T}=defaultopt) = compute_regularyukawapot(x, ξ, opt)
+compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt::Option{T}=defaultopt) = compute_regularyukawapot(x, ξ, opt)
 
 #=
 	Compute the normal derivative of the regular part of the yukawa potential, that is, 
@@ -251,8 +251,8 @@ function compute_regularyukawacoll!_{T}(dest::Array{T,2}, elements::Vector{Eleme
 	end
 	nothing
 end
-compute_regularyukawacoll!{T}(::Type{SingleLayer}, dest::Union(Array{T,2},DenseArray{T,2}), elements::Vector{Element{T}}; opt::Option{T}=defaultopt) = compute_regularyukawacoll!_(dest, elements, compute_regularyukawapot, opt)
-compute_regularyukawacoll!{T}(::Type{DoubleLayer}, dest::Union(Array{T,2}, DenseArray{T,2}), elements::Vector{Element{T}}; opt::Option{T}=defaultopt) = compute_regularyukawacoll!_(dest, elements, compute_regularyukawapot_dn, opt)
+compute_regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}; opt::Option{T}=defaultopt) = compute_regularyukawacoll!_(dest, elements, compute_regularyukawapot, opt)
+compute_regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}; opt::Option{T}=defaultopt) = compute_regularyukawacoll!_(dest, elements, compute_regularyukawapot_dn, opt)
 
 #=
 	TODO
@@ -356,8 +356,8 @@ function eye!{T}(m::DenseArray{T,2}, α::Number=one(T))
 end
 
 # Convenience aliases
-gemv!{T}(α::T, m::Union(Array{T,2}, DenseArray{T,2}), v::Vector{T}, dest::DenseArray{T,1}) = gemv!(α, m, v, one(T), dest)
-gemv!{T}(α::T, m::Union(Array{T,2}, DenseArray{T,2}), v::Vector{T}, β::T, dest::DenseArray{T,1}) = gemv!('N', α, m, v, β, dest)
+gemv!{T}(α::T, m::DenseArray{T,2}, v::Vector{T}, dest::DenseArray{T,1}) = gemv!(α, m, v, one(T), dest)
+gemv!{T}(α::T, m::DenseArray{T,2}, v::Vector{T}, β::T, dest::DenseArray{T,1}) = gemv!('N', α, m, v, β, dest)
 
 end # module
 
