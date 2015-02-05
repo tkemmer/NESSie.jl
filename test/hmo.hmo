@@ -17,7 +17,7 @@ stuffing
 
 BEG_CHARGE_DATA
 	stuffing
-	x 1.0 2.0 3.0
-	x -2.00001 1.337 42.0
+	x 1.0 2.0 3.0 999.0
+	x -2.00001 1.337 42.0 -999.9
 END_CHARGE_DATA
 
