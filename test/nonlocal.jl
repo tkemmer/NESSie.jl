@@ -39,3 +39,36 @@ for dtype in (Float64, Float32)
 	@test_approx_eq elem.distorig -60/√769
 	@test_approx_eq elem.area √769/2
 end
+
+# check compute_singularpot
+for dtype in (Float64, Float32)
+	# empty lists
+	@test compute_singularpot(Element{dtype}[], Charge{dtype}[]) == (dtype[], dtype[])
+	# empty charge list
+	elements = [Element(map(dtype, [0, 0, 0]), map(dtype, [0, 0, 3]), map(dtype, [0, 3, 0])),
+				Element(map(dtype, [3, 0, 0]), map(dtype, [0, 4, 0]), map(dtype, [0, 0, 5]))]
+	map(compute_props!, elements)
+	(umol, qmol) = compute_singularpot(elements, Charge{dtype}[])
+	@test isa(umol, Vector{dtype}) && isa(qmol, Vector{dtype})
+	@test umol == qmol == [0, 0]
+	# single charge (trivial options)
+	opt = Option(one(dtype), zero(dtype), zero(dtype), zero(dtype))
+	charges = [Charge(dtype, 0, 0, 0, √2)]
+	(umol, qmol) = compute_singularpot(elements, charges, opt)
+	@test isa(umol, Vector{dtype}) && isa(qmol, Vector{dtype})
+	@test_approx_eq umol [1, .6]
+	@test_approx_eq qmol [0, -162/25/√769]
+	# single charge (non-trivial options)
+	opt = Option(convert(dtype, 2), zero(dtype), zero(dtype), zero(dtype))
+	(umol, qmol) = compute_singularpot(elements, charges, opt)
+	@test isa(umol, Vector{dtype}) && isa(qmol, Vector{dtype})
+	@test_approx_eq umol [.5, .3]
+	@test_approx_eq qmol [0, -162/50/√769]
+	# multiple charges (non-trivial options)
+	push!(charges, Charge(dtype, 1, 1, 1, -√5))
+	(umol, qmol) = compute_singularpot(elements, charges, opt)
+	@test isa(umol, Vector{dtype}) && isa(qmol, Vector{dtype})
+	@test_approx_eq umol [2 \ (1-√5), -1.2]
+	@test_approx_eq qmol [2 \ √5, 1593/50/√769]
+end
+
