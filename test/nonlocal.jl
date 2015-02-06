@@ -52,14 +52,14 @@ for dtype in (Float64, Float32)
 	@test isa(umol, Vector{dtype}) && isa(qmol, Vector{dtype})
 	@test umol == qmol == [0, 0]
 	# single charge (trivial options)
-	opt = Option(one(dtype), zero(dtype), zero(dtype), zero(dtype))
+	opt = Option(one(dtype), zeros(dtype, 3)...)
 	charges = [Charge(dtype, 0, 0, 0, √2)]
 	(umol, qmol) = compute_singularpot(elements, charges, opt)
 	@test isa(umol, Vector{dtype}) && isa(qmol, Vector{dtype})
 	@test_approx_eq umol [1, .6]
 	@test_approx_eq qmol [0, -162/25/√769]
 	# single charge (non-trivial options)
-	opt = Option(convert(dtype, 2), zero(dtype), zero(dtype), zero(dtype))
+	opt = Option(convert(dtype, 2), zeros(dtype, 3)...)
 	(umol, qmol) = compute_singularpot(elements, charges, opt)
 	@test isa(umol, Vector{dtype}) && isa(qmol, Vector{dtype})
 	@test_approx_eq umol [.5, .3]
@@ -72,3 +72,38 @@ for dtype in (Float64, Float32)
 	@test_approx_eq qmol [2 \ √5, 1593/50/√769]
 end
 
+# check compute_regularyukawapot
+for dtype in (Float64, Float32)
+	# x == ξ
+	x = ones(dtype, 3)
+	opt = Option(zeros(dtype, 4)..., convert(dtype, 7))
+	ret = compute_regularyukawapot(x, x, opt)
+	@test isa(ret, dtype)
+	@test_approx_eq ret -7
+	# ξ not in origin (no cancellation)
+	ξ = -ones(dtype, 3)
+	ret = compute_regularyukawapot(x, ξ, opt)
+	@test isa(ret, dtype)
+	@test_approx_eq ret ((exp(-14*√3)-1) / 2 / √3)
+	# ξ in origin (no cancellation)
+	ξ = zeros(dtype, 3)
+	ret = compute_regularyukawapot(x, ξ, opt)
+	@test isa(ret, dtype)
+	@test_approx_eq ret ((exp(-7*√3)-1) / √3)
+	# ξ in origin (potential cancellation)
+	ret = compute_regularyukawapot(.001x, ξ, opt)
+	@test isa(ret, dtype)
+	@test_approx_eq ret ((exp(-7*√.000003)-1) / √.000003)
+	# ξ in origin (potential cancellation 2)
+	ret = compute_regularyukawapot(.0001x, ξ, opt)
+	@test isa(ret, dtype)
+	@test_approx_eq ret ((exp(-7*√.00000003)-1) / √.00000003)
+	# ξ in origin (potential cancellation 3)
+	ret = compute_regularyukawapot(.00001x, ξ, opt)
+	@test isa(ret, dtype)
+	@test_approx_eq ret ((exp(-7*√.0000000003)-1) / √.0000000003)
+end
+
+# TODO compute_regularyukawacoll
+
+# TODO compute_cauchy
