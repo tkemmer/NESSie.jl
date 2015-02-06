@@ -19,6 +19,7 @@ export
 
 	# this file
 	eye!,
+	isdegenerate,
 	compute_props!,
 	compute_singularpot,
 	compute_regularyukawapot,
@@ -40,11 +41,7 @@ const defaultopt = Option(2., 78., 1.8, 20.)
 =#
 function compute_props!{T}(elem::Element{T})
 	# reject degenerate triangles
-	@assert begin
-				elem.v1 != elem.v2 &&
-				elem.v1 != elem.v3 &&
-				elem.v2 != elem.v3
-			end "Degenerate triangle $(elem)"
+	@assert !isdegenerate(elem) "Degenerate triangle $(elem)"
 
 	# compute centroid
 	elem.center = 3 \ (elem.v1 + elem.v2 + elem.v3)
@@ -344,7 +341,6 @@ function compute_cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{
 	nothing
 end
 
-
 #=
 	Initializes the given matrix m with αI, with I being an identity
 	matrix with the same dimensions as m.
@@ -362,6 +358,26 @@ function eye!{T}(m::DenseArray{T,2}, α::Number=one(T))
 	end
 	nothing
 end
+
+#=
+	Tests whether the triangle with the given nodes is degenerate.
+
+	@param v1
+				First node of the triangle
+	@param v2
+				Second node of the triangle
+	@param v3
+				Third node of the triangle
+	@return bool
+=#
+function isdegenerate{T <: FloatingPoint}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T})
+	@assert length(v1) == length(v2) == length(v3) == 3
+	u1 = v2 - v1
+	u2 = v3 - v1
+	cosine = u1 ⋅ u2 / vecnorm(u1) / vecnorm(u2)
+	v1 == v2 || v1 == v3 || v2 == v3 || 1 - abs(cosine) <= eps(T)
+end
+isdegenerate{T}(elem::Element{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
 
 # Convenience aliases
 gemv!{T}(α::T, m::DenseArray{T,2}, v::Vector{T}, dest::DenseArray{T,1}) = gemv!(α, m, v, one(T), dest)
