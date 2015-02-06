@@ -18,6 +18,7 @@ export
 	readhmo_charges,
 
 	# this file
+	defaultopt,
 	eye!,
 	isdegenerate,
 	compute_props!,
@@ -30,7 +31,11 @@ export
 include("types.jl")
 include("hmo.jl")
 
-const defaultopt = Option(2., 78., 1.8, 20.)
+# Default options
+const defaultopt64 = Option(2., 78., 1.8, 20.)
+const defaultopt32 = Option(2f0, 78f0, 1.8f0, 20f0)
+defaultopt(::Type{Float64}) = defaultopt64
+defaultopt(::Type{Float32}) = defaultopt32
 
 #=
 	Computes the element properties, that is, centroid, normal, distance to origin, and
@@ -73,7 +78,7 @@ end
 				Constants to be used, including the dielectric constant of the solute
 	@return (Vector{T}, Vector{T})
 =#
-function compute_singularpot{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt)
+function compute_singularpot{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
 	umol = T[]; qmol = T[]
 	for elem in elements
 		push!(umol, 0)
@@ -103,7 +108,7 @@ end
 				Constants to be used
 	@return T
 =#
-function compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=defaultopt)
+function compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=defaultopt(T))
 	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
 	rnorm = vecnorm(x-ξ)
 
@@ -135,7 +140,7 @@ function compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Opt
 	# no danger of cancellation
 	(exp(-scalednorm) - 1) / rnorm
 end
-compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt::Option{T}=defaultopt) = compute_regularyukawapot(x, ξ, opt)
+compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt::Option{T}=defaultopt(T)) = compute_regularyukawapot(x, ξ, opt)
 
 #=
 	Compute the normal derivative of the regular part of the yukawa potential, that is, 
@@ -157,7 +162,7 @@ compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt:
 				Constants to be used
 	@return T
 =#
-function compute_regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, opt::Option{T}=defaultopt)
+function compute_regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, opt::Option{T}=defaultopt(T))
 	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
 	r = x - ξ
 	rnorm = vecnorm(r)
@@ -217,7 +222,7 @@ end
 	@param opt
 				Constants to be used
 =#
-function compute_regularyukawacoll!_{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, opt::Option{T}=defaultopt)
+function compute_regularyukawacoll!_{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, opt::Option{T}=defaultopt(T))
 	#=== MEMORY-CRITICAL CODE! ===#
 	numelem = length(elements)
 	@assert size(dest) == (numelem, numelem)
@@ -256,13 +261,13 @@ function compute_regularyukawacoll!_{T}(dest::DenseArray{T,2}, elements::Vector{
 	end
 	nothing
 end
-compute_regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}; opt::Option{T}=defaultopt) = compute_regularyukawacoll!_(dest, elements, compute_regularyukawapot, opt)
-compute_regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}; opt::Option{T}=defaultopt) = compute_regularyukawacoll!_(dest, elements, compute_regularyukawapot_dn, opt)
+compute_regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}; opt::Option{T}=defaultopt(T)) = compute_regularyukawacoll!_(dest, elements, compute_regularyukawapot, opt)
+compute_regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}; opt::Option{T}=defaultopt(T)) = compute_regularyukawacoll!_(dest, elements, compute_regularyukawapot_dn, opt)
 
 #=
 	TODO
 =#
-function compute_cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt)
+function compute_cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
 	# convient access to constants
 	const εΩ = opt.εΩ
 	const εΣ = opt.εΣ
