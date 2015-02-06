@@ -104,6 +104,31 @@ for dtype in (Float64, Float32)
 	@test_approx_eq ret ((exp(-7*√.0000000003)-1) / √.0000000003)
 end
 
+# check compute_regularyukawapot_dn
+for dtype in (Float64, Float32)
+	# x == ξ
+	x = ones(dtype, 3)
+	opt = Option(zeros(dtype, 4)..., convert(dtype, 7))
+	ret = compute_regularyukawapot_dn(x, x, x, opt)
+	@test isa(ret, dtype)
+	@test ret == 0
+	# ξ not in origin (no cancellation)
+	ξ = -ones(dtype, 3)
+	n = map(dtype, [1, 0, 0])
+	ret = compute_regularyukawapot_dn(x, ξ, n, opt)
+	@test isa(ret, dtype)
+	@test_approx_eq ret ((1 - exp(-14*√3)*(1+14*√3)) / 12 / √3)
+	# ξ in origin (no cancellation)
+	ξ = zeros(dtype, 3)
+	ret = compute_regularyukawapot_dn(x, ξ, n, opt)
+	@test isa(ret, dtype)
+	@test_approx_eq ret ((1 - exp(-7*√3)*(1+7*√3)) / 3 / √3)
+	# ξ in origin (potential cancellation)
+	ret = compute_regularyukawapot_dn(.001x, ξ, n, opt)
+	@test isa(ret, dtype)
+	@test_approx_eq ret ((1 - exp(-7*√.000003)*(1+7*√.000003)) / .003 / √.000003)
+end
+
 # TODO compute_regularyukawacoll
 
 # TODO compute_cauchy
