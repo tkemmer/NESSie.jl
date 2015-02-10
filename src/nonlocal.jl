@@ -172,7 +172,7 @@ function compute_regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vec
 		return zero(T)
 	end
 
-	cosovernorm2 = (r ⋅ normal) / rnorm / rnorm / rnorm
+	cosovernorm2 = (r ⋅ normal) / rnorm^3
 	scalednorm = opt.yukawa * rnorm
 
 	# guard against cancellation
