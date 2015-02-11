@@ -23,8 +23,12 @@ export
 	isdegenerate,
 	compute_props!,
 	compute_singularpot,
+	compute_laplacepot,
+	compute_laplacepot_dn,
 	compute_regularyukawapot,
 	compute_regularyukawapot_dn,
+	compute_radoncoll!,
+	compute_laplacecoll!,
 	compute_regularyukawacoll!,
 	compute_cauchy
 
@@ -95,6 +99,94 @@ function compute_singularpot{T}(elements::Vector{Element{T}}, charges::Vector{Ch
 end
 
 #=
+	Compute the laplace potential 1 / |x-ξ|.
+
+	Note that the result is premultiplied by 4π!
+
+	@param x
+				Integration variable
+	@param ξ
+				Observation point
+	@return T
+=#
+function compute_laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
+	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
+	rnorm = vecnorm(x-ξ)
+
+	# limit for |x-ξ| →	0
+	if rnorm <= 0
+		return zero(T)
+	end
+
+	# guard against small rnorm
+	if rnorm < .1
+		# use alternating series to approximate
+		# 1/c = Σ((-1)^i * (x-1)^i) for i = 0 to ∞
+		term = one(T)
+		tolerance = 1e-16
+		tsum = zero(T)
+		for i in 1:15
+			if abs(term) < tolerance
+				break
+			end
+
+			tsum += term
+			term *= -(rnorm - 1)
+		end
+		return tsum
+	end
+
+	1 / rnorm
+end
+compute_laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, ::Option{T}) = compute_laplacepot(x, ξ)
+
+#=
+	Compute the normal derivative of the laplace potential:
+	- 1 / |x-ξ|^2   * (x-ξ) ⋅ n / |x-ξ|
+
+	Note that the result is premultiplied by 4π!
+
+	@param x
+				Integration variable
+	@param ξ
+				Observation point
+	@param normal
+				Normal unit vector at x
+	@return T
+=#
+function compute_laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
+	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
+	r = x - ξ
+	rnorm = vecnorm(r)
+
+	# limit for |x-ξ| → 0
+	if rnorm <= 0
+		return zero(T)
+	end
+
+	# guard against small rnorm
+	if rnorm < .1
+		# use alternating series to approximate
+		# -1/c^3 = -1/2 * Σ((-1)^i * (x-1)^i * (i+1) * (i+2)) for i = 0 to ∞
+		term = convert(T, 2)
+		tolerance = 1e-16
+		tsum = zero(T)
+		for i in 1:15
+			if abs(term) < tolerance
+				break
+			end
+
+			tsum += term * (i+1) * (i+2)
+			term *= -(rnorm -1)
+		end
+		return -.5 * tsum * (r ⋅ normal)
+	end
+	
+	-1 / rnorm^3 * (r ⋅ normal)
+end
+compute_laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = compute_laplacepot_dn(x, ξ, normal)
+
+#=
 	Compute the regular part of the yukawa potential, that is, Yukawa minus Laplace:
 	e^[-√(εΣ/ε∞)/λ * |x-ξ|] / |x-ξ|  -  1 / |x-ξ|
 
@@ -128,7 +220,7 @@ function compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Opt
 		tsum = zero(T) 	# DON'T EVER USE 0 HERE! Time: x2, Memory: x3
 		for i in 1:15
 			if abs(term) <= tolerance
-				continue
+				break
 			end
 
 			tsum += term
@@ -157,7 +249,7 @@ compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt:
 	@param ξ
 				Observation point
 	@param normal
-				Unit normal vector at x
+				Normal unit vector at x
 	@param opt
 				Constants to be used
 	@return T
@@ -183,7 +275,7 @@ function compute_regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vec
 		tolerance = 1e-16 * abs(term)
 		tsum = zero(T)  # DON'T EVER USE 0 HERE!
 		for i in 2:16
-			if abs(term * (i-1)) <= tolerance
+			if abs(term #=* (i-1)=#) <= tolerance
 				continue
 			end
 
@@ -198,17 +290,11 @@ function compute_regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vec
 end
 
 #=
-	Compute the Dirichlet trace of the single layer potential or the essential part of the
-	double layer potential of Yukawa minus Laplace, depending on the function given. Use
-	the function aliases with "SingleLayer" or "DoubleLayer" as defined	below.
+	Radon cubature with seven points to generate a potential matrix according to the given
+	function f. For easy setup, use the function aliases compute_laplacecoll! and
+	compute_regularyukawacoll! with "SingleLayer" or "DoubleLayer" instead.
 
-	Please note that, in the latter case, the relation of K (Kʸ) to the full double layer
-	potential W (Wʸ) is given by
-	[(γ₀ξ^{int} W)f](ξ) = [-1 + σ(ξ)]f(ξ) + [Kf](ξ)
-
-	This function uses a Radon cubature with seven points to generate the regular part of
-	the Yukawa potential matrix. References:
-
+	References:
 	[1] V. I. Krilov. Priblizhennoe vichislenie integralov. Moskva, Nauka, 1967.
 	[2] J. Radon. Zur mechanischen Kubatur. Monatsh. für Math. 52(4): 286-300, 1948.
 
@@ -222,7 +308,7 @@ end
 	@param opt
 				Constants to be used
 =#
-function compute_regularyukawacoll!_{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, opt::Option{T}=defaultopt(T))
+function compute_radoncoll!{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, opt::Option{T}=defaultopt(T))
 	#=== MEMORY-CRITICAL CODE! ===#
 	numelem = length(elements)
 	@assert size(dest) == (numelem, numelem)
@@ -234,15 +320,13 @@ function compute_regularyukawacoll!_{T}(dest::DenseArray{T,2}, elements::Vector{
 	
 	# pre-allocate memory for cubature points
 	cubpts = [zeros(T, 3) for _ in 1:7]
-	# pre-compute μ * centroid for all elements and μ
-	center = [[elem.center * μ[i] for i in 1:7] for elem in elements]
-
+	
 	@inbounds for eidx in 1:numelem
 		elem = elements[eidx]
 		u = elem.v2 - elem.v1
 		v = elem.v3 - elem.v1
 		area = 2. * elem.area
-		
+
 		# compute cubature points
 		# devectorized version of cubpts = [u * ξ[i] + v * η[i] + elem.v1 for i in 1:7]
 		for i in 1:7, j in 1:3
@@ -253,16 +337,62 @@ function compute_regularyukawacoll!_{T}(dest::DenseArray{T,2}, elements::Vector{
 			obs = elements[oidx]
 			value = zero(T)
 			for i in 1:7
-				#value += f(cubpts[i], obs.center * μ[i], elem.normal, opt)
-				value += f(cubpts[i], center[eidx][i], elem.normal, opt) 
+				value += f(cubpts[i], obs.center, elem.normal, opt) * μ[i]
 			end
 			dest[oidx, eidx] = value * area
 		end
 	end
 	nothing
 end
-compute_regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}; opt::Option{T}=defaultopt(T)) = compute_regularyukawacoll!_(dest, elements, compute_regularyukawapot, opt)
-compute_regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}; opt::Option{T}=defaultopt(T)) = compute_regularyukawacoll!_(dest, elements, compute_regularyukawapot_dn, opt)
+
+#=
+	Compute the Dirichlet trace of the single or double layer potential of Laplace.
+
+	Please note that, in the latter case, the relation of K (Kʸ) to the full double layer
+	potential W (Wʸ) is given by
+	[(γ₀ξ^{int} W)f](ξ) = [-1 + σ(ξ)]f(ξ) + [Kf](ξ)
+
+	This function uses a Radon cubature with seven points to generate the regular part of
+	the Yukawa potential matrix.
+
+	Note that the result is premultiplied by 4π!
+
+	@param _
+				SingleLayer or DoubleLayer
+	@param dest
+				Destination matrix
+	@param elements
+				List of elements in the system
+	@param opt
+				Constants to be used
+=#
+compute_laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = compute_radoncoll!(dest, elements, compute_laplacepot, opt)
+compute_laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = compute_radoncoll!(dest, elements, compute_laplacepot_dn, opt)
+
+#=
+	Compute the Dirichlet trace of the single layer potential or the essential part of the
+	double layer potential of Yukawa minus Laplace.
+
+	Please note that, in the latter case, the relation of K (Kʸ) to the full double layer
+	potential W (Wʸ) is given by
+	[(γ₀ξ^{int} W)f](ξ) = [-1 + σ(ξ)]f(ξ) + [Kf](ξ)
+
+	This function uses a Radon cubature with seven points to generate the regular part of
+	the Yukawa potential matrix.
+
+	Note that the result is premultiplied by 4π!
+
+	@param _
+				SingleLayer or DoubleLayer
+	@param dest
+				Destination matrix
+	@param elements
+				List of elements in the system
+	@param opt
+				Constants to be used
+=#
+compute_regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = compute_radoncoll!(dest, elements, compute_regularyukawapot, opt)
+compute_regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = compute_radoncoll!(dest, elements, compute_regularyukawapot_dn, opt)
 
 #=
 	TODO
