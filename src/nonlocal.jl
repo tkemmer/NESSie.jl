@@ -17,6 +17,11 @@ export
 	readhmo_elements,
 	readhmo_charges,
 
+	# rjasanow.jl
+	compute_rjasanowcoll!,
+	compute_rjasanowsinglepot,
+	compute_rjasanowdoublepot,
+
 	# this file
 	defaultopt,
 	eye!,
@@ -34,6 +39,7 @@ export
 
 include("types.jl")
 include("hmo.jl")
+include("rjasanow.jl")
 
 # Default options
 const defaultopt64 = Option(2., 78., 1.8, 20.)
@@ -99,7 +105,7 @@ function compute_singularpot{T}(elements::Vector{Element{T}}, charges::Vector{Ch
 end
 
 #=
-	Compute the laplace potential 1 / |x-ξ|.
+	Compute the Laplace potential 1 / |x-ξ|.
 
 	Note that the result is premultiplied by 4π!
 
@@ -141,7 +147,7 @@ end
 compute_laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, ::Option{T}) = compute_laplacepot(x, ξ)
 
 #=
-	Compute the normal derivative of the laplace potential:
+	Compute the normal derivative of the Laplace potential:
 	- 1 / |x-ξ|^2   * (x-ξ) ⋅ n / |x-ξ|
 
 	Note that the result is premultiplied by 4π!
@@ -303,8 +309,8 @@ end
 	@param elements
 				List of all surface elements
 	@param f
-				compute_regularyukawapot or compute_regularyukawapot_dn for single or
-				double layer computation, respectively
+				Supported functions: compute_regularyukawapot, compute_regularyukawapot_dn,
+				compute_laplacepot, compute_laplacepot_dn
 	@param opt
 				Constants to be used
 =#
