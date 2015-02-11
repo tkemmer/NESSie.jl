@@ -18,24 +18,24 @@ export
 	readhmo_charges,
 
 	# rjasanow.jl
-	compute_rjasanowcoll!,
-	compute_rjasanowsinglepot,
-	compute_rjasanowdoublepot,
+	rjasanowcoll!,
+	rjasanowsinglepot,
+	rjasanowdoublepot,
 
 	# this file
 	defaultopt,
 	eye!,
 	isdegenerate,
-	compute_props!,
-	compute_singularpot,
-	compute_laplacepot,
-	compute_laplacepot_dn,
-	compute_regularyukawapot,
-	compute_regularyukawapot_dn,
-	compute_radoncoll!,
-	compute_laplacecoll!,
-	compute_regularyukawacoll!,
-	compute_cauchy
+	props!,
+	singularpot,
+	laplacepot,
+	laplacepot_dn,
+	regularyukawapot,
+	regularyukawapot_dn,
+	radoncoll!,
+	laplacecoll!,
+	regularyukawacoll!,
+	cauchy
 
 include("types.jl")
 include("hmo.jl")
@@ -54,7 +54,7 @@ defaultopt(::Type{Float32}) = defaultopt32
 	@param elem
 				Element of interest
 =#
-function compute_props!{T}(elem::Element{T})
+function props!{T}(elem::Element{T})
 	# reject degenerate triangles
 	@assert !isdegenerate(elem) "Degenerate triangle $(elem)"
 
@@ -88,7 +88,7 @@ end
 				Constants to be used, including the dielectric constant of the solute
 	@return (Vector{T}, Vector{T})
 =#
-function compute_singularpot{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
+function singularpot{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
 	umol = T[]; qmol = T[]
 	for elem in elements
 		push!(umol, 0)
@@ -115,7 +115,7 @@ end
 				Observation point
 	@return T
 =#
-function compute_laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
+function laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
 	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
 	rnorm = vecnorm(x-ξ)
 
@@ -144,7 +144,7 @@ function compute_laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
 
 	1 / rnorm
 end
-compute_laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, ::Option{T}) = compute_laplacepot(x, ξ)
+laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, ::Option{T}) = laplacepot(x, ξ)
 
 #=
 	Compute the normal derivative of the Laplace potential:
@@ -160,7 +160,7 @@ compute_laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, ::Option{T
 				Normal unit vector at x
 	@return T
 =#
-function compute_laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
+function laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
 	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
 	r = x - ξ
 	rnorm = vecnorm(r)
@@ -190,7 +190,7 @@ function compute_laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vec
 	
 	-1 / rnorm^3 * (r ⋅ normal)
 end
-compute_laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = compute_laplacepot_dn(x, ξ, normal)
+laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = laplacepot_dn(x, ξ, normal)
 
 #=
 	Compute the regular part of the yukawa potential, that is, Yukawa minus Laplace:
@@ -206,7 +206,7 @@ compute_laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, :
 				Constants to be used
 	@return T
 =#
-function compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=defaultopt(T))
+function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=defaultopt(T))
 	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
 	rnorm = vecnorm(x-ξ)
 
@@ -238,7 +238,7 @@ function compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Opt
 	# no danger of cancellation
 	(exp(-scalednorm) - 1) / rnorm
 end
-compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt::Option{T}=defaultopt(T)) = compute_regularyukawapot(x, ξ, opt)
+regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt::Option{T}=defaultopt(T)) = regularyukawapot(x, ξ, opt)
 
 #=
 	Compute the normal derivative of the regular part of the yukawa potential, that is, 
@@ -260,7 +260,7 @@ compute_regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt:
 				Constants to be used
 	@return T
 =#
-function compute_regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, opt::Option{T}=defaultopt(T))
+function regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, opt::Option{T}=defaultopt(T))
 	#=== TIME- AND MEMORY-CRITICAL CODE! ===#
 	r = x - ξ
 	rnorm = vecnorm(r)
@@ -297,8 +297,8 @@ end
 
 #=
 	Radon cubature with seven points to generate a potential matrix according to the given
-	function f. For easy setup, use the function aliases compute_laplacecoll! and
-	compute_regularyukawacoll! with "SingleLayer" or "DoubleLayer" instead.
+	function f. For easy setup, use the function aliases laplacecoll! and
+	regularyukawacoll! with "SingleLayer" or "DoubleLayer" instead.
 
 	References:
 	[1] V. I. Krilov. Priblizhennoe vichislenie integralov. Moskva, Nauka, 1967.
@@ -309,12 +309,12 @@ end
 	@param elements
 				List of all surface elements
 	@param f
-				Supported functions: compute_regularyukawapot, compute_regularyukawapot_dn,
-				compute_laplacepot, compute_laplacepot_dn
+				Supported functions: regularyukawapot, regularyukawapot_dn, laplacepot, 
+				laplacepot_dn
 	@param opt
 				Constants to be used
 =#
-function compute_radoncoll!{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, opt::Option{T}=defaultopt(T))
+function radoncoll!{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, opt::Option{T}=defaultopt(T))
 	#=== MEMORY-CRITICAL CODE! ===#
 	numelem = length(elements)
 	@assert size(dest) == (numelem, numelem)
@@ -372,8 +372,8 @@ end
 	@param opt
 				Constants to be used
 =#
-compute_laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = compute_radoncoll!(dest, elements, compute_laplacepot, opt)
-compute_laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = compute_radoncoll!(dest, elements, compute_laplacepot_dn, opt)
+laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, laplacepot, opt)
+laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, laplacepot_dn, opt)
 
 #=
 	Compute the Dirichlet trace of the single layer potential or the essential part of the
@@ -397,13 +397,13 @@ compute_laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Ve
 	@param opt
 				Constants to be used
 =#
-compute_regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = compute_radoncoll!(dest, elements, compute_regularyukawapot, opt)
-compute_regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = compute_radoncoll!(dest, elements, compute_regularyukawapot_dn, opt)
+regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot, opt)
+regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot_dn, opt)
 
 #=
 	TODO
 =#
-function compute_cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
+function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
 	# convient access to constants
 	const εΩ = opt.εΩ
 	const εΣ = opt.εΣ
@@ -430,7 +430,7 @@ function compute_cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{
 	eye!(m33, 2π)
 
 	# compute molecular potential for the point charges
-	umol, qmol = compute_singularpot(elements, charges, opt)
+	umol, qmol = singularpot(elements, charges, opt)
 
 	# create right hand side
 	rhs = zeros(T, 3 * numelem)
@@ -447,7 +447,7 @@ function compute_cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{
 		generate and apply Kʸ-K
 	=#
 	buffer = Array(T, numelem, numelem)
-	compute_regularyukawacoll!(DoubleLayer, buffer, elements)
+	regularyukawacoll!(DoubleLayer, buffer, elements)
 
 	# β += (1-εΩ/εΣ)(Kʸ-K)umol
 	gemv!(1-εΩ/εΣ, buffer, umol, β)
@@ -462,7 +462,7 @@ function compute_cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{
 	#=
 		generate and apply Vʸ-V
 	=#
-	compute_regularyukawacoll!(SingleLayer, buffer, elements)
+	regularyukawacoll!(SingleLayer, buffer, elements)
 
 	# β += (εΩ/εΣ - εΩ/ε∞)(Vʸ-V)qmol
 	gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)

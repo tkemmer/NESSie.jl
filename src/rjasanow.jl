@@ -12,11 +12,11 @@ import Base: log, asin, vecnorm
 	@param elements
 				List of all surface elements
 	@param f
-				Supported functions: compute_rjasanowsinglepot, compute_rjasanowdoublepot
+				Supported functions: rjasanowsinglepot, rjasanowdoublepot
 	@param zerodiag
 				Specifies whether the diagonal elements should be zero
 =#
-function compute_rjasanowcoll!_{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, zerodiag::Bool=false)
+function rjasanowcoll!_{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, zerodiag::Bool=false)
 	numelem = length(elements)
 	gridsize = zero(T)
 	for elem in elements, node in (elem.v1, elem.v2, elem.v3)
@@ -28,8 +28,8 @@ function compute_rjasanowcoll!_{T}(dest::DenseArray{T,2}, elements::Vector{Eleme
 		dest[oidx, eidx] = zerodiag && eidx == oidx ? zero(T) : f(elements[eidx], elements[oidx].center, gridsize)
 	end
 end
-compute_rjasanowcoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}) = compute_rjasanowcoll!_(dest, elements, compute_rjasanowsinglepot)
-compute_rjasanowcoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}) = compute_rjasanowcoll!_(dest, elements, compute_rjasanowdoublepot, true)
+rjasanowcoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}) = rjasanowcoll!_(dest, elements, rjasanowsinglepot)
+rjasanowcoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}) = rjasanowcoll!_(dest, elements, rjasanowdoublepot, true)
 
 #=
 	Rjasanow's implementation to compute the Laplace potential.
@@ -44,7 +44,7 @@ compute_rjasanowcoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::V
 				Size of the grid
 	@return T
 =#
-function compute_rjasanowsinglepot{T}(elem::Element{T}, obs::Vector{T}, gridsize::T)
+function rjasanowsinglepot{T}(elem::Element{T}, obs::Vector{T}, gridsize::T)
 	t = elem.normal .* elem.normal
 	kom = t[2] > t[1] ? (t[3] > t[2] ? 3 : 2) : (t[3] > t[1] ? 3 : 1)
 	ivord = elem.normal[kom] > 0 ? 1 : -1
@@ -76,7 +76,7 @@ end
 				Size of the grid
 	@return T
 =#
-function compute_rjasanowdoublepot{T}(elem::Element{T}, obs::Vector{T}, gridsize::T)
+function rjasanowdoublepot{T}(elem::Element{T}, obs::Vector{T}, gridsize::T)
 	t = elem.normal .* elem.normal
 	kom = t[2] > t[1] ? (t[3] > t[2] ? 3 : 2) : (t[3] > t[1] ? 3 : 1)
 	ivord = elem.normal[kom] > 0 ? 1 : -1
