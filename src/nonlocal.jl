@@ -1,6 +1,5 @@
 module NonLocalBEM
 
-import ArrayViews: view
 import Base.LinAlg.BLAS: gemv!, axpy!
 
 export
@@ -401,7 +400,17 @@ regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vect
 regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot_dn, opt)
 
 #=
-	TODO
+	Computes the full cauchy data on the surface of the biomolecule.
+
+	Note that the result is premultiplied by 4π!
+
+	@param elements
+				List of surface elements
+	@param charges
+				List of charges in the biomolecule
+	@param opt
+				Constants to be used
+	@return Vector{T}
 =#
 function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
 	# convient access to constants
@@ -414,15 +423,15 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt
 	m = zeros(T, 3 * numelem, 3 * numelem)
 
 	# convenient access to 9 blocks of the system matrix
-	m11 = view(m,          1:numelem,           1:numelem )
-	m21 = view(m,          1:numelem,   1+numelem:2numelem)
-	m31 = view(m,          1:numelem,  1+2numelem:3numelem)
-	m12 = view(m,  1+numelem:2numelem,          1:numelem )
-	m22 = view(m,  1+numelem:2numelem,  1+numelem:2numelem)
-	m32 = view(m,  1+numelem:2numelem, 1+2numelem:3numelem)
-	m13 = view(m, 1+2numelem:3numelem,          1:numelem )
-	m23 = view(m, 1+2numelem:3numelem,  1+numelem:2numelem)
-	m33 = view(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
+	m11 = sub(m,          1:numelem,           1:numelem )
+	m12 = sub(m,          1:numelem,   1+numelem:2numelem)
+	m13 = sub(m,          1:numelem,  1+2numelem:3numelem)
+	m21 = sub(m,  1+numelem:2numelem,          1:numelem )
+	m22 = sub(m,  1+numelem:2numelem,  1+numelem:2numelem)
+	m23 = sub(m,  1+numelem:2numelem, 1+2numelem:3numelem)
+	m31 = sub(m, 1+2numelem:3numelem,          1:numelem )
+	m32 = sub(m, 1+2numelem:3numelem,  1+numelem:2numelem)
+	m33 = sub(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
 
 	# initialize the system matrix
 	eye!(m11, 2π)
@@ -436,12 +445,11 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt
 	rhs = zeros(T, 3 * numelem)
 	
 	# convenient access to the first block of rhs
-	β = view(rhs, 1:numelem)
+	β = sub(rhs, 1:numelem)
 	
 	# initialize rhs
 	copy!(β, umol)
 	scale!(β, -2π)
-
 
 	#=
 		generate and apply Kʸ-K
@@ -457,7 +465,6 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt
 
 	# m13 += ε∞/εΣ * (Kʸ-K)
 	axpy!(ε∞/εΣ, buffer, m13)
-	
 
 	#=
 		generate and apply Vʸ-V
@@ -469,17 +476,43 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt
 
 	# m12 += (εΩ/ε∞ - εΩ/εΣ)(Vʸ-V)
 	axpy!(εΩ * (1/ε∞ - 1/εΣ), buffer, m12)
-
 	
 	#=
 		generate and apply K
 	=#
+	rjasanowcoll!(DoubleLayer, buffer, elements)
 
-	# TODO
-	#…
+	# β += K
+	gemv!(1., buffer, umol, β)
 
-	#println([m11 m12 m13; m21 m22 m23; m31 m32 m33]) 
-	nothing
+	# m11 -= K
+	axpy!(-1., buffer, m11)
+
+	# m21 += K
+	axpy!(1., buffer, m21)
+
+	# m33 -= K
+	axpy!(-1., buffer, m33)
+
+	#=
+		generate and apply V
+	=#
+	rjasanowcoll!(SingleLayer, buffer, elements)
+
+	# β -= εΩ/ε∞ * V * qmol
+	gemv!(-εΩ/ε∞, buffer, qmol, β)
+
+	# m12 += εΩ/ε∞ * V
+	axpy!(εΩ/ε∞, buffer, m12)
+
+	# m22 -= V
+	axpy!(-1., buffer, m22)
+
+	# m32 += εΩ/ε∞ * V
+	axpy!(εΩ/ε∞, buffer, m32)
+
+	# solve system
+	m\rhs
 end
 
 #=
@@ -491,7 +524,7 @@ end
 	@param α
 				Coefficient of the identity matrix
 =#
-function eye!{T}(m::DenseArray{T,2}, α::Number=one(T))
+function eye!{T}(m::Union(DenseArray{T,2}, SubArray{T,2}), α::Number=one(T))
 	fill!(m, zero(T))
 	α = convert(T, α)
 	@inbounds for i in 1:min(size(m)...)
@@ -521,8 +554,8 @@ end
 isdegenerate{T}(elem::Element{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
 
 # Convenience aliases
-gemv!{T}(α::T, m::DenseArray{T,2}, v::Vector{T}, dest::DenseArray{T,1}) = gemv!(α, m, v, one(T), dest)
-gemv!{T}(α::T, m::DenseArray{T,2}, v::Vector{T}, β::T, dest::DenseArray{T,1}) = gemv!('N', α, m, v, β, dest)
+gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!(α, m, v, one(T), dest)
+gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, β::T, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!('N', α, m, v, β, dest)
 
 end # module
 
