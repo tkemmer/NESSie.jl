@@ -1,3 +1,44 @@
+# check laplacepot
+for dtype in (Float64, Float32)
+    # x == ξ
+    x = ones(dtype, 3)
+    ret = laplacepot(x, x)
+    @test isa(ret, dtype)
+    @test ret == 0
+    # ξ not in origin (moderate vecnorm)
+    ξ = -ones(dtype, 3)
+    ret = laplacepot(x, ξ)
+    @test isa(ret, dtype)
+    @test_approx_eq ret 0.288675134594812882254574390250978727823800875635063438009301
+    # ξ in origin (moderate vecnorm)
+    ξ = zeros(dtype, 3)
+    ret = laplacepot(x, ξ)
+    @test isa(ret, dtype)
+    @test_approx_eq ret 0.577350269189625764509148780501957455647601751270126876018602
+    # TODO alternating series
+end
+
+# check laplacepot_dn
+for dtype in (Float64, Float32)
+    # x == ξ
+    x = ones(dtype, 3)
+    n = map(dtype, [1, 0, 0])
+    ret = laplacepot_dn(x, x, n)
+    @test isa(ret, dtype)
+    @test ret == 0
+    # ξ not in origin (moderate vecnorm)
+    ξ = -ones(dtype, 3)
+    ret = laplacepot_dn(x, ξ, n)
+    @test isa(ret, dtype)
+    @test_approx_eq ret -0.04811252243246881370909573170849645463730014593917723966821
+    # ξ in origin (moderate vecnorm)
+    ξ = zeros(dtype, 3)
+    ret = laplacepot_dn(x, ξ, n)
+    @test isa(ret, dtype)
+    @test_approx_eq ret -0.19245008972987525483638292683398581854920058375670895867286
+    # TODO alternating series
+end
+
 # check regularyukawapot
 for dtype in (Float64, Float32)
     # x == ξ
@@ -34,13 +75,13 @@ end
 for dtype in (Float64, Float32)
     # x == ξ
     x = ones(dtype, 3)
+    n = map(dtype, [1, 0, 0])
     opt = Option(zeros(dtype, 4)..., convert(dtype, 7))
-    ret = regularyukawapot_dn(x, x, x, opt)
+    ret = regularyukawapot_dn(x, x, n, opt)
     @test isa(ret, dtype)
     @test ret == 0
     # ξ not in origin (no cancellation)
     ξ = -ones(dtype, 3)
-    n = map(dtype, [1, 0, 0])
     ret = regularyukawapot_dn(x, ξ, n, opt)
     @test isa(ret, dtype)
     @test_approx_eq ret 0.048112522396707305228639137148607498838982054839859863103104
@@ -63,7 +104,4 @@ for dtype in (Float64, Float32)
     @test_approx_eq ret 14.14393831379399210175378534648974379367907886588210581085651
 end
 
-# TODO laplacepot
-# TODO laplacepot_dn
 # TODO radoncoll!
-

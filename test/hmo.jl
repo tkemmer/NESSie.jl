@@ -38,4 +38,3 @@ finally
     [close(fh) for (_, fh, __) in testfiles]
     rm(tempfile[1])
 end
-

@@ -39,4 +39,3 @@ for dtype in (Float64, Float32)
     @test_approx_eq elem.distorig -60/√769
     @test_approx_eq elem.area √769/2
 end
-
