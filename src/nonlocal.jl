@@ -3,42 +3,42 @@ module NonLocalBEM
 import Base.LinAlg.BLAS: gemv!, axpy!
 
 export
-	# types.jl
-	Element,
-	Charge,
-	Option,
-	SingleLayer,
-	DoubleLayer,
+    # types.jl
+    Element,
+    Charge,
+    Option,
+    SingleLayer,
+    DoubleLayer,
 
-	# hmo.jl
-	readhmo,
-	readhmo_nodes,
-	readhmo_elements,
-	readhmo_charges,
+    # hmo.jl
+    readhmo,
+    readhmo_nodes,
+    readhmo_elements,
+    readhmo_charges,
 
-	# radon.jl
-	laplacepot,
-	laplacepot_dn,
-	regularyukawapot,
-	regularyukawapot_dn,
-	radoncoll!,
-	laplacecoll!,
-	regularyukawacoll!,
+    # radon.jl
+    laplacepot,
+    laplacepot_dn,
+    regularyukawapot,
+    regularyukawapot_dn,
+    radoncoll!,
+    laplacecoll!,
+    regularyukawacoll!,
 
-	# rjasanow.jl
-	rjasanowcoll!,
-	rjasanowsinglepot,
-	rjasanowdoublepot,
+    # rjasanow.jl
+    rjasanowcoll!,
+    rjasanowsinglepot,
+    rjasanowdoublepot,
 
-	# util.jl
-	props!,
-	eye!,
-	isdegenerate,
+    # util.jl
+    props!,
+    eye!,
+    isdegenerate,
 
-	# this file
-	defaultopt,
-	singularpot,
-	cauchy
+    # this file
+    defaultopt,
+    singularpot,
+    cauchy
 
 include("types.jl")
 include("hmo.jl")
@@ -53,149 +53,149 @@ defaultopt(::Type{Float64}) = defaultopt64
 defaultopt(::Type{Float32}) = defaultopt32
 
 #=
-	Computes the molecular potential (and the normal derivative) of the given system of
-	point charges in a structureless medium.
+    Computes the molecular potential (and the normal derivative) of the given system of
+    point charges in a structureless medium.
 
-	Note that the results are premultiplied by 4π!
+    Note that the results are premultiplied by 4π!
 
-	@param elements
-				List of elements in the system
-	@param charges
-				List of charges in the system
-	@param opt
-				Constants to be used, including the dielectric constant of the solute
-	@return (Vector{T}, Vector{T})
+    @param elements
+                List of elements in the system
+    @param charges
+                List of charges in the system
+    @param opt
+                Constants to be used, including the dielectric constant of the solute
+    @return (Vector{T}, Vector{T})
 =#
 function singularpot{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
-	umol = T[]; qmol = T[]
-	for elem in elements
-		push!(umol, 0)
-		push!(qmol, 0)
-		for charge in charges
-			r = elem.center - charge.pos
-			rnorm = vecnorm(r)
+    umol = T[]; qmol = T[]
+    for elem in elements
+        push!(umol, 0)
+        push!(qmol, 0)
+        for charge in charges
+            r = elem.center - charge.pos
+            rnorm = vecnorm(r)
 
-			umol[end] += charge.val / rnorm
-			qmol[end] -= charge.val * (r ⋅ elem.normal) / rnorm^3
-		end
-	end
-	(opt.εΩ \ umol, opt.εΩ \ qmol)
+            umol[end] += charge.val / rnorm
+            qmol[end] -= charge.val * (r ⋅ elem.normal) / rnorm^3
+        end
+    end
+    (opt.εΩ \ umol, opt.εΩ \ qmol)
 end
 
 #=
-	Computes the full cauchy data on the surface of the biomolecule.
+    Computes the full cauchy data on the surface of the biomolecule.
 
-	Note that the result is premultiplied by 4π!
+    Note that the result is premultiplied by 4π!
 
-	@param elements
-				List of surface elements
-	@param charges
-				List of charges in the biomolecule
-	@param opt
-				Constants to be used
-	@return Vector{T}
+    @param elements
+                List of surface elements
+    @param charges
+                List of charges in the biomolecule
+    @param opt
+                Constants to be used
+    @return Vector{T}
 =#
 function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
-	# convient access to constants
-	const εΩ = opt.εΩ
-	const εΣ = opt.εΣ
-	const ε∞ = opt.ε∞
+    # convient access to constants
+    const εΩ = opt.εΩ
+    const εΣ = opt.εΣ
+    const ε∞ = opt.ε∞
 
-	# create system matrix
-	numelem = length(elements)
-	m = zeros(T, 3 * numelem, 3 * numelem)
+    # create system matrix
+    numelem = length(elements)
+    m = zeros(T, 3 * numelem, 3 * numelem)
 
-	# convenient access to 9 blocks of the system matrix
-	m11 = sub(m,          1:numelem,           1:numelem )
-	m12 = sub(m,          1:numelem,   1+numelem:2numelem)
-	m13 = sub(m,          1:numelem,  1+2numelem:3numelem)
-	m21 = sub(m,  1+numelem:2numelem,          1:numelem )
-	m22 = sub(m,  1+numelem:2numelem,  1+numelem:2numelem)
-	m23 = sub(m,  1+numelem:2numelem, 1+2numelem:3numelem)
-	m31 = sub(m, 1+2numelem:3numelem,          1:numelem )
-	m32 = sub(m, 1+2numelem:3numelem,  1+numelem:2numelem)
-	m33 = sub(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
+    # convenient access to 9 blocks of the system matrix
+    m11 = sub(m,          1:numelem,           1:numelem )
+    m12 = sub(m,          1:numelem,   1+numelem:2numelem)
+    m13 = sub(m,          1:numelem,  1+2numelem:3numelem)
+    m21 = sub(m,  1+numelem:2numelem,          1:numelem )
+    m22 = sub(m,  1+numelem:2numelem,  1+numelem:2numelem)
+    m23 = sub(m,  1+numelem:2numelem, 1+2numelem:3numelem)
+    m31 = sub(m, 1+2numelem:3numelem,          1:numelem )
+    m32 = sub(m, 1+2numelem:3numelem,  1+numelem:2numelem)
+    m33 = sub(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
 
-	# initialize the system matrix
-	eye!(m11, 2π)
-	eye!(m21, 2π)
-	eye!(m33, 2π)
+    # initialize the system matrix
+    eye!(m11, 2π)
+    eye!(m21, 2π)
+    eye!(m33, 2π)
 
-	# compute molecular potential for the point charges
-	umol, qmol = singularpot(elements, charges, opt)
+    # compute molecular potential for the point charges
+    umol, qmol = singularpot(elements, charges, opt)
 
-	# create right hand side
-	rhs = zeros(T, 3 * numelem)
-	
-	# convenient access to the first block of rhs
-	β = sub(rhs, 1:numelem)
-	
-	# initialize rhs
-	copy!(β, umol)
-	scale!(β, -2π)
+    # create right hand side
+    rhs = zeros(T, 3 * numelem)
+    
+    # convenient access to the first block of rhs
+    β = sub(rhs, 1:numelem)
+    
+    # initialize rhs
+    copy!(β, umol)
+    scale!(β, -2π)
 
-	#=
-		generate and apply Kʸ-K
-	=#
-	buffer = Array(T, numelem, numelem)
-	regularyukawacoll!(DoubleLayer, buffer, elements)
+    #=
+        generate and apply Kʸ-K
+    =#
+    buffer = Array(T, numelem, numelem)
+    regularyukawacoll!(DoubleLayer, buffer, elements)
 
-	# β += (1-εΩ/εΣ)(Kʸ-K)umol
-	gemv!(1-εΩ/εΣ, buffer, umol, β)
+    # β += (1-εΩ/εΣ)(Kʸ-K)umol
+    gemv!(1-εΩ/εΣ, buffer, umol, β)
 
-	# m11 -= Kʸ-K
-	axpy!(-1., buffer, m11)
+    # m11 -= Kʸ-K
+    axpy!(-1., buffer, m11)
 
-	# m13 += ε∞/εΣ * (Kʸ-K)
-	axpy!(ε∞/εΣ, buffer, m13)
+    # m13 += ε∞/εΣ * (Kʸ-K)
+    axpy!(ε∞/εΣ, buffer, m13)
 
-	#=
-		generate and apply Vʸ-V
-	=#
-	regularyukawacoll!(SingleLayer, buffer, elements)
+    #=
+        generate and apply Vʸ-V
+    =#
+    regularyukawacoll!(SingleLayer, buffer, elements)
 
-	# β += (εΩ/εΣ - εΩ/ε∞)(Vʸ-V)qmol
-	gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
+    # β += (εΩ/εΣ - εΩ/ε∞)(Vʸ-V)qmol
+    gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
 
-	# m12 += (εΩ/ε∞ - εΩ/εΣ)(Vʸ-V)
-	axpy!(εΩ * (1/ε∞ - 1/εΣ), buffer, m12)
-	
-	#=
-		generate and apply K
-	=#
-	rjasanowcoll!(DoubleLayer, buffer, elements)
+    # m12 += (εΩ/ε∞ - εΩ/εΣ)(Vʸ-V)
+    axpy!(εΩ * (1/ε∞ - 1/εΣ), buffer, m12)
+    
+    #=
+        generate and apply K
+    =#
+    rjasanowcoll!(DoubleLayer, buffer, elements)
 
-	# β += K
-	gemv!(1., buffer, umol, β)
+    # β += K
+    gemv!(1., buffer, umol, β)
 
-	# m11 -= K
-	axpy!(-1., buffer, m11)
+    # m11 -= K
+    axpy!(-1., buffer, m11)
 
-	# m21 += K
-	axpy!(1., buffer, m21)
+    # m21 += K
+    axpy!(1., buffer, m21)
 
-	# m33 -= K
-	axpy!(-1., buffer, m33)
+    # m33 -= K
+    axpy!(-1., buffer, m33)
 
-	#=
-		generate and apply V
-	=#
-	rjasanowcoll!(SingleLayer, buffer, elements)
+    #=
+        generate and apply V
+    =#
+    rjasanowcoll!(SingleLayer, buffer, elements)
 
-	# β -= εΩ/ε∞ * V * qmol
-	gemv!(-εΩ/ε∞, buffer, qmol, β)
+    # β -= εΩ/ε∞ * V * qmol
+    gemv!(-εΩ/ε∞, buffer, qmol, β)
 
-	# m12 += εΩ/ε∞ * V
-	axpy!(εΩ/ε∞, buffer, m12)
+    # m12 += εΩ/ε∞ * V
+    axpy!(εΩ/ε∞, buffer, m12)
 
-	# m22 -= V
-	axpy!(-1., buffer, m22)
+    # m22 -= V
+    axpy!(-1., buffer, m22)
 
-	# m32 += εΩ/ε∞ * V
-	axpy!(εΩ/ε∞, buffer, m32)
+    # m32 += εΩ/ε∞ * V
+    axpy!(εΩ/ε∞, buffer, m32)
 
-	# solve system
-	m\rhs
+    # solve system
+    m\rhs
 end
 
 end # module
