@@ -91,11 +91,14 @@ end
                 List of surface elements
     @param charges
                 List of charges in the biomolecule
+    @param rjasanow
+                Specifies whether to use the Rjasanow implementation for Laplace potentials
+                instead of a Radon cubature.
     @param opt
                 Constants to be used
     @return Vector{T}
 =#
-function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
+function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, rjasanow::Bool=false, opt::Option{T}=defaultopt(T))
     # convient access to constants
     const εΩ = opt.εΩ
     const εΣ = opt.εΣ
@@ -126,10 +129,10 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt
 
     # create right hand side
     rhs = zeros(T, 3 * numelem)
-    
+
     # convenient access to the first block of rhs
     β = sub(rhs, 1:numelem)
-    
+
     # initialize rhs
     copy!(β, umol)
     scale!(β, -2π)
@@ -159,11 +162,11 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt
 
     # m12 += (εΩ/ε∞ - εΩ/εΣ)(Vʸ-V)
     axpy!(εΩ * (1/ε∞ - 1/εΣ), buffer, m12)
-    
+
     #=
         generate and apply K
     =#
-    rjasanowcoll!(DoubleLayer, buffer, elements)
+    (rjasanow ? rjasanowcoll! : laplacecoll!)(DoubleLayer, buffer, elements)
 
     # β += K
     gemv!(1., buffer, umol, β)
@@ -180,7 +183,7 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt
     #=
         generate and apply V
     =#
-    rjasanowcoll!(SingleLayer, buffer, elements)
+    (rjasanow ? rjasanowcoll! : laplacecoll!)(SingleLayer, buffer, elements)
 
     # β -= εΩ/ε∞ * V * qmol
     gemv!(-εΩ/ε∞, buffer, qmol, β)
