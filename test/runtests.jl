@@ -1,7 +1,7 @@
 using NonLocalBEM
 using Base.Test
 
-const tests = ["hmo", "nonlocal"]
+const tests = ["hmo", "radon", "rjasanow", "util", "nonlocal"]
 
 println("Running tests:")
 for t in tests
