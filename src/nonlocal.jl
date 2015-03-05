@@ -1,6 +1,7 @@
 module NonLocalBEM
 
 import Base.LinAlg.BLAS: gemv!, axpy!
+import JSON: json
 
 export
     # types.jl
@@ -32,8 +33,14 @@ export
 
     # util.jl
     props!,
+    indexmap,
+    unpack,
+    vertexnormals,
     eye!,
     isdegenerate,
+
+    # xml3d.jl
+    xml3d_mesh,
 
     # this file
     defaultopt,
@@ -45,6 +52,7 @@ include("hmo.jl")
 include("radon.jl")
 include("rjasanow.jl")
 include("util.jl")
+include("xml3d.jl")
 
 # Default options
 const defaultopt64 = Option(2., 78., 1.8, 20.)

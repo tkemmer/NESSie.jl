@@ -18,11 +18,60 @@ function props!{T}(elem::Element{T})
     elem.normal /= vnorm
 
     # compute distance to origin
-    elem.distorig = - elem.normal ⋅    elem.v1    
+    elem.distorig = - elem.normal ⋅ elem.v1
 
     # compute area
     elem.area = 2 \ vnorm
     nothing
+end
+
+#=
+    Returns a dictionary that links each node pointer to the corresponding index in
+    the `nodes` list.
+
+    @param nodes
+        List of nodes
+    @return Dict{Pointer{T}, Int}
+=#
+function indexmap{T}(nodes::Vector{Vector{T}})
+    Dict([pointer(node) => i for (i, node) in enumerate(nodes)])
+end
+
+#=
+    Unpacks the given vector of vectors into a single vector:
+    [[1, 2, 3], [4, 5, 6]] => [1, 2, 3, 4, 5, 6]
+
+    @param data
+        Vector of vectors
+    @return Vector{T}
+=#
+function unpack{T}(data::Vector{Vector{T}})
+    T[o for o in T[o[i] for i in 1:3, o in data]]
+end
+
+#=
+    Returns a list containing the normal vectors of the given nodes with respect to the
+    given surface elements.
+
+    @param nodes
+        List of nodes
+    @param elements
+        List of surface elements
+    @return
+        Vector{Vector{T}}
+=#
+function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}})
+    idxmap = indexmap(nodes)
+    normals = [zeros(T, 3) for _ in 1:length(nodes)]
+    count = zeros(T, length(nodes))
+    for elem in elements, node in (elem.v1, elem.v2, elem.v3)
+        idx = idxmap[pointer(node)]
+        count[idx] += 1
+        for i in 1:3
+            normals[idx][i] += (node[i]-normals[idx][i]) / count[idx]
+        end
+    end
+    normals
 end
 
 #=
