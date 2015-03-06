@@ -41,9 +41,11 @@ indexmap{T}(nodes::Vector{Vector{T}}) = Dict([pointer(node) => i for (i, node) i
 
     @param data
         Vector of vectors
+    @param innerdim
+        Dimension of the inner vectors
     @return Vector{T}
 =#
-unpack{T}(data::Vector{Vector{T}}) = T[o for o in T[o[i] for i in 1:3, o in data]]
+unpack{T}(data::Vector{Vector{T}}, innerdim=3) = T[o for o in T[o[i] for i in 1:innerdim, o in data]]
 
 #=
     Returns a list containing the normal vectors of the given nodes with respect to the
