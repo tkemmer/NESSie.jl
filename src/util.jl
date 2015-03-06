@@ -33,9 +33,7 @@ end
         List of nodes
     @return Dict{Pointer{T}, Int}
 =#
-function indexmap{T}(nodes::Vector{Vector{T}})
-    Dict([pointer(node) => i for (i, node) in enumerate(nodes)])
-end
+indexmap{T}(nodes::Vector{Vector{T}}) = Dict([pointer(node) => i for (i, node) in enumerate(nodes)])
 
 #=
     Unpacks the given vector of vectors into a single vector:
@@ -45,9 +43,7 @@ end
         Vector of vectors
     @return Vector{T}
 =#
-function unpack{T}(data::Vector{Vector{T}})
-    T[o for o in T[o[i] for i in 1:3, o in data]]
-end
+unpack{T}(data::Vector{Vector{T}}) = T[o for o in T[o[i] for i in 1:3, o in data]]
 
 #=
     Returns a list containing the normal vectors of the given nodes with respect to the
