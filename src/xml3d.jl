@@ -7,7 +7,7 @@
         List of surface elements
     @return ASCIIString
 =#
-function xml3d_mesh{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}})
+function xml3d_mesh{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}}, invertnormals::Bool=false)
     idx = indexmap(nodes)
     json(Dict(
         "format" => "xml3d-json",
@@ -23,7 +23,7 @@ function xml3d_mesh{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}})
             ),
             "normal" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{ASCIIString, Vector{Float64}}("value" => unpack(vertexnormals(nodes, elements)))]
+                "seq" => [Dict{ASCIIString, Vector{Float64}}("value" => unpack(vertexnormals(nodes, elements, invertnormals)))]
             )
         )
     ))
