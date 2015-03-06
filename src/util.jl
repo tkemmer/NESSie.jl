@@ -65,11 +65,11 @@ function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}}
     idxmap = indexmap(nodes)
     normals = [zeros(T, 3) for _ in 1:length(nodes)]
     count = zeros(T, length(nodes))
-    for elem in elements, node in (elem.v1, elem.v2, elem.v3)
+    @inbounds for elem in elements, node in (elem.v1, elem.v2, elem.v3)
         idx = idxmap[pointer(node)]
         count[idx] += 1
         for i in 1:3
-            normals[idx][i] += (node[i]-normals[idx][i]) / count[idx]
+            normals[idx][i] += (elem.normal[i]-normals[idx][i]) / count[idx]
         end
     end
     invert ? -normals : normals
