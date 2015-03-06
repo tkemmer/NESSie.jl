@@ -41,6 +41,18 @@ for dtype in (Float64, Float32)
 end
 
 # check indexmap
+for dtype in (Float64, Float32)
+    v1 = dtype[1, 2, 3]
+    v2 = dtype[4, 5, 6]
+    v3 = dtype[7, 8, 9]
+    d = indexmap(Vector{dtype}[])
+    @test d == Dict()
+    d = indexmap(Vector{dtype}[v1, v2, v3])
+    @test d[pointer(v1)] == 1 && d[pointer(v2)] == 2 && d[pointer(v3)] == 3
+    d = indexmap(Vector{dtype}[v1, v1, v2])
+    @test d[pointer(v1)] == 2 && d[pointer(v2)] == 3
+    @test_throws KeyError d[pointer(v3)]
+end
 
 # check unpack
 for dtype in (Float64, Float32)

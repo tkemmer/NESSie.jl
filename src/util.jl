@@ -27,7 +27,8 @@ end
 
 #=
     Returns a dictionary that links each node pointer to the corresponding index in
-    the `nodes` list.
+    the `nodes` list. Registers only the last index if the same node is included
+    multiple times.
 
     @param nodes
         List of nodes
