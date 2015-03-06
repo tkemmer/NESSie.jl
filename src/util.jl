@@ -57,10 +57,12 @@ end
         List of nodes
     @param elements
         List of surface elements
+    @param invert
+        Specifies whether all normals should be inverted
     @return
         Vector{Vector{T}}
 =#
-function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}})
+function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}}, invert::Bool=false)
     idxmap = indexmap(nodes)
     normals = [zeros(T, 3) for _ in 1:length(nodes)]
     count = zeros(T, length(nodes))
@@ -71,7 +73,7 @@ function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}}
             normals[idx][i] += (node[i]-normals[idx][i]) / count[idx]
         end
     end
-    normals
+    invert ? -normals : normals
 end
 
 #=
