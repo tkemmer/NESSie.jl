@@ -39,3 +39,18 @@ for dtype in (Float64, Float32)
     @test_approx_eq elem.distorig -60/√769
     @test_approx_eq elem.area √769/2
 end
+
+# check indexmap
+
+# check unpack
+for dtype in (Float64, Float32)
+    @test unpack(Vector{dtype}[dtype[1], dtype[2], dtype[3]], 0) == []
+    @test unpack(Vector{dtype}[dtype[1], dtype[2], dtype[3]], 1) == [1, 2, 3]
+    @test unpack(Vector{dtype}[dtype[1, 2], dtype[3, 4]], 1)     == [1, 3]
+    @test unpack(Vector{dtype}[dtype[1, 2], dtype[3, 4]], 2)     == [1, 2, 3, 4]
+    @test unpack(Vector{dtype}[dtype[1, 2, 3], dtype[4, 5, 6]])  == [1, 2, 3, 4, 5, 6]
+    @test unpack(Vector{dtype}[dtype[1, 2, 3, 4, 5, 6]], 6)      == [1, 2, 3, 4, 5, 6]
+    @test_throws BoundsError unpack(Vector{dtype}[dtype[1], dtype[2], dtype[3]], 2)
+end
+
+# check vertexnormals
