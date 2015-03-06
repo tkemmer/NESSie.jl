@@ -11,19 +11,19 @@ let m = zeros(Int, 3, 3)
 end
 
 # check props! and isdegenerate
-@test_throws ErrorException isdegenerate([1., 1.], [1., 1., 1.], [1., 1., 1.])
-@test_throws ErrorException isdegenerate([1., 1., 1.], [1., 1.], [1., 1., 1.])
-@test_throws ErrorException isdegenerate([1., 1., 1.], [1., 1., 1.], [1., 1.])
+@test_throws AssertionError isdegenerate([1., 1.], [1., 1., 1.], [1., 1., 1.])
+@test_throws AssertionError isdegenerate([1., 1., 1.], [1., 1.], [1., 1., 1.])
+@test_throws AssertionError isdegenerate([1., 1., 1.], [1., 1., 1.], [1., 1.])
 for dtype in (Float64, Float32)
     # degenerate triangles
     elem = Element(map(dtype, [0, 0, 0]), map(dtype, [0, 0, 0]), map(dtype, [1, 0, 0]))
-    @test_throws ErrorException props!(elem)
+    @test_throws AssertionError props!(elem)
     elem = Element(map(dtype, [0, 0, 0]), map(dtype, [0, 0, 1]), map(dtype, [0, 0, 0]))
-    @test_throws ErrorException props!(elem)
+    @test_throws AssertionError props!(elem)
     elem = Element(map(dtype, [1, 0, 0]), map(dtype, [0, 0, 0]), map(dtype, [0, 0, 0]))
-    @test_throws ErrorException props!(elem)
+    @test_throws AssertionError props!(elem)
     elem = Element(map(dtype, [0, 1, 0]), map(dtype, [0, 2, 0]), map(dtype, [0, 3, 0]))
-    @test_throws ErrorException props!(elem)
+    @test_throws AssertionError props!(elem)
     # simple 2D triangle
     elem = Element(map(dtype, [0, 0, 0]), map(dtype, [0, 0, 3]), map(dtype, [0, 3, 0]))
     props!(elem)
