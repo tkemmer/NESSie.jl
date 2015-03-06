@@ -114,3 +114,38 @@ for dtype in (Float64, Float32)
 end
 
 # check vertexnormals
+for dtype in (Float64, Float32)
+    nodes    = Vector{dtype}[dtype[0, 0, 0], dtype[0, 0, 3], dtype[0, 3, 0], dtype[1, -3, 3]]
+    elements = [Element(nodes[1], nodes[2], nodes[3]),
+                Element(nodes[1], nodes[4], nodes[2])]
+    map(props!, elements)
+    d = vertexnormals(Vector{dtype}[], Element{dtype}[])
+    @test isa(d, Vector{Vector{dtype}})
+    @test d == []
+    d = vertexnormals(Vector{dtype}[nodes[1], nodes[2], nodes[3]], Element{dtype}[elements[1]])
+    @test isa(d, Vector{Vector{dtype}})
+    @test length(d) == 3
+    @test_approx_eq d[1] [-1, 0, 0]
+    @test_approx_eq d[2] [-1, 0, 0]
+    @test_approx_eq d[3] [-1, 0, 0]
+    d = vertexnormals(Vector{dtype}[nodes[1], nodes[2], nodes[4]], Element{dtype}[elements[2]])
+    @test isa(d, Vector{Vector{dtype}})
+    @test length(d) == 3
+    @test_approx_eq d[1] √90 \ [-9, -3, 0]
+    @test_approx_eq d[2] √90 \ [-9, -3, 0]
+    @test_approx_eq d[3] √90 \ [-9, -3, 0]
+    d = vertexnormals(nodes, elements)
+    @test isa(d, Vector{Vector{dtype}})
+    @test length(d) == 4
+    @test_approx_eq d[1] √360 \ [-9 - √90, -3, 0]
+    @test_approx_eq d[2] √360 \ [-9 - √90, -3, 0]
+    @test_approx_eq d[3] [-1, 0, 0]
+    @test_approx_eq d[4] √90 \ [-9, -3, 0]
+    d = vertexnormals(nodes, elements, true)
+    @test isa(d, Vector{Vector{dtype}})
+    @test length(d) == 4
+    @test_approx_eq d[1] -√360 \ [-9 - √90, -3, 0]
+    @test_approx_eq d[2] -√360 \ [-9 - √90, -3, 0]
+    @test_approx_eq d[3] [1, 0, 0]
+    @test_approx_eq d[4] -√90 \ [-9, -3, 0]
+end
