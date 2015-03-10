@@ -1,3 +1,5 @@
+import JSON: parse
+
 # check eye!
 for dtype in (Int, Float64, Float32)
     m = zeros(dtype, 3, 3)
@@ -148,4 +150,57 @@ for dtype in (Float64, Float32)
     @test_approx_eq d[2] -√360 \ [-9 - √90, -3, 0]
     @test_approx_eq d[3] [1, 0, 0]
     @test_approx_eq d[4] -√90 \ [-9, -3, 0]
+end
+
+# check xml3d_mesh
+for dtype in (Float64, Float32)
+    # empty system
+    js = parse(xml3d_mesh(Vector{dtype}[], Element{dtype}[]))
+    @test js["format"] == "xml3d-json"
+    @test haskey(js, "version")
+    @test js["data"]["index"]["type"] == "int"
+    @test length(js["data"]["index"]["seq"]) == 1
+    @test js["data"]["index"]["seq"][1]["value"] == []
+    @test js["data"]["position"]["type"] == "float3"
+    @test length(js["data"]["position"]["seq"]) == 1
+    @test js["data"]["position"]["seq"][1]["value"] == []
+    @test js["data"]["normal"]["type"] == "float3"
+    @test length(js["data"]["normal"]["seq"]) == 1
+    @test js["data"]["normal"]["seq"][1]["value"] == []
+    # small system
+    nodes    = Vector{dtype}[dtype[0, 0, 0], dtype[0, 0, 3], dtype[0, 3, 0], dtype[1, -3, 3]]
+    elements = [Element(nodes[1], nodes[2], nodes[3]),
+                Element(nodes[1], nodes[4], nodes[2])]
+    map(props!, elements)
+    js = parse(xml3d_mesh(nodes, elements))
+    @test js["format"] == "xml3d-json"
+    @test haskey(js, "version")
+    @test js["data"]["index"]["type"] == "int"
+    @test length(js["data"]["index"]["seq"]) == 1
+    @test js["data"]["index"]["seq"][1]["value"] == [0, 1, 2, 0, 3, 1]
+    @test js["data"]["position"]["type"] == "float3"
+    @test length(js["data"]["position"]["seq"]) == 1
+    @test js["data"]["position"]["seq"][1]["value"] == [0, 0, 0, 0, 0, 3, 0, 3, 0, 1, -3, 3]
+    @test js["data"]["normal"]["type"] == "float3"
+    @test length(js["data"]["normal"]["seq"]) == 1
+    @test_approx_eq(
+        convert(Vector{dtype}, js["data"]["normal"]["seq"][1]["value"]),
+        [√360 \ [-9 - √90, -3, 0]; √360 \ [-9 - √90, -3, 0]; [-1, 0, 0]; √90 \ [-9, -3, 0]]
+    )
+    # small system, inverted normals
+    js = parse(xml3d_mesh(nodes, elements, true))
+    @test js["format"] == "xml3d-json"
+    @test haskey(js, "version")
+    @test js["data"]["index"]["type"] == "int"
+    @test length(js["data"]["index"]["seq"]) == 1
+    @test js["data"]["index"]["seq"][1]["value"] == [0, 1, 2, 0, 3, 1]
+    @test js["data"]["position"]["type"] == "float3"
+    @test length(js["data"]["position"]["seq"]) == 1
+    @test js["data"]["position"]["seq"][1]["value"] == [0, 0, 0, 0, 0, 3, 0, 3, 0, 1, -3, 3]
+    @test js["data"]["normal"]["type"] == "float3"
+    @test length(js["data"]["normal"]["seq"]) == 1
+    @test_approx_eq(
+        convert(Vector{dtype}, js["data"]["normal"]["seq"][1]["value"]),
+        [-√360 \ [-9 - √90, -3, 0]; -√360 \ [-9 - √90, -3, 0]; [1, 0, 0]; -√90 \ [-9, -3, 0]]
+    )
 end
