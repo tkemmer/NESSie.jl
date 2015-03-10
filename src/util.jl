@@ -76,6 +76,37 @@ function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}}
 end
 
 #=
+    Returns a mesh representation of the given system in a XML3D-specific JSON format.
+
+    @param nodes
+        List of nodes
+    @param elements
+        List of surface elements
+    @return ASCIIString
+=#
+function xml3d_mesh{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}}, invertnormals::Bool=false)
+    idx = indexmap(nodes)
+    json(Dict(
+        "format" => "xml3d-json",
+        "version" => "0.4.0",
+        "data" => Dict(
+            "index" => Dict(
+                "type" => "int",
+                "seq" => [Dict{ASCIIString, Vector{Int}}("value" => [idx[pointer(n)]-1 for n in unpack([Vector{T}[o.v1, o.v2, o.v3] for o in elements])])]
+            ),
+            "position" => Dict(
+                "type" => "float3",
+                "seq" => [Dict{ASCIIString, Vector{Float64}}("value" => unpack(nodes))]
+            ),
+            "normal" => Dict(
+                "type" => "float3",
+                "seq" => [Dict{ASCIIString, Vector{Float64}}("value" => unpack(vertexnormals(nodes, elements, invertnormals)))]
+            )
+        )
+    ))
+end
+
+#=
     Initializes the given matrix m with αI, with I being an identity
     matrix with the same dimensions as m.
 
@@ -116,4 +147,3 @@ isdegenerate{T}(elem::Element{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
 # Convenience aliases
 gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!(α, m, v, one(T), dest)
 gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, β::T, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!('N', α, m, v, β, dest)
-

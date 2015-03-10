@@ -36,11 +36,9 @@ export
     indexmap,
     unpack,
     vertexnormals,
+    xml3d_mesh,
     eye!,
     isdegenerate,
-
-    # xml3d.jl
-    xml3d_mesh,
 
     # this file
     defaultopt,
@@ -52,7 +50,6 @@ include("hmo.jl")
 include("radon.jl")
 include("rjasanow.jl")
 include("util.jl")
-include("xml3d.jl")
 
 # Default options
 const defaultopt64 = Option(2., 78., 1.8, 20.)
