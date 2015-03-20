@@ -144,6 +144,22 @@ function isdegenerate{T <: FloatingPoint}(v1::Vector{T}, v2::Vector{T}, v3::Vect
 end
 isdegenerate{T}(elem::Element{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
 
+#=
+    Computes the cosine of the angle between the given vectors.
+
+    @param u
+        First vector
+    @param unorm
+        Length of the first vector
+    @param v
+        Second vector
+    @param vnorm
+        Length of the second vector
+    @return T
+=#
+cos{T}(u::Vector{T}, unorm::T, v::Vector{T}, vnorm::T) = (u ⋅ v / (unorm * vnorm))
+cos{T}(u::Vector{T}, v::Vector{T}) = cos(u, vecnorm(u), v, vecnorm(v))
+
 # Convenience aliases
 gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!(α, m, v, one(T), dest)
 gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, β::T, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!('N', α, m, v, β, dest)
