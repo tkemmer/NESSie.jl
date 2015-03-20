@@ -1,5 +1,6 @@
 module NonLocalBEM
 
+import Base: sign
 import Base.LinAlg.BLAS: gemv!, axpy!
 import JSON: json
 
@@ -207,4 +208,3 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, rja
 end
 
 end # module
-

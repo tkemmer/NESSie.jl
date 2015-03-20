@@ -176,6 +176,21 @@ cos{T}(u::Vector{T}, v::Vector{T}) = cos(u, vecnorm(u), v, vecnorm(v))
 =#
 cathetus{T}(hyp::T, cosθ::T) = √(hyp^2 * (1 - cosθ^2))
 
+#=
+    Determines whether the normal vector of the plane specified by the vectors u1 and u2
+    has the same orientation as the given normal vector.
+
+    @param u1
+        First vector
+    @param u2
+        Second vector
+    @param
+        Normal vector to compare against
+    @return 1 if both normals have the same orientation, 0 if at least one of the
+        vectors is zero, -1 otherwise.
+=#
+sign{T}(u1::Vector{T}, u2::Vector{T}, normal::Vector{T}) = sign((u1 × u2) ⋅ normal)
+
 # Convenience aliases
 gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!(α, m, v, one(T), dest)
 gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, β::T, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!('N', α, m, v, β, dest)
