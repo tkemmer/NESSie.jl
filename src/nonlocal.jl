@@ -1,6 +1,6 @@
 module NonLocalBEM
 
-import Base: sign
+import Base: cos, sign
 import Base.LinAlg.BLAS: gemv!, axpy!
 import JSON: json
 
@@ -11,6 +11,18 @@ export
     Option,
     SingleLayer,
     DoubleLayer,
+
+    # util.jl
+    props!,
+    indexmap,
+    unpack,
+    vertexnormals,
+    xml3d_mesh,
+    eye!,
+    isdegenerate,
+    cos,
+    cathetus,
+    sign,
 
     # hmo.jl
     readhmo,
@@ -32,25 +44,16 @@ export
     rjasanowsinglepot,
     rjasanowdoublepot,
 
-    # util.jl
-    props!,
-    indexmap,
-    unpack,
-    vertexnormals,
-    xml3d_mesh,
-    eye!,
-    isdegenerate,
-
     # this file
     defaultopt,
     singularpot,
     cauchy
 
 include("types.jl")
+include("util.jl")
 include("hmo.jl")
 include("radon.jl")
 include("rjasanow.jl")
-include("util.jl")
 
 # Default options
 const defaultopt64 = Option(2., 78., 1.8, 20.)
