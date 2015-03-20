@@ -58,7 +58,7 @@ function readhmo_nodes(stream::IOStream, atstart::Bool=false; dtype::Union(Type{
             break
         end
 
-        push!(nodes, float64(split(line)[2:end]))
+        push!(nodes, [parse(dtype, a) for a in split(line)[2:end]])
     end
     nodes
 end
@@ -96,7 +96,7 @@ function readhmo_elements{T <: Union(Float64,Float32)}(stream::IOStream, nodes::
             break
         end
 
-        push!(elements, Element(map(x -> nodes[x], map(int, split(line)[4:end]))...))
+        push!(elements, Element([nodes[parse(Int, a)] for a in split(line)[4:end]]...))
     end
     elements
 end
@@ -132,9 +132,7 @@ function readhmo_charges(stream::IOStream, atstart::Bool=false; dtype::Union(Typ
             break
         end
 
-        push!(charges, Charge(dtype, float64(split(line)[2:end])...))
+        push!(charges, Charge(dtype, [parse(dtype, a) for a in split(line)[2:end]]...))
     end
     charges
 end
-
-
