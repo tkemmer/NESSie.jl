@@ -160,6 +160,22 @@ isdegenerate{T}(elem::Element{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
 cos{T}(u::Vector{T}, unorm::T, v::Vector{T}, vnorm::T) = (u ⋅ v / (unorm * vnorm))
 cos{T}(u::Vector{T}, v::Vector{T}) = cos(u, vecnorm(u), v, vecnorm(v))
 
+#=
+    Computes the cathetus c1 of a triangle given the hypotenuse h and the cosine of the
+    exterior angle θ between the hypotenuse and the other cathetus c2.
+
+    c2 = h * cos θ
+    h² = c1² + c2²
+    <=> c1 = √(h² * (1 - cos² θ))
+
+    @param hyp
+        Hypotenuse of the triangle
+    @param cosθ
+        Cosine of the exterior angle between the hypotenuse and the other cathetus
+    @return T
+=#
+cathetus{T}(hyp::T, cosθ::T) = √(hyp^2 * (1 - cosθ^2))
+
 # Convenience aliases
 gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!(α, m, v, one(T), dest)
 gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, β::T, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!('N', α, m, v, β, dest)
