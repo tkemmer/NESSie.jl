@@ -18,7 +18,7 @@ function props!{T}(elem::Element{T})
     elem.normal /= vnorm
 
     # compute distance to origin
-    elem.distorig = - elem.normal ⋅ elem.v1
+    elem.distorig = elem.normal ⋅ elem.v1
 
     # compute area
     elem.area = 2 \ vnorm
@@ -190,6 +190,22 @@ cathetus{T}(hyp::T, cosθ::T) = √(hyp^2 * (1 - cosθ^2))
         vectors is zero, -1 otherwise.
 =#
 sign{T}(u1::Vector{T}, u2::Vector{T}, normal::Vector{T}) = sign((u1 × u2) ⋅ normal)
+
+#=
+    Calculates the (positive or negative) distance from the given point q to the plane
+    given in Hesse normal form, that is, in the form of a unit normal vector and its
+    distance to the origin.
+
+    @param q
+        Point of interest
+    @param normal
+        Unit normal vector of the plane
+    @param distorig
+        Distance from the origin to the plane (≥ 0)
+    @return T
+=#
+dist{T}(q::Vector{T}, normal::Vector{T}, distorig::T) = q ⋅ normal - distorig
+dist{T}(q::Vector{T}, elem::Element{T}) = dist(q, elem.normal, elem.distorig)
 
 # Convenience aliases
 gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!(α, m, v, one(T), dest)

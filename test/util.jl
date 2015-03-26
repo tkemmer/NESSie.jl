@@ -69,7 +69,7 @@ for dtype in (Float64, Float32)
     @test isa(elem.area, dtype)
     @test_approx_eq elem.center [1., 4/3, 5/3]
     @test_approx_eq elem.normal (√769 \ [20, 15, 12])
-    @test_approx_eq elem.distorig -60/√769
+    @test_approx_eq elem.distorig 60/√769
     @test_approx_eq elem.area √769/2
 end
 

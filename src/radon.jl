@@ -1,3 +1,9 @@
+module Radon
+
+import NonLocalBEM: Element, SingleLayer, DoubleLayer, Option, defaultopt
+
+export laplacecoll!, regularyukawacoll!
+
 #=
     Compute the Laplace potential 1 / |x-ξ|.
 
@@ -81,7 +87,7 @@ function laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
         end
         return -.5 * tsum * (r ⋅ normal)
     end
-    
+
     -1 / rnorm^3 * (r ⋅ normal)
 end
 laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = laplacepot_dn(x, ξ, normal)
@@ -135,7 +141,7 @@ end
 regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt::Option{T}=defaultopt(T)) = regularyukawapot(x, ξ, opt)
 
 #=
-    Compute the normal derivative of the regular part of the yukawa potential, that is, 
+    Compute the normal derivative of the regular part of the yukawa potential, that is,
     Yukawa minus Laplace:
     d/dn [e^[-√(εΣ/ε∞)/λ * |x-ξ|] / |x-ξ|  -  1 / |x-ξ|]
     = [1 - (1 + √(εΣ/ε∞)/λ * |x-ξ|)e^(√(εΣ/ε∞)/λ * |x-ξ|)] / |x-ξ|²   * (x-ξ)⋅n / |x-ξ|
@@ -203,7 +209,7 @@ end
     @param elements
                 List of all surface elements
     @param f
-                Supported functions: regularyukawapot, regularyukawapot_dn, laplacepot, 
+                Supported functions: regularyukawapot, regularyukawapot_dn, laplacepot,
                 laplacepot_dn
     @param opt
                 Constants to be used
@@ -212,15 +218,15 @@ function radoncoll!{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::F
     #=== MEMORY-CRITICAL CODE! ===#
     numelem = length(elements)
     @assert size(dest) == (numelem, numelem)
-    
+
     const r15 = √15
     const ξ = (1/3, (6+r15)/21, (9-2r15)/21, (6+r15)/21, (6-r15)/21, (9+2r15)/21, (6-r15)/21)
     const η = (1/3, (9-2r15)/21, (6+r15)/21, (6+r15)/21, (9+2r15)/21, (6-r15)/21, (6-r15)/21)
     const μ = (9/80, (155+r15)/2400, (155+r15)/2400, (155+r15)/2400, (155-r15)/2400, (155-r15)/2400, (155-r15)/2400)
-    
+
     # pre-allocate memory for cubature points
     cubpts = [zeros(T, 3) for _ in 1:7]
-    
+
     @inbounds for eidx in 1:numelem
         elem = elements[eidx]
         u = elem.v2 - elem.v1
@@ -294,3 +300,4 @@ laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Ele
 regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot, opt)
 regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot_dn, opt)
 
+end # module

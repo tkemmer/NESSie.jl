@@ -23,6 +23,7 @@ export
     cos,
     cathetus,
     sign,
+    dist,
 
     # hmo.jl
     readhmo,
@@ -49,17 +50,20 @@ export
     singularpot,
     cauchy
 
+# Include module files
 include("types.jl")
 include("util.jl")
 include("hmo.jl")
-include("radon.jl")
-include("rjasanow.jl")
 
 # Default options
 const defaultopt64 = Option(2., 78., 1.8, 20.)
 const defaultopt32 = Option(2f0, 78f0, 1.8f0, 20f0)
 defaultopt(::Type{Float64}) = defaultopt64
 defaultopt(::Type{Float32}) = defaultopt32
+
+# Include submodule files
+include("radon.jl")
+include("rjasanow.jl")
 
 #=
     Computes the molecular potential (and the normal derivative) of the given system of
@@ -100,14 +104,13 @@ end
                 List of surface elements
     @param charges
                 List of charges in the biomolecule
-    @param rjasanow
-                Specifies whether to use the Rjasanow implementation for Laplace potentials
-                instead of a Radon cubature.
+    @param laplacemod
+                Module to be used for Laplace potential; Valid values: Radon, Rjasanow
     @param opt
                 Constants to be used
     @return Vector{T}
 =#
-function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, rjasanow::Bool=false, opt::Option{T}=defaultopt(T))
+function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, laplacemod::Module=Radon, opt::Option{T}=defaultopt(T))
     # convient access to constants
     const εΩ = opt.εΩ
     const εΣ = opt.εΣ
@@ -150,7 +153,7 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, rja
         generate and apply Kʸ-K
     =#
     buffer = Array(T, numelem, numelem)
-    regularyukawacoll!(DoubleLayer, buffer, elements)
+    Radon.regularyukawacoll!(DoubleLayer, buffer, elements)
 
     # β += (1-εΩ/εΣ)(Kʸ-K)umol
     gemv!(1-εΩ/εΣ, buffer, umol, β)
@@ -164,7 +167,7 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, rja
     #=
         generate and apply Vʸ-V
     =#
-    regularyukawacoll!(SingleLayer, buffer, elements)
+    Radon.regularyukawacoll!(SingleLayer, buffer, elements)
 
     # β += (εΩ/εΣ - εΩ/ε∞)(Vʸ-V)qmol
     gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
@@ -175,7 +178,7 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, rja
     #=
         generate and apply K
     =#
-    (rjasanow ? rjasanowcoll! : laplacecoll!)(DoubleLayer, buffer, elements)
+    laplacemod.laplacecoll!(DoubleLayer, buffer, elements)
 
     # β += K
     gemv!(1., buffer, umol, β)
@@ -192,7 +195,7 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, rja
     #=
         generate and apply V
     =#
-    (rjasanow ? rjasanowcoll! : laplacecoll!)(SingleLayer, buffer, elements)
+    laplacemod.laplacecoll!(SingleLayer, buffer, elements)
 
     # β -= εΩ/ε∞ * V * qmol
     gemv!(-εΩ/ε∞, buffer, qmol, β)
