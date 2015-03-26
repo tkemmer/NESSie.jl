@@ -23,7 +23,7 @@ export
     cos,
     cathetus,
     sign,
-    dist,
+    distance,
 
     # hmo.jl
     readhmo,

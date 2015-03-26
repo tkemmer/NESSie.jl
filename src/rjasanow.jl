@@ -1,49 +1,42 @@
 module Rjasanow
 
-import NonLocalBEM: Element, SingleLayer, DoubleLayer, cos, cathetus, sign, dist
+import NonLocalBEM: Element, SingleLayer, DoubleLayer, PotentialType, cos, cathetus, sign, distance
 
 export laplacecoll!
 
 #=
-    Enum-like representation of the obseration point's position relative to the
-    corresponding surface element.
+    Enum-like representation of the obseration point's position relative to the corresponding
+    surface element.
 =#
 abstract ObservationPosition
 type InPlane <: ObservationPosition end
 type InSpace <: ObservationPosition end
 
 #=
-    Computes a part of the Laplace potential of a surface element given the observation
-    point ξ and two nodes x1 and x2 of the surface element as well as its normal vector.
-    x2 is required to be x1's next neighbor in counterclockwise direction. Also, ξ is
-    required to lie in the same plane as the surface element.
-
-    h/4π * [ln((1 + sin φ)/(1 - sin φ))] from φ1 to φ2
-    = h/4π * [ln((1 + sin φ2)/(1 - sin φ2)) - ln((1 + sin φ1)/(1 - sin φ1))]
-    = h/4π * ln((1 + sin φ2)(1 - sin φ1)/((1 - sin φ2)(1 + sin φ1)))
-
-    with h being the height of ξ in the triangle spanned by the three given points and
-    φ1 and φ2 being the angles between h and the two sides extending from ξ, respectively.
+    Computes the single or double layer Laplace potential of the triangle defined by the
+    observation point ξ and two nodes x1 and x2 of the surface element. x2 is required to
+    be x1's next neighbor in counterclockwise direction. Also, ξ needs to be projected
+    onto the surface element plane.
 
     Note that the result is premultiplied by 4π!
 
-    References:
-    [1] S. Rjasanow. Vorkonditionierte iterative Auflösung von Randelementgleichungen
-        für die Dirichlet-Aufgabe. Wissenschaftliche Schriftreihe der Technischen Uni-
-        versität Karl-Marx-Stadt, 7/1990.
-
+    @param ptype
+        SingleLayer or DoubleLayer
     @param ξ
-        Observation point
+        Observation point (projection)
     @param x1
         One node of the surface element
     @param x2
         x1's next neighbor in counterclockwise direction
     @param normal
         Unit normal vector of the surface element
+    @param dist
+        Distance from the original ξ to the surface element plane
     @return T
 =#
-function laplacepot{T}(::Type{InPlane}, ξ::Vector{T}, x1::Vector{T}, x2::Vector{T}, normal::Vector{T})
-    # Construct triangle sides
+function laplacepot{T, P <: PotentialType}(ptype::Type{P}, ξ::Vector{T}, x1::Vector{T}, x2::Vector{T}, normal::Vector{T}, dist::T)
+    # Construct triangle sides. Later on, we will use the height h of the triangle at point
+    # ξ as well as the angles φ1 abd φ2 between h and the triangle sides extending from ξ.
     u1 = x1 - ξ
     u2 = x2 - ξ
     v  = x2 - x1
@@ -74,83 +67,165 @@ function laplacepot{T}(::Type{InPlane}, ξ::Vector{T}, x1::Vector{T}, x2::Vector
         return zero(T)
     end
 
-    # Since the observation point lies in the same plane as the surface element, we can decide
-    # whether the result of this function is to be added or subtracted from the whole surface
-    # triangle's Laplace potential by checking on which side of v the observation point lies.
-    # This is equivalent to checking whether the normal of the triangle here and the one of
-    # the surface element (which are obviously (anti)parallel) are oriented alike.
-    #
-    # TODO check why we have to multiply 0.5 here
-    sign(u1, u2, normal) * .5 * h * log((1+sinφ2) * (1-sinφ1) / ((1-sinφ2) * (1+sinφ1)))
+    # Check whether or not the original ξ lies in the surface element plane
+    ξloc = dist < eps() ? InPlane : InSpace
+
+    # Since the observation point (projection) lies in the same plane as the surface element,
+    # we can decide whether the result of this function is to be added or subtracted from the
+    # whole surface triangle's Laplace potential by checking on which side of v the observation
+    # point lies. This is equivalent to checking whether the normal of the triangle here and
+    # the one of the surface element (which are obviously (anti)parallel) are oriented alike.
+    sign(u1, u2, normal) * laplacepot(ptype, ξloc, sinφ1, sinφ2, h, dist)
 end
 
 #=
-    TODO
-=#
-function laplacepot{T}(::Type{InSpace}, ξ::Vector{T}, x1::Vector{T}, x2::Vector{T}, normal::Vector{T})
-    zero(T)
-end
+    Computes the Laplace potential of the triangle with the given height h at the observation
+    point ξ and the sines of the angles φ1 and φ2 between h and the triangle sides extending
+    from ξ.
 
-#=
-    TODO
-=#
-laplacepot{T, L <: ObservationPosition}(ξloc::Type{L}, ξ::Vector{T}, elem::Element{T}) = begin
-    laplacepot(ξloc, ξ, elem.v1, elem.v2, elem.normal) +
-    laplacepot(ξloc, ξ, elem.v2, elem.v3, elem.normal) +
-    laplacepot(ξloc, ξ, elem.v3, elem.v1, elem.normal)
-end
-
-#=
-    TODO
-=#
-laplacepot_dn(::Type{InPlane}) = 0
-
-#=
-    TODO
-=#
-function laplacepot_dn(::Type{InPlane})
-    zero(T)
-end
-
-#=
-    Generates a potential matrix according to the given function f. Use the function aliases
-    with "SingleLayer" or "DoubleLayer" as defined below.
+    h/4π * [ln((1 + sin(φ))/(1 - sin(φ)))]   from φ1 to φ2
+    = h/4π * [ln((1 + sin(φ2))/(1 - sin(φ2))) - ln((1 + sin(φ1))/(1 - sin(φ1)))]
+    = h/4π * ln((1 + sin(φ2))(1 - sin(φ1))/((1 - sin(φ2))(1 + sin(φ1))))
 
     Note that the result is premultiplied by 4π!
 
     References:
-    [1] S. Rjasanow. Vorkonditionierte iterative Auflösung von Randelementgleichungen für
-        die Dirichlet-Aufgabe. Wissenschaftliche Schriftreihe der Technischen Universität
-        Karl-Marx-Stadt, 7/1990.
+    [1] S. Rjasanow. Vorkonditionierte iterative Auflösung von Randelementgleichungen für die
+        Dirichlet-Aufgabe. Wissenschaftliche Schriftreihe der Technischen Universität Karl-
+        Marx-Stadt, 7/1990.
 
-    @param dest
-                Destination matrix
-    @param elements
-                List of all surface elements
-    @param f
-                Supported functions: laplacepot, laplacepot_dn
-    @param zerodiag
-                Specifies whether the diagonal elements should be zero
+    @param sinφ1
+        Sine of the angle between h and one triangle side extending from ξ
+    @param sinφ2
+        Sine of the angle between h and the other triangle side extending from ξ
+    @param h
+        Height of the triangle
+    @param d
+        Distance from ξ to the plane the original surface element lies in (unused)
+    @return T
+
+    TODO check why we have to multiply 0.5 here
 =#
-function laplacecoll!_{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, zerodiag::Bool=false)
+laplacepot{T}(::Type{SingleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, d::T) = .5h * log((1+sinφ2) * (1-sinφ1) / ((1-sinφ2) * (1+sinφ1)))
+
+#=
+    Computes the Laplace potential of the triangle with the given height h at the observation
+    point ξ and the sines of the angles φ1 and φ2 between h and the triangle sides extending
+    from ξ.
+
+    This function projects ξ onto the plane the original surface element lies in before
+    computing the potential.
+
+    h/8π * <1> + d/4π * <2>
+
+    <1>: ln((√(1 - χ² sin²(φ)) + √(1 - χ²) sin(φ)) / (√(1 - χ² sin²(φ)) - √(1 - χ²) sin(φ)))
+           from φ1 to φ2
+         = ln((√(1 - χ² sin²(φ2)) + √(1 - χ²) sin(φ2)) * (√(1 - χ² sin²(φ1)) - √(1 - χ²) sin(φ1))
+           / (√(1 - χ² sin²(φ2)) - √(1 - χ²) sin(φ2)) * √(1 - χ² sin²(φ1)) + √(1 - χ²) sin(φ1))
+
+    <2>: arcsin(χ sin(φ)) - φ   from φ1 to φ2
+         = arcsin(χ sin(φ2)) - arcsin(sin(φ2)) - arcsin(χ sin(φ1)) + arcsin(sin(φ1))
+
+    with χ = d / √(d² + h²).
+
+    Note that the result is premultiplied by 4π!
+
+    References:
+    [1] S. Rjasanow. Vorkonditionierte iterative Auflösung von Randelementgleichungen für die
+        Dirichlet-Aufgabe. Wissenschaftliche Schriftreihe der Technischen Universität Karl-
+        Marx-Stadt, 7/1990.
+
+    @param sinφ1
+        Sine of the angle between h and one triangle side extending from ξ
+    @param sinφ2
+        Sine of the angle between h and the other triangle side extending from ξ
+    @param h
+        Height of the triangle
+    @param d
+        Distance from ξ to the plane the original surface element lies in
+    @return T
+=#
+laplacepot{T}(::Type{SingleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, d::T) = begin
+    χ  = d / √(d^2 + h^2)
+    χ2 = χ^2
+
+    # h/8π * <1>
+    result = .5h * log(logterm(χ2, sinφ2) / logterm(χ2, sinφ1))
+    # + d/4π * <2>
+    result + d * (asin(χ * sinφ2) - asin(sinφ2) - asin(χ * sinφ1) + asin(sinφ1))
+end
+
+#=
+    TODO
+=#
+laplacepot{T}(::Type{DoubleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, d::T) = zero(T)
+
+#=
+    TODO
+=#
+laplacepot{T}(::Type{DoubleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, d::T) = zero(T)
+
+#=
+    TODO
+=#
+laplacepot{T, P <: PotentialType}(ptype::Type{P}, ξ::Vector{T}, elem::Element{T}, dist::T) = begin
+    laplacepot(ptype, ξ, elem.v1, elem.v2, elem.normal, dist) +
+    laplacepot(ptype, ξ, elem.v2, elem.v3, elem.normal, dist) +
+    laplacepot(ptype, ξ, elem.v3, elem.v1, elem.normal, dist)
+end
+
+#=
+    Generates a single or double layer Laplace potential matrix using equations by S. Rjasanow.
+
+    Note that the result is premultiplied by 4π!
+
+    References:
+    [1] S. Rjasanow. Vorkonditionierte iterative Auflösung von Randelementgleichungen für die
+        Dirichlet-Aufgabe. Wissenschaftliche Schriftreihe der Technischen Universität Karl-
+        Marx-Stadt, 7/1990.
+
+    @param ptype
+        SingleLayer or DoubleLayer
+    @param dest
+        Destination matrix
+    @param elements
+        List of all surface elements
+=#
+function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, elements::Vector{Element{T}})
     numelem = length(elements)
     @inbounds for eidx in 1:numelem, oidx in 1:numelem
         #TODO check whether zerodiag is necessary
-        if zerodiag && eidx == oidx
+        if ptype == DoubleLayer && eidx == oidx
             dest[oidx, eidx] = zero(T)
             continue
         end
 
         ξ = elements[oidx].center
         elem = elements[eidx]
+        dist = distance(ξ, elem)
 
-        # Check if ξ lies in the same plane as the surface element
-        ξloc = abs(dist(ξ, elem)) < eps() ? InPlane : InSpace
+        # Project ξ onto the surface element plane if necessary
+        if abs(dist) >= eps()
+            ξ = ξ - dist .* elem.normal
+        end
 
-        dest[oidx, eidx] = f(ξloc, ξ, elem)
+        dest[oidx, eidx] = laplacepot(ptype, ξ, elem, abs(dist))
     end
+    nothing
 end
-laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}) = laplacecoll!_(dest, elements, laplacepot)
-laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}) = laplacecoll!_(dest, elements, laplacepot_dn, true)
+
+#=
+    Helper function to compute
+    √(1 - χ2 * sinφ^2) + √(1 - χ2) * sinφ / (√(1 - χ2 * sinφ^2) - √(1 - χ2) * sinφ)
+
+    @param χ2
+    @param sinφ
+    @return T
+=#
+logterm{T}(χ2::T, sinφ::T) = begin
+    term1 = √(1 - χ2 * sinφ^2)
+    term2 = √(1 - χ2) * sinφ
+    (term1 + term2) / (term1 - term2)
+end
 
 end # module

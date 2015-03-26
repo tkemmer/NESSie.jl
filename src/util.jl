@@ -204,8 +204,8 @@ sign{T}(u1::Vector{T}, u2::Vector{T}, normal::Vector{T}) = sign((u1 × u2) ⋅ n
         Distance from the origin to the plane (≥ 0)
     @return T
 =#
-dist{T}(q::Vector{T}, normal::Vector{T}, distorig::T) = q ⋅ normal - distorig
-dist{T}(q::Vector{T}, elem::Element{T}) = dist(q, elem.normal, elem.distorig)
+distance{T}(q::Vector{T}, normal::Vector{T}, distorig::T) = q ⋅ normal - distorig
+distance{T}(q::Vector{T}, elem::Element{T}) = distance(q, elem.normal, elem.distorig)
 
 # Convenience aliases
 gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!(α, m, v, one(T), dest)
