@@ -31,20 +31,6 @@ export
     readhmo_elements,
     readhmo_charges,
 
-    # radon.jl
-    laplacepot,
-    laplacepot_dn,
-    regularyukawapot,
-    regularyukawapot_dn,
-    radoncoll!,
-    laplacecoll!,
-    regularyukawacoll!,
-
-    # rjasanow.jl
-    rjasanowcoll!,
-    rjasanowsinglepot,
-    rjasanowdoublepot,
-
     # this file
     defaultopt,
     singularpot,
