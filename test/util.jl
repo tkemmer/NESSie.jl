@@ -204,3 +204,8 @@ for dtype in (Float64, Float32)
         [-√360 \ [-9 - √90, -3, 0]; -√360 \ [-9 - √90, -3, 0]; [1, 0, 0]; -√90 \ [-9, -3, 0]]
     )
 end
+
+# TODO check cos
+# TODO check cathetus
+# TODO check sign
+# TODO check distance

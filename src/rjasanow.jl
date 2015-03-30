@@ -68,7 +68,7 @@ function laplacepot{T, P <: PotentialType}(ptype::Type{P}, ξ::Vector{T}, x1::Ve
     end
 
     # Check whether or not the original ξ lies in the surface element plane
-    ξloc = dist < eps() ? InPlane : InSpace
+    ξloc = abs(dist) < eps() ? InPlane : InSpace
 
     # Since the observation point (projection) lies in the same plane as the surface element,
     # we can decide whether the result of this function is to be added or subtracted from the
@@ -146,6 +146,7 @@ laplacepot{T}(::Type{SingleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, 
     @return T
 =#
 laplacepot{T}(::Type{SingleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, d::T) = begin
+    d  = abs(d)
     χ  = d / √(d^2 + h^2)
     χ2 = χ^2
 
@@ -163,7 +164,10 @@ laplacepot{T}(::Type{DoubleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, 
 #=
     TODO
 =#
-laplacepot{T}(::Type{DoubleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, d::T) = zero(T)
+laplacepot{T}(::Type{DoubleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, d::T) = begin
+    χ  = abs(d) / √(d^2 + h^2)
+    sign(d) * (asin(χ * sinφ1) - asin(sinφ1) - asin(χ * sinφ2) + asin(sinφ2))
+end
 
 #=
     TODO
@@ -209,7 +213,7 @@ function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,
             ξ = ξ - dist .* elem.normal
         end
 
-        dest[oidx, eidx] = laplacepot(ptype, ξ, elem, abs(dist))
+        dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist)
     end
     nothing
 end
