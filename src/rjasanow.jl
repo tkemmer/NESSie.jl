@@ -83,11 +83,12 @@ end
     point ξ and the sines of the angles φ1 and φ2 between h and the triangle sides extending
     from ξ.
 
-    h/4π * [ln((1 + sin(φ))/(1 - sin(φ)))]   from φ1 to φ2
-    = h/4π * [ln((1 + sin(φ2))/(1 - sin(φ2))) - ln((1 + sin(φ1))/(1 - sin(φ1)))]
-    = h/4π * ln((1 + sin(φ2))(1 - sin(φ1))/((1 - sin(φ2))(1 + sin(φ1))))
+    h/8π * [ln((1 + sin(φ))/(1 - sin(φ)))]   from φ1 to φ2
+    = h/8π * [ln((1 + sin(φ2))/(1 - sin(φ2))) - ln((1 + sin(φ1))/(1 - sin(φ1)))]
+    = h/8π * ln((1 + sin(φ2))(1 - sin(φ1))/((1 - sin(φ2))(1 + sin(φ1))))
 
-    Note that the result is premultiplied by 4π!
+    Note that the result is premultiplied by 4π! Also note that the equation in [1] misses a
+    factor of 0.5.
 
     References:
     [1] S. Rjasanow. Vorkonditionierte iterative Auflösung von Randelementgleichungen für die
@@ -103,8 +104,6 @@ end
     @param d
         Distance from ξ to the plane the original surface element lies in (unused)
     @return T
-
-    TODO check why we have to multiply 0.5 here
 =#
 laplacepot{T}(::Type{SingleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, d::T) = .5h * log((1+sinφ2) * (1-sinφ1) / ((1-sinφ2) * (1+sinφ1)))
 
