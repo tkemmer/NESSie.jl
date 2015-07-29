@@ -31,6 +31,9 @@ export
     readhmo_elements,
     readhmo_charges,
 
+    # off.jl
+    readoff,
+
     # this file
     defaultopt,
     singularpot,
@@ -40,6 +43,7 @@ export
 include("types.jl")
 include("util.jl")
 include("hmo.jl")
+include("off.jl")
 
 # Default options
 const defaultopt64 = Option(2., 78., 1.8, 20.)
