@@ -68,8 +68,8 @@ include("rjasanow.jl")
 function singularpot{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
     umol = T[]; qmol = T[]
     for elem in elements
-        push!(umol, 0)
-        push!(qmol, 0)
+        push!(umol, zero(T))
+        push!(qmol, zero(T))
         for charge in charges
             r = elem.center - charge.pos
             rnorm = vecnorm(r)
