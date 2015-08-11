@@ -31,7 +31,7 @@ end
 function readoff_nodes(stream::IOStream, n::Int, dtype::Union(Type{Float64},Type{Float32})=Float64)
     nodes = Vector{dtype}[]
 
-    @inbounds for _ in 1:n
+    for _ in 1:n
         push!(nodes, [parse(dtype, e) for e in split(readline(stream))])
     end
 
@@ -55,7 +55,7 @@ end
 function readoff_elements{T <: Union(Float64,Float32)}(stream::IOStream, n::Int, nodes::Vector{Vector{T}}, dtype::Union(Type{Float64},Type{Float32})=Float64)
     elements = Element{dtype}[]
 
-    @inbounds for _ in 1:n
+    for _ in 1:n
         push!(elements, Element([nodes[parse(Int, e) + 1] for e in split(readline(stream))[2:end]]...))
     end
 
