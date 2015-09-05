@@ -1,6 +1,6 @@
 module Rjasanow
 
-import NonLocalBEM: Element, SingleLayer, DoubleLayer, PotentialType, cos, cathetus, sign, distance
+import NonLocalBEM: Element, SingleLayer, DoubleLayer, Option, PotentialType, cos, cathetus, sign, distance
 
 export laplacecoll!
 
@@ -216,6 +216,7 @@ function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,
     end
     nothing
 end
+laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, ::Option{T}) = laplacecoll!(ptype, dest, elements)
 
 #=
     Helper function to compute

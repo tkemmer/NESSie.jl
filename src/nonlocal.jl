@@ -100,7 +100,7 @@ end
                 Constants to be used
     @return Vector{T}
 =#
-function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, laplacemod::Module=Radon, opt::Option{T}=defaultopt(T))
+function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, laplacemod::Module=Rjasanow, opt::Option{T}=defaultopt(T))
     # convient access to constants
     const εΩ = opt.εΩ
     const εΣ = opt.εΣ
@@ -143,7 +143,7 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, lap
         generate and apply Kʸ-K
     =#
     buffer = Array(T, numelem, numelem)
-    Radon.regularyukawacoll!(DoubleLayer, buffer, elements)
+    Radon.regularyukawacoll!(DoubleLayer, buffer, elements, opt)
 
     # β += (1-εΩ/εΣ)(Kʸ-K)umol
     gemv!(1-εΩ/εΣ, buffer, umol, β)
@@ -157,7 +157,7 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, lap
     #=
         generate and apply Vʸ-V
     =#
-    Radon.regularyukawacoll!(SingleLayer, buffer, elements)
+    Radon.regularyukawacoll!(SingleLayer, buffer, elements, opt)
 
     # β += (εΩ/εΣ - εΩ/ε∞)(Vʸ-V)qmol
     gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
@@ -168,7 +168,7 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, lap
     #=
         generate and apply K
     =#
-    laplacemod.laplacecoll!(DoubleLayer, buffer, elements)
+    laplacemod.laplacecoll!(DoubleLayer, buffer, elements, opt)
 
     # β += K
     gemv!(1., buffer, umol, β)
@@ -185,7 +185,7 @@ function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, lap
     #=
         generate and apply V
     =#
-    laplacemod.laplacecoll!(SingleLayer, buffer, elements)
+    laplacemod.laplacecoll!(SingleLayer, buffer, elements, opt)
 
     # β -= εΩ/ε∞ * V * qmol
     gemv!(-εΩ/ε∞, buffer, qmol, β)
