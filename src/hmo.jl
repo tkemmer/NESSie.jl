@@ -7,7 +7,7 @@
                 Data type T for return value
     @return (Vector{Vector{T}}, Vector{Element{T}}, Vector{Charge{T}})
 =#
-function readhmo(stream::IOStream; dtype::Union{Type{Float64},Type{Float32}}=Float64)
+function readhmo{T <: AbstractFloat}(stream::IOStream; dtype::Type{T}=Float64)
     nodes = Vector{dtype}[]
     elements = Element{dtype}[]
     charges = Charge{dtype}[]
@@ -38,7 +38,7 @@ end
                 Data type T for return value
     @return Vector{Vector{T}}
 =#
-function readhmo_nodes(stream::IOStream, atstart::Bool=false; dtype::Union{Type{Float64},Type{Float32}}=Float64)
+function readhmo_nodes{T <: AbstractFloat}(stream::IOStream, atstart::Bool=false; dtype::Type{T}=Float64)
     nodes = Vector{dtype}[]
     while !eof(stream)
         line = readline(stream)
@@ -76,7 +76,7 @@ end
                 Data type T for return value
     @return Vector{Vector{T}}
 =#
-function readhmo_elements{T <: Union{Float64,Float32}}(stream::IOStream, nodes::Vector{Vector{T}}, atstart::Bool=false; dtype::Union{Type{Float64},Type{Float32}}=T)
+function readhmo_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Vector{T}}, atstart::Bool=false; dtype::Type{T}=T)
     elements = Element{dtype}[]
     while !eof(stream)
         line = readline(stream)
@@ -112,7 +112,7 @@ end
                 Data type T for return value
     @return Vector{Charge{T}}
 =#
-function readhmo_charges(stream::IOStream, atstart::Bool=false; dtype::Union{Type{Float64},Type{Float32}}=Float64)
+function readhmo_charges{T <: AbstractFloat}(stream::IOStream, atstart::Bool=false; dtype::Type{T}=Float64)
     charges = Charge{dtype}[]
     while !eof(stream)
         line = readline(stream)

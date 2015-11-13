@@ -7,7 +7,7 @@
                 Data type T for return value
     @return (Vector{Vector{T}}, Vector{Element{T}})
 =#
-function readoff(stream::IOStream; dtype::Union{Type{Float64},Type{Float32}}=Float64)
+function readoff{T <: AbstractFloat}(stream::IOStream; dtype::Type{T}=Float64)
     @assert readline(stream) == "OFF\n" "Invalid OFF file"
 
     # read number of nodes and elements
@@ -28,7 +28,7 @@ end
                 Data type T for return value
     @return Vector{Vector{T}}
 =#
-function readoff_nodes(stream::IOStream, n::Int, dtype::Union{Type{Float64},Type{Float32}}=Float64)
+function readoff_nodes{T <: AbstractFloat}(stream::IOStream, n::Int, dtype::Type{T}=Float64)
     nodes = Vector{dtype}[]
 
     for _ in 1:n
@@ -52,7 +52,7 @@ end
                 Data type T for return value
     @return Vector{Element{T}}
 =#
-function readoff_elements{T <: Union{Float64,Float32}}(stream::IOStream, n::Int, nodes::Vector{Vector{T}}, dtype::Union{Type{Float64},Type{Float32}}=Float64)
+function readoff_elements{T <: AbstractFloat}(stream::IOStream, n::Int, nodes::Vector{Vector{T}}, dtype::Type{T}=Float64)
     elements = Element{dtype}[]
 
     for _ in 1:n
