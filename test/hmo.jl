@@ -17,7 +17,7 @@ try
         end
         # check return types
         @test isa(nodes, Vector{Vector{dtype}})
-        @test isa(elements, Vector{Element{dtype}})
+        @test isa(elements, Vector{Triangle{dtype}})
         @test isa(charges, Vector{Charge{dtype}})
         # check lengths
         @test length(nodes) == len[1]

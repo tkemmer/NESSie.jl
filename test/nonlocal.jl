@@ -1,10 +1,10 @@
 # check singularpot
 for dtype in (Float64, Float32)
     # empty lists
-    @test singularpot(Element{dtype}[], Charge{dtype}[]) == (dtype[], dtype[])
+    @test singularpot(Triangle{dtype}[], Charge{dtype}[]) == (dtype[], dtype[])
     # empty charge list
-    elements = [Element(map(dtype, [0, 0, 0]), map(dtype, [0, 0, 3]), map(dtype, [0, 3, 0])),
-                Element(map(dtype, [3, 0, 0]), map(dtype, [0, 4, 0]), map(dtype, [0, 0, 5]))]
+    elements = [Triangle(map(dtype, [0, 0, 0]), map(dtype, [0, 0, 3]), map(dtype, [0, 3, 0])),
+                Triangle(map(dtype, [3, 0, 0]), map(dtype, [0, 4, 0]), map(dtype, [0, 0, 5]))]
     map(props!, elements)
     (umol, qmol) = singularpot(elements, Charge{dtype}[])
     @test isa(umol, Vector{dtype}) && isa(qmol, Vector{dtype})

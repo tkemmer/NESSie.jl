@@ -5,7 +5,7 @@
                 Handle to OFF file
     @param dtype
                 Data type T for return value
-    @return (Vector{Vector{T}}, Vector{Element{T}})
+    @return (Vector{Vector{T}}, Vector{Triangle{T}})
 =#
 function readoff{T <: AbstractFloat}(stream::IOStream; dtype::Type{T}=Float64)
     @assert readline(stream) == "OFF\n" "Invalid OFF file"
@@ -50,13 +50,13 @@ end
                 List of reference nodes
     @param dtype
                 Data type T for return value
-    @return Vector{Element{T}}
+    @return Vector{Triangle{T}}
 =#
 function readoff_elements{T <: AbstractFloat}(stream::IOStream, n::Int, nodes::Vector{Vector{T}}, dtype::Type{T}=Float64)
-    elements = Element{dtype}[]
+    elements = Triangle{dtype}[]
 
     for _ in 1:n
-        push!(elements, Element([nodes[parse(Int, e) + 1] for e in split(readline(stream))[2:end]]...))
+        push!(elements, Triangle([nodes[parse(Int, e) + 1] for e in split(readline(stream))[2:end]]...))
     end
 
     elements

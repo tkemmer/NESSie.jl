@@ -5,11 +5,11 @@
                 Handle to HMO file
     @param dtype
                 Data type T for return value
-    @return (Vector{Vector{T}}, Vector{Element{T}}, Vector{Charge{T}})
+    @return (Vector{Vector{T}}, Vector{Triangle{T}}, Vector{Charge{T}})
 =#
 function readhmo{T <: AbstractFloat}(stream::IOStream; dtype::Type{T}=Float64)
     nodes = Vector{dtype}[]
-    elements = Element{dtype}[]
+    elements = Triangle{dtype}[]
     charges = Charge{dtype}[]
     while !eof(stream)
         line = readline(stream)
@@ -77,7 +77,7 @@ end
     @return Vector{Vector{T}}
 =#
 function readhmo_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Vector{T}}, atstart::Bool=false; dtype::Type{T}=T)
-    elements = Element{dtype}[]
+    elements = Triangle{dtype}[]
     while !eof(stream)
         line = readline(stream)
 
@@ -96,7 +96,7 @@ function readhmo_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Ve
             break
         end
 
-        push!(elements, Element([nodes[parse(Int, a)] for a in split(line)[4:end]]...))
+        push!(elements, Triangle([nodes[parse(Int, a)] for a in split(line)[4:end]]...))
     end
     elements
 end

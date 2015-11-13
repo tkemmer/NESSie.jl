@@ -3,9 +3,9 @@
     area.
 
     @param elem
-                Element of interest
+                Triangle of interest
 =#
-function props!{T}(elem::Element{T})
+function props!{T}(elem::Triangle{T})
     # reject degenerate triangles
     @assert !isdegenerate(elem) "Degenerate triangle $(elem)"
 
@@ -61,7 +61,7 @@ unpack{T}(data::Vector{Vector{T}}, innerdim=3) = T[o for o in T[o[i] for i in 1:
     @return
         Vector{Vector{T}}
 =#
-function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}}, invert::Bool=false)
+function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invert::Bool=false)
     idxmap = indexmap(nodes)
     normals = [zeros(T, 3) for _ in 1:length(nodes)]
     count = zeros(T, length(nodes))
@@ -84,7 +84,7 @@ end
         List of surface elements
     @return ASCIIString
 =#
-function xml3d_mesh{T}(nodes::Vector{Vector{T}}, elements::Vector{Element{T}}, invertnormals::Bool=false)
+function xml3d_mesh{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false)
     idx = indexmap(nodes)
     json(Dict(
         "format" => "xml3d-json",
@@ -142,7 +142,7 @@ function isdegenerate{T <: AbstractFloat}(v1::Vector{T}, v2::Vector{T}, v3::Vect
     cosine = u1 ⋅ u2 / vecnorm(u1) / vecnorm(u2)
     v1 == v2 || v1 == v3 || v2 == v3 || 1 - abs(cosine) <= eps(T)
 end
-isdegenerate{T}(elem::Element{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
+isdegenerate{T}(elem::Triangle{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
 
 #=
     Computes the cosine of the angle between the given vectors.
@@ -205,7 +205,7 @@ sign{T}(u1::Vector{T}, u2::Vector{T}, normal::Vector{T}) = sign((u1 × u2) ⋅ n
     @return T
 =#
 distance{T}(q::Vector{T}, normal::Vector{T}, distorig::T) = q ⋅ normal - distorig
-distance{T}(q::Vector{T}, elem::Element{T}) = distance(q, elem.normal, elem.distorig)
+distance{T}(q::Vector{T}, elem::Triangle{T}) = distance(q, elem.normal, elem.distorig)
 
 # Convenience aliases
 gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!(α, m, v, one(T), dest)

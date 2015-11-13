@@ -7,6 +7,7 @@ import JSON: json
 export
     # types.jl
     Element,
+    Triangle,
     Charge,
     Option,
     SingleLayer,
@@ -69,7 +70,7 @@ include("rjasanow.jl")
                 Constants to be used, including the dielectric constant of the solute
     @return (Vector{T}, Vector{T})
 =#
-function singularpot{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
+function singularpot{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
     umol = T[]; qmol = T[]
     for elem in elements
         push!(umol, zero(T))
@@ -100,7 +101,7 @@ end
                 Constants to be used
     @return Vector{T}
 =#
-function cauchy{T}(elements::Vector{Element{T}}, charges::Vector{Charge{T}}, laplacemod::Module=Rjasanow, opt::Option{T}=defaultopt(T))
+function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, laplacemod::Module=Rjasanow, opt::Option{T}=defaultopt(T))
     # convient access to constants
     const εΩ = opt.εΩ
     const εΣ = opt.εΣ

@@ -37,16 +37,16 @@ end
 @test_throws AssertionError isdegenerate([1., 1., 1.], [1., 1., 1.], [1., 1.])
 for dtype in (Float64, Float32)
     # degenerate triangles
-    elem = Element(dtype[0, 0, 0], dtype[0, 0, 0], dtype[1, 0, 0])
+    elem = Triangle(dtype[0, 0, 0], dtype[0, 0, 0], dtype[1, 0, 0])
     @test_throws AssertionError props!(elem)
-    elem = Element(dtype[0, 0, 0], dtype[0, 0, 1], dtype[0, 0, 0])
+    elem = Triangle(dtype[0, 0, 0], dtype[0, 0, 1], dtype[0, 0, 0])
     @test_throws AssertionError props!(elem)
-    elem = Element(dtype[1, 0, 0], dtype[0, 0, 0], dtype[0, 0, 0])
+    elem = Triangle(dtype[1, 0, 0], dtype[0, 0, 0], dtype[0, 0, 0])
     @test_throws AssertionError props!(elem)
-    elem = Element(dtype[0, 1, 0], dtype[0, 2, 0], dtype[0, 3, 0])
+    elem = Triangle(dtype[0, 1, 0], dtype[0, 2, 0], dtype[0, 3, 0])
     @test_throws AssertionError props!(elem)
     # simple 2D triangle
-    elem = Element(dtype[0, 0, 0], dtype[0, 0, 3], dtype[0, 3, 0])
+    elem = Triangle(dtype[0, 0, 0], dtype[0, 0, 3], dtype[0, 3, 0])
     props!(elem)
     @test isa(elem.center, Vector{dtype})
     @test length(elem.center) == 3
@@ -59,7 +59,7 @@ for dtype in (Float64, Float32)
     @test_approx_eq elem.distorig 0.
     @test_approx_eq elem.area 4.5
     # simple 3D triangle
-    elem = Element(dtype[3, 0, 0], dtype[0, 4, 0], dtype[0, 0, 5])
+    elem = Triangle(dtype[3, 0, 0], dtype[0, 4, 0], dtype[0, 0, 5])
     props!(elem)
     @test isa(elem.center, Vector{dtype})
     @test length(elem.center) == 3
@@ -118,19 +118,19 @@ end
 # check vertexnormals
 for dtype in (Float64, Float32)
     nodes    = Vector{dtype}[dtype[0, 0, 0], dtype[0, 0, 3], dtype[0, 3, 0], dtype[1, -3, 3]]
-    elements = [Element(nodes[1], nodes[2], nodes[3]),
-                Element(nodes[1], nodes[4], nodes[2])]
+    elements = [Triangle(nodes[1], nodes[2], nodes[3]),
+                Triangle(nodes[1], nodes[4], nodes[2])]
     map(props!, elements)
-    d = vertexnormals(Vector{dtype}[], Element{dtype}[])
+    d = vertexnormals(Vector{dtype}[], Triangle{dtype}[])
     @test isa(d, Vector{Vector{dtype}})
     @test d == []
-    d = vertexnormals(Vector{dtype}[nodes[1], nodes[2], nodes[3]], Element{dtype}[elements[1]])
+    d = vertexnormals(Vector{dtype}[nodes[1], nodes[2], nodes[3]], Triangle{dtype}[elements[1]])
     @test isa(d, Vector{Vector{dtype}})
     @test length(d) == 3
     @test_approx_eq d[1] [-1, 0, 0]
     @test_approx_eq d[2] [-1, 0, 0]
     @test_approx_eq d[3] [-1, 0, 0]
-    d = vertexnormals(Vector{dtype}[nodes[1], nodes[2], nodes[4]], Element{dtype}[elements[2]])
+    d = vertexnormals(Vector{dtype}[nodes[1], nodes[2], nodes[4]], Triangle{dtype}[elements[2]])
     @test isa(d, Vector{Vector{dtype}})
     @test length(d) == 3
     @test_approx_eq d[1] √90 \ [-9, -3, 0]
@@ -155,7 +155,7 @@ end
 # check xml3d_mesh
 for dtype in (Float64, Float32)
     # empty system
-    js = parse(xml3d_mesh(Vector{dtype}[], Element{dtype}[]))
+    js = parse(xml3d_mesh(Vector{dtype}[], Triangle{dtype}[]))
     @test js["format"] == "xml3d-json"
     @test haskey(js, "version")
     @test js["data"]["index"]["type"] == "int"
@@ -169,8 +169,8 @@ for dtype in (Float64, Float32)
     @test js["data"]["normal"]["seq"][1]["value"] == []
     # small system
     nodes    = Vector{dtype}[dtype[0, 0, 0], dtype[0, 0, 3], dtype[0, 3, 0], dtype[1, -3, 3]]
-    elements = [Element(nodes[1], nodes[2], nodes[3]),
-                Element(nodes[1], nodes[4], nodes[2])]
+    elements = [Triangle(nodes[1], nodes[2], nodes[3]),
+                Triangle(nodes[1], nodes[4], nodes[2])]
     map(props!, elements)
     js = parse(xml3d_mesh(nodes, elements))
     @test js["format"] == "xml3d-json"

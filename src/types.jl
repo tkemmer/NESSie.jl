@@ -1,7 +1,9 @@
+abstract Element
+
 #=
     Representation of a single surface triangle.
 =#
-type Element{T <: AbstractFloat}
+type Triangle{T <: AbstractFloat} <: Element
     v1::Vector{T}       # position of the first node
     v2::Vector{T}       # position of the second node
     v3::Vector{T}       # position of the third node
@@ -10,7 +12,7 @@ type Element{T <: AbstractFloat}
     area::T             # area of the triangle
     distorig::T         # distance to the origin
 end
-Element{T <: AbstractFloat}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}) = Element(v1, v2, v3, T[], T[], zero(T), zero(T))
+Triangle{T <: AbstractFloat}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}) = Triangle(v1, v2, v3, T[], T[], zero(T), zero(T))
 
 #=
     Representation of a single charge.

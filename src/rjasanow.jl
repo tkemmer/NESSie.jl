@@ -1,6 +1,6 @@
 module Rjasanow
 
-import NonLocalBEM: Element, SingleLayer, DoubleLayer, Option, PotentialType, cos, cathetus, sign, distance
+import NonLocalBEM: Triangle, SingleLayer, DoubleLayer, Option, PotentialType, cos, cathetus, sign, distance
 
 export laplacecoll!
 
@@ -171,7 +171,7 @@ end
 #=
     TODO
 =#
-laplacepot{T, P <: PotentialType}(ptype::Type{P}, ξ::Vector{T}, elem::Element{T}, dist::T) = begin
+laplacepot{T, P <: PotentialType}(ptype::Type{P}, ξ::Vector{T}, elem::Triangle{T}, dist::T) = begin
     laplacepot(ptype, ξ, elem.v1, elem.v2, elem.normal, dist) +
     laplacepot(ptype, ξ, elem.v2, elem.v3, elem.normal, dist) +
     laplacepot(ptype, ξ, elem.v3, elem.v1, elem.normal, dist)
@@ -194,7 +194,7 @@ end
     @param elements
         List of all surface elements
 =#
-function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, elements::Vector{Element{T}})
+function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}})
     numelem = length(elements)
     @inbounds for eidx in 1:numelem, oidx in 1:numelem
         #TODO check whether zerodiag is necessary
@@ -216,7 +216,7 @@ function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,
     end
     nothing
 end
-laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, ::Option{T}) = laplacecoll!(ptype, dest, elements)
+laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ::Option{T}) = laplacecoll!(ptype, dest, elements)
 
 #=
     Helper function to compute

@@ -1,6 +1,6 @@
 module Radon
 
-import NonLocalBEM: Element, SingleLayer, DoubleLayer, Option, defaultopt
+import NonLocalBEM: Triangle, SingleLayer, DoubleLayer, Option, defaultopt
 
 export laplacecoll!, regularyukawacoll!
 
@@ -214,7 +214,7 @@ end
     @param opt
                 Constants to be used
 =#
-function radoncoll!{T}(dest::DenseArray{T,2}, elements::Vector{Element{T}}, f::Function, opt::Option{T}=defaultopt(T))
+function radoncoll!{T}(dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, f::Function, opt::Option{T}=defaultopt(T))
     #=== MEMORY-CRITICAL CODE! ===#
     numelem = length(elements)
     @assert size(dest) == (numelem, numelem)
@@ -272,8 +272,8 @@ end
     @param opt
                 Constants to be used
 =#
-laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, laplacepot, opt)
-laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, laplacepot_dn, opt)
+laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, laplacepot, opt)
+laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, laplacepot_dn, opt)
 
 #=
     Compute the Dirichlet trace of the single layer potential or the essential part of the
@@ -297,7 +297,7 @@ laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Ele
     @param opt
                 Constants to be used
 =#
-regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot, opt)
-regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Element{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot_dn, opt)
+regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot, opt)
+regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot_dn, opt)
 
 end # module
