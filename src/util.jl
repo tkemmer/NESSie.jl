@@ -115,7 +115,7 @@ end
     @param α
                 Coefficient of the identity matrix
 =#
-function eye!{T}(m::Union(DenseArray{T,2}, SubArray{T,2}), α::Number=one(T))
+function eye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T))
     fill!(m, zero(T))
     α = convert(T, α)
     @inbounds for i in 1:min(size(m)...)
@@ -135,7 +135,7 @@ end
                 Third node of the triangle
     @return bool
 =#
-function isdegenerate{T <: FloatingPoint}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T})
+function isdegenerate{T <: AbstractFloat}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T})
     @assert length(v1) == length(v2) == length(v3) == 3
     u1 = v2 - v1
     u2 = v3 - v1
@@ -208,5 +208,5 @@ distance{T}(q::Vector{T}, normal::Vector{T}, distorig::T) = q ⋅ normal - disto
 distance{T}(q::Vector{T}, elem::Element{T}) = distance(q, elem.normal, elem.distorig)
 
 # Convenience aliases
-gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!(α, m, v, one(T), dest)
-gemv!{T}(α::T, m::Union(DenseArray{T,2}, SubArray{T,2}), v::Vector{T}, β::T, dest::Union(DenseArray{T,1}, SubArray{T,1})) = gemv!('N', α, m, v, β, dest)
+gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!(α, m, v, one(T), dest)
+gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, β::T, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!('N', α, m, v, β, dest)
