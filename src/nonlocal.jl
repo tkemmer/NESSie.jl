@@ -44,8 +44,8 @@ export
 # Include module files
 include("types.jl")
 include("util.jl")
-include("hmo.jl")
-include("off.jl")
+include("input/hmo.jl")
+include("input/off.jl")
 
 # Default options
 const defaultopt64 = Option(2., 78., 1.8, 20.)
