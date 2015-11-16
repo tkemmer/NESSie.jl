@@ -27,13 +27,9 @@ export
     sign,
     distance,
 
-    # hmo.jl
+    # input file readers
     readhmo,
-    readhmo_nodes,
-    readhmo_elements,
-    readhmo_charges,
-
-    # off.jl
+    readmatlab,
     readoff,
 
     # this file
@@ -45,6 +41,7 @@ export
 include("types.jl")
 include("util.jl")
 include("input/hmo.jl")
+include("input/matlab.jl")
 include("input/off.jl")
 
 # Default options
