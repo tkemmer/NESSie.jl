@@ -20,9 +20,7 @@ function laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
     rnorm = vecnorm(x-ξ)
 
     # limit for |x-ξ| →    0
-    if rnorm <= 0
-        return zero(T)
-    end
+    rnorm <= 0 && return zero(T)
 
     # guard against small rnorm
     if rnorm < .1
@@ -32,9 +30,7 @@ function laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
         tolerance = 1e-16
         tsum = zero(T)
         for i in 1:15
-            if abs(term) < tolerance
-                break
-            end
+            abs(term) < tolerance && break
 
             tsum += term
             term *= -(rnorm - 1)
@@ -66,9 +62,7 @@ function laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
     rnorm = vecnorm(r)
 
     # limit for |x-ξ| → 0
-    if rnorm <= 0
-        return zero(T)
-    end
+    rnorm <= 0 && return zero(T)
 
     # guard against small rnorm
     if rnorm < .1
@@ -78,9 +72,7 @@ function laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
         tolerance = 1e-16
         tsum = zero(T)
         for i in 1:15
-            if abs(term) < tolerance
-                break
-            end
+            abs(term) < tolerance && break
 
             tsum += term * (i+1) * (i+2)
             term *= -(rnorm -1)
@@ -111,9 +103,7 @@ function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=d
     rnorm = vecnorm(x-ξ)
 
     # limit for |x-ξ| → 0
-    if rnorm <= 0
-        return -opt.yukawa
-    end
+    rnorm <= 0 && return -opt.yukawa
 
     scalednorm = opt.yukawa * rnorm
 
@@ -125,9 +115,7 @@ function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=d
         tolerance = 1e-16 * abs(term)
         tsum = zero(T)     # DON'T EVER USE 0 HERE! Time: x2, Memory: x3
         for i in 1:15
-            if abs(term) <= tolerance
-                break
-            end
+            abs(term) <= tolerance && break
 
             tsum += term
             term *= -scalednorm / (i+1)
@@ -166,9 +154,7 @@ function regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, 
     rnorm = vecnorm(r)
 
     # limit for |x-ξ| → 0
-    if rnorm <= 0
-        return zero(T)
-    end
+    rnorm <= 0 && return zero(T)
 
     cosovernorm2 = (r ⋅ normal) / rnorm^3
     scalednorm = opt.yukawa * rnorm
@@ -181,9 +167,7 @@ function regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, 
         tolerance = 1e-16 * abs(term)
         tsum = zero(T)  # DON'T EVER USE 0 HERE!
         for i in 2:16
-            if abs(term #=* (i-1)=#) <= tolerance
-                continue
-            end
+            abs(term #=* (i-1)=#) <= tolerance && continue
 
             tsum += term * (i-1)
             term *= -scalednorm / (i+1)

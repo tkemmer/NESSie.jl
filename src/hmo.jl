@@ -54,9 +54,7 @@ function readhmo_nodes{T <: AbstractFloat}(stream::IOStream, atstart::Bool=false
         end
 
         # Stop as soon as all nodes have been processed.
-        if line == "END_NODL_DATA\n"
-            break
-        end
+        line == "END_NODL_DATA\n" && break
 
         push!(nodes, [parse(dtype, a) for a in split(line)[2:end]])
     end
@@ -92,9 +90,7 @@ function readhmo_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Ve
         end
 
         # Stop as soon as all elements have been processed.
-        if line == "END_ELEM_DATA\n"
-            break
-        end
+        line == "END_ELEM_DATA\n" && break
 
         push!(elements, Triangle([nodes[parse(Int, a)] for a in split(line)[4:end]]...))
     end
@@ -128,9 +124,7 @@ function readhmo_charges{T <: AbstractFloat}(stream::IOStream, atstart::Bool=fal
         end
 
         # Stop as soon as all charges have been processed.
-        if line == "END_CHARGE_DATA\n"
-            break
-        end
+        line == "END_CHARGE_DATA\n" && break
 
         push!(charges, Charge(dtype, [parse(dtype, a) for a in split(line)[2:end]]...))
     end
