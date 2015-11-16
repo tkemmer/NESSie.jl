@@ -32,7 +32,7 @@ type Charge{T <: AbstractFloat}
     val::T          # charge value
 end
 Charge{T <: AbstractFloat}(args::T...) = Charge{T}([args[1:end-1]...], args[end])
-Charge(dtype::DataType, args...) = Charge{dtype}(convert(Vector{dtype}, [args[1:end-1]...]), convert(dtype, args[end]))
+Charge(T::DataType, args...) = Charge{T}(convert(Vector{T}, [args[1:end-1]...]), convert(T, args[end]))
 
 #=
     Constants.

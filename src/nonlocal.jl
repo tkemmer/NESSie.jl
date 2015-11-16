@@ -93,13 +93,13 @@ end
                 List of surface elements
     @param charges
                 List of charges in the biomolecule
-    @param laplacemod
+    @param LaplaceMod
                 Module to be used for Laplace potential; Valid values: Radon, Rjasanow
     @param opt
                 Constants to be used
     @return Vector{T}
 =#
-function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, laplacemod::Module=Rjasanow, opt::Option{T}=defaultopt(T))
+function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, LaplaceMod::Module=Rjasanow, opt::Option{T}=defaultopt(T))
     # convient access to constants
     const εΩ = opt.εΩ
     const εΣ = opt.εΣ
@@ -167,7 +167,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, la
     #=
         generate and apply K
     =#
-    laplacemod.laplacecoll!(DoubleLayer, buffer, elements, opt)
+    LaplaceMod.laplacecoll!(DoubleLayer, buffer, elements, opt)
 
     # β += K
     gemv!(1., buffer, umol, β)
@@ -184,7 +184,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, la
     #=
         generate and apply V
     =#
-    laplacemod.laplacecoll!(SingleLayer, buffer, elements, opt)
+    LaplaceMod.laplacecoll!(SingleLayer, buffer, elements, opt)
 
     # β -= εΩ/ε∞ * V * qmol
     gemv!(-εΩ/ε∞, buffer, qmol, β)
