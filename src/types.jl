@@ -15,6 +15,16 @@ end
 Triangle{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}) = Triangle(v1, v2, v3, T[], T[], zero(T), zero(T))
 
 #=
+    Representation of a tetrahedron.
+=#
+type Tetrahedron{T} <: Element{T}
+    v1::Vector{T}       # position of the first node
+    v2::Vector{T}       # position of the second node
+    v3::Vector{T}       # position of the third node
+    v4::Vector{T}       # position of the fourth node
+end
+
+#=
     Representation of a single charge.
 =#
 type Charge{T <: AbstractFloat}

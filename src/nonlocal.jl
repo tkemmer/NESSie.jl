@@ -8,6 +8,7 @@ export
     # types.jl
     Element,
     Triangle,
+    Tetrahedron,
     Charge,
     Option,
     SingleLayer,
