@@ -3,17 +3,19 @@ const testtypes = (Float64, Float32)
 const testfiles = ((tempfile[1], tempfile[2], (0,0,0)),   # empty file
                    ("hmo.hmo", open("hmo.hmo"), (2,2,2))) # dummy file
 
+import NonLocalBEM: readhmo_nodes, readhmo_elements, readhmo_charges
+
 try
     for (fname, fh, len) in testfiles, fn in ("single", "bulk"), dtype in testtypes
         nodes = (); elements = (); charges = ()
         if fn == "single"
             # check single methods (atstart=false)
-            nodes = readhmo_nodes(fh, false, dtype=dtype)
-            elements = readhmo_elements(fh, nodes, false, dtype=dtype)
-            charges = readhmo_charges(fh, false, dtype=dtype)
+            nodes = readhmo_nodes(fh, false, dtype)
+            elements = readhmo_elements(fh, nodes, false, dtype)
+            charges = readhmo_charges(fh, false, dtype)
         elseif fn == "bulk"
             # check bulk method (implicit single methods with atstart=true)
-            nodes, elements, charges = readhmo(fh, dtype=dtype)
+            nodes, elements, charges = readhmo(fh, dtype)
         end
         # check return types
         @test isa(nodes, Vector{Vector{dtype}})
