@@ -1,4 +1,5 @@
 using NonLocalBEM.Rjasanow
 
-# TODO check laplacepot
-# TODO check laplacecoll!
+@pending logterm --> :nothing
+@pending laplacepot --> :nothing
+@pending laplacecoll! --> :nothing
