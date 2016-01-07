@@ -207,6 +207,16 @@ sign{T}(u1::Vector{T}, u2::Vector{T}, normal::Vector{T}) = sign((u1 × u2) ⋅ n
 distance{T}(q::Vector{T}, normal::Vector{T}, distorig::T) = q ⋅ normal - distorig
 distance{T}(q::Vector{T}, elem::Triangle{T}) = distance(q, elem.normal, elem.distorig)
 
+#=
+    Creates a reverse index for the given vector, that is, a dictionary linking the
+    object IDs of the vector elements to the corresponding position in the vector.
+
+    @param v
+        A vector
+    @return Dict{UInt, UInt}
+=#
+reverseindex{T}(v::Vector{T}) = Dict{UInt, UInt}([object_id(e) => i for (i,e) in enumerate(v)])
+
 # Convenience aliases
 gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!(α, m, v, one(T), dest)
 gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, β::T, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!('N', α, m, v, β, dest)

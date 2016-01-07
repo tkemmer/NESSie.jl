@@ -26,6 +26,7 @@ export
     cathetus,
     sign,
     distance,
+    reverseindex,
 
     # input file readers
     readhmo,
