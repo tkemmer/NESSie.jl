@@ -126,7 +126,7 @@ function readhmo_charges{T <: AbstractFloat}(stream::IOStream, atstart::Bool=fal
         # Stop as soon as all charges have been processed.
         line == "END_CHARGE_DATA\n" && break
 
-        push!(charges, Charge(T, [parse(T, a) for a in split(line)[2:end]]...))
+        push!(charges, Charge([parse(T, a) for a in split(line)[2:end]]...))
     end
     charges
 end
