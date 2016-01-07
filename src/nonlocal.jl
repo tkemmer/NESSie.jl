@@ -32,6 +32,7 @@ export
     readhmo,
     readmatlab,
     readoff,
+    readpqr,
 
     # this file
     defaultopt,
@@ -44,6 +45,7 @@ include("util.jl")
 include("input/hmo.jl")
 include("input/matlab.jl")
 include("input/off.jl")
+include("input/pqr.jl")
 
 # Default options
 const defaultopt64 = Option(2., 78., 1.8, 20.)
