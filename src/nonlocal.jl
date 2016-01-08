@@ -1,4 +1,4 @@
-module NonLocalBEM
+module NonLocalES
 
 import Base: cos, sign
 import Base.LinAlg.BLAS: gemv!, axpy!

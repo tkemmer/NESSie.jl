@@ -1,6 +1,6 @@
 module Radon
 
-import NonLocalBEM: Triangle, SingleLayer, DoubleLayer, Option, defaultopt
+import NonLocalES: Triangle, SingleLayer, DoubleLayer, Option, defaultopt
 
 export laplacecoll!, regularyukawacoll!
 

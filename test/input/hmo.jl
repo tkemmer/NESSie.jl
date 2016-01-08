@@ -1,4 +1,4 @@
-import NonLocalBEM: readhmo_nodes, readhmo_elements, readhmo_charges
+import NonLocalES: readhmo_nodes, readhmo_elements, readhmo_charges
 
 const testfiles = ((mktemp()..., (0,0,0)), # empty file
                    (mktemp()..., (2,2,2))) # dummy file

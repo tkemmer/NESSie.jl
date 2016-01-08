@@ -1,4 +1,4 @@
-import NonLocalBEM.Radon
+import NonLocalES.Radon
 
 context("laplacepot") do
     for T in testtypes

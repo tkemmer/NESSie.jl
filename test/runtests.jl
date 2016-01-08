@@ -1,4 +1,4 @@
-using NonLocalBEM
+using NonLocalES
 using FactCheck
 
 # All tests. Will be used if no command line arguments are given.
