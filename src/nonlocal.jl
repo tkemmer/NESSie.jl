@@ -14,6 +14,9 @@ export
     # bem.jl
     defaultopt, singularpot, cauchy
 
+# Global constants
+const ε0 = 1/ (4π * 1e-7 * 299792458^2)
+
 # Include module files
 include("types.jl")
 include("util.jl")
