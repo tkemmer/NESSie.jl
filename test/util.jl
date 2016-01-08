@@ -1,3 +1,4 @@
+import NonLocalES: eye!, isdegenerate, indexmap, unpack, vertexnormals, cos, cathetus, sign, distance, reverseindex
 import JSON: parse
 
 context("eye!") do

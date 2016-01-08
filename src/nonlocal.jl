@@ -8,7 +8,7 @@ export
     # types.jl
     Element, Triangle, Tetrahedron, Charge, Option, SingleLayer, DoubleLayer,
     # util.jl
-    props!, indexmap, unpack, vertexnormals, xml3d_mesh, eye!, isdegenerate, cos, cathetus, sign, distance, reverseindex,
+    props!, xml3d_mesh,
     # input file readers
     readhmo, readmatlab, readoff, readpqr,
     # bem.jl
