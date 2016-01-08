@@ -62,11 +62,11 @@ unpack{T}(data::Vector{Vector{T}}, innerdim=3) = T[o for o in T[o[i] for i in 1:
         Vector{Vector{T}}
 =#
 function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invert::Bool=false)
-    idxmap = indexmap(nodes)
+    revidx = reverseindex(nodes)
     normals = [zeros(T, 3) for _ in 1:length(nodes)]
     count = zeros(T, length(nodes))
     @inbounds for elem in elements, node in (elem.v1, elem.v2, elem.v3)
-        idx = idxmap[pointer(node)]
+        idx = revidx[object_id(node)]
         count[idx] += 1
         for i in 1:3
             normals[idx][i] += (elem.normal[i]-normals[idx][i]) / count[idx]
@@ -85,14 +85,14 @@ end
     @return ASCIIString
 =#
 function xml3d_mesh{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false)
-    idx = indexmap(nodes)
+    revidx = reverseindex(nodes)
     json(Dict(
         "format" => "xml3d-json",
         "version" => "0.4.0",
         "data" => Dict(
             "index" => Dict(
                 "type" => "int",
-                "seq" => [Dict{ASCIIString, Vector{Int}}("value" => [idx[pointer(n)]-1 for n in unpack([Vector{T}[o.v1, o.v2, o.v3] for o in elements])])]
+                "seq" => [Dict{ASCIIString, Vector{Int}}("value" => [revidx[object_id(n)]-1 for n in unpack([Vector{T}[o.v1, o.v2, o.v3] for o in elements])])]
             ),
             "position" => Dict(
                 "type" => "float3",

@@ -1,4 +1,4 @@
-import NonLocalES: eye!, isdegenerate, indexmap, unpack, vertexnormals, cos, cathetus, sign, distance, reverseindex
+import NonLocalES: eye!, isdegenerate, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
 import JSON: parse
 
 context("eye!") do
@@ -76,26 +76,26 @@ context("props! and isdegenerate") do
     end
 end
 
-context("indexmap") do
+context("reverseindex") do
     for T in testtypes
         v1 = T[1, 2, 3]
         v2 = T[4, 5, 6]
         v3 = T[7, 8, 9]
-        d = indexmap(Vector{T}[])
-        @fact isa(d, Dict{Ptr{T}, Int}) --> true
+        d = reverseindex(Vector{T}[])
+        @fact isa(d, Dict{UInt, UInt}) --> true
         @fact d --> Dict()
-        d = indexmap(Vector{T}[v1, v2, v3])
-        @fact isa(d, Dict{Ptr{T}, Int}) --> true
+        d = reverseindex(Vector{T}[v1, v2, v3])
+        @fact isa(d, Dict{UInt, UInt}) --> true
         @fact length(d) --> 3
-        @fact d[pointer(v1)] --> 1
-        @fact d[pointer(v2)] --> 2
-        @fact d[pointer(v3)] --> 3
-        d = indexmap(Vector{T}[v1, v1, v2])
-        @fact isa(d, Dict{Ptr{T}, Int}) --> true
+        @fact d[object_id(v1)] --> 1
+        @fact d[object_id(v2)] --> 2
+        @fact d[object_id(v3)] --> 3
+        d = reverseindex(Vector{T}[v1, v1, v2])
+        @fact isa(d, Dict{UInt, UInt}) --> true
         @fact length(d) --> 2
-        @fact d[pointer(v1)] --> 2
-        @fact d[pointer(v2)] --> 3
-        @fact_throws KeyError d[pointer(v3)]
+        @fact d[object_id(v1)] --> 2
+        @fact d[object_id(v2)] --> 3
+        @fact_throws KeyError d[object_id(v3)]
     end
 end
 
@@ -217,4 +217,3 @@ end
 @pending cathetus --> :nothing
 @pending sign --> :nothing
 @pending distance --> :nothing
-@pending reverseindex --> :nothing
