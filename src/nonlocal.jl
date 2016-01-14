@@ -1,7 +1,8 @@
 module NonLocalES
 
-import Base: cos, sign
+import Base: cos, sign, seek
 import Base.LinAlg.BLAS: gemv!, axpy!
+import Distances: euclidean, sqeuclidean
 import JSON: json
 
 export
@@ -12,7 +13,9 @@ export
     # input file readers
     readhmo, readmatlab, readoff, readpqr,
     # bem.jl
-    defaultopt, singularpot, cauchy
+    singularpot, cauchy,
+    #this file
+    defaultopt
 
 # Global constants
 const ε0 = 1/ (4π * 1e-7 * 299792458^2)
@@ -25,6 +28,7 @@ include("input/matlab.jl")
 include("input/off.jl")
 include("input/pqr.jl")
 include("bem.jl")
+include("fem.jl")
 
 # Default options
 const defaultopt64 = Option(2., 78., 1.8, 20.)
