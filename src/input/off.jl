@@ -8,6 +8,7 @@
     @return (Vector{Vector{T}}, Vector{Triangle{T}})
 =#
 function readoff{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
+    eof(stream) && return (Vector{T}[], Triangle{T}[])
     @assert readline(stream) == "OFF\n" "Invalid OFF file"
 
     # read number of nodes and elements
