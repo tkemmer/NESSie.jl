@@ -6,8 +6,8 @@ const tests = ["input/hmo", "input/matlab", "input/off", "input/pqr", "types", "
 const testtypes = (Float64, Float32)
 
 for t in (length(ARGS) > 0 ? ARGS : tests)
-    facts("$(t)") do
-        include("$(t).jl")
+    facts(t) do
+        include(endswith(t, ".jl") ? t : "$(t).jl")
     end
     println()
 end
