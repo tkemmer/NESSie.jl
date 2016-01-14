@@ -1,4 +1,4 @@
-import NonLocalES: eye!, isdegenerate, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
+import NonLocalES: eye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
 import JSON: parse
 
 context("eye!") do
@@ -74,6 +74,25 @@ context("props! and isdegenerate") do
         @fact elem.distorig --> roughly(map(T, 60/√769))
         @fact elem.area --> roughly(T(√769/2))
     end
+end
+
+context("seek") do
+    fname, fh = mktemp()
+    write(fh, "Lorem\nipsum\ndolor\nsit\namet.\n")
+    seekstart(fh)
+    seek(fh, "Foo")
+    @fact eof(fh) --> true
+    seekstart(fh)
+    seek(fh, "Foo", false)
+    @fact eof(fh) --> true
+    seekstart(fh)
+    seek(fh, "dolor")
+    @fact readline(fh) --> "sit\n"
+    seekstart(fh)
+    seek(fh, "dolor", false)
+    @fact readline(fh) --> "dolor\n"
+    close(fh)
+    rm(fname)
 end
 
 context("reverseindex") do

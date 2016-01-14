@@ -111,9 +111,9 @@ end
     matrix with the same dimensions as m.
 
     @param m
-                Corresponding matrix
+        Corresponding matrix
     @param α
-                Coefficient of the identity matrix
+        Coefficient of the identity matrix
 =#
 function eye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T))
     fill!(m, zero(T))
@@ -128,11 +128,11 @@ end
     Tests whether the triangle with the given nodes is degenerate.
 
     @param v1
-                First node of the triangle
+        First node of the triangle
     @param v2
-                Second node of the triangle
+        Second node of the triangle
     @param v3
-                Third node of the triangle
+        Third node of the triangle
     @return bool
 =#
 function isdegenerate{T <: AbstractFloat}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T})
@@ -143,6 +143,28 @@ function isdegenerate{T <: AbstractFloat}(v1::Vector{T}, v2::Vector{T}, v3::Vect
     v1 == v2 || v1 == v3 || v2 == v3 || 1 - abs(cosine) <= eps(T)
 end
 isdegenerate{T}(elem::Triangle{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
+
+#=
+    Fast-forwards an IOStream to the next line starting with the
+    given prefix. In case there is no such line. the stream handle
+    will be set to EOF.
+
+    @param fh
+        A stream object
+    @param
+        Prefix of interest
+    @param skiptheline
+        If true, said line will also be skipped
+=#
+function seek(fh::IOStream, prefix::ASCIIString, skiptheline::Bool=true)
+    m = -1
+    while !eof(fh)
+        skiptheline || (m = position(fh))
+        startswith(readline(fh), prefix) && break
+    end
+    eof(fh) || skiptheline || seek(fh, m)
+    nothing
+end
 
 #=
     Computes the cosine of the angle between the given vectors.
