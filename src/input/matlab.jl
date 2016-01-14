@@ -24,8 +24,7 @@ end
 function readmatlab_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     nodes = Vector{T}[]
     seek(stream, "vert=[")
-    while !eof(stream)
-        line = readline(stream)
+    for line in eachline(stream)
         startswith(line, "%") && continue        # skip comments
         startswith(line, "];") && break          # all nodes read
         push!(nodes, [parse(T, e) for e in split(line)[3:5]])
@@ -47,8 +46,7 @@ end
 function readmatlab_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Vector{T}}, ::Type{T}=Float64)
     elements = Tetrahedron{T}[]
     seek(stream, "simp=[")
-    while !eof(stream)
-        line = readline(stream)
+    for line in eachline(stream)
         startswith(line, "%") && continue        # skip comments
         startswith(line, "];") && break          # all simplices read
         push!(elements, Tetrahedron([nodes[parse(Int, e)+1] for e in split(line)[8:end]]...))

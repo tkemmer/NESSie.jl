@@ -1,7 +1,7 @@
 import NonLocalES: readhmo_nodes, readhmo_elements, readhmo_charges
 
-const testfiles = ((mktemp()..., (0,0,0)), # empty file
-                   (mktemp()..., (2,2,2))) # dummy file
+testfiles = ((mktemp()..., (0,0,0)), # empty file
+             (mktemp()..., (2,2,2))) # dummy file
 write(testfiles[2][2], """
 # stuffing
 stuffing
@@ -30,13 +30,13 @@ END_CHARGE_DATA
 
 try
     for (fname, fh, len) in testfiles, fn in ("single", "bulk"), T in testtypes
-        seek(fh,0)
+        seekstart(fh)
         nodes = (); elements = (); charges = ()
         if fn == "single"
             # check single methods (atstart=false)
-            nodes = readhmo_nodes(fh, false, T)
-            elements = readhmo_elements(fh, nodes, false, T)
-            charges = readhmo_charges(fh, false, T)
+            nodes = readhmo_nodes(fh, T)
+            elements = readhmo_elements(fh, nodes, T)
+            charges = readhmo_charges(fh, T)
         elseif fn == "bulk"
             # check bulk method (implicit single methods with atstart=true)
             nodes, elements, charges = readhmo(fh, T)

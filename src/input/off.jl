@@ -29,16 +29,7 @@ end
                 Data type T for return value
     @return Vector{Vector{T}}
 =#
-function readoff_nodes{T <: AbstractFloat}(stream::IOStream, n::Int, ::Type{T}=Float64)
-    nodes = Vector{T}[]
-
-    for _ in 1:n
-        push!(nodes, [parse(T, e) for e in split(readline(stream))])
-    end
-
-    nodes
-end
-
+readoff_nodes{T <: AbstractFloat}(stream::IOStream, n::Int, ::Type{T}=Float64) = Vector{T}[[parse(T, e) for e in split(readline(stream))] for _ in 1:n]
 
 #=
     Reads all element data from the given OFF file.
@@ -53,12 +44,4 @@ end
                 Data type T for return value
     @return Vector{Triangle{T}}
 =#
-function readoff_elements{T <: AbstractFloat}(stream::IOStream, n::Int, nodes::Vector{Vector{T}}, ::Type{T}=Float64)
-    elements = Triangle{T}[]
-
-    for _ in 1:n
-        push!(elements, Triangle([nodes[parse(Int, e) + 1] for e in split(readline(stream))[2:end]]...))
-    end
-
-    elements
-end
+readoff_elements{T <: AbstractFloat}(stream::IOStream, n::Int, nodes::Vector{Vector{T}}, ::Type{T}=Float64) = Triangle{T}[Triangle([nodes[parse(Int, e) + 1] for e in split(readline(stream))[2:end]]...) for _ in 1:n]
