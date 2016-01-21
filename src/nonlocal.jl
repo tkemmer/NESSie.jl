@@ -14,6 +14,8 @@ export
     readhmo, readmatlab, readoff, readpqr,
     # bem.jl
     singularpot, cauchy,
+    # fem.jl
+    espotential,
     #this file
     defaultopt
 
