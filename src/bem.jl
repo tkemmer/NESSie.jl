@@ -92,7 +92,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     gemv!(1-εΩ/εΣ, buffer, umol, β)
 
     # m11 -= Kʸ-K
-    axpy!(-1., buffer, m11)
+    axpy!(-one(T), buffer, m11)
 
     # m13 += ε∞/εΣ * (Kʸ-K)
     axpy!(ε∞/εΣ, buffer, m13)
@@ -114,16 +114,16 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     LaplaceMod.laplacecoll!(DoubleLayer, buffer, elements, opt)
 
     # β += K
-    gemv!(1., buffer, umol, β)
+    gemv!(one(T), buffer, umol, β)
 
     # m11 -= K
-    axpy!(-1., buffer, m11)
+    axpy!(-one(T), buffer, m11)
 
     # m21 += K
-    axpy!(1., buffer, m21)
+    axpy!(one(T), buffer, m21)
 
     # m33 -= K
-    axpy!(-1., buffer, m33)
+    axpy!(-one(T), buffer, m33)
 
     #=
         generate and apply V
@@ -137,7 +137,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     axpy!(εΩ/ε∞, buffer, m12)
 
     # m22 -= V
-    axpy!(-1., buffer, m22)
+    axpy!(-one(T), buffer, m22)
 
     # m32 += εΩ/ε∞ * V
     axpy!(εΩ/ε∞, buffer, m32)
