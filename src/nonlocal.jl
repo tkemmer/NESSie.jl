@@ -13,11 +13,13 @@ export
     # input file readers
     readhmo, readmatlab, readoff, readpqr,
     # bem.jl
-    singularpot, cauchy,
+    φmol, ∂ₙφmol, cauchy,
     # fem.jl
     espotential,
+    # born.jl
+    φlocal, φnonlocal,
     #this file
-    defaultopt
+    defaultopt, ε0
 
 # Global constants
 const ε0 = 1/ (4π * 1e-7 * 299792458^2)

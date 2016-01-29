@@ -1,38 +1,33 @@
-context("singularpot") do
+context("φmol and ∂ₙφmol") do
     for T in testtypes
         # empty lists
-        @fact singularpot(Triangle{T}[], Charge{T}[]) --> (T[], T[])
+        @fact φmol(Vector{T}[], Charge{T}[]) --> T[]
         # empty charge list
-        elements = [Triangle(map(T, [0, 0, 0]), map(T, [0, 0, 3]), map(T, [0, 3, 0])),
-                    Triangle(map(T, [3, 0, 0]), map(T, [0, 4, 0]), map(T, [0, 0, 5]))]
+        elements = [Triangle(T[0, 0, 0], T[0, 0, 3], T[0, 3, 0]),
+                    Triangle(T[3, 0, 0], T[0, 4, 0], T[0, 0, 5])]
         map(props!, elements)
-        (umol, qmol) = singularpot(elements, Charge{T}[])
+        umol = φmol(elements, Charge{T}[])
         @fact isa(umol, Vector{T}) --> true
+        @fact umol --> zeros(T, 2)
+        qmol = ∂ₙφmol(elements, Charge{T}[])
         @fact isa(qmol, Vector{T}) --> true
-        @fact umol --> [0, 0]
-        @fact qmol --> [0, 0]
-        # single charge (trivial options)
-        opt = Option(one(T), zeros(T, 3)...)
+        @fact qmol --> zeros(T, 2)
+        # single charge
         charges = [Charge(T, 0, 0, 0, √2)]
-        (umol, qmol) = singularpot(elements, charges, opt)
+        umol = φmol(elements, charges)
         @fact isa(umol, Vector{T}) --> true
+        @fact umol --> roughly(T[1, .6])
+        qmol = ∂ₙφmol(elements, charges)
         @fact isa(qmol, Vector{T}) --> true
-        @fact umol --> roughly(map(T, [1, .6]))
-        @fact qmol --> roughly(map(T, [0, -162/25/√769]))
-        # single charge (non-trivial options)
-        opt = Option(T(2), zeros(T, 3)...)
-        (umol, qmol) = singularpot(elements, charges, opt)
-        @fact isa(umol, Vector{T}) --> true
-        @fact isa(qmol, Vector{T}) --> true
-        @fact umol --> roughly(map(T, [.5, .3]))
-        @fact qmol --> roughly(map(T, [0, -162/50/√769]))
-        # multiple charges (non-trivial options)
+        @fact qmol --> roughly(T[0, -162/25/√769])
+        # multiple charges
         push!(charges, Charge(T, 1, 1, 1, -√5))
-        (umol, qmol) = singularpot(elements, charges, opt)
+        umol = φmol(elements, charges)
         @fact isa(umol, Vector{T}) --> true
+        @fact umol --> roughly(T[1 - √5, -2.4])
+        qmol = ∂ₙφmol(elements, charges)
         @fact isa(qmol, Vector{T}) --> true
-        @fact umol --> roughly(map(T, [2 \ (1-√5), -1.2]))
-        @fact qmol --> roughly(map(T, [2 \ √5, 1593/50/√769]))
+        @fact qmol --> roughly(T[√5, 1593/25/√769])
     end
 end
 

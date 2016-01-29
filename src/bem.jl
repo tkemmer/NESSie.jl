@@ -1,32 +1,31 @@
 #=
-    Computes the molecular potential (and the normal derivative) of the given system of
-    point charges in a structureless medium.
+    Computes the molecular potential of the given system of point charges in a structureless medium.
 
-    Note that the results are premultiplied by 4π!
+    Note that the results are premultiplied by 4π * εΩ!
 
-    @param elements
-                List of elements in the system
+    @param ξ/ξlist
+                Observation point(s)
     @param charges
-                List of charges in the system
-    @param opt
-                Constants to be used, including the dielectric constant of the solute
-    @return (Vector{T}, Vector{T})
+                Point charges
+    @return T or Vector{T}
 =#
-function singularpot{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
-    umol = T[]; qmol = T[]
-    for elem in elements
-        push!(umol, zero(T))
-        push!(qmol, zero(T))
-        for charge in charges
-            r = elem.center - charge.pos
-            rnorm = vecnorm(r)
+φmol{T}(ξlist::Vector{Vector{T}}, charges::Vector{Charge{T}}) = [φmol(ξ, charges) for ξ in ξlist]
+φmol{T}(ξlist::Vector{Triangle{T}}, charges::Vector{Charge{T}}) = [φmol(ξ.center, charges) for ξ in ξlist]
+φmol{T}(ξ::Vector{T}, charges::Vector{Charge{T}}) = sum([q.val / euclidean(ξ, q.pos) for q in charges])
 
-            umol[end] += charge.val / rnorm
-            qmol[end] -= charge.val * (r ⋅ elem.normal) / rnorm^3
-        end
-    end
-    (opt.εΩ \ umol, opt.εΩ \ qmol)
-end
+#=
+    Computes the molecular potential of the given system of point charges in a structureless medium.
+
+    Note that the results are premultiplied by 4π * εΩ!
+
+    @param ξ/ξlist
+                Observation point(s)
+    @param charges
+                Point charges
+    @return T or Vector{T}
+=#
+∂ₙφmol{T}(ξlist::Vector{Triangle{T}}, charges::Vector{Charge{T}}) = [∂ₙφmol(ξ, charges) for ξ in ξlist]
+∂ₙφmol{T}(ξ::Triangle{T}, charges::Vector{Charge{T}}) = -sum([q.val * ((ξ.center - q.pos) ⋅ ξ.normal) / euclidean(ξ.center, q.pos)^3 for q in charges])
 
 #=
     Computes the full cauchy data on the surface of the biomolecule.
@@ -70,7 +69,8 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     eye!(m33, 2π)
 
     # compute molecular potential for the point charges
-    umol, qmol = singularpot(elements, charges, opt)
+    umol = opt.εΩ \ φmol(elements, charges)
+    qmol = opt.εΩ \ ∂ₙφmol(elements, charges)
 
     # create right hand side
     rhs = zeros(T, 3 * numelem)
