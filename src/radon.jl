@@ -10,9 +10,9 @@ export laplacecoll!, regularyukawacoll!
     Note that the result is premultiplied by 4π!
 
     @param x
-                Integration variable
+        Integration variable
     @param ξ
-                Observation point
+        Observation point
     @return T
 =#
 function laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
@@ -49,14 +49,14 @@ laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, ::Option{T}) = lap
     Note that the result is premultiplied by 4π!
 
     @param x
-                Integration variable
+        Integration variable
     @param ξ
-                Observation point
+        Observation point
     @param normal
-                Normal unit vector at x
+        Normal unit vector at x
     @return T
 =#
-function laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
+function ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
     r = x - ξ
     rnorm = vecnorm(r)
@@ -82,7 +82,7 @@ function laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
 
     -1 / rnorm^3 * (r ⋅ normal)
 end
-laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = laplacepot_dn(x, ξ, normal)
+∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = ∂laplacepot(x, ξ, normal)
 
 #=
     Compute the regular part of the yukawa potential, that is, Yukawa minus Laplace:
@@ -91,11 +91,11 @@ laplacepot_dn{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{
     Note that the result is premultiplied by 4π!
 
     @param x
-                Integration variable
+        Integration variable
     @param ξ
-                Observation point
+        Observation point
     @param opt
-                Constants to be used
+        Constants to be used
     @return T
 =#
 function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=defaultopt(T))
@@ -139,16 +139,16 @@ regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt::Option{
     Note that the result is premultiplied by 4π!
 
     @param x
-                Integration variable
+        Integration variable
     @param ξ
-                Observation point
+        Observation point
     @param normal
-                Normal unit vector at x
+        Normal unit vector at x
     @param opt
-                Constants to be used
+        Constants to be used
     @return T
 =#
-function regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, opt::Option{T}=defaultopt(T))
+function ∂ₙregularyukawapot{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, opt::Option{T}=defaultopt(T))
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
     r = x - ξ
     rnorm = vecnorm(r)
@@ -180,28 +180,42 @@ function regularyukawapot_dn{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, 
 end
 
 #=
-    Radon cubature with seven points to generate a potential matrix according to the given
-    function f. For easy setup, use the function aliases laplacecoll! and
-    regularyukawacoll! with "SingleLayer" or "DoubleLayer" instead.
+    Seven-point Radon cubature for a given function and a list of triangles and
+    observation points. If `dest` is a vector, the function values f for each
+    surface triangle have to be specified, since each element of the vector
+    represents the dot product of the corresponding coefficient matrix row and
+    the `fvals` vector.
+
+    If you intend computing single/double layer potentials with this function,
+    you might want to use the shorthand signatures `laplacecoll!` and
+    `regularyukawacoll` instead.
+
+    Note that the result is premultiplied by 4π.
 
     References:
     [1] V. I. Krilov. Priblizhennoe vichislenie integralov. Moskva, Nauka, 1967.
     [2] J. Radon. Zur mechanischen Kubatur. Monatsh. für Math. 52(4): 286-300, 1948.
 
     @param dest
-                Destination matrix
+        Destination matrix/vector
     @param elements
-                List of all surface elements
-    @param f
-                Supported functions: regularyukawapot, regularyukawapot_dn, laplacepot,
-                laplacepot_dn
+        Surface elements
+    @param ξlist
+        Observation points
+    @param solution
+        Fundamental solution. Supported functions: regularyukawapot, ∂ₙregularyukawapot,
+        laplacepot, ∂ₙlaplacepot
+    @param fvals
+        Function values of the elements
     @param opt
-                Constants to be used
+        Constants to be used
 =#
-function radoncoll!{T}(dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, f::Function, opt::Option{T}=defaultopt(T))
+function radoncoll!{T}(dest::Union{DenseArray{T,1}, DenseArray{T,2}}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, solution::Function, fvals::DenseArray{T,1}=T[], opt::Option{T}=defaultopt(T))
     #=== MEMORY-CRITICAL CODE! ===#
-    numelem = length(elements)
-    @assert size(dest) == (numelem, numelem)
+    isvec  = isa(dest, DenseArray{T,1})
+    isvec && @assert length(fvals) == length(elements)
+    isvec && @assert length(dest) == length(ξlist)
+    isvec || @assert size(dest) == (length(ξlist), length(elements))
 
     const r15 = √15
     const ξ = (1/3, (6+r15)/21, (9-2r15)/21, (6+r15)/21, (6-r15)/21, (9+2r15)/21, (6-r15)/21)
@@ -211,8 +225,7 @@ function radoncoll!{T}(dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, f::
     # pre-allocate memory for cubature points
     cubpts = [zeros(T, 3) for _ in 1:7]
 
-    @inbounds for eidx in 1:numelem
-        elem = elements[eidx]
+    @inbounds for (eidx, elem) in enumerate(elements)
         u = elem.v2 - elem.v1
         v = elem.v3 - elem.v1
         area = 2. * elem.area
@@ -223,65 +236,27 @@ function radoncoll!{T}(dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, f::
             cubpts[i][j] = ξ[i] * u[j] + η[i] * v[j] + elem.v1[j]
         end
 
-        for oidx in 1:numelem
-            obs = elements[oidx]
+        for (oidx, obs) in enumerate(ξlist)
             value = zero(T)
             for i in 1:7
-                value += f(cubpts[i], obs.center, elem.normal, opt) * μ[i]
+                value += solution(cubpts[i], obs, elem.normal, opt) * μ[i]
             end
-            dest[oidx, eidx] = value * area
+            isvec ?
+                dest[oidx] += value * area * fvals[eidx] :
+                dest[oidx, eidx] = value * area
         end
     end
     nothing
 end
 
-#=
-    Compute the Dirichlet trace of the single or double layer potential of Laplace.
+laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, laplacepot, fvals, opt)
+laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, ∂ₙlaplacepot, fvals, opt)
+laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, laplacepot, T[], opt)
+laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, ∂ₙlaplacepot, T[], opt)
 
-    Please note that, in the latter case, the relation of K (Kʸ) to the full double layer
-    potential W (Wʸ) is given by
-    [(γ₀ξ^{int} W)f](ξ) = [-1 + σ(ξ)]f(ξ) + [Kf](ξ)
-
-    This function uses a Radon cubature with seven points to generate the regular part of
-    the Yukawa potential matrix.
-
-    Note that the result is premultiplied by 4π!
-
-    @param _
-                SingleLayer or DoubleLayer
-    @param dest
-                Destination matrix
-    @param elements
-                List of elements in the system
-    @param opt
-                Constants to be used
-=#
-laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, laplacepot, opt)
-laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, laplacepot_dn, opt)
-
-#=
-    Compute the Dirichlet trace of the single layer potential or the essential part of the
-    double layer potential of Yukawa minus Laplace.
-
-    Please note that, in the latter case, the relation of K (Kʸ) to the full double layer
-    potential W (Wʸ) is given by
-    [(γ₀ξ^{int} W)f](ξ) = [-1 + σ(ξ)]f(ξ) + [Kf](ξ)
-
-    This function uses a Radon cubature with seven points to generate the regular part of
-    the Yukawa potential matrix.
-
-    Note that the result is premultiplied by 4π!
-
-    @param _
-                SingleLayer or DoubleLayer
-    @param dest
-                Destination matrix
-    @param elements
-                List of elements in the system
-    @param opt
-                Constants to be used
-=#
-regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot, opt)
-regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, regularyukawapot_dn, opt)
+regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, regularyukawapot, fvals, opt)
+regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, ∂ₙregularyukawapot, fvals, opt)
+regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, regularyukawapot, T[], opt)
+regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, ∂ₙregularyukawapot, T[], opt)
 
 end # module

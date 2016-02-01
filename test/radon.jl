@@ -21,22 +21,22 @@ context("laplacepot") do
     end
 end
 
-context("laplacepot_dn") do
+context("∂ₙlaplacepot") do
     for T in testtypes
         # x --> ξ
         x = ones(T, 3)
         n = map(T, [1, 0, 0])
-        ret = Radon.Radon.laplacepot_dn(x, x, n)
+        ret = Radon.Radon.∂ₙlaplacepot(x, x, n)
         @fact isa(ret, T) --> true
         @fact ret --> 0
         # ξ not in origin (moderate vecnorm)
         ξ = -ones(T, 3)
-        ret = Radon.Radon.laplacepot_dn(x, ξ, n)
+        ret = Radon.Radon.∂ₙlaplacepot(x, ξ, n)
         @fact isa(ret, T) --> true
         @fact ret --> roughly(T(-0.04811252243246881370909573170849645463730014593917723966821))
         # ξ in origin (moderate vecnorm)
         ξ = zeros(T, 3)
-        ret = Radon.Radon.laplacepot_dn(x, ξ, n)
+        ret = Radon.Radon.∂ₙlaplacepot(x, ξ, n)
         @fact isa(ret, T) --> true
         @fact ret --> roughly(T(-0.19245008972987525483638292683398581854920058375670895867286))
         @pending alternating_series --> :nothing
@@ -76,35 +76,35 @@ context("regularyukawapot") do
     end
 end
 
-context("regularyukawapot_dn") do
+context("∂ₙregularyukawapot") do
     for T in testtypes
         # x --> ξ
         x = ones(T, 3)
         n = map(T, [1, 0, 0])
         opt = Option(zeros(T, 4)..., T(7))
-        ret = Radon.regularyukawapot_dn(x, x, n, opt)
+        ret = Radon.∂ₙregularyukawapot(x, x, n, opt)
         @fact isa(ret, T) --> true
         @fact ret --> 0
         # ξ not in origin (no cancellation)
         ξ = -ones(T, 3)
-        ret = Radon.regularyukawapot_dn(x, ξ, n, opt)
+        ret = Radon.∂ₙregularyukawapot(x, ξ, n, opt)
         @fact isa(ret, T) --> true
         @fact ret --> roughly(T(0.048112522396707305228639137148607498838982054839859863103104))
         # ξ in origin (no cancellation)
         ξ = zeros(T, 3)
-        ret = Radon.regularyukawapot_dn(x, ξ, n, opt)
+        ret = Radon.∂ₙregularyukawapot(x, ξ, n, opt)
         @fact isa(ret, T) --> true
         @fact ret --> roughly(T(0.192436385477375021033020985138032408973537816345889754008150))
         # ξ in origin (potential cancellation)
-        ret = Radon.regularyukawapot_dn(.001x, ξ, n, opt)
+        ret = Radon.∂ₙregularyukawapot(.001x, ξ, n, opt)
         @fact isa(ret, T) --> true
         @fact ret --> roughly(T(14.03126641709760402264474861719654017225786809145550365963283))
         # ξ in origin (potential cancellation 2)
-        ret = Radon.regularyukawapot_dn(.0001x, ξ, n, opt)
+        ret = Radon.∂ₙregularyukawapot(.0001x, ξ, n, opt)
         @fact isa(ret, T) --> true
         @fact ret --> roughly(T(14.13365345844970855427401235115544109979343227826364222026794))
         # ξ in origin (potential cancellation 3)
-        ret = Radon.regularyukawapot_dn(.00001x, ξ, n, opt)
+        ret = Radon.∂ₙregularyukawapot(.00001x, ξ, n, opt)
         @fact isa(ret, T) --> true
         @fact ret --> roughly(T(14.14393831379399210175378534648974379367907886588210581085651))
     end

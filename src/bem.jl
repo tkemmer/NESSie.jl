@@ -82,11 +82,14 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     copy!(β, umol)
     scale!(β, -2π)
 
+    # create list of observation points
+    ξlist = [e.center for e in elements]
+
     #=
         generate and apply Kʸ-K
     =#
     buffer = Array(T, numelem, numelem)
-    Radon.regularyukawacoll!(DoubleLayer, buffer, elements, opt)
+    Radon.regularyukawacoll!(DoubleLayer, buffer, elements, ξlist, opt)
 
     # β += (1-εΩ/εΣ)(Kʸ-K)umol
     gemv!(1-εΩ/εΣ, buffer, umol, β)
@@ -100,7 +103,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     #=
         generate and apply Vʸ-V
     =#
-    Radon.regularyukawacoll!(SingleLayer, buffer, elements, opt)
+    Radon.regularyukawacoll!(SingleLayer, buffer, elements, ξlist, opt)
 
     # β += (εΩ/εΣ - εΩ/ε∞)(Vʸ-V)qmol
     gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
@@ -111,7 +114,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     #=
         generate and apply K
     =#
-    LaplaceMod.laplacecoll!(DoubleLayer, buffer, elements, opt)
+    LaplaceMod.laplacecoll!(DoubleLayer, buffer, elements, ξlist, opt)
 
     # β += K
     gemv!(one(T), buffer, umol, β)
@@ -128,7 +131,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     #=
         generate and apply V
     =#
-    LaplaceMod.laplacecoll!(SingleLayer, buffer, elements, opt)
+    LaplaceMod.laplacecoll!(SingleLayer, buffer, elements, ξlist, opt)
 
     # β -= εΩ/ε∞ * V * qmol
     gemv!(-εΩ/ε∞, buffer, qmol, β)

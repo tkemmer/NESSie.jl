@@ -178,7 +178,10 @@ laplacepot{T, P <: PotentialType}(ptype::Type{P}, ξ::Vector{T}, elem::Triangle{
 end
 
 #=
-    Generates a single or double layer Laplace potential matrix using equations by S. Rjasanow.
+    Generates a single or double layer Laplace potential matrix/vector using equations by
+    S. Rjasanow. If `dest` is a vector, the function values f for each surface triangle have
+    to be specified, since each element of the vector represents the dot product of the
+    corresponding coefficient matrix row and the `fvals` vector.
 
     Note that the result is premultiplied by 4π!
 
@@ -190,33 +193,44 @@ end
     @param ptype
         SingleLayer or DoubleLayer
     @param dest
-        Destination matrix
+        Destination matrix/vector
     @param elements
-        List of all surface elements
+        Surface elements
+    @param ξlist
+        Observation points
+    @param fvals
+        Function values of the elements
 =#
-function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}})
-    numelem = length(elements)
-    @inbounds for eidx in 1:numelem, oidx in 1:numelem
+function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::Union{DenseArray{T,1}, DenseArray{T, 2}}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T,1}=T[])
+    isvec  = isa(dest, DenseArray{T, 1})
+    isvec && @assert length(dest) == length(ξlist)
+    isvec && @assert length(fvals) == length(elements)
+    isvec || @assert size(dest) == (length(ξlist), length(elements))
+
+    @inbounds for (eidx, elem) in enumerate(elements), (oidx, ξ) in enumerate(ξlist)
+
         #TODO check whether zerodiag is necessary
-        if ptype == DoubleLayer && eidx == oidx
+        if !isvec && ptype == DoubleLayer && eidx == oidx
             dest[oidx, eidx] = zero(T)
             continue
         end
 
-        ξ = elements[oidx].center
-        elem = elements[eidx]
         dist = distance(ξ, elem)
 
         # Project ξ onto the surface element plane if necessary
-        if abs(dist) >= eps()
+        if abs(dist) >= 1e-10
             ξ = ξ - dist .* elem.normal
         end
 
-        dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist)
+        isvec ?
+            dest[oidx] += laplacepot(ptype, ξ, elem, dist) * fvals[eidx] :
+            dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist)
     end
     nothing
 end
-laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ::Option{T}) = laplacecoll!(ptype, dest, elements)
+laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, ::Option{T}) = laplacecoll!(ptype, dest, elements, ξlist, fvals)
+laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, ::Option{T}) = laplacecoll!(ptype, dest, elements, ξlist)
+
 
 #=
     Helper function to compute
