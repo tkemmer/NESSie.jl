@@ -1,6 +1,6 @@
 module Radon
 
-import NonLocalES: Triangle, SingleLayer, DoubleLayer, Option, defaultopt
+import ..ProteinES: Triangle, SingleLayer, DoubleLayer, Option, defaultopt
 
 export laplacecoll!, regularyukawacoll!
 

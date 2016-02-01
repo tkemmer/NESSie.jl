@@ -1,4 +1,4 @@
-import NonLocalES.Radon
+using ProteinES.Radon
 
 context("laplacepot") do
     for T in testtypes

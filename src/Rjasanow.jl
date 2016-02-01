@@ -1,6 +1,6 @@
 module Rjasanow
 
-import NonLocalES: Triangle, SingleLayer, DoubleLayer, Option, PotentialType, cos, cathetus, sign, distance
+import ..ProteinES: Triangle, SingleLayer, DoubleLayer, Option, PotentialType, cos, cathetus, sign, distance
 
 export laplacecoll!
 

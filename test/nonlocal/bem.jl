@@ -1,3 +1,5 @@
+using ProteinES.Nonlocal
+
 context("φmol and ∂ₙφmol") do
     for T in testtypes
         # empty lists

@@ -83,6 +83,8 @@ end
     at the node positions.
 
     ρ(r) = 1/(4π*ε0) * Σ qᵢ/|rᵢ-r|
+
+    Note that the result is premultiplied by 4π*ε0.
 =#
 function chargedensity{T}(nodes::Vector{Vector{T}}, charges::Vector{Charge{T}})
     [sum([charge.val / euclidean(charge.pos, node) for charge in charges]) for node in nodes]
