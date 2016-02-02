@@ -61,15 +61,15 @@ function laplacepot{T, P <: PotentialType}(ptype::Type{P}, ξ::Vector{T}, x1::Ve
     h = cathetus(u1norm, sinφ1)
 
     # Degenerate triangles
-    if max(0, h) < eps() ||            # ξ on the line through v1 and v2 (|φ1| = |φ2| = π/2)
-        1 - abs(sinφ1) < eps() ||      # ξ on the line through v1 and v2 (φ1 = π/2)
-        1 - abs(sinφ2) < eps() ||      # ξ on the line through v1 and v2 (φ2 = π/2)
-        abs(sinφ1 - sinφ2) < eps()     # v1 and v2 on the line through ξ (φ1 = φ2 = 0)
+    if max(0, h) < 1e-10 ||            # ξ on the line through v1 and v2 (|φ1| = |φ2| = π/2)
+        1 - abs(sinφ1) < 1e-10 ||      # ξ on the line through v1 and v2 (φ1 = π/2)
+        1 - abs(sinφ2) < 1e-10 ||      # ξ on the line through v1 and v2 (φ2 = π/2)
+        abs(sinφ1 - sinφ2) < 1e-10     # v1 and v2 on the line through ξ (φ1 = φ2 = 0)
         return zero(T)
     end
 
     # Check whether or not the original ξ lies in the surface element plane
-    ξloc = abs(dist) < eps() ? InPlane : InSpace
+    ξloc = abs(dist) < 1e-10 ? InPlane : InSpace
 
     # Since the observation point (projection) lies in the same plane as the surface element,
     # we can decide whether the result of this function is to be added or subtracted from the
