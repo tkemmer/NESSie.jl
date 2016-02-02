@@ -1,6 +1,7 @@
 module Rjasanow
 
-import ..ProteinES: Triangle, SingleLayer, DoubleLayer, Option, PotentialType, cos, cathetus, sign, distance
+using ..ProteinES
+import ..ProteinES: cos, cathetus, sign, distance
 
 export laplacecoll!
 

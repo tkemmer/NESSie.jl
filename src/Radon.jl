@@ -1,6 +1,6 @@
 module Radon
 
-import ..ProteinES: Triangle, SingleLayer, DoubleLayer, Option, defaultopt
+using ..ProteinES
 
 export laplacecoll!, regularyukawacoll!
 

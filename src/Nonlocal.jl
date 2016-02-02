@@ -1,11 +1,13 @@
 module Nonlocal
 
 using ..ProteinES
+import ..ProteinES: Radon, Rjasanow, eye!, gemv!, axpy!
+import ..ProteinES.Local: φmol, ∂ₙφmol
 import Distances: euclidean
 
 export
     # bem.jl
-    φmol, ∂ₙφmol, cauchy,
+    cauchy,
     # fem.jl
     espotential
 

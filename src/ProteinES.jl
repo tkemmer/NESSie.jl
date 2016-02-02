@@ -5,7 +5,7 @@ import Base.LinAlg.BLAS: gemv!, axpy!
 
 export
     # types.jl
-    Element, Triangle, Tetrahedron, Charge, Option, SingleLayer, DoubleLayer,
+    Element, Triangle, Tetrahedron, Charge, Option, SingleLayer, DoubleLayer, PotentialType,
     # util.jl
     props!,
     # this file
@@ -25,9 +25,9 @@ defaultopt(::Type{Float32}) = defaultopt32
 
 # Include submodule files
 include("IO.jl")
-include("Local.jl")
-include("Nonlocal.jl")
 include("Radon.jl")
 include("Rjasanow.jl")
+include("Local.jl")
+include("Nonlocal.jl")
 
 end # module
