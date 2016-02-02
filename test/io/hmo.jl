@@ -44,9 +44,9 @@ context("readhmo") do
                 nodes, elements, charges = readhmo(fh, T)
             end
             # check return types
-            @fact isa(nodes, Vector{Vector{T}}) --> true
-            @fact isa(elements, Vector{Triangle{T}}) --> true
-            @fact isa(charges, Vector{Charge{T}}) --> true
+            @fact typeof(nodes) --> Vector{Vector{T}}
+            @fact typeof(elements) --> Vector{Triangle{T}}
+            @fact typeof(charges) --> Vector{Charge{T}}
             # check lengths
             @fact length(nodes) --> len[1]
             @fact length(elements) --> len[2]

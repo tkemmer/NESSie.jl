@@ -17,7 +17,7 @@ context("readpqr") do
             seekstart(fh)
             charges = readpqr(fh, T)
 
-            @fact isa(charges, Vector{Charge{T}}) --> true
+            @fact typeof(charges) --> Vector{Charge{T}}
             @fact length(charges) --> len
             if fname == testfiles[2][1]
                 @fact charges[1].pos --> T[-17.108, 25.866, 23.850]

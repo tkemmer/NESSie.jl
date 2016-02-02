@@ -29,8 +29,8 @@ context("readoff") do
                 nodes, elements = readoff(fh, T)
             end
             # check return types
-            @fact isa(nodes, Vector{Vector{T}}) --> true
-            @fact isa(elements, Vector{Triangle{T}}) --> true
+            @fact typeof(nodes) --> Vector{Vector{T}}
+            @fact typeof(elements) --> Vector{Triangle{T}}
 
             # check lengths
             @fact length(nodes) --> len[1]

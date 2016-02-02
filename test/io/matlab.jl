@@ -42,8 +42,8 @@ context("readmatlab") do
                 nodes, elements = readmatlab(fh, T)
             end
             # check return types
-            @fact isa(nodes, Vector{Vector{T}}) --> true
-            @fact isa(elements, Vector{Tetrahedron{T}}) --> true
+            @fact typeof(nodes) --> Vector{Vector{T}}
+            @fact typeof(elements) --> Vector{Tetrahedron{T}}
             # check lengths
             @fact length(nodes) --> len[1]
             @fact length(elements) --> len[2]
