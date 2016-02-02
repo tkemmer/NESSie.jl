@@ -61,10 +61,10 @@ function laplacepot{T, P <: PotentialType}(ptype::Type{P}, ξ::Vector{T}, x1::Ve
     h = cathetus(u1norm, sinφ1)
 
     # Degenerate triangles
-    if max(0, h) < 1e-10 ||            # ξ on the line through v1 and v2 (|φ1| = |φ2| = π/2)
-        1 - abs(sinφ1) < 1e-10 ||      # ξ on the line through v1 and v2 (φ1 = π/2)
-        1 - abs(sinφ2) < 1e-10 ||      # ξ on the line through v1 and v2 (φ2 = π/2)
-        abs(sinφ1 - sinφ2) < 1e-10     # v1 and v2 on the line through ξ (φ1 = φ2 = 0)
+    if max(zero(T), h) < 1e-10 ||         # ξ on the line through v1 and v2 (|φ1| = |φ2| = π/2)
+        one(T) - abs(sinφ1) < 1e-10 ||    # ξ on the line through v1 and v2 (φ1 = π/2)
+        one(T) - abs(sinφ2) < 1e-10 ||    # ξ on the line through v1 and v2 (φ2 = π/2)
+        abs(sinφ1 - sinφ2) < 1e-10        # v1 and v2 on the line through ξ (φ1 = φ2 = 0)
         return zero(T)
     end
 
@@ -106,7 +106,7 @@ end
         Distance from ξ to the plane the original surface element lies in (unused)
     @return T
 =#
-laplacepot{T}(::Type{SingleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, d::T) = .5h * log((1+sinφ2) * (1-sinφ1) / ((1-sinφ2) * (1+sinφ1)))
+laplacepot{T}(::Type{SingleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, d::T) = T(.5) * h * log((one(T)+sinφ2) * (one(T)-sinφ1) / ((one(T)-sinφ2) * (one(T)+sinφ1)))
 
 #=
     Computes the Laplace potential of the triangle with the given height h at the observation
@@ -151,7 +151,7 @@ laplacepot{T}(::Type{SingleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, 
     χ2 = χ^2
 
     # h/8π * <1>
-    result = .5h * log(logterm(χ2, sinφ2) / logterm(χ2, sinφ1))
+    result = T(.5) * h * log(logterm(χ2, sinφ2) / logterm(χ2, sinφ1))
     # + d/4π * <2>
     result + d * (asin(χ * sinφ2) - asin(sinφ2) - asin(χ * sinφ1) + asin(sinφ1))
 end
@@ -242,8 +242,8 @@ laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, eleme
     @return T
 =#
 logterm{T}(χ2::T, sinφ::T) = begin
-    term1 = √(1 - χ2 * sinφ^2)
-    term2 = √(1 - χ2) * sinφ
+    term1 = √(one(T) - χ2 * sinφ^2)
+    term2 = √(one(T) - χ2) * sinφ
     (term1 + term2) / (term1 - term2)
 end
 
