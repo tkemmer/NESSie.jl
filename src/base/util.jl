@@ -63,7 +63,7 @@ unpack{T}(data::Vector{Vector{T}}, innerdim=3) = T[o for o in T[o[i] for i in 1:
 =#
 function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invert::Bool=false)
     revidx = reverseindex(nodes)
-    normals = [zeros(T, 3) for _ in 1:length(nodes)]
+    normals = Vector{T}[zeros(T, 3) for _ in 1:length(nodes)]
     count = zeros(T, length(nodes))
     @inbounds for elem in elements, node in (elem.v1, elem.v2, elem.v3)
         idx = revidx[object_id(node)]
