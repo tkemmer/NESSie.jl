@@ -82,7 +82,7 @@ function ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T
 
     -1 / rnorm^3 * (r ⋅ normal)
 end
-∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = ∂laplacepot(x, ξ, normal)
+∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = ∂ₙlaplacepot(x, ξ, normal)
 
 #=
     Compute the regular part of the yukawa potential, that is, Yukawa minus Laplace:
