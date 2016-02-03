@@ -63,6 +63,31 @@ context("laplacepot") do
                                     - 2 * 0.0260303288327139057352736693314968773933071931295084)))
 
         # 2. Double layer potentials
-        @pending doublelayerpotentials --> :nothing
+        # 1.1 ξ is a triangle vertex
+        ξ = elem.v1
+        res = laplacepot(DoubleLayer, ξ, elem, zero(T))
+        @fact typeof(res) --> T
+        @fact res --> roughly(zero(T))
+        ξ = elem.v2
+        res = laplacepot(DoubleLayer, ξ, elem, zero(T))
+        @fact typeof(res) --> T
+        @fact res --> roughly(zero(T))
+        ξ = elem.v3
+        res = laplacepot(DoubleLayer, ξ, elem, zero(T))
+        @fact typeof(res) --> T
+        @fact res --> roughly(zero(T))
+
+        # 1.2 ξ lies in the same plane as the triangle
+        ξ = T[0, -1, 0]
+        res = laplacepot(DoubleLayer, ξ, elem, zero(T))
+        @fact typeof(res) --> T
+        @fact res --> roughly(zero(T))
+        ξ = T[0, -1, -1]
+        res = laplacepot(DoubleLayer, ξ, elem, zero(T))
+        @fact typeof(res) --> T
+        @fact res --> roughly(zero(T))
+
+        @pending dl_ξ_above_vertex --> :nothing
+        @pending dl_ξ_somewhere_in_space --> :nothing
     end
 end
