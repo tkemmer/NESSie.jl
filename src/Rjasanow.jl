@@ -147,8 +147,8 @@ laplacepot{T}(::Type{SingleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, 
 =#
 laplacepot{T}(::Type{SingleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, d::T) = begin
     d  = abs(d)
-    χ  = d / √(d^2 + h^2)
-    χ2 = χ^2
+    χ2 = d^2 / (d^2 + h^2)
+    χ  = √χ2
 
     # h/8π * <1>
     result = T(.5) * h * log(logterm(χ2, sinφ2) / logterm(χ2, sinφ1))
@@ -157,7 +157,24 @@ laplacepot{T}(::Type{SingleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, 
 end
 
 #=
-    TODO
+    Computes the normal derivative of the Laplace potential of the triangle when the
+    observation point resides in the same plane as the triangle. This case is trivial
+    since the term (ξ-r') ⋅ n in the integral, with r' being a point in the triangle
+    and n being a normal vector of the triangle, is obviously zero.
+
+    1/4π * ∫-1/|ξ-r'|^3 * (ξ-r')⋅n dr'
+    = 1/4π * ∫-1/|ξ-r'|^3 * 0 dr'
+    = 0
+
+    @param sinφ1
+        Sine of the angle between h and one triangle side extending from ξ
+    @param sinφ2
+        Sine of the angle between h and the other triangle side extending from ξ
+    @param h
+        Height of the triangle
+    @param d
+        Distance from ξ to the plane the original surface element lies in
+    @return T
 =#
 laplacepot{T}(::Type{DoubleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, d::T) = zero(T)
 
