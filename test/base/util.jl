@@ -179,7 +179,22 @@ context("vertexnormals") do
     end
 end
 
-@pending cos --> :nothing
+context("cos") do
+    for T in testtypes
+        u = T[1, 0, 0]
+        @fact typeof(cos(u, T[1, 0, 0])) --> T
+        @fact cos(u, T[1, 0, 0]) --> roughly(one(T))
+        @fact cos(u, T[0, 1, 0]) --> roughly(zero(T))
+        @fact cos(u, T[0, 1, 0]) --> roughly(zero(T))
+        @fact cos(u, T[-1, 0, 0]) --> roughly(-one(T))
+        @fact cos(u, T[0, -1, 0]) --> roughly(zero(T))
+        @fact cos(u, T[1, 1, 0]) --> roughly(T(cos(π/4)))
+        @fact cos(u, T[-1, 1, 0]) --> roughly(T(cos(3π/4)))
+        @fact cos(u, T[1, 0, 1]) --> roughly(T(cos(π/4)))
+    end
+end
+
 @pending cathetus --> :nothing
 @pending sign --> :nothing
 @pending distance --> :nothing
+@pending ddot --> :nothing

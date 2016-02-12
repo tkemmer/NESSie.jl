@@ -25,4 +25,4 @@
     @return T or Vector{T}
 =#
 ∂ₙφmol{T}(ξlist::Vector{Triangle{T}}, charges::Vector{Charge{T}}) = [∂ₙφmol(ξ, charges) for ξ in ξlist]
-∂ₙφmol{T}(ξ::Triangle{T}, charges::Vector{Charge{T}}) = -sum([q.val * ((ξ.center - q.pos) ⋅ ξ.normal) / euclidean(ξ.center, q.pos)^3 for q in charges])
+∂ₙφmol{T}(ξ::Triangle{T}, charges::Vector{Charge{T}}) = -sum([q.val * ddot(ξ.center, q.pos, ξ.normal) / euclidean(ξ.center, q.pos)^3 for q in charges])

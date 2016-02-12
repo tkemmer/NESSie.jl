@@ -1,6 +1,7 @@
 module Local
 
 using ..ProteinES
+using ..ProteinES: ddot
 using Distances: euclidean
 
 export φmol, ∂ₙφmol

@@ -168,19 +168,20 @@ cos{T}(u::Vector{T}, v::Vector{T}) = cos(u, vecnorm(u), v, vecnorm(v))
 cathetus{T}(hyp::T, cosθ::T) = √(hyp^2 * (1 - cosθ^2))
 
 #=
-    Determines whether the normal vector of the plane specified by the vectors u1 and u2
+    Determines whether the normal vector of the plane specified by the vectors u and v
     has the same orientation as the given normal vector.
 
-    @param u1
+    @param u
         First vector
-    @param u2
+    @param v
         Second vector
-    @param
+    @param n
         Normal vector to compare against
     @return 1 if both normals have the same orientation, 0 if at least one of the
         vectors is zero, -1 otherwise.
 =#
-sign{T}(u1::Vector{T}, u2::Vector{T}, normal::Vector{T}) = sign((u1 × u2) ⋅ normal)
+# Devectorized version of sign((u1 × u2) ⋅ normal)
+sign{T}(u::Vector{T}, v::Vector{T}, n::Vector{T}) = sign((u[2]*v[3] - u[3]*v[2]) * n[1] + (u[3]*v[1] - u[1]*v[3]) * n[2] + (u[1]*v[2] - u[2]*v[1]) * n[3])
 
 #=
     Calculates the (positive or negative) distance from the given point q to the plane
@@ -197,6 +198,19 @@ sign{T}(u1::Vector{T}, u2::Vector{T}, normal::Vector{T}) = sign((u1 × u2) ⋅ n
 =#
 distance{T}(q::Vector{T}, normal::Vector{T}, distorig::T) = q ⋅ normal - distorig
 distance{T}(q::Vector{T}, elem::Triangle{T}) = distance(q, elem.normal, elem.distorig)
+
+#=
+    Devectorized computation of (u-v)⋅n.
+
+    @param u
+        First vector
+    @param v
+        Second vector
+    @param n
+        Third vector
+    @return T
+=#
+ddot{T}(u::Vector{T}, v::Vector{T}, n::Vector{T}) = (u[1] - v[1]) * n[1] + (u[2] - v[2]) * n[2] + (u[3] - v[3]) * n[3]
 
 #=
     Creates a reverse index for the given vector, that is, a dictionary linking the

@@ -1,7 +1,7 @@
 module Rjasanow
 
 using ..ProteinES
-import ..ProteinES: cos, cathetus, sign, distance
+using ..ProteinES: cos, cathetus, sign, distance
 
 export laplacecoll!
 
@@ -106,7 +106,7 @@ end
         Distance from ξ to the plane the original surface element lies in (unused)
     @return T
 =#
-laplacepot{T}(::Type{SingleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, d::T) = T(.5) * h * log((one(T)+sinφ2) * (one(T)-sinφ1) / ((one(T)-sinφ2) * (one(T)+sinφ1)))
+laplacepot{T}(::Type{SingleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, d::T) = 2 \ h * log((1+sinφ2) * (1-sinφ1) / ((1-sinφ2) * (1+sinφ1)))
 
 #=
     Computes the Laplace potential of the triangle with the given height h at the observation
@@ -236,9 +236,8 @@ function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::Union{DenseAr
         dist = distance(ξ, elem)
 
         # Project ξ onto the surface element plane if necessary
-        if abs(dist) >= 1e-10
-            ξ = ξ - dist .* elem.normal
-        end
+        # Devectorized version of ξ -= dist * elem.normal
+        abs(dist) >= 1e-10 && (ξ = [ξ[i] - dist * elem.normal[i] for i in 1:3])
 
         isvec ?
             dest[oidx] += laplacepot(ptype, ξ, elem, dist) * fvals[eidx] :
@@ -259,8 +258,8 @@ laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, eleme
     @return T
 =#
 logterm{T}(χ2::T, sinφ::T) = begin
-    term1 = √(one(T) - χ2 * sinφ^2)
-    term2 = √(one(T) - χ2) * sinφ
+    term1 = √(1 - χ2 * sinφ^2)
+    term2 = √(1 - χ2) * sinφ
     (term1 + term2) / (term1 - term2)
 end
 

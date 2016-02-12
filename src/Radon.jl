@@ -1,7 +1,8 @@
 module Radon
 
 using ..ProteinES
-import Distances: euclidean
+using ..ProteinES: ddot
+using Distances: euclidean
 
 export laplacecoll!, regularyukawacoll!
 
@@ -77,10 +78,10 @@ function ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T
             tsum += term * (i+1) * (i+2)
             term *= -(rnorm - 1)
         end
-        return -2 \ tsum * ((x - ξ) ⋅ normal)
+        return -2 \ tsum * ddot(x, ξ, normal)
     end
 
-    -1 / rnorm^3 * ((x - ξ) ⋅ normal)
+    -1 / rnorm^3 * ddot(x, ξ, normal)
 end
 ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = ∂ₙlaplacepot(x, ξ, normal)
 
@@ -155,7 +156,7 @@ function ∂ₙregularyukawapot{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T
     # limit for |x-ξ| → 0
     rnorm <= 1e-10 && return zero(T)
 
-    cosovernorm2 = ((x - ξ) ⋅ normal) / rnorm^3
+    cosovernorm2 = ddot(x, ξ, normal) / rnorm^3
     scalednorm = opt.yukawa * rnorm
 
     # guard against cancellation
