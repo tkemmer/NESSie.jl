@@ -44,7 +44,7 @@ immutable Option{T <: AbstractFloat}
     λ::T        # scale
     yukawa::T   # exponent for fundamental solution of yukawa operator -1/Λ = -1/(λ√(ε∞/εΣ))
 end
-Option{T <: AbstractFloat}(εΩ::T, εΣ::T, ε∞::T, λ::T) = Option(εΩ, εΣ, ε∞, λ, -√(εΣ/ε∞)/λ)
+Option{T <: AbstractFloat}(εΩ::T, εΣ::T, ε∞::T, λ::T) = Option(εΩ, εΣ, ε∞, λ, √(εΣ/ε∞)/λ)
 
 #=
     Enum-like representation of potential types.
