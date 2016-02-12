@@ -151,7 +151,7 @@ laplacepot{T}(::Type{SingleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, 
     χ  = √χ2
 
     # h/8π * <1>
-    result = T(.5) * h * log(logterm(χ2, sinφ2) / logterm(χ2, sinφ1))
+    result = 2 \ h * log(logterm(χ2, sinφ2) / logterm(χ2, sinφ1))
     # + d/4π * <2>
     result + d * (asin(χ * sinφ2) - asin(sinφ2) - asin(χ * sinφ1) + asin(sinφ1))
 end

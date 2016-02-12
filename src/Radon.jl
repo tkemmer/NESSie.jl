@@ -1,6 +1,7 @@
 module Radon
 
 using ..ProteinES
+import Distances: euclidean
 
 export laplacecoll!, regularyukawacoll!
 
@@ -17,17 +18,17 @@ export laplacecoll!, regularyukawacoll!
 =#
 function laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
-    rnorm = vecnorm(x-ξ)
+    rnorm = euclidean(x, ξ)
 
-    # limit for |x-ξ| →    0
-    rnorm <= 0 && return zero(T)
+    # limit for |x-ξ| → 0
+    rnorm <= 1e-10 && return zero(T)
 
     # guard against small rnorm
     if rnorm < .1
         # use alternating series to approximate
         # 1/c = Σ((-1)^i * (x-1)^i) for i = 0 to ∞
         term = one(T)
-        tolerance = 1e-16
+        tolerance = 1e-10
         tsum = zero(T)
         for i in 1:15
             abs(term) < tolerance && break
@@ -58,29 +59,28 @@ laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, ::Option{T}) = lap
 =#
 function ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
-    r = x - ξ
-    rnorm = vecnorm(r)
+    rnorm = euclidean(x, ξ)
 
     # limit for |x-ξ| → 0
-    rnorm <= 0 && return zero(T)
+    rnorm <= 1e-10 && return zero(T)
 
     # guard against small rnorm
     if rnorm < .1
         # use alternating series to approximate
         # -1/c^3 = -1/2 * Σ((-1)^i * (x-1)^i * (i+1) * (i+2)) for i = 0 to ∞
-        term = convert(T, 2)
-        tolerance = 1e-16
+        term = T(2)
+        tolerance = 1e-10
         tsum = zero(T)
         for i in 1:15
             abs(term) < tolerance && break
 
             tsum += term * (i+1) * (i+2)
-            term *= -(rnorm -1)
+            term *= -(rnorm - 1)
         end
-        return -.5 * tsum * (r ⋅ normal)
+        return -2 \ tsum * ((x - ξ) ⋅ normal)
     end
 
-    -1 / rnorm^3 * (r ⋅ normal)
+    -1 / rnorm^3 * ((x - ξ) ⋅ normal)
 end
 ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = ∂ₙlaplacepot(x, ξ, normal)
 
@@ -100,10 +100,10 @@ end
 =#
 function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=defaultopt(T))
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
-    rnorm = vecnorm(x-ξ)
+    rnorm = euclidean(x, ξ)
 
     # limit for |x-ξ| → 0
-    rnorm <= 0 && return -opt.yukawa
+    rnorm <= 1e-10 && return -opt.yukawa
 
     scalednorm = opt.yukawa * rnorm
 
@@ -112,7 +112,7 @@ function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=d
         # use alternating series to approximate
         # e^(-c) - 1 = Σ((-c)^i / i!) for i=1 to ∞
         term = -scalednorm
-        tolerance = 1e-16 * abs(term)
+        tolerance = 1e-10 * abs(term)
         tsum = zero(T)     # DON'T EVER USE 0 HERE! Time: x2, Memory: x3
         for i in 1:15
             abs(term) <= tolerance && break
@@ -150,13 +150,12 @@ regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt::Option{
 =#
 function ∂ₙregularyukawapot{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, opt::Option{T}=defaultopt(T))
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
-    r = x - ξ
-    rnorm = vecnorm(r)
+    rnorm = euclidean(x, ξ)
 
     # limit for |x-ξ| → 0
-    rnorm <= 0 && return zero(T)
+    rnorm <= 1e-10 && return zero(T)
 
-    cosovernorm2 = (r ⋅ normal) / rnorm^3
+    cosovernorm2 = ((x - ξ) ⋅ normal) / rnorm^3
     scalednorm = opt.yukawa * rnorm
 
     # guard against cancellation
@@ -164,7 +163,7 @@ function ∂ₙregularyukawapot{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T
         # use alternating series to approximate
         # 1 - (c+1)e^(-c) = Σ((-c)^i * (i-1) / i!) for i=2 to ∞
         term = scalednorm * scalednorm / 2
-        tolerance = 1e-16 * abs(term)
+        tolerance = 1e-10 * abs(term)
         tsum = zero(T)  # DON'T EVER USE 0 HERE!
         for i in 2:16
             abs(term #=* (i-1)=#) <= tolerance && continue
@@ -218,9 +217,9 @@ function radoncoll!{T}(dest::Union{DenseArray{T,1}, DenseArray{T,2}}, elements::
     isvec || @assert size(dest) == (length(ξlist), length(elements))
 
     const r15 = √15
-    const ξ = (1/3, (6+r15)/21, (9-2r15)/21, (6+r15)/21, (6-r15)/21, (9+2r15)/21, (6-r15)/21)
-    const η = (1/3, (9-2r15)/21, (6+r15)/21, (6+r15)/21, (9+2r15)/21, (6-r15)/21, (6-r15)/21)
-    const μ = (9/80, (155+r15)/2400, (155+r15)/2400, (155+r15)/2400, (155-r15)/2400, (155-r15)/2400, (155-r15)/2400)
+    const ξ = T[1/3, (6+r15)/21, (9-2r15)/21, (6+r15)/21, (6-r15)/21, (9+2r15)/21, (6-r15)/21]
+    const η = T[1/3, (9-2r15)/21, (6+r15)/21, (6+r15)/21, (9+2r15)/21, (6-r15)/21, (6-r15)/21]
+    const μ = T[9/80, (155+r15)/2400, (155+r15)/2400, (155+r15)/2400, (155-r15)/2400, (155-r15)/2400, (155-r15)/2400]
 
     # pre-allocate memory for cubature points
     cubpts = [zeros(T, 3) for _ in 1:7]
@@ -228,7 +227,7 @@ function radoncoll!{T}(dest::Union{DenseArray{T,1}, DenseArray{T,2}}, elements::
     @inbounds for (eidx, elem) in enumerate(elements)
         u = elem.v2 - elem.v1
         v = elem.v3 - elem.v1
-        area = 2. * elem.area
+        area = 2 * elem.area
 
         # compute cubature points
         # devectorized version of cubpts = [u * ξ[i] + v * η[i] + elem.v1 for i in 1:7]
