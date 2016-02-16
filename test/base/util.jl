@@ -1,4 +1,4 @@
-import ProteinES: eye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
+using ProteinES: eye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
 
 context("eye!") do
     for T in (Int, testtypes...)

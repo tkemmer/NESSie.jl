@@ -1,5 +1,5 @@
 using ProteinES.Nonlocal
-import ProteinES.Nonlocal: basisfunctions, localstiffness
+using ProteinES.Nonlocal: basisfunctions, localstiffness
 
 context("basisfunctions") do
     for T in testtypes

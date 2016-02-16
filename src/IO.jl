@@ -1,8 +1,8 @@
 module IO
 
 using ..ProteinES
-import ..ProteinES: reverseindex, unpack, vertexnormals
-import JSON: json
+using ..ProteinES: reverseindex, unpack, vertexnormals
+using JSON: json
 
 export readhmo, readmatlab, readoff, readpqr, xml3dmesh
 

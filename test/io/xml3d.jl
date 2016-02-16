@@ -1,5 +1,5 @@
 using ProteinES.IO
-import JSON: parse
+using JSON: parse
 
 context("xml3dmesh") do
     for T in testtypes

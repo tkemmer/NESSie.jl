@@ -1,5 +1,5 @@
 using ProteinES.IO
-import ProteinES.IO: readoff_nodes, readoff_elements
+using ProteinES.IO: readoff_nodes, readoff_elements
 
 testfiles = ((mktemp()..., (0,0)), # empty file
              (mktemp()..., (3,2))) # dummy file

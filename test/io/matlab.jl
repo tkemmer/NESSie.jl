@@ -1,5 +1,5 @@
 using ProteinES.IO
-import ProteinES.IO: readmatlab_nodes, readmatlab_elements
+using ProteinES.IO: readmatlab_nodes, readmatlab_elements
 
 testfiles = ((mktemp()..., (0,0)), # empty file
              (mktemp()..., (4,2))) # dummy file

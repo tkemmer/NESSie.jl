@@ -1,5 +1,5 @@
 using ProteinES.Rjasanow
-import ProteinES.Rjasanow: laplacepot
+using ProteinES.Rjasanow: laplacepot
 
 @pending laplacecoll! --> :nothing
 
