@@ -7,7 +7,7 @@
         List of surface elements
     @return ASCIIString
 =#
-function xml3dmesh{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false)
+function xml3djson{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false)
     revidx = reverseindex(nodes)
     json(Dict(
         "format" => "xml3d-json",

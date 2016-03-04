@@ -4,7 +4,7 @@ using ..ProteinES
 using ..ProteinES: reverseindex, unpack, vertexnormals
 using JSON: json
 
-export readhmo, readmatlab, readoff, readpqr, xml3dmesh
+export readhmo, readmatlab, readoff, readpqr, xml3djson
 
 include("io/hmo.jl")
 include("io/matlab.jl")

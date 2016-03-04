@@ -1,10 +1,10 @@
 using ProteinES.IO
 using JSON: parse
 
-context("xml3dmesh") do
+context("xml3djson") do
     for T in testtypes
         # empty system
-        js = parse(xml3dmesh(Vector{T}[], Triangle{T}[]))
+        js = parse(xml3djson(Vector{T}[], Triangle{T}[]))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
         @fact js["data"]["index"]["type"] --> "int"
@@ -21,7 +21,7 @@ context("xml3dmesh") do
         elements = [Triangle(nodes[1], nodes[2], nodes[3]),
                     Triangle(nodes[1], nodes[4], nodes[2])]
         map(props!, elements)
-        js = parse(xml3dmesh(nodes, elements))
+        js = parse(xml3djson(nodes, elements))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
         @fact js["data"]["index"]["type"] --> "int"
@@ -36,7 +36,7 @@ context("xml3dmesh") do
             [√360 \ [-9 - √90, -3, 0]; √360 \ [-9 - √90, -3, 0]; [-1, 0, 0]; √90 \ [-9, -3, 0]]
         ))
         # small system, inverted normals
-        js = parse(xml3dmesh(nodes, elements, true))
+        js = parse(xml3djson(nodes, elements, true))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
         @fact js["data"]["index"]["type"] --> "int"
