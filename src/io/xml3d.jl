@@ -1,4 +1,24 @@
 #=
+    Returns a point cloud representation of the given system in a XML3D-specific JSON format.
+
+    @param nodes
+        List of nodes
+    @return ASCIIString
+=#
+function xml3djson{T}(nodes::Vector{Vector{T}})
+    json(Dict(
+        "format" => "xml3d-json",
+        "version" => "0.4.0",
+        "data" => Dict(
+            "position" => Dict(
+                "type" => "float3",
+                "seq" => [Dict{ASCIIString, Vector{Float64}}("value" => unpack(nodes))]
+            )
+        )
+    ))
+end
+
+#=
     Returns a mesh representation of the given system in a XML3D-specific JSON format.
 
     @param nodes
@@ -27,4 +47,23 @@ function xml3djson{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, i
             )
         )
     ))
+end
+
+#=
+    Returns a point cloud representation of the given system in a XML3D-specific XML format.
+
+    @param nodes
+        List of nodes
+    @return ASCIIString
+=#
+function xml3dmesh{T}(nodes::Vector{T})
+    xdoc = XMLDocument()
+    xroot = create_root(xdoc, "xml3d")
+    set_attribute(xroot, "xmlns", "http://www.xml3d.org/2009/xml3d")
+    xmesh = new_child(xroot, "data")
+    set_attribute(xmesh, "id", "mesh")
+    xpos = new_child(xmesh, "float3")
+    set_attribute(xpos, "name", "position")
+    add_text(xpos, join(unpack(nodes), " "))
+    string(xdoc)
 end
