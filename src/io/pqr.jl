@@ -1,5 +1,10 @@
 #=
     Reads protein partial charges from the given PQR file.
+
+    @param stream
+        Handle to PQR file
+    @param _
+        Data type T for return value
 =#
 function readpqr{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     charges = Charge{T}[]
@@ -9,3 +14,4 @@ function readpqr{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     end
     charges
 end
+readpqr{T}(fname::ASCIIString, ::Type{T}=Float64) = open(fh -> readpqr(fh, T), fname)

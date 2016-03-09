@@ -2,23 +2,27 @@
     Reads the GAMer-generated volume mesh from the given mcsf file.
 
     @param stream
-                Handle to mcsf file
+        Handle to mcsf file
     @param _
-                Data type T for return value
+        Data type T for return value
+    @param domain
+        Element domain
     @return (Vector{Vector{T}}, Vector{Tetrahedron{T}})
 =#
-function readmcsf{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
+function readmcsf{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64; domain::Symbol=:nothing)
     nodes = readmcsf_nodes(stream, T)
-    (nodes, readmcsf_elements(stream, nodes, T))
+    (nodes, readmcsf_elements(stream, nodes, T, domain=domain))
 end
+readmcsf{T}(fname::ASCIIString, ::Type{T}=Float64; domain::Symbol=:nothing) = open(fh -> readmcsf(fh, T, domain=domain), fname)
+readmcsf{T}(fnameΩ::ASCIIString, fnameΣ::ASCIIString, ::Type{T}) = meshunion(readmcsf(fnameΩ, T, domain=:Ω)..., readmcsf(fnameΣ, T, domain=:Σ)...)
 
 #=
     Reads the nodes of a GAMer-generated volume mesh from the given mcsf file.
 
     @param stream
-                Handle to mcsf file
+        Handle to mcsf file
     @param _
-                Data type T for return value
+        Data type T for return value
     @return Vector{Vector{T}}
 =#
 function readmcsf_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
@@ -36,20 +40,20 @@ end
     Reads the tetrahedra of a GAMer-generated volume mesh from the given mcsf file.
 
     @param stream
-                Handle to mcsf file
+        Handle to mcsf file
     @param nodes
-                List of reference nodes
+        List of reference nodes
     @param _
-                Data type T for return value
+        Data type T for return value
     @return Vector{Tetrahedron{T}}
 =#
-function readmcsf_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Vector{T}}, ::Type{T}=Float64)
+function readmcsf_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Vector{T}}, ::Type{T}=Float64; domain::Symbol=:nothing)
     elements = Tetrahedron{T}[]
     seek(stream, "simp=[")
     for line in eachline(stream)
         startswith(line, "%") && continue        # skip comments
         startswith(line, "];") && break          # all simplices read
-        push!(elements, Tetrahedron([nodes[parse(Int, e)+1] for e in split(line)[8:end]]...))
+        push!(elements, Tetrahedron([nodes[parse(Int, e)+1] for e in split(line)[8:end]]..., domain))
     end
     elements
 end

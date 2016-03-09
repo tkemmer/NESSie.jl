@@ -35,15 +35,15 @@ end
 
     @param nodesΩ
         First node list
-    @param nodesΣ
-        Second node list
     @param elementsΩ
         First element list
+    @param nodesΣ
+        Second node list
     @param elementsΣ
         Second element list
     @return (Vector{Vector{T}}, Vector{Tetrahedron{T}})
 =#
-function meshunion{T}(nodesΩ::Vector{Vector{T}}, nodesΣ::Vector{Vector{T}}, elementsΩ::Vector{Tetrahedron{T}}, elementsΣ::Vector{Tetrahedron{T}})
+function meshunion{T}(nodesΩ::Vector{Vector{T}}, elementsΩ::Vector{Tetrahedron{T}}, nodesΣ::Vector{Vector{T}}, elementsΣ::Vector{Tetrahedron{T}})
     # find nodes that are to be replaced (tbr)
     obsolete = nodesΣ ∩ nodesΩ
     tbr = Dict{Vector{T}, Int}(zip(obsolete, indexin(obsolete, nodesΩ)))

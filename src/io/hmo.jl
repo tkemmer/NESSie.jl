@@ -2,23 +2,24 @@
     Reads all data from the given HMO file.
 
     @param stream
-                Handle to HMO file
+        Handle to HMO file
     @param _
-                Data type T for return value
+        Data type T for return value
     @return (Vector{Vector{T}}, Vector{Triangle{T}}, Vector{Charge{T}})
 =#
 function readhmo{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     nodes = readhmo_nodes(stream, T)
     (nodes, readhmo_elements(stream, nodes, T), readhmo_charges(stream, T))
 end
+readhmo{T}(fname::ASCIIString, ::Type{T}=Float64) = open(fh -> readhmo(fh, T), fname)
 
 #=
     Reads all node data from the given HMO file.
 
     @param stream
-                Handle to HMO file
+        Handle to HMO file
     @param _
-                Data type T for return value
+        Data type T for return value
     @return Vector{Vector{T}}
 =#
 function readhmo_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
@@ -36,11 +37,11 @@ end
     Reads all element data from the given HMO file.
 
     @param stream
-                Handle to HMO file
+        Handle to HMO file
     @param nodes
-                List of referenced nodes
+        List of referenced nodes
     @param _
-                Data type T for return value
+        Data type T for return value
     @return Vector{Vector{T}}
 =#
 function readhmo_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Vector{T}}, ::Type{T}=T)
@@ -58,9 +59,9 @@ end
     Reads all charge data from the given HMO file.
 
     @param stream
-                Handle to HMO file
+        Handle to HMO file
     @param _
-                Data type T for return value
+        Data type T for return value
     @return Vector{Charge{T}}
 =#
 function readhmo_charges{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
