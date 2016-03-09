@@ -197,7 +197,7 @@ end
 context("meshunion") do
     for T in testtypes
         # empty lists
-        nodes, elements = meshunion(Vector{T}[], Vector{T}[], Tetrahedron{T}[], Tetrahedron{T}[])
+        nodes, elements = meshunion(Vector{T}[], Tetrahedron{T}[], Vector{T}[], Tetrahedron{T}[])
         @fact typeof(nodes) --> Vector{Vector{T}}
         @fact typeof(elements) --> Vector{Tetrahedron{T}}
         @fact length(nodes) --> 0
@@ -205,9 +205,9 @@ context("meshunion") do
         # small system
         nodesΩ = Vector{T}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
         nodesΣ = Vector{T}[[0, 0, 0], [-1, 0, 0], [0, -1, 0], [0, 0, -1]]
-        elementsΩ = [Tetrahedron{T}(nodesΩ...), Tetrahedron{T}(nodesΩ...)]
-        elementsΣ = [Tetrahedron{T}(nodesΣ...)]
-        nodes, elements = meshunion(nodesΩ, nodesΣ, elementsΩ, elementsΣ)
+        elementsΩ = [Tetrahedron(nodesΩ...), Tetrahedron(nodesΩ...)]
+        elementsΣ = [Tetrahedron(nodesΣ...)]
+        nodes, elements = meshunion(nodesΩ, elementsΩ, nodesΣ, elementsΣ)
         oids = Set([object_id(e) for e in nodes])
         @fact typeof(nodes) --> Vector{Vector{T}}
         @fact typeof(elements) --> Vector{Tetrahedron{T}}
