@@ -22,7 +22,9 @@ type Tetrahedron{T} <: Element{T}
     v2::Vector{T}       # position of the second node
     v3::Vector{T}       # position of the third node
     v4::Vector{T}       # position of the fourth node
+    domain::Symbol      # element domain (solvent :Σ, solute :Ω, or :nothing)
 end
+Tetrahedron{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}, v4::Vector{T}) = Tetrahedron(v1, v2, v3, v4, :nothing)
 
 #=
     Representation of a single charge.
