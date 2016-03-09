@@ -3,7 +3,7 @@
     area.
 
     @param elem
-                Triangle of interest
+        Triangle of interest
 =#
 function props!{T}(elem::Triangle{T})
     # reject degenerate triangles
@@ -23,6 +23,41 @@ function props!{T}(elem::Triangle{T})
     # compute area
     elem.area = 2 \ vnorm
     nothing
+end
+
+#=
+    Merges two lists of nodes and elements, e.g., the volume meshes of a protein and the
+    solvent. Duplicate nodes (e.g., the nodes on the protein surface) are merged into a
+    single node, duplicate elements (if any) are retained.
+
+    Note that this function assumes that there are no duplicates within either of the
+    node lists.
+
+    @param nodesΩ
+        First node list
+    @param nodesΣ
+        Second node list
+    @param elementsΩ
+        First element list
+    @param elementsΣ
+        Second element list
+    @return (Vector{Vector{T}}, Vector{Tetrahedron{T}})
+=#
+function meshunion{T}(nodesΩ::Vector{Vector{T}}, nodesΣ::Vector{Vector{T}}, elementsΩ::Vector{Tetrahedron{T}}, elementsΣ::Vector{Tetrahedron{T}})
+    # find nodes that are to be replaced (tbr)
+    obsolete = nodesΣ ∩ nodesΩ
+    tbr = Dict{Vector{T}, Int}(zip(obsolete, indexin(obsolete, nodesΩ)))
+
+    elements = copy(elementsΣ)
+    for elem in elementsΣ
+        haskey(tbr, elem.v1) && (elem.v1 = nodesΩ[tbr[elem.v1]])
+        haskey(tbr, elem.v2) && (elem.v2 = nodesΩ[tbr[elem.v2]])
+        haskey(tbr, elem.v3) && (elem.v3 = nodesΩ[tbr[elem.v3]])
+        haskey(tbr, elem.v4) && (elem.v4 = nodesΩ[tbr[elem.v4]])
+    end
+    append!(elements, elementsΩ)
+
+    collect(Set(nodesΣ) ∪ Set(nodesΩ)), elements
 end
 
 #=

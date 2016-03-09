@@ -7,7 +7,7 @@ export
     # types.jl
     Element, Triangle, Tetrahedron, Charge, Option, SingleLayer, DoubleLayer, PotentialType,
     # util.jl
-    props!,
+    props!, meshunion,
     # this file
     defaultopt, ε0
 

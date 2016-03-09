@@ -194,6 +194,40 @@ context("cos") do
     end
 end
 
+context("meshunion") do
+    for T in testtypes
+        # empty lists
+        nodes, elements = meshunion(Vector{T}[], Vector{T}[], Tetrahedron{T}[], Tetrahedron{T}[])
+        @fact typeof(nodes) --> Vector{Vector{T}}
+        @fact typeof(elements) --> Vector{Tetrahedron{T}}
+        @fact length(nodes) --> 0
+        @fact length(elements) --> 0
+        # small system
+        nodesΩ = Vector{T}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        nodesΣ = Vector{T}[[0, 0, 0], [-1, 0, 0], [0, -1, 0], [0, 0, -1]]
+        elementsΩ = [Tetrahedron{T}(nodesΩ...), Tetrahedron{T}(nodesΩ...)]
+        elementsΣ = [Tetrahedron{T}(nodesΣ...)]
+        nodes, elements = meshunion(nodesΩ, nodesΣ, elementsΩ, elementsΣ)
+        oids = Set([object_id(e) for e in nodes])
+        @fact typeof(nodes) --> Vector{Vector{T}}
+        @fact typeof(elements) --> Vector{Tetrahedron{T}}
+        @fact length(nodes) --> 7
+        @fact length(elements) --> 3
+        for node in nodesΩ ∪ nodesΣ
+            @fact node ∈ nodes --> true
+        end
+        @fact elementsΩ[1] ∈ elements --> true
+        @fact elementsΩ[2] ∈ elements --> true
+        @fact elementsΣ[1] ∈ elements --> true
+        @fact elementsΣ[1].v1 --> exactly(nodesΩ[1])
+        for elem in elements
+            for v in (elem.v1, elem.v2, elem.v3, elem.v4)
+                v ∈ oids
+            end
+        end
+    end
+end
+
 @pending cathetus --> :nothing
 @pending sign --> :nothing
 @pending distance --> :nothing
