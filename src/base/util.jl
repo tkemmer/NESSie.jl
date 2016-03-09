@@ -26,17 +26,6 @@ function props!{T}(elem::Triangle{T})
 end
 
 #=
-    Returns a dictionary that links each node pointer to the corresponding index in
-    the `nodes` list. Registers only the last index if the same node is included
-    multiple times.
-
-    @param nodes
-        List of nodes
-    @return Dict{Pointer{T}, Int}
-=#
-indexmap{T}(nodes::Vector{Vector{T}}) = Dict([pointer(node) => i for (i, node) in enumerate(nodes)])
-
-#=
     Unpacks the given vector of vectors into a single vector:
     [[1, 2, 3], [4, 5, 6]] => [1, 2, 3, 4, 5, 6]
 
