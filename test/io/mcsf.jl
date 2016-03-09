@@ -1,5 +1,5 @@
 using ProteinES.IO
-using ProteinES.IO: readmatlab_nodes, readmatlab_elements
+using ProteinES.IO: readmcsf_nodes, readmcsf_elements
 
 testfiles = ((mktemp()..., (0,0)), # empty file
              (mktemp()..., (4,2))) # dummy file
@@ -28,18 +28,18 @@ simp=[
 ];
 mcsf_end=1;""")
 
-context("readmatlab") do
+context("readmcsf") do
     try
         for (fname, fh, len) in testfiles, fn in ("single", "bulk"), T in testtypes
             seekstart(fh)
             nodes = (); elements = ()
             if fn == "single"
                 # check single methods
-                nodes = readmatlab_nodes(fh, T)
-                elements = readmatlab_elements(fh, nodes, T)
+                nodes = readmcsf_nodes(fh, T)
+                elements = readmcsf_elements(fh, nodes, T)
             elseif fn == "bulk"
                 # check bulk method
-                nodes, elements = readmatlab(fh, T)
+                nodes, elements = readmcsf(fh, T)
             end
             # check return types
             @fact typeof(nodes) --> Vector{Vector{T}}

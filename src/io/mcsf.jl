@@ -1,27 +1,27 @@
 #=
-    Reads the GAMer-generated volume mesh from the given MATLAB file.
+    Reads the GAMer-generated volume mesh from the given mcsf file.
 
     @param stream
-                Handle to MATLAB file
+                Handle to mcsf file
     @param _
                 Data type T for return value
     @return (Vector{Vector{T}}, Vector{Tetrahedron{T}})
 =#
-function readmatlab{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
-    nodes = readmatlab_nodes(stream, T)
-    (nodes, readmatlab_elements(stream, nodes, T))
+function readmcsf{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
+    nodes = readmcsf_nodes(stream, T)
+    (nodes, readmcsf_elements(stream, nodes, T))
 end
 
 #=
-    Reads the nodes of a GAMer-generated volume mesh from the given MATLAB file.
+    Reads the nodes of a GAMer-generated volume mesh from the given mcsf file.
 
     @param stream
-                Handle to MATLAB file
+                Handle to mcsf file
     @param _
                 Data type T for return value
     @return Vector{Vector{T}}
 =#
-function readmatlab_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
+function readmcsf_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     nodes = Vector{T}[]
     seek(stream, "vert=[")
     for line in eachline(stream)
@@ -33,17 +33,17 @@ function readmatlab_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float6
 end
 
 #=
-    Reads the tetrahedra of a GAMer-generated volume mesh from the given MATLAB file.
+    Reads the tetrahedra of a GAMer-generated volume mesh from the given mcsf file.
 
     @param stream
-                Handle to MATLAB file
+                Handle to mcsf file
     @param nodes
                 List of reference nodes
     @param _
                 Data type T for return value
     @return Vector{Tetrahedron{T}}
 =#
-function readmatlab_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Vector{T}}, ::Type{T}=Float64)
+function readmcsf_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Vector{T}}, ::Type{T}=Float64)
     elements = Tetrahedron{T}[]
     seek(stream, "simp=[")
     for line in eachline(stream)

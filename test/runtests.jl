@@ -4,7 +4,7 @@ using FactCheck
 # All tests. Will be used if no command line arguments are given.
 const tests = [
     "base/types.jl", "base/util.jl",
-    "io/hmo", "io/matlab", "io/off", "io/pqr", "io/xml3d",
+    "io/hmo", "io/mcsf", "io/off", "io/pqr", "io/xml3d",
     "local/bem", "local/misc",
     "nonlocal/bem", "nonlocal/fem",
     "radon", "rjasanow"]
