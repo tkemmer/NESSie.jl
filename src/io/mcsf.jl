@@ -9,11 +9,11 @@
         Element domain
     @return (Vector{Vector{T}}, Vector{Tetrahedron{T}})
 =#
-function readmcsf{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64; domain::Symbol=:nothing)
+function readmcsf{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64; domain::Symbol=:none)
     nodes = readmcsf_nodes(stream, T)
     (nodes, readmcsf_elements(stream, nodes, T, domain=domain))
 end
-readmcsf{T}(fname::ASCIIString, ::Type{T}=Float64; domain::Symbol=:nothing) = open(fh -> readmcsf(fh, T, domain=domain), fname)
+readmcsf{T}(fname::ASCIIString, ::Type{T}=Float64; domain::Symbol=:none) = open(fh -> readmcsf(fh, T, domain=domain), fname)
 readmcsf{T}(fnameΩ::ASCIIString, fnameΣ::ASCIIString, ::Type{T}) = meshunion(readmcsf(fnameΩ, T, domain=:Ω)..., readmcsf(fnameΣ, T, domain=:Σ)...)
 
 #=
@@ -47,7 +47,7 @@ end
         Data type T for return value
     @return Vector{Tetrahedron{T}}
 =#
-function readmcsf_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Vector{T}}, ::Type{T}=Float64; domain::Symbol=:nothing)
+function readmcsf_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Vector{T}}, ::Type{T}=Float64; domain::Symbol=:none)
     elements = Tetrahedron{T}[]
     seek(stream, "simp=[")
     for line in eachline(stream)
