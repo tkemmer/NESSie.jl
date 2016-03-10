@@ -2,7 +2,7 @@ module Nonlocal
 
 using ..ProteinES
 using ..ProteinES: Radon, Rjasanow, eye!, gemv!, axpy!, reverseindex
-using ..ProteinES.Local: φmol, ∂ₙφmol
+using ..ProteinES.Local: φmol, ∂ₙφmol, ∇φmol
 using Distances: euclidean
 
 export

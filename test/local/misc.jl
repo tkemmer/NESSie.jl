@@ -32,3 +32,5 @@ context("φmol and ∂ₙφmol") do
         @fact qmol --> roughly(T[√5, 1593/25/√769])
     end
 end
+
+@pending ∇φmol --> :nothing
