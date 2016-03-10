@@ -40,8 +40,8 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     eye!(m33, 2π)
 
     # compute molecular potential for the point charges
-    umol = opt.εΩ \ φmol(elements, charges)
-    qmol = opt.εΩ \ ∂ₙφmol(elements, charges)
+    umol = εΩ \ φmol(elements, charges)
+    qmol = εΩ \ ∂ₙφmol(elements, charges)
 
     # create right hand side
     rhs = zeros(T, 3 * numelem)
@@ -118,4 +118,20 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
 
     # solve system
     m\rhs
+end
+
+function φΩ{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, LaplaceMod::Module=Rjasanow, opt::Option{T}=defaultopt(T))
+    c = cauchy(elements, charges, LaplaceMod, opt)
+    numelem = length(elements)
+    φ = zeros(T, length(nodes))
+
+    # convenient access
+    γ0intφstar = c[1:numelem]
+    γ1intφstar = c[1+numelem:2numelem]
+
+    LaplaceMod.laplacecoll!(DoubleLayer, φ, elements, nodes, γ0intφstar)
+    scale!(φ, -1)
+    LaplaceMod.laplacecoll!(SingleLayer, φ, elements, nodes, γ1intφstar)
+    scale!(φ, 2)
+    T(1.69e-9 / 4π / ε0) * (4π \ φ + opt.εΩ \ φmol(nodes, charges))
 end
