@@ -1,7 +1,10 @@
+#=
+    Elements
+=#
 abstract Element{T <: AbstractFloat}
 
 #=
-    Representation of a single surface triangle.
+    Representation of a single surface triangle
 =#
 type Triangle{T} <: Element{T}
     v1::Vector{T}       # position of the first node
@@ -15,7 +18,7 @@ end
 Triangle{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}) = Triangle(v1, v2, v3, T[], T[], zero(T), zero(T))
 
 #=
-    Representation of a tetrahedron.
+    Representation of a tetrahedron
 =#
 type Tetrahedron{T} <: Element{T}
     v1::Vector{T}       # position of the first node
@@ -27,7 +30,7 @@ end
 Tetrahedron{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}, v4::Vector{T}) = Tetrahedron(v1, v2, v3, v4, :none)
 
 #=
-    Representation of a single charge.
+    Representation of a single charge
 =#
 type Charge{T <: AbstractFloat}
     pos::Vector{T}  # position of the charge
@@ -37,7 +40,7 @@ Charge{T <: AbstractFloat}(args::T...) = Charge{T}([args[1:end-1]...], args[end]
 Charge(T::DataType, args...) = Charge{T}(convert(Vector{T}, [args[1:end-1]...]), convert(T, args[end]))
 
 #=
-    Constants.
+    Constants
 =#
 immutable Option{T <: AbstractFloat}
     εΩ::T       # dielectric constant of the solute
@@ -49,8 +52,34 @@ end
 Option{T <: AbstractFloat}(εΩ::T, εΣ::T, ε∞::T, λ::T) = Option(εΩ, εΣ, ε∞, λ, √(εΣ/ε∞)/λ)
 
 #=
-    Enum-like representation of potential types.
+    Enum-like representation of potential types
 =#
 abstract PotentialType
 type SingleLayer <: PotentialType end
 type DoubleLayer <: PotentialType end
+
+#=
+    Quadrature points
+=#
+abstract QuadraturePoints{T <: AbstractFloat}
+
+#=
+    Quadrature points in 2D
+=#
+immutable QuadPts2D{T} <: QuadraturePoints{T}
+    num::Int            # number of points
+    x::Vector{T}        # x values
+    y::Vector{T}        # y values
+    weight::Vector{T}   # weights
+end
+
+#=
+    Quadrature points in 3D
+=#
+immutable QuadPts3D{T} <: QuadraturePoints{T}
+    num::Int            # number of points
+    x::Vector{T}        # x values
+    y::Vector{T}        # y values
+    z::Vector{T}        # z values
+    weight::Vector{T}   # weights
+end

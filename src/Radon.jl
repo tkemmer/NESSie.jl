@@ -217,13 +217,9 @@ function radoncoll!{T}(dest::Union{DenseArray{T,1}, DenseArray{T,2}}, elements::
     isvec && @assert length(dest) == length(ξlist)
     isvec || @assert size(dest) == (length(ξlist), length(elements))
 
-    const r15 = √15
-    const ξ = T[1/3, (6+r15)/21, (9-2r15)/21, (6+r15)/21, (6-r15)/21, (9+2r15)/21, (6-r15)/21]
-    const η = T[1/3, (9-2r15)/21, (6+r15)/21, (6+r15)/21, (9+2r15)/21, (6-r15)/21, (6-r15)/21]
-    const μ = T[9/80, (155+r15)/2400, (155+r15)/2400, (155+r15)/2400, (155-r15)/2400, (155-r15)/2400, (155-r15)/2400]
-
     # pre-allocate memory for cubature points
-    cubpts = [zeros(T, 3) for _ in 1:7]
+    qpts = quadraturepoints(Triangle, T)
+    cubpts = [zeros(T, 3) for _ in 1:qpts.num]
 
     @inbounds for (eidx, elem) in enumerate(elements)
         u = elem.v2 - elem.v1
@@ -232,14 +228,14 @@ function radoncoll!{T}(dest::Union{DenseArray{T,1}, DenseArray{T,2}}, elements::
 
         # compute cubature points
         # devectorized version of cubpts = [u * ξ[i] + v * η[i] + elem.v1 for i in 1:7]
-        for i in 1:7, j in 1:3
-            cubpts[i][j] = ξ[i] * u[j] + η[i] * v[j] + elem.v1[j]
+        for i in 1:qpts.num, j in 1:3
+            cubpts[i][j] = qpts.x[i] * u[j] + qpts.y[i] * v[j] + elem.v1[j]
         end
 
         for (oidx, obs) in enumerate(ξlist)
             value = zero(T)
-            for i in 1:7
-                value += solution(cubpts[i], obs, elem.normal, opt) * μ[i]
+            for i in 1:qpts.num
+                value += solution(cubpts[i], obs, elem.normal, opt) * qpts.weight[i]
             end
             isvec ?
                 dest[oidx] += value * area * fvals[eidx] :

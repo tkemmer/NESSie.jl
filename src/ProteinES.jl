@@ -5,7 +5,9 @@ import Base.LinAlg.BLAS: gemv!, axpy!
 
 export
     # types.jl
-    Element, Triangle, Tetrahedron, Charge, Option, SingleLayer, DoubleLayer, PotentialType,
+    Element, Triangle, Tetrahedron, Charge, Option, SingleLayer, DoubleLayer, PotentialType, QuadraturePoints, QuadPts2D, QuadPts2D,
+    # quad.jl
+    quadraturepoints,
     # util.jl
     props!, meshunion,
     # this file
@@ -15,6 +17,7 @@ export
 const ε0 = 1/ (4π * 1e-7 * 299792458^2)
 
 include("base/types.jl")
+include("base/quad.jl")
 include("base/util.jl")
 
 # Default options
