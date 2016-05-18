@@ -30,7 +30,7 @@ end
 Tetrahedron{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}, v4::Vector{T}) = Tetrahedron(v1, v2, v3, v4, :none)
 
 #=
-    Representation of a single charge
+    Representation of a single point charge
 =#
 type Charge{T <: AbstractFloat}
     pos::Vector{T}  # position of the charge
@@ -41,6 +41,7 @@ Charge(T::DataType, args...) = Charge{T}(convert(Vector{T}, [args[1:end-1]...]),
 
 #=
     Constants
+    TODO move yukawa to a more suitable place
 =#
 immutable Option{T <: AbstractFloat}
     εΩ::T       # dielectric constant of the solute

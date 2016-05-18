@@ -227,7 +227,7 @@ function radoncoll!{T}(dest::Union{DenseArray{T,1}, DenseArray{T,2}}, elements::
         area = 2 * elem.area
 
         # compute cubature points
-        # devectorized version of cubpts = [u * ξ[i] + v * η[i] + elem.v1 for i in 1:7]
+        # devectorized version of cubpts = [u * qpts.x[i] + v * qpts.y[i] + elem.v1 for i in 1:7]
         for i in 1:qpts.num, j in 1:3
             cubpts[i][j] = qpts.x[i] * u[j] + qpts.y[i] * v[j] + elem.v1[j]
         end
