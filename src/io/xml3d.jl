@@ -3,7 +3,7 @@
 
     @param nodes
         List of nodes
-    @return ASCIIString
+    @return String
 =#
 function xml3djson{T}(nodes::Vector{Vector{T}})
     json(Dict(
@@ -12,7 +12,7 @@ function xml3djson{T}(nodes::Vector{Vector{T}})
         "data" => Dict(
             "position" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{ASCIIString, Vector{Float64}}("value" => unpack(nodes))]
+                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(nodes))]
             )
         )
     ))
@@ -25,7 +25,7 @@ end
         List of nodes
     @param elements
         List of surface elements
-    @return ASCIIString
+    @return String
 =#
 function xml3djson{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false)
     revidx = reverseindex(nodes)
@@ -35,15 +35,15 @@ function xml3djson{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, i
         "data" => Dict(
             "index" => Dict(
                 "type" => "int",
-                "seq" => [Dict{ASCIIString, Vector{Int}}("value" => [revidx[object_id(n)]-1 for n in unpack([Vector{T}[o.v1, o.v2, o.v3] for o in elements])])]
+                "seq" => [Dict{String, Vector{Int}}("value" => [revidx[object_id(n)]-1 for n in unpack([Vector{T}[o.v1, o.v2, o.v3] for o in elements])])]
             ),
             "position" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{ASCIIString, Vector{Float64}}("value" => unpack(nodes))]
+                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(nodes))]
             ),
             "normal" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{ASCIIString, Vector{Float64}}("value" => unpack(vertexnormals(nodes, elements, invertnormals)))]
+                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(vertexnormals(nodes, elements, invertnormals)))]
             )
         )
     ))
@@ -54,7 +54,7 @@ end
 
     @param nodes
         List of nodes
-    @return ASCIIString
+    @return String
 =#
 function xml3dmesh{T}(nodes::Vector{T})
     xdoc = XMLDocument()

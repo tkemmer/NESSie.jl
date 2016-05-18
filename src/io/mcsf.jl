@@ -13,8 +13,8 @@ function readmcsf{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64; domai
     nodes = readmcsf_nodes(stream, T)
     (nodes, readmcsf_elements(stream, nodes, T, domain=domain))
 end
-readmcsf{T}(fname::ASCIIString, ::Type{T}=Float64; domain::Symbol=:none) = open(fh -> readmcsf(fh, T, domain=domain), fname)
-readmcsf{T}(fnameΩ::ASCIIString, fnameΣ::ASCIIString, ::Type{T}) = meshunion(readmcsf(fnameΩ, T, domain=:Ω)..., readmcsf(fnameΣ, T, domain=:Σ)...)
+readmcsf{T}(fname::String, ::Type{T}=Float64; domain::Symbol=:none) = open(fh -> readmcsf(fh, T, domain=domain), fname)
+readmcsf{T}(fnameΩ::String, fnameΣ::String, ::Type{T}) = meshunion(readmcsf(fnameΩ, T, domain=:Ω)..., readmcsf(fnameΣ, T, domain=:Σ)...)
 
 #=
     Reads the nodes of a GAMer-generated volume mesh from the given mcsf file.

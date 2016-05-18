@@ -149,7 +149,7 @@ isdegenerate{T}(elem::Triangle{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
     @param skiptheline
         If true, said line will also be skipped
 =#
-function seek(fh::IOStream, prefix::ASCIIString, skiptheline::Bool=true)
+function seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
     m = -1
     while !eof(fh)
         skiptheline || (m = position(fh))

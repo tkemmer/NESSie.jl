@@ -11,7 +11,7 @@ function readhmo{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     nodes = readhmo_nodes(stream, T)
     (nodes, readhmo_elements(stream, nodes, T), readhmo_charges(stream, T))
 end
-readhmo{T}(fname::ASCIIString, ::Type{T}=Float64) = open(fh -> readhmo(fh, T), fname)
+readhmo{T}(fname::String, ::Type{T}=Float64) = open(fh -> readhmo(fh, T), fname)
 
 #=
     Reads all node data from the given HMO file.

@@ -17,7 +17,7 @@ function readoff{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     nodes = readoff_nodes(stream, numnodes, T)
     (nodes, readoff_elements(stream, numelem, nodes, T))
 end
-readoff{T}(fname::ASCIIString, ::Type{T}=Float64) = open(fh -> readoff(fh, T), fname)
+readoff{T}(fname::String, ::Type{T}=Float64) = open(fh -> readoff(fh, T), fname)
 
 #=
     Reads all node data from the given OFF file.

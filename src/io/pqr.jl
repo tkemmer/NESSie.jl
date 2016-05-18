@@ -14,4 +14,4 @@ function readpqr{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     end
     charges
 end
-readpqr{T}(fname::ASCIIString, ::Type{T}=Float64) = open(fh -> readpqr(fh, T), fname)
+readpqr{T}(fname::String, ::Type{T}=Float64) = open(fh -> readpqr(fh, T), fname)
