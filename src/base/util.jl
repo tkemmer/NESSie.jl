@@ -244,7 +244,7 @@ ddot{T}(u::Vector{T}, v::Vector{T}, n::Vector{T}) = (u[1] - v[1]) * n[1] + (u[2]
         A vector
     @return Dict{UInt, UInt}
 =#
-reverseindex{T}(v::Vector{T}) = Dict{UInt, UInt}([object_id(e) => i for (i,e) in enumerate(v)])
+reverseindex{T}(v::Vector{T}) = Dict{UInt, UInt}(object_id(e) => i for (i,e) in enumerate(v))
 
 # Convenience aliases
 gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!(α, m, v, one(T), dest)
