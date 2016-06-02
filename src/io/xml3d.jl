@@ -56,7 +56,7 @@ end
         List of nodes
     @return String
 =#
-function xml3dmesh{T}(nodes::Vector{T})
+function xml3dmesh{T}(nodes::Vector{Vector{T}})
     xdoc = XMLDocument()
     xroot = create_root(xdoc, "xml3d")
     set_attribute(xroot, "xmlns", "http://www.xml3d.org/2009/xml3d")
