@@ -1,6 +1,8 @@
 .DS_Store
 *.swp
 *.log
+*.o
 main.jl
 data/
+tools/mesher/mesher
 work/
