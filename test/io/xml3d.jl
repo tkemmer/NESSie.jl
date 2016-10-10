@@ -2,18 +2,6 @@ using ProteinES.IO
 using JSON: parse
 using LightXML: parse_string, root, name, child_elements, attribute, content
 
-#=
-    collect() overload to fix LightXML errors in Julia 0.5-dev due
-    to missing length(::XMLElementIter).
-=#
-function collect(xitr::LightXML.XMLElementIter)
-    ret = LightXML.XMLElement[]
-    for e in xitr
-        push!(ret, e)
-    end
-    ret
-end
-
 context("xml3djson") do
     for T in testtypes
         # empty system
