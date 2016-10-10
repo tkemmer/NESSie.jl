@@ -119,25 +119,21 @@ end
 
 context("unpack") do
     for T in testtypes
-        d = unpack(Vector{T}[T[1], T[2], T[3]], 0)
+        d = unpack(Vector{T}[])
         @fact typeof(d) --> Vector{T}
         @fact d --> []
-        d = unpack(Vector{T}[T[1], T[2], T[3]], 1)
+        d = unpack(Vector{T}[T[1], T[2], T[3]])
         @fact typeof(d) --> Vector{T}
         @fact d --> [1, 2, 3]
-        d = unpack(Vector{T}[T[1, 2], T[3, 4]], 1)
-        @fact typeof(d) --> Vector{T}
-        @fact d --> [1, 3]
-        d = unpack(Vector{T}[T[1, 2], T[3, 4]], 2)
+        d = unpack(Vector{T}[T[1, 2], T[3, 4]])
         @fact typeof(d) --> Vector{T}
         @fact d --> [1, 2, 3, 4]
         d = unpack(Vector{T}[T[1, 2, 3], T[4, 5, 6]])
         @fact typeof(d) --> Vector{T}
         @fact d --> [1, 2, 3, 4, 5, 6]
-        d = unpack(Vector{T}[T[1, 2, 3, 4, 5, 6]], 6)
+        d = unpack(Vector{T}[T[1, 2, 3, 4, 5, 6]])
         @fact typeof(d) --> Vector{T}
         @fact d --> [1, 2, 3, 4, 5, 6]
-        @fact_throws BoundsError unpack(Vector{T}[T[1], T[2], T[3]], 2)
     end
 end
 
