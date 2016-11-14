@@ -11,6 +11,8 @@ export laplacecoll!, regularyukawacoll!
 
     Note that the result is premultiplied by 4π!
 
+    TODO regularize
+
     @param x
         Integration variable
     @param ξ
@@ -42,13 +44,15 @@ function laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
 
     1 / rnorm
 end
-laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, ::Option{T}) = laplacepot(x, ξ)
+laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, ::T) = laplacepot(x, ξ)
 
 #=
     Compute the normal derivative of the Laplace potential:
     - 1 / |x-ξ|^2   * (x-ξ) ⋅ n / |x-ξ|
 
     Note that the result is premultiplied by 4π!
+
+    TODO regularize
 
     @param x
         Integration variable
@@ -83,7 +87,7 @@ function ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T
 
     -1 / rnorm^3 * ddot(x, ξ, normal)
 end
-∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::Option{T}) = ∂ₙlaplacepot(x, ξ, normal)
+∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::T) = ∂ₙlaplacepot(x, ξ, normal)
 
 #=
     Compute the regular part of the yukawa potential, that is, Yukawa minus Laplace:
@@ -95,18 +99,18 @@ end
         Integration variable
     @param ξ
         Observation point
-    @param opt
-        Constants to be used
+    @param yukawa
+        Exponent of the fundamental solution of the Yukawa operator (see base/constants.jl)
     @return T
 =#
-function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=defaultopt(T))
+function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, yukawa::T)
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
     rnorm = euclidean(x, ξ)
 
     # limit for |x-ξ| → 0
-    rnorm <= 1e-10 && return -opt.yukawa
+    rnorm <= 1e-10 && return -yukawa
 
-    scalednorm = opt.yukawa * rnorm
+    scalednorm = yukawa * rnorm
 
     # guard against cancellation
     if scalednorm < .1
@@ -127,7 +131,7 @@ function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, opt::Option{T}=d
     # no danger of cancellation
     (exp(-scalednorm) - 1) / rnorm
 end
-regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt::Option{T}=defaultopt(T)) = regularyukawapot(x, ξ, opt)
+regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, yukawa::T) = regularyukawapot(x, ξ, yukawa)
 
 #=
     Compute the normal derivative of the regular part of the yukawa potential, that is,
@@ -145,11 +149,11 @@ regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, opt::Option{
         Observation point
     @param normal
         Normal unit vector at x
-    @param opt
-        Constants to be used
+    @param yukawa
+        Exponent of the fundamental solution of the Yukawa operator (see base/constants.jl)
     @return T
 =#
-function ∂ₙregularyukawapot{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, opt::Option{T}=defaultopt(T))
+function ∂ₙregularyukawapot{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, yukawa::T)
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
     rnorm = euclidean(x, ξ)
 
@@ -157,7 +161,7 @@ function ∂ₙregularyukawapot{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T
     rnorm <= 1e-10 && return zero(T)
 
     cosovernorm2 = ddot(x, ξ, normal) / rnorm^3
-    scalednorm = opt.yukawa * rnorm
+    scalednorm = yukawa * rnorm
 
     # guard against cancellation
     if scalednorm < .1
@@ -207,10 +211,17 @@ end
         laplacepot, ∂ₙlaplacepot
     @param fvals
         Function values of the elements
-    @param opt
-        Constants to be used
+    @param yukawa
+        Exponent of the fundamental solution of the Yukawa operator (see base/constants.jl)
 =#
-function radoncoll!{T}(dest::Union{DenseArray{T,1}, DenseArray{T,2}}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, solution::Function, fvals::DenseArray{T,1}=T[], opt::Option{T}=defaultopt(T))
+function radoncoll!{T}(
+        dest::Union{DenseArray{T,1}, DenseArray{T,2}},
+        elements::Vector{Triangle{T}},
+        ξlist::Vector{Vector{T}},
+        solution::Function,
+        fvals::DenseArray{T,1}=T[],
+        yukawa::T=zero(T)
+    )
     #=== MEMORY-CRITICAL CODE! ===#
     isvec  = isa(dest, DenseArray{T,1})
     isvec && @assert length(fvals) == length(elements)
@@ -235,7 +246,7 @@ function radoncoll!{T}(dest::Union{DenseArray{T,1}, DenseArray{T,2}}, elements::
         for (oidx, obs) in enumerate(ξlist)
             value = zero(T)
             for i in 1:qpts.num
-                value += solution(cubpts[i], obs, elem.normal, opt) * qpts.weight[i]
+                value += solution(cubpts[i], obs, elem.normal, yukawa) * qpts.weight[i]
             end
             isvec ?
                 dest[oidx] += value * area * fvals[eidx] :
@@ -245,14 +256,14 @@ function radoncoll!{T}(dest::Union{DenseArray{T,1}, DenseArray{T,2}}, elements::
     nothing
 end
 
-laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, laplacepot, fvals, opt)
-laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, ∂ₙlaplacepot, fvals, opt)
-laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, laplacepot, T[], opt)
-laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, ∂ₙlaplacepot, T[], opt)
+laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}) = radoncoll!(dest, elements, ξlist, laplacepot, fvals)
+laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}) = radoncoll!(dest, elements, ξlist, ∂ₙlaplacepot, fvals)
+laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}) = radoncoll!(dest, elements, ξlist, laplacepot)
+laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}) = radoncoll!(dest, elements, ξlist, ∂ₙlaplacepot)
 
-regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, regularyukawapot, fvals, opt)
-regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, ∂ₙregularyukawapot, fvals, opt)
-regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, regularyukawapot, T[], opt)
-regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, opt::Option{T}=defaultopt(T)) = radoncoll!(dest, elements, ξlist, ∂ₙregularyukawapot, T[], opt)
+regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, yukawa::T) = radoncoll!(dest, elements, ξlist, regularyukawapot, fvals, yukawa)
+regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, yukawa::T) = radoncoll!(dest, elements, ξlist, ∂ₙregularyukawapot, fvals, yukawa)
+regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, yukawa::T) = radoncoll!(dest, elements, ξlist, regularyukawapot, T[], yukawa)
+regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, yukawa::T) = radoncoll!(dest, elements, ξlist, ∂ₙregularyukawapot, T[], yukawa)
 
 end # module

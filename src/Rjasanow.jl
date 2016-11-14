@@ -245,9 +245,6 @@ function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::Union{DenseAr
     end
     nothing
 end
-laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, fvals::DenseArray{T, 1}, ::Option{T}) = laplacecoll!(ptype, dest, elements, ξlist, fvals)
-laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, ξlist::Vector{Vector{T}}, ::Option{T}) = laplacecoll!(ptype, dest, elements, ξlist)
-
 
 #=
     Helper function to compute

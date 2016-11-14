@@ -15,9 +15,10 @@
 =#
 function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, LaplaceMod::Module=Rjasanow, opt::Option{T}=defaultopt(T))
     # convient access to constants
-    const εΩ = opt.εΩ
-    const εΣ = opt.εΣ
-    const ε∞ = opt.ε∞
+    const εΩ  = opt.εΩ
+    const εΣ  = opt.εΣ
+    const ε∞  = opt.ε∞
+    const yuk = yukawa(opt)
 
     # create system matrix
     const numelem = length(elements)
@@ -60,7 +61,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
         generate and apply Kʸ-K
     =#
     buffer = Array(T, numelem, numelem)
-    Radon.regularyukawacoll!(DoubleLayer, buffer, elements, ξlist, opt)
+    Radon.regularyukawacoll!(DoubleLayer, buffer, elements, ξlist, yuk)
 
     # β += (1-εΩ/εΣ)(Kʸ-K)umol
     gemv!(1-εΩ/εΣ, buffer, umol, β)
@@ -74,7 +75,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     #=
         generate and apply Vʸ-V
     =#
-    Radon.regularyukawacoll!(SingleLayer, buffer, elements, ξlist, opt)
+    Radon.regularyukawacoll!(SingleLayer, buffer, elements, ξlist, yuk)
 
     # β += (εΩ/εΣ - εΩ/ε∞)(Vʸ-V)qmol
     gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
@@ -85,7 +86,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     #=
         generate and apply K
     =#
-    LaplaceMod.laplacecoll!(DoubleLayer, buffer, elements, ξlist, opt)
+    LaplaceMod.laplacecoll!(DoubleLayer, buffer, elements, ξlist)
 
     # β += K
     gemv!(one(T), buffer, umol, β)
@@ -102,7 +103,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     #=
         generate and apply V
     =#
-    LaplaceMod.laplacecoll!(SingleLayer, buffer, elements, ξlist, opt)
+    LaplaceMod.laplacecoll!(SingleLayer, buffer, elements, ξlist)
 
     # β -= εΩ/ε∞ * V * qmol
     gemv!(-εΩ/ε∞, buffer, qmol, β)
