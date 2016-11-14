@@ -20,7 +20,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     const ε∞ = opt.ε∞
 
     # create system matrix
-    numelem = length(elements)
+    const numelem = length(elements)
     m = zeros(T, 3 * numelem, 3 * numelem)
 
     # convenient access to 9 blocks of the system matrix

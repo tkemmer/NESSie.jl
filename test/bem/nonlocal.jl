@@ -1,4 +1,4 @@
-using ProteinES.Nonlocal
+using ProteinES.BEM
 
 @pending cauchy --> :nothing
 @pending φΩ --> :nothing

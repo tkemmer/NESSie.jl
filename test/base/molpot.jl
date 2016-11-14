@@ -1,4 +1,4 @@
-using ProteinES.Local
+using ProteinES: φmol, ∂ₙφmol
 
 context("φmol and ∂ₙφmol") do
     for T in testtypes

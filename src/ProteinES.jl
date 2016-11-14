@@ -2,6 +2,7 @@ module ProteinES
 
 import Base: cos, sign, seek
 import Base.LinAlg.BLAS: gemv!, axpy!
+using Distances: euclidean
 
 export
     # types.jl
@@ -19,6 +20,7 @@ const ε0 = 1 / (4π * 1e-7 * 299792458^2) # vacuum permittivity [F/m]
 include("base/types.jl")
 include("base/quad.jl")
 include("base/util.jl")
+include("base/molpot.jl")
 
 # Default options
 const defaultopt64 = Option(2., 78., 1.8, 20.)
@@ -30,7 +32,7 @@ defaultopt(::Type{Float32}) = defaultopt32
 include("IO.jl")
 include("Radon.jl")
 include("Rjasanow.jl")
-include("Local.jl")
-include("Nonlocal.jl")
+include("BEM.jl")
+#include("FEM.jl")
 
 end # module
