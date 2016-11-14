@@ -1,9 +1,21 @@
 #=
+    Quadrature points
+=#
+abstract QuadraturePoints{T <: AbstractFloat}
+
+#=
     Quadrature points and weights for triangles.
 
     Ref:
     [1] J. Radon. Zur mechanischen Kubatur. Monatsh. für Math. 52(4): 286-300, 1948.
 =#
+immutable QuadPts2D{T} <: QuadraturePoints{T}
+    num::Int            # number of points
+    x::Vector{T}        # x values
+    y::Vector{T}        # y values
+    weight::Vector{T}   # weights
+end
+
 const r15 = √15
 
 const triquadpts64 = QuadPts2D(7,
@@ -28,6 +40,14 @@ quadraturepoints(::Type{Triangle}, ::Type{Float32}) = triquadpts32
     [1] P Keast, Moderate degree tetrahedral quadrature formulas, CMAME 55: 339-348 (1986)
     TODO check
 =#
+immutable QuadPts3D{T} <: QuadraturePoints{T}
+    num::Int            # number of points
+    x::Vector{T}        # x values
+    y::Vector{T}        # y values
+    z::Vector{T}        # z values
+    weight::Vector{T}   # weights
+end
+
 const tetraquadpts64 = QuadPts3D(5,
     [.25, .5, 1/6, 1/6, 1/6],
     [.25, 1/6, 1/6, 1/6, .5],

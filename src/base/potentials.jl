@@ -1,4 +1,11 @@
 #=
+    Enum-like representation of potential types
+=#
+abstract PotentialType
+type SingleLayer <: PotentialType end
+type DoubleLayer <: PotentialType end
+
+#=
     Computes the molecular potential of the given system of point charges in a structureless medium.
 
     φmol(r) = 1/(4π*ε0*εΩ) * Σ qᵢ/|rᵢ-r|
