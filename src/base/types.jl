@@ -44,10 +44,10 @@ Charge(T::DataType, args...) = Charge{T}(convert(Vector{T}, [args[1:end-1]...]),
     TODO move yukawa to a more suitable place
 =#
 immutable Option{T <: AbstractFloat}
-    εΩ::T       # dielectric constant of the solute
-    εΣ::T       # dielectric constant of the solvent
-    ε∞::T       # large-scale (bulk) solvent response
-    λ::T        # scale
+    εΩ::T       # dielectric constant of the solute []
+    εΣ::T       # dielectric constant of the solvent []
+    ε∞::T       # large-scale (bulk) solvent response []
+    λ::T        # correlation length scale [Å]
     yukawa::T   # exponent for fundamental solution of yukawa operator -1/Λ = -1/(λ√(ε∞/εΣ))
 end
 Option{T <: AbstractFloat}(εΩ::T, εΣ::T, ε∞::T, λ::T) = Option(εΩ, εΣ, ε∞, λ, √(εΣ/ε∞)/λ)

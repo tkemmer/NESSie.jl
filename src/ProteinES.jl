@@ -14,7 +14,7 @@ export
     defaultopt, ε0
 
 # Global constants
-const ε0 = 1/ (4π * 1e-7 * 299792458^2)
+const ε0 = 1 / (4π * 1e-7 * 299792458^2) # vacuum permittivity [F/m]
 
 include("base/types.jl")
 include("base/quad.jl")
