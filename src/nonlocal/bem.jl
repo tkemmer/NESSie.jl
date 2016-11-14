@@ -24,15 +24,15 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     m = zeros(T, 3 * numelem, 3 * numelem)
 
     # convenient access to 9 blocks of the system matrix
-    m11 = sub(m,          1:numelem,           1:numelem )
-    m12 = sub(m,          1:numelem,   1+numelem:2numelem)
-    m13 = sub(m,          1:numelem,  1+2numelem:3numelem)
-    m21 = sub(m,  1+numelem:2numelem,          1:numelem )
-    m22 = sub(m,  1+numelem:2numelem,  1+numelem:2numelem)
-    m23 = sub(m,  1+numelem:2numelem, 1+2numelem:3numelem)
-    m31 = sub(m, 1+2numelem:3numelem,          1:numelem )
-    m32 = sub(m, 1+2numelem:3numelem,  1+numelem:2numelem)
-    m33 = sub(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
+    m11 = view(m,          1:numelem,           1:numelem )
+    m12 = view(m,          1:numelem,   1+numelem:2numelem)
+    m13 = view(m,          1:numelem,  1+2numelem:3numelem)
+    m21 = view(m,  1+numelem:2numelem,          1:numelem )
+    m22 = view(m,  1+numelem:2numelem,  1+numelem:2numelem)
+    m23 = view(m,  1+numelem:2numelem, 1+2numelem:3numelem)
+    m31 = view(m, 1+2numelem:3numelem,          1:numelem )
+    m32 = view(m, 1+2numelem:3numelem,  1+numelem:2numelem)
+    m33 = view(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
 
     # initialize the system matrix
     eye!(m11, 2π)
@@ -47,7 +47,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     rhs = zeros(T, 3 * numelem)
 
     # convenient access to the first block of rhs
-    β = sub(rhs, 1:numelem)
+    β = view(rhs, 1:numelem)
 
     # initialize rhs
     copy!(β, umol)
