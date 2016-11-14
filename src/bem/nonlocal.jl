@@ -88,7 +88,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     =#
     LaplaceMod.laplacecoll!(DoubleLayer, buffer, elements, ξlist)
 
-    # β += K
+    # β += K⋅umol
     gemv!(one(T), buffer, umol, β)
 
     # m11 -= K
