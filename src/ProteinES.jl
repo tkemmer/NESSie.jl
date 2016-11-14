@@ -11,7 +11,7 @@ include("base/quadrature.jl")
 export QuadraturePoints, QuadPts2D, QuadPts3D, quadraturepoints
 
 include("base/constants.jl")
-export ε0, Option, defaultopt, yukawa
+export ε0, σ, Option, defaultopt, yukawa
 
 include("base/util.jl")
 export props!, meshunion

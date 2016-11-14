@@ -36,9 +36,9 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     m33 = view(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
 
     # initialize the system matrix
-    eye!(m11, 2π)
-    eye!(m21, 2π)
-    eye!(m33, 2π)
+    eye!(m11, 4π * σ)
+    eye!(m21, 4π * σ)
+    eye!(m33, 4π * σ)
 
     # compute molecular potential for the point charges
     umol = εΩ \ φmol(elements, charges)
@@ -52,7 +52,7 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
 
     # initialize rhs
     copy!(β, umol)
-    scale!(β, -2π)
+    scale!(β, -4π * σ)
 
     # create list of observation points
     ξlist = [e.center for e in elements]
