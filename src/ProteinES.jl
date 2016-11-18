@@ -1,7 +1,7 @@
 module ProteinES
 
 import Base: cos, sign, seek
-import Base.LinAlg.BLAS: gemv!, axpy!
+import Base.LinAlg.BLAS: gemv!, gemv, axpy!, gemm
 using Distances: euclidean
 
 include("base/model.jl")
