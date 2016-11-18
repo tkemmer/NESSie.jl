@@ -1,10 +1,12 @@
 module BEM
 
 using ..ProteinES
-using ..ProteinES: Radon, Rjasanow, eye!, pluseye!, gemv!, axpy!, reverseindex, φmol, ∂ₙφmol
+using ..ProteinES: Radon, Rjasanow, pluseye!, gemv!, gemv, gemm, axpy!, φmol, ∂ₙφmol
 using Distances: euclidean
 
 export
+    # local.jl
+    solvelocal,
     # nonlocal.jl
     cauchy, φΩ
 

@@ -1,23 +1,41 @@
 #=
     TODO
 =#
-function solve_u{T}(
+function solvelocal{T}(
         elements::Vector{Triangle{T}},
         charges::Vector{Charge{T}},
         LaplaceMod::Module=Rjasanow,
         opt::Option{T}=defaultopt(T)
     )
+    # observation points ξ
+    const ξlist = [e.center for e in elements]
+
+    # compute molecular potentials for the point charges
+    const umol = opt.εΩ \   φmol(elements, charges)
+    const qmol = opt.εΩ \ ∂ₙφmol(elements, charges)
+
+    const u = solve_u(elements, umol, qmol, ξlist, LaplaceMod, opt)
+    const q = solve_q(elements, u, ξlist, LaplaceMod, opt)
+
+    (u, q, umol, qmol)
+end
+
+
+#=
+    TODO
+=#
+function solve_u{T}(
+        elements::Vector{Triangle{T}},
+        umol::Vector{T},
+        qmol::Vector{T},
+        ξlist::Vector{Vector{T}},
+        LaplaceMod::Module=Rjasanow,
+        opt::Option{T}=defaultopt(T),
+    )
     # convenient access to constants
     const εΩ = opt.εΩ
     const εΣ = opt.εΣ
     const numelem = length(elements)
-
-    # compute molecular potentials for the point charges
-    const umol = εΩ \ φmol(elements, charges)
-    const qmol = εΩ \ ∂ₙφmol(elements, charges)
-
-    # observation points
-    const ξlist = [e.center for e in elements]
 
     #=
         system matrix
@@ -25,7 +43,7 @@ function solve_u{T}(
     m = zeros(T, numelem, numelem)
 
     # m = (1 + εΩ/εΣ) ⋅ σ
-    eye!(m, (1 + εΩ/εΣ) * 4π * σ)
+    pluseye!(m, (1 + εΩ/εΣ) * 4π * σ)
 
     # generate K
     buf = Array(T, numelem, numelem)
@@ -54,4 +72,34 @@ function solve_u{T}(
 
     # solve system
     m\rhs
+end
+
+
+#=
+    q = V^{-1}⋅(σ + K)u
+=#
+function solve_q{T}(
+        elements::Vector{Triangle{T}},
+        u::Vector{T},
+        ξlist::Vector{Vector{T}},
+        LaplaceMod::Module=Rjasanow,
+        opt::Option{T}=defaultopt(T)
+    )
+    # constants
+    const numelem = length(elements)
+
+    # system matrix
+    m = zeros(T, numelem, numelem)
+
+    # m = (σ + K)
+    LaplaceMod.laplacecoll!(DoubleLayer, m, elements, ξlist)
+    pluseye!(m, 4π * σ)
+
+    # m = V^{-1}⋅(σ + K)
+    v = Array(T, numelem, numelem)
+    LaplaceMod.laplacecoll!(SingleLayer, v, elements, ξlist)
+    m = gemm(one(T), pinv(v), m)     # TODO check tolerance
+
+    # q = m⋅u
+    gemv(one(T), m, u)
 end
