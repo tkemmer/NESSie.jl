@@ -38,3 +38,27 @@ type Charge{T <: AbstractFloat}
 end
 Charge{T <: AbstractFloat}(args::T...) = Charge{T}([args[1:end-1]...], args[end])
 Charge(T::DataType, args...) = Charge{T}(convert(Vector{T}, [args[1:end-1]...]), convert(T, args[end]))
+
+#=
+    Models
+=#
+abstract Model{T <: AbstractFloat}
+
+#=
+    Surface model
+    Protein immersed in a structured solvent, represented by the protein surface and its partial point charges.
+=#
+type SurfaceModel{T} <: Model{T}
+    elements::Vector{Triangle{T}}
+    charges::Vector{Charge{T}}
+end
+
+#=
+    Volume model
+    Protein immersed in a structured solvent; protein and a sphere of surrounding space represented as a collection of
+    tetrahedra and the protein's partial point charges.
+=#
+type VolumeModel{T} <: Model{T}
+    elements::Vector{Tetrahedron{T}}
+    charges::Vector{Charge{T}}
+end
