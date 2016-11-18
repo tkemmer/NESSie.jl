@@ -1,4 +1,15 @@
 #=
+    Result data of the nonlocal solving process to be used for potential computation and post-processing.
+=#
+type NonlocalBEMResult{T} <: BEMResult{T}
+    u::SubArray{T,1}
+    q::SubArray{T,1}
+    w::SubArray{T,1}
+    umol::Vector{T}
+    qmol::Vector{T}
+end
+
+#=
     Computes the full cauchy data on the surface of the biomolecule.
 
     Note that the result is premultiplied by 4π!
@@ -13,12 +24,18 @@
                 Constants to be used
     @return Vector{T}
 =#
-function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, LaplaceMod::Module=Rjasanow, opt::Option{T}=defaultopt(T))
-    # convient access to constants
-    const εΩ  = opt.εΩ
-    const εΣ  = opt.εΣ
-    const ε∞  = opt.ε∞
-    const yuk = yukawa(opt)
+function solvenonlocal{T}(
+        model::SurfaceModel{T},
+        LaplaceMod::Module=Rjasanow,
+        opt::Option{T}=defaultopt(T)
+    )
+    # convenient access
+    const elements = model.elements
+    const charges  = model.charges
+    const εΩ       = opt.εΩ
+    const εΣ       = opt.εΣ
+    const ε∞       = opt.ε∞
+    const yuk      = yukawa(opt)
 
     # create system matrix
     const numelem = length(elements)
@@ -41,8 +58,8 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     pluseye!(m33, 4π * σ)
 
     # compute molecular potential for the point charges
-    umol = εΩ \ φmol(elements, charges)
-    qmol = εΩ \ ∂ₙφmol(elements, charges)
+    const umol = εΩ \ φmol(elements, charges)
+    const qmol = εΩ \ ∂ₙφmol(elements, charges)
 
     # create right hand side
     rhs = zeros(T, 3 * numelem)
@@ -118,7 +135,14 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     axpy!(εΩ/ε∞, buffer, m32)
 
     # solve system
-    m\rhs
+    cauchy = m\rhs
+    NonlocalBEMResult(
+        view(cauchy, 1:          numelem),
+        view(cauchy, 1+numelem: 2numelem),
+        view(cauchy, 1+2numelem:3numelem),
+        umol,
+        qmol
+    )
 end
 
 function φΩ{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, LaplaceMod::Module=Rjasanow, opt::Option{T}=defaultopt(T))
