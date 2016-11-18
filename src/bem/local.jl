@@ -1,12 +1,26 @@
+
+#=
+    TODO
+=#
+type LocalBEMResult{T} <: BEMResult{T}
+    u::Vector{T}
+    q::Vector{T}
+    umol::Vector{T}
+    qmol::Vector{T}
+end
+
 #=
     TODO
 =#
 function solvelocal{T}(
-        elements::Vector{Triangle{T}},
-        charges::Vector{Charge{T}},
+        model::SurfaceModel{T},
         LaplaceMod::Module=Rjasanow,
         opt::Option{T}=defaultopt(T)
     )
+    # convenience aliases
+    const elements = model.elements
+    const charges  = model.charges
+
     # observation points ξ
     const ξlist = [e.center for e in elements]
 
@@ -17,7 +31,7 @@ function solvelocal{T}(
     const u = solve_u(elements, umol, qmol, ξlist, LaplaceMod, opt)
     const q = solve_q(elements, u, ξlist, LaplaceMod, opt)
 
-    (u, q, umol, qmol)
+    LocalBEMResult(u, q, umol, qmol)
 end
 
 
