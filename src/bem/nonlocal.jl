@@ -36,9 +36,9 @@ function cauchy{T}(elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, La
     m33 = view(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
 
     # initialize the system matrix
-    eye!(m11, 4π * σ)
-    eye!(m21, 4π * σ)
-    eye!(m33, 4π * σ)
+    pluseye!(m11, 4π * σ)
+    pluseye!(m21, 4π * σ)
+    pluseye!(m33, 4π * σ)
 
     # compute molecular potential for the point charges
     umol = εΩ \ φmol(elements, charges)

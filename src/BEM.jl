@@ -1,7 +1,7 @@
 module BEM
 
 using ..ProteinES
-using ..ProteinES: Radon, Rjasanow, eye!, gemv!, axpy!, reverseindex, φmol, ∂ₙφmol
+using ..ProteinES: Radon, Rjasanow, eye!, pluseye!, gemv!, axpy!, reverseindex, φmol, ∂ₙφmol
 using Distances: euclidean
 
 export
