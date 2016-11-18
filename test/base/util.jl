@@ -1,8 +1,16 @@
-using ProteinES: eye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
+using ProteinES: eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
 
-context("eye!") do
+context("eye! and pluseye!") do
     for T in (Int, testtypes...)
-        m = zeros(T, 3, 3)
+        m = -ones(T, 3, 3)
+        pluseye!(m)
+        @fact typeof(m) --> Array{T, 2}
+        @fact size(m) --> (3, 3)
+        @fact m --> [0 -1 -1; -1 0 -1; -1 -1 0]
+        pluseye!(m, 2)
+        @fact typeof(m) --> Array{T, 2}
+        @fact size(m) --> (3, 3)
+        @fact m --> [2 -1 -1; -1 2 -1; -1 -1 2]
         eye!(m)
         @fact typeof(m) --> Array{T, 2}
         @fact size(m) --> (3, 3)

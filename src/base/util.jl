@@ -108,9 +108,21 @@ end
 =#
 function eye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T))
     fill!(m, zero(T))
+    pluseye!(m, α)
+end
+
+#=
+    Adds α to all diagonal elements of matrix m.
+
+    @param m
+        Matrix to be modified in-place
+    @param α
+        Some number
+=#
+function pluseye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T))
     α = convert(T, α)
     @inbounds for i in 1:min(size(m)...)
-        m[i, i] = α
+        m[i, i] += α
     end
     nothing
 end
