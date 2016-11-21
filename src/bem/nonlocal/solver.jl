@@ -8,6 +8,8 @@
     with Ξ being the list of observation points, that is, the set of triangle centroids.
 =#
 type NonlocalBEMResult{T} <: BEMResult{T}
+    model::SurfaceModel{T}
+    opt::Option{T}
     u::SubArray{T,1}
     q::SubArray{T,1}
     w::SubArray{T,1}
@@ -140,6 +142,8 @@ function solvenonlocal{T}(
     # solve system
     cauchy = m\rhs
     NonlocalBEMResult(
+        model,
+        opt,
         view(cauchy, 1:          numelem),
         view(cauchy, 1+numelem: 2numelem),
         view(cauchy, 1+2numelem:3numelem),

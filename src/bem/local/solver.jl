@@ -7,6 +7,8 @@
     with Ξ being the list of observation points, that is, the set of triangle centroids.
 =#
 type LocalBEMResult{T} <: BEMResult{T}
+    model::SurfaceModel{T}
+    opt::Option{T}
     u::Vector{T}
     q::Vector{T}
     umol::Vector{T}
@@ -41,7 +43,7 @@ function solvelocal{T}(
     const u = solve_u(model.elements, umol, qmol, Ξ, LaplaceMod, opt)
     const q = solve_q(model.elements, u, Ξ, LaplaceMod, opt)
 
-    LocalBEMResult(u, q, umol, qmol)
+    LocalBEMResult(model, opt, u, q, umol, qmol)
 end
 
 #=
