@@ -35,7 +35,6 @@ function solvenonlocal{T}(
     )
     # convenient access
     const elements = model.elements
-    const charges  = model.charges
     const εΩ       = opt.εΩ
     const εΣ       = opt.εΣ
     const ε∞       = opt.ε∞
@@ -62,8 +61,8 @@ function solvenonlocal{T}(
     pluseye!(m33, 4π * σ)
 
     # compute molecular potential for the point charges
-    const umol = εΩ \ φmol(elements, charges)
-    const qmol = εΩ \ ∂ₙφmol(elements, charges)
+    const umol = εΩ \ φmol(model)
+    const qmol = εΩ \ ∂ₙφmol(model)
 
     # create right hand side
     rhs = zeros(T, 3 * numelem)

@@ -35,8 +35,8 @@ function solvelocal{T}(
     const Ξ = [e.center for e in model.elements]
 
     # compute molecular potentials for the point charges
-    const umol = opt.εΩ \   φmol(model.elements, model.charges)
-    const qmol = opt.εΩ \ ∂ₙφmol(model.elements, model.charges)
+    const umol = opt.εΩ \   φmol(model)
+    const qmol = opt.εΩ \ ∂ₙφmol(model)
 
     const u = solve_u(model.elements, umol, qmol, Ξ, LaplaceMod, opt)
     const q = solve_q(model.elements, u, Ξ, LaplaceMod, opt)
