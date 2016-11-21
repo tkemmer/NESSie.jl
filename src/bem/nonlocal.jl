@@ -1,5 +1,11 @@
 #=
     Result data of the nonlocal solving process to be used for potential computation and post-processing.
+    ▶ u:    [γ0int(φ*)](ξ) ∀ ξ ∈ Ξ
+    ▶ q:    [γ1int(φ*)](ξ) ∀ ξ ∈ Ξ
+    ▶ w:    TODO
+    ▶ umol: [γ0int(φ*mol)](ξ) ∀ ξ ∈ Ξ
+    ▶ qmol: [γ1int(φ*mol)](ξ) ∀ ξ ∈ Ξ
+    with Ξ being the list of observation points, that is, the set of triangle centroids.
 =#
 type NonlocalBEMResult{T} <: BEMResult{T}
     u::SubArray{T,1}
@@ -14,15 +20,13 @@ end
 
     Note that the result is premultiplied by 4π!
 
-    @param elements
-                List of surface elements
-    @param charges
-                List of charges in the biomolecule
+    @param model
+                Surface model
     @param LaplaceMod
                 Module to be used for Laplace potential; Valid values: Radon, Rjasanow
     @param opt
                 Constants to be used
-    @return Vector{T}
+    @return NonlocalBEMResult{T}
 =#
 function solvenonlocal{T}(
         model::SurfaceModel{T},
