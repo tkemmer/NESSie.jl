@@ -219,7 +219,13 @@ end
     @param fvals
         Function values of the elements
 =#
-function laplacecoll!{T, P <: PotentialType}(ptype::Type{P}, dest::Union{DenseArray{T,1}, DenseArray{T, 2}}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::DenseArray{T,1}=T[])
+function laplacecoll!{T, P <: PotentialType}(
+        ptype::Type{P},
+        dest::Union{DenseArray{T,1}, DenseArray{T, 2}},
+        elements::Vector{Triangle{T}},
+        Ξ::Vector{Vector{T}},
+        fvals::DenseArray{T,1}=T[]
+    )
     isvec  = isa(dest, DenseArray{T, 1})
     isvec && @assert length(dest) == length(Ξ)
     isvec && @assert length(fvals) == length(elements)
