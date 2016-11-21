@@ -1,6 +1,10 @@
-
 #=
-    TODO
+    Result data of the local solving process to be used for potential computation and post-processing:
+    ▶ u:    [γ0int(φ*)](ξ) ∀ ξ ∈ Ξ
+    ▶ q:    [γ1int(φ*)](ξ) ∀ ξ ∈ Ξ
+    ▶ umol: [γ0int(φ*mol)](ξ) ∀ ξ ∈ Ξ
+    ▶ qmol: [γ1int(φ*mol)](ξ) ∀ ξ ∈ Ξ
+    with Ξ being the list of observation points, that is, the set of triangle centroids.
 =#
 type LocalBEMResult{T} <: BEMResult{T}
     u::Vector{T}
@@ -10,39 +14,58 @@ type LocalBEMResult{T} <: BEMResult{T}
 end
 
 #=
-    TODO
+    Computes all vectors required for potential computation.
+
+    Note that the result is premultiplied by 4π!
+
+    @param model
+            Surface model
+    @param LaplaceMod
+            Module to be used for Laplace potential; Valid values: Radon, Rjasanow
+    @param opt
+            Constants to be used
+    @return LocalBEMResult{T}
 =#
 function solvelocal{T}(
         model::SurfaceModel{T},
         LaplaceMod::Module=Rjasanow,
         opt::Option{T}=defaultopt(T)
     )
-    # convenience aliases
-    const elements = model.elements
-    const charges  = model.charges
-
     # observation points ξ
-    const ξlist = [e.center for e in elements]
+    const ξlist = [e.center for e in model.elements]
 
     # compute molecular potentials for the point charges
-    const umol = opt.εΩ \   φmol(elements, charges)
-    const qmol = opt.εΩ \ ∂ₙφmol(elements, charges)
+    const umol = opt.εΩ \   φmol(model.elements, model.charges)
+    const qmol = opt.εΩ \ ∂ₙφmol(model.elements, model.charges)
 
-    const u = solve_u(elements, umol, qmol, ξlist, LaplaceMod, opt)
-    const q = solve_q(elements, u, ξlist, LaplaceMod, opt)
+    const u = solve_u(model.elements, umol, qmol, ξlist, LaplaceMod, opt)
+    const q = solve_q(model.elements, u, ξlist, LaplaceMod, opt)
 
     LocalBEMResult(u, q, umol, qmol)
 end
 
-
 #=
-    TODO
+    Computes u.
+
+    @param elements
+            List of surface triangles
+    @param umol
+            Molecular potential on the surface
+    @param qmol
+            Normal derivative of the molecular potential on the surface
+    @param Ξ
+            List of observation points
+    @param LaplaceMod
+            Module to be used for Laplace potential; Valid values: Radon, Rjasanow
+    @param opt
+            Constants to be used
+    @return Vector{T}
 =#
 function solve_u{T}(
         elements::Vector{Triangle{T}},
         umol::Vector{T},
         qmol::Vector{T},
-        ξlist::Vector{Vector{T}},
+        Ξ::Vector{Vector{T}},
         LaplaceMod::Module=Rjasanow,
         opt::Option{T}=defaultopt(T),
     )
@@ -61,7 +84,7 @@ function solve_u{T}(
 
     # generate K
     buf = Array(T, numelem, numelem)
-    LaplaceMod.laplacecoll!(DoubleLayer, buf, elements, ξlist)
+    LaplaceMod.laplacecoll!(DoubleLayer, buf, elements, Ξ)
 
     # m += (εΩ/εΣ - 1) ⋅ K
     axpy!(εΩ/εΣ - 1, buf, m)
@@ -79,7 +102,7 @@ function solve_u{T}(
     gemv!(one(T), buf, umol, rhs)
 
     # generate V
-    LaplaceMod.laplacecoll!(SingleLayer, buf, elements, ξlist)
+    LaplaceMod.laplacecoll!(SingleLayer, buf, elements, Ξ)
 
     # rhs -= εΩ/εΣ ⋅ V ⋅ qmol
     gemv!(εΩ/εΣ, buf, qmol, rhs)
@@ -88,14 +111,25 @@ function solve_u{T}(
     m\rhs
 end
 
-
 #=
-    q = V^{-1}⋅(σ + K)u
+    Computes q = V^{-1}⋅(σ + K)u.
+
+    @param elements
+            List of surface triangles
+    @param u
+            Vector u
+    @param Ξ
+            List of observation points
+    @param LaplaceMod
+            Module to be used for Laplace potential; Valid values: Radon, Rjasanow
+    @param opt
+            Constants to be used
+    @return Vector{T}
 =#
 function solve_q{T}(
         elements::Vector{Triangle{T}},
         u::Vector{T},
-        ξlist::Vector{Vector{T}},
+        Ξ::Vector{Vector{T}},
         LaplaceMod::Module=Rjasanow,
         opt::Option{T}=defaultopt(T)
     )
@@ -106,12 +140,12 @@ function solve_q{T}(
     m = zeros(T, numelem, numelem)
 
     # m = (σ + K)
-    LaplaceMod.laplacecoll!(DoubleLayer, m, elements, ξlist)
+    LaplaceMod.laplacecoll!(DoubleLayer, m, elements, Ξ)
     pluseye!(m, 4π * σ)
 
     # m = V^{-1}⋅(σ + K)
     v = Array(T, numelem, numelem)
-    LaplaceMod.laplacecoll!(SingleLayer, v, elements, ξlist)
+    LaplaceMod.laplacecoll!(SingleLayer, v, elements, Ξ)
     m = gemm(one(T), pinv(v), m)     # TODO check tolerance
 
     # q = m⋅u
