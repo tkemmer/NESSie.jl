@@ -8,7 +8,9 @@ export solvelocal, solvenonlocal
 
 abstract BEMResult{T <: AbstractFloat}
 
-include("bem/local.jl")
-include("bem/nonlocal.jl")
+include("bem/local/potential.jl")
+include("bem/local/solver.jl")
+include("bem/nonlocal/potential.jl")
+include("bem/nonlocal/solver.jl")
 
 end # module
