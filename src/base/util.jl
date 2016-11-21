@@ -143,7 +143,7 @@ function isdegenerate{T <: AbstractFloat}(v1::Vector{T}, v2::Vector{T}, v3::Vect
     u1 = v2 - v1
     u2 = v3 - v1
     cosine = u1 ⋅ u2 / vecnorm(u1) / vecnorm(u2)
-    v1 == v2 || v1 == v3 || v2 == v3 || 1 - abs(cosine) <= 1e-10
+    vecnorm(v1 - v2) < 1e-10 || vecnorm(v1 - v3) < 1e-10 || vecnorm(v2 - v3) < 1e-10 || 1 - abs(cosine) <= 1e-10
 end
 isdegenerate{T}(elem::Triangle{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
 

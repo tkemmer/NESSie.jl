@@ -54,6 +54,8 @@ context("props! and isdegenerate") do
         @fact_throws AssertionError props!(elem)
         elem = Triangle(T[0, 1, 0], T[0, 2, 0], T[0, 3, 0])
         @fact_throws AssertionError props!(elem)
+        elem = Triangle(T[0, 1, 0], T[1e-11, 1, 0], T[0, 3, 0])
+        @fact_throws AssertionError props!(elem)
         # simple 2D triangle
         elem = Triangle(T[0, 0, 0], T[0, 0, 3], T[0, 3, 0])
         props!(elem)
