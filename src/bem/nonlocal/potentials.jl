@@ -1,15 +1,19 @@
-function φΩ{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, charges::Vector{Charge{T}}, LaplaceMod::Module=Rjasanow, opt::Option{T}=defaultopt(T))
-    c = cauchy(elements, charges, LaplaceMod, opt)
-    numelem = length(elements)
-    φ = zeros(T, length(nodes))
+#=
+    TODO
+=#
+function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
+    # result vector
+    φ = zeros(T, length(Ξ))
 
-    # convenient access
-    γ0intφstar = c[1:numelem]
-    γ1intφstar = c[1+numelem:2numelem]
-
-    LaplaceMod.laplacecoll!(DoubleLayer, φ, elements, nodes, γ0intφstar)
+    # φ  = -[K ⋅ u](ξ)
+    LaplaceMod.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, bem.u)
     scale!(φ, -1)
-    LaplaceMod.laplacecoll!(SingleLayer, φ, elements, nodes, γ1intφstar)
+
+    # φ += [V ⋅ q](ξ)
+    LaplaceMod.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, bem.q)
+
+    # φ *= 2
     scale!(φ, 2)
-    T(1.69e-9 / 4π / ε0) * (4π \ φ + opt.εΩ \ φmol(nodes, charges))
+
+    T(1.69e-9 / 4π / ε0) * (4π \ φ + opt.εΩ \ φmol(Ξ, charges)) # [φΩ] = V = C/F
 end
