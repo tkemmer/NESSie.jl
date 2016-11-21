@@ -12,14 +12,14 @@ type DoubleLayer <: PotentialType end
 
     Note that the results are premultiplied by 4π * ε0 * εΩ!
 
-    @param ξ/ξlist
+    @param ξ/Ξ
                 Observation point(s)
     @param charges
                 Point charges
     @return T or Vector{T}
 =#
-φmol{T}(ξlist::Vector{Vector{T}}, charges::Vector{Charge{T}}) = [φmol(ξ, charges) for ξ in ξlist]
-φmol{T}(ξlist::Vector{Triangle{T}}, charges::Vector{Charge{T}}) = [φmol(ξ.center, charges) for ξ in ξlist]
+φmol{T}(Ξ::Vector{Vector{T}}, charges::Vector{Charge{T}}) = [φmol(ξ, charges) for ξ in Ξ]
+φmol{T}(Ξ::Vector{Triangle{T}}, charges::Vector{Charge{T}}) = [φmol(ξ.center, charges) for ξ in Ξ]
 φmol{T}(ξ::Vector{T}, charges::Vector{Charge{T}}) = sum([q.val / euclidean(ξ, q.pos) for q in charges])
 # TODO devectorize!
 
@@ -30,19 +30,19 @@ type DoubleLayer <: PotentialType end
 
     Note that the results are premultiplied by 4π * εΩ * ε0!
 
-    @param ξ/ξlist
+    @param ξ/Ξ
                 Observation point(s)
     @param charges
                 Point charges
     @return T or Vector{T}
 =#
-∂ₙφmol{T}(ξlist::Vector{Triangle{T}}, charges::Vector{Charge{T}}) = [∂ₙφmol(ξ, charges) for ξ in ξlist]
+∂ₙφmol{T}(Ξ::Vector{Triangle{T}}, charges::Vector{Charge{T}}) = [∂ₙφmol(ξ, charges) for ξ in Ξ]
 ∂ₙφmol{T}(ξ::Triangle{T}, charges::Vector{Charge{T}}) = -sum([q.val * ddot(ξ.center, q.pos, ξ.normal) / euclidean(ξ.center, q.pos)^3 for q in charges])
 # TODO devectorize!
 
 #=
     TODO
 =#
-∇φmol{T}(ξlist::Vector{Vector{T}}, charges::Vector{Charge{T}}) = [∇φmol(ξ, charges) for ξ in ξlist]
+∇φmol{T}(Ξ::Vector{Vector{T}}, charges::Vector{Charge{T}}) = [∇φmol(ξ, charges) for ξ in Ξ]
 ∇φmol{T}(ξ::Vector{T}, charges::Vector{Charge{T}}) = -sum([q.val * (ξ - q.pos) / euclidean(ξ, q.pos)^3 for q in charges])
 # TODO devectorize!

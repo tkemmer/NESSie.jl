@@ -76,13 +76,13 @@ function solvenonlocal{T}(
     scale!(β, -4π * σ)
 
     # create list of observation points
-    ξlist = [e.center for e in elements]
+    Ξ = [e.center for e in elements]
 
     #=
         generate and apply Kʸ-K
     =#
     buffer = Array(T, numelem, numelem)
-    Radon.regularyukawacoll!(DoubleLayer, buffer, elements, ξlist, yuk)
+    Radon.regularyukawacoll!(DoubleLayer, buffer, elements, Ξ, yuk)
 
     # β += (1-εΩ/εΣ)(Kʸ-K)umol
     gemv!(1-εΩ/εΣ, buffer, umol, β)
@@ -96,7 +96,7 @@ function solvenonlocal{T}(
     #=
         generate and apply Vʸ-V
     =#
-    Radon.regularyukawacoll!(SingleLayer, buffer, elements, ξlist, yuk)
+    Radon.regularyukawacoll!(SingleLayer, buffer, elements, Ξ, yuk)
 
     # β += (εΩ/εΣ - εΩ/ε∞)(Vʸ-V)qmol
     gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
@@ -107,7 +107,7 @@ function solvenonlocal{T}(
     #=
         generate and apply K
     =#
-    LaplaceMod.laplacecoll!(DoubleLayer, buffer, elements, ξlist)
+    LaplaceMod.laplacecoll!(DoubleLayer, buffer, elements, Ξ)
 
     # β += K⋅umol
     gemv!(one(T), buffer, umol, β)
@@ -124,7 +124,7 @@ function solvenonlocal{T}(
     #=
         generate and apply V
     =#
-    LaplaceMod.laplacecoll!(SingleLayer, buffer, elements, ξlist)
+    LaplaceMod.laplacecoll!(SingleLayer, buffer, elements, Ξ)
 
     # β -= εΩ/ε∞ * V * qmol
     gemv!(-εΩ/ε∞, buffer, qmol, β)

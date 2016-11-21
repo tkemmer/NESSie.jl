@@ -32,14 +32,14 @@ function solvelocal{T}(
         opt::Option{T}=defaultopt(T)
     )
     # observation points ξ
-    const ξlist = [e.center for e in model.elements]
+    const Ξ = [e.center for e in model.elements]
 
     # compute molecular potentials for the point charges
     const umol = opt.εΩ \   φmol(model.elements, model.charges)
     const qmol = opt.εΩ \ ∂ₙφmol(model.elements, model.charges)
 
-    const u = solve_u(model.elements, umol, qmol, ξlist, LaplaceMod, opt)
-    const q = solve_q(model.elements, u, ξlist, LaplaceMod, opt)
+    const u = solve_u(model.elements, umol, qmol, Ξ, LaplaceMod, opt)
+    const q = solve_q(model.elements, u, Ξ, LaplaceMod, opt)
 
     LocalBEMResult(u, q, umol, qmol)
 end
