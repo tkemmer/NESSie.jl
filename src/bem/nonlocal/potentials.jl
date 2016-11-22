@@ -12,11 +12,19 @@ function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     # φ += [V ⋅ q](ξ)
     LaplaceMod.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, bem.q)
 
-    # φ *= 2
-    scale!(φ, 2)
+    # φ *= 2/4π  (K and V were premultiplied by 4π! 4π⋅ε0 from u and q still to be applied)
+    scale!(φ, T(1 / 2π))
 
-    # TODO document coefficients (soon...)
-    T(1.69e-9 / 4π / ε0) * (T(4π) \ φ + bem.opt.εΩ \ φmol(Ξ, bem.model.charges)) # [φΩ] = V = C/F
+    # φ += 1/εΩ ⋅ umol   (umol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
+    axpy!(1/bem.opt.εΩ, φmol(Ξ, bem.model.charges), φ)
+
+    # Apply remaining prefactors:
+    # ▶ 4π⋅ε0     for u, q, and umol
+    # ▶ 1.69e-19  for elemental charge e; [e] = C
+    # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
+    scale!(φ, T(1.69e-9 / 4π / ε0))
+
+    φ # [φΩ] = V = C/F
 end
 
 #=
