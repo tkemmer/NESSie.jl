@@ -15,5 +15,5 @@ function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     # φ *= 2
     scale!(φ, 2)
 
-    T(1.69e-9 / 4π / ε0) * (4π \ φ + opt.εΩ \ φmol(Ξ, charges)) # [φΩ] = V = C/F
+    T(1.69e-9 / 4π / ε0) * (4π \ φ + bem.opt.εΩ \ φmol(Ξ, bem.model.charges)) # [φΩ] = V = C/F
 end
