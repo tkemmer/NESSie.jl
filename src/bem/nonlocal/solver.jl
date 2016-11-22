@@ -1,10 +1,10 @@
 #=
     Result data of the nonlocal solving process to be used for potential computation and post-processing.
-    ▶ u:    [γ0int(φ*)](ξ) ∀ ξ ∈ Ξ
-    ▶ q:    [γ1int(φ*)](ξ) ∀ ξ ∈ Ξ
-    ▶ w:    TODO
-    ▶ umol: [γ0int(φ*mol)](ξ) ∀ ξ ∈ Ξ
-    ▶ qmol: [γ1int(φ*mol)](ξ) ∀ ξ ∈ Ξ
+    ▶ u:    [γ0int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+    ▶ q:    [γ1int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+    ▶ w:    [γ0ext(Ψ)](ξ)     ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+    ▶ umol: [γ0int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+    ▶ qmol: [γ1int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
     with Ξ being the list of observation points, that is, the set of triangle centroids.
 =#
 type NonlocalBEMResult{T} <: BEMResult{T}
@@ -20,14 +20,14 @@ end
 #=
     Computes the full cauchy data on the surface of the biomolecule.
 
-    Note that the result is premultiplied by 4π!
+    See `NonlocalBEMResult` for remarks on the present prefactors.
 
     @param model
-                Surface model
+            Surface model
     @param LaplaceMod
-                Module to be used for Laplace potential; Valid values: Radon, Rjasanow
+            Module to be used for Laplace potential; Valid values: Radon, Rjasanow
     @param opt
-                Constants to be used
+            Constants to be used
     @return NonlocalBEMResult{T}
 =#
 function solvenonlocal{T}(
@@ -57,13 +57,15 @@ function solvenonlocal{T}(
     m32 = view(m, 1+2numelem:3numelem,  1+numelem:2numelem)
     m33 = view(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
 
-    # initialize the system matrix
+    # initialize the system matrix;
+    # since all other components of the system matrix will be premultiplied by 4π, do the same for σ here
     pluseye!(m11, 4π * σ)
     pluseye!(m21, 4π * σ)
     pluseye!(m33, 4π * σ)
 
-    # compute molecular potential for the point charges
-    const umol = εΩ \ φmol(model)
+    # compute molecular potential for the point charges;
+    # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
+    const umol = εΩ \   φmol(model)
     const qmol = εΩ \ ∂ₙφmol(model)
 
     # create right hand side
@@ -72,7 +74,8 @@ function solvenonlocal{T}(
     # convenient access to the first block of rhs
     β = view(rhs, 1:numelem)
 
-    # initialize rhs
+    # initialize rhs;
+    # again, we apply a prefactor of 4π to σ to match the other components of the vector
     copy!(β, umol)
     scale!(β, -4π * σ)
 
