@@ -224,7 +224,7 @@ function laplacecoll!{T, P <: PotentialType}(
         dest::Union{DenseArray{T,1}, DenseArray{T, 2}},
         elements::Vector{Triangle{T}},
         Ξ::Vector{Vector{T}},
-        fvals::DenseArray{T,1}=T[]
+        fvals::Union{DenseArray{T,1},SubArray{T,1}}=T[]
     )
     isvec  = isa(dest, DenseArray{T, 1})
     isvec && @assert length(dest) == length(Ξ)

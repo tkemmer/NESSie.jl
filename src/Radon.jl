@@ -256,13 +256,13 @@ function radoncoll!{T}(
     nothing
 end
 
-laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::DenseArray{T, 1}) = radoncoll!(dest, elements, Ξ, laplacepot, fvals)
-laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::DenseArray{T, 1}) = radoncoll!(dest, elements, Ξ, ∂ₙlaplacepot, fvals)
+laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::Union{DenseArray{T,1},SubArray{T,1}}) = radoncoll!(dest, elements, Ξ, laplacepot, fvals)
+laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::Union{DenseArray{T,1},SubArray{T,1}}) = radoncoll!(dest, elements, Ξ, ∂ₙlaplacepot, fvals)
 laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}) = radoncoll!(dest, elements, Ξ, laplacepot)
 laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}) = radoncoll!(dest, elements, Ξ, ∂ₙlaplacepot)
 
-regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::DenseArray{T, 1}, yukawa::T) = radoncoll!(dest, elements, Ξ, regularyukawapot, fvals, yukawa)
-regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::DenseArray{T, 1}, yukawa::T) = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, fvals, yukawa)
+regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::Union{DenseArray{T,1},SubArray{T,1}}, yukawa::T) = radoncoll!(dest, elements, Ξ, regularyukawapot, fvals, yukawa)
+regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::Union{DenseArray{T,1},SubArray{T,1}}, yukawa::T) = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, fvals, yukawa)
 regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, yukawa::T) = radoncoll!(dest, elements, Ξ, regularyukawapot, T[], yukawa)
 regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, yukawa::T) = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, T[], yukawa)
 
