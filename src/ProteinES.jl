@@ -11,13 +11,13 @@ include("base/quadrature.jl")
 export QuadraturePoints, QuadPts2D, QuadPts3D, quadraturepoints
 
 include("base/constants.jl")
-export ε0, σ, Option, defaultopt, yukawa
+export ε0, σ, Option, defaultopt
 
 include("base/util.jl")
 export props!, meshunion
 
 include("base/potentials.jl")
-export PotentialType, SingleLayer, DoubleLayer
+export PotentialType, SingleLayer, DoubleLayer, φmol, ∂ₙφmol
 
 # Submodules
 include("IO.jl")

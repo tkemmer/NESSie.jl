@@ -1,3 +1,4 @@
+using ProteinES: yukawa
 using ProteinES.Radon
 
 context("laplacepot") do
