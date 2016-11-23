@@ -55,13 +55,13 @@ function φΣ{T}(Ξ::Vector{Vector{T}}, bem::LocalBEMResult{T}, LaplaceMod::Modu
 
     # φ  = -εΩ/εΣ ⋅ [Vtilde ⋅ (q + qmol)](ξ)
     copy!(buf, bem.q)
-    axpy!(1/bem.opt.εΩ, bem.qmol, buf)
+    axpy!(1, bem.qmol, buf)
     LaplaceMod.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, buf)
     scale!(φ, -bem.opt.εΩ/bem.opt.εΣ)
 
     # φ += [W ⋅ (u + umol)](ξ)
     copy!(buf, bem.u)
-    axpy!(1/bem.opt.εΩ, bem.umol, buf)
+    axpy!(1, bem.umol, buf)
     LaplaceMod.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, buf)
 
     # Apply remaining prefactors:
