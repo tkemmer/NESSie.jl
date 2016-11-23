@@ -1,5 +1,14 @@
 #=
-    TODO
+    Computes the interior nonlocal electrostatic potential φΩ for the given set of points Ξ. Note that the function
+    does not verify whether the given points actually lie inside of the protein.
+
+    @param Ξ
+        List of observation points
+    @param bem
+        Result of `solvelocal`
+    @param LaplaceMod
+        Module to be used for Laplace potential; Valid values: Radon, Rjasanow
+    @return Vector{T}  ([φΩ] = V = C/F)
 =#
 function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
     # result vector
@@ -15,7 +24,7 @@ function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     # φ *= 2/4π  (K and V were premultiplied by 4π! 4π⋅ε0 from u and q still to be applied)
     scale!(φ, T(1 / 2π))
 
-    # φ += 1/εΩ ⋅ umol   (umol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
+    # φ += 1/εΩ ⋅ φ*mol(ξ)  (φ*mol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
     axpy!(1/bem.opt.εΩ, φmol(Ξ, bem.model.charges), φ)
 
     # Apply remaining prefactors:
@@ -28,7 +37,16 @@ function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
 end
 
 #=
-    TODO
+    Computes the exterior nonlocal electrostatic potential φΣ for the given set of points Ξ. Note that the function
+    does not verify whether the given points actually lie in the surrounding space.
+
+    @param Ξ
+        List of observation points
+    @param bem
+        Result of `solvelocal`
+    @param LaplaceMod
+        Module to be used for Laplace potential; Valid values: Radon, Rjasanow
+    @return Vector{T}  ([φΣ] = V = C/F)
 =#
 function φΣ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
     # result vector
