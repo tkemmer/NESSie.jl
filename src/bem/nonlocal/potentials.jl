@@ -33,7 +33,7 @@ function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
     scale!(φ, T(1.69e-9 / 4π / ε0))
 
-    φ # [φΩ] = V = C/F
+    φ
 end
 
 #=
@@ -89,5 +89,5 @@ function φΣ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
     scale!(φ, T(1.69e-9 / 4π / 4π / ε0))
 
-    φ # [φΣ] = V = C/F
+    φ
 end
