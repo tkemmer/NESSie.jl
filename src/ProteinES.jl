@@ -5,7 +5,7 @@ import Base.LinAlg.BLAS: gemv!, gemv, axpy!, gemm
 using Distances: euclidean
 
 include("base/model.jl")
-export Element, Triangle, Tetrahedron, Charge, Mode, SurfaceModel, VolumeModel
+export Element, Triangle, Tetrahedron, Charge, Model, SurfaceModel, VolumeModel
 
 include("base/quadrature.jl")
 export QuadraturePoints, QuadPts2D, QuadPts3D, quadraturepoints
