@@ -1,4 +1,3 @@
-using ProteinES.BEM
-
-@pending cauchy --> :nothing
+@pending solvenonlocal --> :nothing
 @pending φΩ --> :nothing
+@pending φΣ --> :nothing
