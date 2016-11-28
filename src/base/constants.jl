@@ -13,7 +13,7 @@ const ec = 1.602176e-9                      # 10^10 times the elementary charge 
 #=
     Common prefactor for all potentials φΩ and φΣ:
 
-        1.602e-19 / 10e-10 / 4π / ε0 ≈ 1.145
+        1.602e-19 / 10e-10 / 4π / ε0 ≈ 1.145 * 4π
 
     @param T
         Return type
