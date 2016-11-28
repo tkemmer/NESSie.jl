@@ -22,7 +22,7 @@ function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     LaplaceMod.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, bem.q)
 
     # φ *= 2/4π  (K and V were premultiplied by 4π! 4π⋅ε0 from u and q still to be applied)
-    scale!(φ, T(1 / 2π))
+    scale!(φ, 1/2π)
 
     # φ += 1/εΩ ⋅ φ*mol(ξ)  (φ*mol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
     axpy!(1/bem.opt.εΩ, φmol(Ξ, bem.model.charges), φ)
@@ -31,7 +31,7 @@ function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     # ▶ 4π⋅ε0     for u, q, and umol
     # ▶ 1.69e-19  for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    scale!(φ, T(1.69e-9 / 4π / ε0))
+    scale!(φ, 1.69e-9 / 4π / ε0)
 
     φ
 end
@@ -87,7 +87,7 @@ function φΣ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     # ▶ 4π⋅ε0     for u, q, w, umol, and qmol
     # ▶ 1.69e-19  for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    scale!(φ, T(1.69e-9 / 4π / 4π / ε0))
+    scale!(φ, 1.69e-9 / 4π / 4π / ε0)
 
     φ
 end
