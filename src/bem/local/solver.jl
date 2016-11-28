@@ -28,7 +28,8 @@ end
             Constants to be used
     @return LocalBEMResult{T}
 =#
-function solvelocal{T}(
+function solve{T}(
+        ::Type{LocalES},
         model::SurfaceModel{T},
         LaplaceMod::Module=Rjasanow,
         opt::Option{T}=defaultopt(T)

@@ -30,7 +30,8 @@ end
             Constants to be used
     @return NonlocalBEMResult{T}
 =#
-function solvenonlocal{T}(
+function solve{T}(
+        ::Type{NonlocalES},
         model::SurfaceModel{T},
         LaplaceMod::Module=Rjasanow,
         opt::Option{T}=defaultopt(T)

@@ -4,7 +4,7 @@ using ..ProteinES
 using ..ProteinES: Radon, Rjasanow, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
 using Distances: euclidean
 
-export solvelocal, solvenonlocal, φΩ, φΣ
+export solve, φΩ, φΣ
 
 abstract BEMResult{T <: AbstractFloat}
 
