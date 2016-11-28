@@ -6,6 +6,15 @@ type SingleLayer <: PotentialType end
 type DoubleLayer <: PotentialType end
 
 #=
+    Enum-like representation of locality assumption:
+    ▶ Local electrostatics:    Complete independence of solvent molecules
+    ▶ Nonlocal electrostatics: Allow solvent molecule correlation effects (with area-of-effect radius λ)
+=#
+abstract LocalityType
+type NonlocalES <: LocalityType end
+type LocalES <: LocalityType end
+
+#=
     Computes the molecular potential of the given system of point charges in a structureless medium.
 
     φmol(r) = 1/(4π*ε0*εΩ) * Σ qᵢ/|rᵢ-r|

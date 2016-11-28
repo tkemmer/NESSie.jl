@@ -17,7 +17,7 @@ include("base/util.jl")
 export props!, meshunion
 
 include("base/potentials.jl")
-export PotentialType, SingleLayer, DoubleLayer, φmol, ∂ₙφmol
+export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES, φmol, ∂ₙφmol
 
 # Submodules
 include("IO.jl")
