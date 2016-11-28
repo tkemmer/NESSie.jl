@@ -20,10 +20,13 @@ immutable Option{T <: AbstractFloat}
 end
 
 # Default options
-const defaultopt64 = Option(2., 78., 1.8, 20.)
-const defaultopt32 = Option(2f0, 78f0, 1.8f0, 20f0)
-defaultopt(::Type{Float64}) = defaultopt64
-defaultopt(::Type{Float32}) = defaultopt32
+for T in [:Float64, :Float32]
+    varname = Symbol("defaultopt_", T)
+    @eval begin
+        const $(varname) = Option($(T)[2, 78, 1.8, 20]...)
+        defaultopt(::Type{$(T)}) = $(varname)
+    end
+end
 
 # exponent for fundamental solution of yukawa operator -1/Λ = -1/(λ√(ε∞/εΣ))
 yukawa{T}(opt::Option{T}) = √(opt.εΣ/opt.ε∞)/opt.λ
