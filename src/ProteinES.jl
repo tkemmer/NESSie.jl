@@ -19,6 +19,9 @@ export props!, meshunion
 include("base/potentials.jl")
 export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES, φmol, ∂ₙφmol
 
+include("base/born.jl")
+export BornIon, bornion, φΩ, φΣ
+
 # Submodules
 include("IO.jl")
 include("Radon.jl")
