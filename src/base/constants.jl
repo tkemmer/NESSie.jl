@@ -8,6 +8,7 @@
 =#
 const ε0 = 1 / (4π * 1e-7 * 299792458^2)    # vacuum permittivity [ε0] = F/m
 const σ  = 0.5                              # σ(ξ) = lim_{ε→0} 1/4πε² ∫dΓᵣ = 1/2 for almost all ξ ∈ Γ [1]
+const ec = 1.602176e-9                      # 10^10 times the elementary charge (10^10 for Å → m conversion); [ec] = C
 
 #=
     Model parameters
