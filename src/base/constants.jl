@@ -11,6 +11,23 @@ const σ  = 0.5                              # σ(ξ) = lim_{ε→0} 1/4πε² �
 const ec = 1.602176e-9                      # 10^10 times the elementary charge (10^10 for Å → m conversion); [ec] = C
 
 #=
+    Common prefactor for all potentials φΩ and φΣ:
+
+        1.602e-19 / 10e-10 / 4π / ε0 ≈ 1.145
+
+    @param T
+        Return type
+    @return T
+=#
+for T in [:Float64, :Float32]
+    varname = Symbol("potprefactor_", T)
+    @eval begin
+        const $(varname) = $(T)(ec / 4π / ε0)
+        potprefactor(::Type{$(T)}) = $(varname)
+    end
+end
+
+#=
     Model parameters
 =#
 immutable Option{T <: AbstractFloat}

@@ -1,7 +1,7 @@
 module BEM
 
 using ..ProteinES
-using ..ProteinES: Radon, Rjasanow, ec, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
+using ..ProteinES: Radon, Rjasanow, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
 using Distances: euclidean
 
 import ..ProteinES: φΩ, φΣ

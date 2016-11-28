@@ -46,7 +46,7 @@ end
     @return T
 =#
 function φΩ{T}(::Type{LocalES}, ξ::Vector{T}, ion::BornIon{T}, opt::Option{T}=defaultopt(T))
-    T(ec / 4π / ε0) * ion.charge.val * (1/euclidean(ion.charge.pos, ξ) + 1/ion.radius * (1/opt.εΣ - 1))
+    potprefactor(T) * ion.charge.val * (1/euclidean(ion.charge.pos, ξ) + 1/ion.radius * (1/opt.εΣ - 1))
 end
 
 #=
@@ -62,7 +62,7 @@ end
     @return T
 =#
 function φΣ{T}(::Type{LocalES}, ξ::Vector{T}, ion::BornIon{T}, opt::Option{T}=defaultopt(T))
-    T(ec / 4π / ε0) * ion.charge.val / opt.εΣ / euclidean(ion.charge.pos, ξ)
+    potprefactor(T) * ion.charge.val / opt.εΣ / euclidean(ion.charge.pos, ξ)
 end
 
 #=
@@ -80,7 +80,7 @@ end
 function φΩ{T}(::Type{NonlocalES}, ξ::Vector{T}, ion::BornIon{T}, opt::Option{T}=defaultopt(T))
     r = euclidean(ion.charge.pos, ξ)
     ν = sqrt(opt.εΣ/opt.ε∞) * ion.radius / opt.λ
-    T(ec / 4π / ε0) * ion.charge.val * (1/r + 1/ion.radius/opt.εΣ * (1 - opt.εΣ + (opt.εΣ - opt.ε∞)/opt.ε∞ * sinh(ν)/ν * exp(-ν)))
+    potprefactor(T) * ion.charge.val * (1/r + 1/ion.radius/opt.εΣ * (1 - opt.εΣ + (opt.εΣ - opt.ε∞)/opt.ε∞ * sinh(ν)/ν * exp(-ν)))
 end
 
 #=
@@ -98,5 +98,5 @@ end
 function φΣ{T}(::Type{NonlocalES}, ξ::Vector{T}, ion::BornIon{T}, opt::Option{T}=defaultopt(T))
     r = euclidean(ion.charge.pos, ξ)
     ν = sqrt(opt.εΣ/opt.ε∞) * ion.radius / opt.λ
-    T(ec / 4π / ε0) * ion.charge.val / opt.εΣ / r * (1 + (opt.εΣ - opt.ε∞)/opt.ε∞ * sinh(ν)/ν * exp(-ν * r/ion.radius))
+    potprefactor(T) * ion.charge.val / opt.εΣ / r * (1 + (opt.εΣ - opt.ε∞)/opt.ε∞ * sinh(ν)/ν * exp(-ν * r/ion.radius))
 end

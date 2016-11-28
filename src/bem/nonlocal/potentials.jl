@@ -31,7 +31,7 @@ function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     # ▶ 4π⋅ε0     for u, q, and umol
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    scale!(φ, ec / 4π / ε0)
+    scale!(φ, potprefactor(T))
 
     φ
 end
@@ -87,7 +87,7 @@ function φΣ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     # ▶ 4π⋅ε0     for u, q, w, umol, and qmol
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    scale!(φ, ec / 4π / 4π / ε0)
+    scale!(φ, potprefactor(T) / 4π)
 
     φ
 end
