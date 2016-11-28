@@ -3,7 +3,7 @@ using FactCheck
 
 # All tests. Will be used if no command line arguments are given.
 const tests = [
-    "base/model.jl", "base/potentials.jl", "base/quadrature.jl", "base/util.jl",
+    "base/born.jl", "base/model.jl", "base/potentials.jl", "base/quadrature.jl", "base/util.jl",
     "bem/local.jl", "bem/nonlocal.jl",
     "io/hmo", "io/mcsf", "io/off", "io/pqr", "io/xml3d",
     "radon", "rjasanow"]
