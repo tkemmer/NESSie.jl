@@ -112,7 +112,7 @@ function solve_u{T}(
     LaplaceMod.laplacecoll!(SingleLayer, buf, elements, Ξ)
 
     # b -= εΩ/εΣ ⋅ V ⋅ qmol
-    gemv!(εΩ/εΣ, buf, qmol, b)
+    gemv!(-εΩ/εΣ, buf, qmol, b)
 
     # u = b / M
     m \ b
