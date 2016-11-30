@@ -231,23 +231,26 @@ function laplacecoll!{T, P <: PotentialType}(
     isvec && @assert length(fvals) == length(elements)
     isvec || @assert size(dest) == (length(Ξ), length(elements))
 
-    @inbounds for (eidx, elem) in enumerate(elements), (oidx, ξ) in enumerate(Ξ)
+    @inbounds for (eidx, elem) in enumerate(elements)
+        Threads.@threads for oidx in 1:length(Ξ)
+            ξ = Ξ[oidx]
 
-        #TODO check whether zerodiag is necessary
-        if !isvec && ptype == DoubleLayer && eidx == oidx
-            dest[oidx, eidx] = zero(T)
-            continue
+            #TODO check whether zerodiag is necessary
+            if !isvec && ptype == DoubleLayer && eidx == oidx
+                dest[oidx, eidx] = zero(T)
+                continue
+            end
+
+            dist = distance(ξ, elem)
+
+            # Project ξ onto the surface element plane if necessary
+            # Devectorized version of ξ -= dist * elem.normal
+            abs(dist) >= 1e-10 && (ξ = [ξ[i] - dist * elem.normal[i] for i in 1:3])
+
+            isvec ?
+                dest[oidx] += laplacepot(ptype, ξ, elem, dist) * fvals[eidx] :
+                dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist)
         end
-
-        dist = distance(ξ, elem)
-
-        # Project ξ onto the surface element plane if necessary
-        # Devectorized version of ξ -= dist * elem.normal
-        abs(dist) >= 1e-10 && (ξ = [ξ[i] - dist * elem.normal[i] for i in 1:3])
-
-        isvec ?
-            dest[oidx] += laplacepot(ptype, ξ, elem, dist) * fvals[eidx] :
-            dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist)
     end
     nothing
 end
