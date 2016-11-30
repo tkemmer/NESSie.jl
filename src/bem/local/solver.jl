@@ -143,18 +143,18 @@ function solve_q{T}(
     # constants
     const numelem = length(elements)
 
-    # system matrix
-    m = zeros(T, numelem, numelem)
+    # right-hand side
+    b   = zeros(T, numelem)
+    buf = Array(T, numelem, numelem)
 
-    # m = (σ + K)
-    LaplaceMod.laplacecoll!(DoubleLayer, m, elements, Ξ)
-    pluseye!(m, 4π * σ)
+    # b = (σ + K) ⋅ u
+    LaplaceMod.laplacecoll!(DoubleLayer, buf, elements, Ξ)
+    pluseye!(buf, 4π * σ)
+    gemv!(one(T), buf, u, b)
 
-    # m = V^{-1}⋅(σ + K)
-    v = Array(T, numelem, numelem)
-    LaplaceMod.laplacecoll!(SingleLayer, v, elements, Ξ)
-    m = gemm(one(T), pinv(v), m)     # TODO check tolerance
+    # generate V
+    LaplaceMod.laplacecoll!(SingleLayer, buf, elements, Ξ)
 
-    # q = m⋅u
-    gemv(one(T), m, u)
+    # q = b / V
+    buf \ b
 end
