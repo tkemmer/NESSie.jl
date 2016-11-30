@@ -103,12 +103,9 @@ function solve_u{T}(
     =#
     b = zeros(T, numelem)
 
-    # b = -σ ⋅ umol;
+    # b = (K - σ) ⋅ umol
     # again, we apply a prefactor of 4π to σ to match the other components of the vector
-    copy!(b, umol)
-    scale!(b, -4π * σ)
-
-    # b += K ⋅ umol
+    pluseye!(buf, -4π * σ)
     gemv!(one(T), buf, umol, b)
 
     # generate V
