@@ -16,7 +16,7 @@ type LocalBEMResult{T} <: BEMResult{T}
 end
 
 #=
-    Computes all vectors required for potential computation.
+    Computes the full cauchy data on the surface of the biomolecule.
 
     See `LocalBEMResult` for remarks on the present prefactors.
 
@@ -42,119 +42,61 @@ function solve{T}(
     const umol = opt.εΩ \   φmol(model)
     const qmol = opt.εΩ \ ∂ₙφmol(model)
 
-    const u = solve_u(model.elements, umol, qmol, Ξ, LaplaceMod, opt)
-    const q = solve_q(model.elements, u, Ξ, LaplaceMod, opt)
-
-    LocalBEMResult(model, opt, u, q, umol, qmol)
-end
-
-#=
-    Computes u = b / M, with
-
-        b = (K - σ) ⋅ umol - εΩ/εΣ ⋅ V ⋅ qmol, and
-
-        M = (1 + εΩ/εΣ) ⋅ σ + (εΩ/εΣ - 1) ⋅ K.
-
-    @param elements
-            List of surface triangles
-    @param umol
-            Molecular potential on the surface
-    @param qmol
-            Normal derivative of the molecular potential on the surface
-    @param Ξ
-            List of observation points
-    @param LaplaceMod
-            Module to be used for Laplace potential; Valid values: Radon, Rjasanow
-    @param opt
-            Constants to be used
-    @return Vector{T}
-=#
-function solve_u{T}(
-        elements::Vector{Triangle{T}},
-        umol::Vector{T},
-        qmol::Vector{T},
-        Ξ::Vector{Vector{T}},
-        LaplaceMod::Module=Rjasanow,
-        opt::Option{T}=defaultopt(T),
-    )
-    # convenient access to constants
+    # convenience aliases
     const εΩ = opt.εΩ
     const εΣ = opt.εΣ
-    const numelem = length(elements)
+    const numelem = length(model.elements)
 
-    #=
-        system matrix
-    =#
+    # system matrix M
     m = zeros(T, numelem, numelem)
+    k = Array(T, numelem, numelem)
+    v = zeros(T, numelem, numelem)
 
-    # M = (1 + εΩ/εΣ) ⋅ σ;
+    # right-hand sides bᵤ and b_q
+    b = zeros(T, numelem)
+
+    # Mᵤ = (1 + εΩ/εΣ) ⋅ σ;
     # since all other components of the system matrix will be premultiplied by 4π, do the same for σ here
     pluseye!(m, (1 + εΩ/εΣ) * 4π * σ)
 
-    # generate K
-    buf = Array(T, numelem, numelem)
-    LaplaceMod.laplacecoll!(DoubleLayer, buf, elements, Ξ)
+    #=
+        generate and apply V
+    =#
+    # M_q = V
+    LaplaceMod.laplacecoll!(SingleLayer, v, model.elements, Ξ)
 
-    # M += (εΩ/εΣ - 1) ⋅ K
-    axpy!(εΩ/εΣ - 1, buf, m)
+    # bᵤ -= εΩ/εΣ ⋅ V ⋅ qmol
+    gemv!(-εΩ/εΣ, v, qmol, b)
 
     #=
-        right-hand side
+        generate and apply K
     =#
-    b = zeros(T, numelem)
+    LaplaceMod.laplacecoll!(DoubleLayer, k, model.elements, Ξ)
 
-    # b = (K - σ) ⋅ umol
+    # Mᵤ += (εΩ/εΣ - 1) ⋅ K
+    axpy!(εΩ/εΣ - 1, k, m)
+
+    # bᵤ = (K - σ) ⋅ umol
     # again, we apply a prefactor of 4π to σ to match the other components of the vector
-    pluseye!(buf, -4π * σ)
-    gemv!(one(T), buf, umol, b)
+    pluseye!(k, -4π * σ)
+    gemv!(one(T), k, umol, b)
 
-    # generate V
-    LaplaceMod.laplacecoll!(SingleLayer, buf, elements, Ξ)
+    #=
+        u = b / M, with
+        b = (K - σ) ⋅ umol - εΩ/εΣ ⋅ V ⋅ qmol, and
+        M = (1 + εΩ/εΣ) ⋅ σ + (εΩ/εΣ - 1) ⋅ K.
+    =#
+    u = m \ b
 
-    # b -= εΩ/εΣ ⋅ V ⋅ qmol
-    gemv!(-εΩ/εΣ, buf, qmol, b)
+    # b_q = (σ + K) ⋅ u
+    fill!(b, zero(T))
+    pluseye!(k, 8π * σ) # meh...
+    gemv!(one(T), k, u, b)
 
-    # u = b / M
-    m \ b
-end
+    #=
+        q = V^{-1}⋅(σ + K)u
+    =#
+    q = v \ b
 
-#=
-    Computes q = V^{-1}⋅(σ + K)u.
-
-    @param elements
-            List of surface triangles
-    @param u
-            Vector u
-    @param Ξ
-            List of observation points
-    @param LaplaceMod
-            Module to be used for Laplace potential; Valid values: Radon, Rjasanow
-    @param opt
-            Constants to be used
-    @return Vector{T}
-=#
-function solve_q{T}(
-        elements::Vector{Triangle{T}},
-        u::Vector{T},
-        Ξ::Vector{Vector{T}},
-        LaplaceMod::Module=Rjasanow,
-        opt::Option{T}=defaultopt(T)
-    )
-    # constants
-    const numelem = length(elements)
-
-    # right-hand side
-    b   = zeros(T, numelem)
-    buf = Array(T, numelem, numelem)
-
-    # b = (σ + K) ⋅ u
-    LaplaceMod.laplacecoll!(DoubleLayer, buf, elements, Ξ)
-    pluseye!(buf, 4π * σ)
-    gemv!(one(T), buf, u, b)
-
-    # generate V
-    LaplaceMod.laplacecoll!(SingleLayer, buf, elements, Ξ)
-
-    # q = b / V
-    buf \ b
+    LocalBEMResult(model, opt, u, q, umol, qmol)
 end
