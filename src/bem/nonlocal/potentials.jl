@@ -67,8 +67,8 @@ function φΣ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     LaplaceMod.laplacecoll!(SingleLayer, φ, elements, Ξ, buf)
     scale!(φ, -εΩ/ε∞)
 
-    # φ += (Vʸ-V)[εΩ(ε0/εΣ - 1/ε∞) ⋅ (q + qmol)](ξ)
-    scale!(buf, εΩ * (ε0/εΣ - 1/ε∞))
+    # φ += (Vʸ-V)[εΩ(1/εΣ - 1/ε∞) ⋅ (q + qmol)](ξ)
+    scale!(buf, εΩ * (1/εΣ - 1/ε∞))
     Radon.regularyukawacoll!(SingleLayer, φ, elements, Ξ, buf, yuk)
 
     # φ += K[u + umol](ξ)
