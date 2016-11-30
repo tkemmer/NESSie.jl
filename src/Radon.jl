@@ -243,10 +243,10 @@ function radoncoll!{T}(
             cubpts[i][j] = qpts.x[i] * u[j] + qpts.y[i] * v[j] + elem.v1[j]
         end
 
-        for (oidx, obs) in enumerate(Ξ)
+        for (oidx, ξ) in enumerate(Ξ)
             value = zero(T)
             for i in 1:qpts.num
-                value += solution(cubpts[i], obs, elem.normal, yukawa) * qpts.weight[i]
+                value += solution(cubpts[i], ξ, elem.normal, yukawa) * qpts.weight[i]
             end
             isvec ?
                 dest[oidx] += value * area * fvals[eidx] :
