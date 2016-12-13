@@ -1,3 +1,8 @@
-ProteinES.jl
+# ProteinES.jl
+Local and nonlocal electrostatics of biomolecules in structured solvents
 
-Local and nonlocal electrostatics of biomolecules in a structured solvent.
+## Abstract
+Electrostatic interactions are a major contributor to protein-protein and protein-ligand interactions. In contrast to other molecular interaction components, they can be significant over medium to long distances and are thus crucial for molecular visibility. Research areas such as rational drug design require accurate estimates of potentials and free energies influenced by electrostatics. One major challenge in this context, however, is the treatment of the solvent the molecules are immersed in, i.e., water in a biological context. Strong simplifications of the structure of such polarizable and highly structured solvents are commonplace to achieve the required computational efficiency, but invariably lead to inaccuracies.
+
+Here, we present efficient protein electrostatics computations in a single and easily extensible software package for the cross-platform and open-source Julia programming language. By modelling water in an implicit but nonlocal fashion, we account for correlation of molecular polarization due to the water network around the solute and sustain accuracy without suffering from infeasible runtimes as compared to the explicit case. Our package contains implementations for our own Boundary Element (BEM) solver as well as a reference Finite Element (FEM) solver, both profiting from the good base performance
+of the Julia language, which can achieve runtimes comparable to C. Additionally, Julia's native and non-native interoperability with other languages such as C, Fortran, R, and Python allows for easy incorporation of our package into existing pipelines.
