@@ -63,15 +63,15 @@ context("regularyukawapot") do
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(-0.57734713663526745894988668695023080532035174827300561882957))
         # ξ in origin (potential cancellation)
-        ret = Radon.regularyukawapot(.001x, ξ, yuk)
+        ret = Radon.regularyukawapot(T(.001) * x, ξ, yuk)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(-6.95773573664079611429119468507639364064769481076591007615189))
         # ξ in origin (potential cancellation 2)
-        ret = Radon.regularyukawapot(.0001x, ξ, yuk)
+        ret = Radon.regularyukawapot(T(.0001) * x, ξ, yuk)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(-6.99575819000175052904190394524100762244862345273988759731283))
         # ξ in origin (potential cancellation 3)
-        ret = Radon.regularyukawapot(.00001x, ξ, yuk)
+        ret = Radon.regularyukawapot(T(.00001) * x, ξ, yuk)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(-6.99957566470162580591945945320355718542304458045960164651420))
     end
@@ -97,15 +97,15 @@ context("∂ₙregularyukawapot") do
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(0.192436385477375021033020985138032408973537816345889754008150))
         # ξ in origin (potential cancellation)
-        ret = Radon.∂ₙregularyukawapot(.001x, ξ, n, yuk)
+        ret = Radon.∂ₙregularyukawapot(T(.001) * x, ξ, n, yuk)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(14.03126641709760402264474861719654017225786809145550365963283))
         # ξ in origin (potential cancellation 2)
-        ret = Radon.∂ₙregularyukawapot(.0001x, ξ, n, yuk)
+        ret = Radon.∂ₙregularyukawapot(T(.0001) * x, ξ, n, yuk)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(14.13365345844970855427401235115544109979343227826364222026794))
         # ξ in origin (potential cancellation 3)
-        ret = Radon.∂ₙregularyukawapot(.00001x, ξ, n, yuk)
+        ret = Radon.∂ₙregularyukawapot(T(.00001) * x, ξ, n, yuk)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(14.14393831379399210175378534648974379367907886588210581085651))
     end
