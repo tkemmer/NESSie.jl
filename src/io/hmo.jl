@@ -27,7 +27,8 @@ function readhmo_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     seek(stream, "BEG_NODL_DATA")
     readline(stream) # skip first line
     for line in eachline(stream)
-        line == "END_NODL_DATA\n" && break
+        line == "END_NODL_DATA" && break
+	println(split(line))
         push!(nodes, [parse(T, a) for a in split(line)[2:end]])
     end
     nodes
@@ -49,7 +50,7 @@ function readhmo_elements{T <: AbstractFloat}(stream::IOStream, nodes::Vector{Ve
     seek(stream, "BEG_ELEM_DATA")
     readline(stream) # skip first line
     for line in eachline(stream)
-        line == "END_ELEM_DATA\n" && break
+        line == "END_ELEM_DATA" && break
         push!(elements, Triangle([nodes[parse(Int, a)] for a in split(line)[4:end]]...))
     end
     elements
@@ -69,7 +70,7 @@ function readhmo_charges{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64
     seek(stream, "BEG_CHARGE_DATA")
     readline(stream) # skip first line
     for line in eachline(stream)
-        line == "END_CHARGE_DATA\n" && break
+        line == "END_CHARGE_DATA" && break
         push!(charges, Charge([parse(T, a) for a in split(line)[2:end]]...))
     end
     charges

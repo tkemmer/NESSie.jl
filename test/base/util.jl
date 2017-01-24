@@ -96,10 +96,10 @@ context("seek") do
     @fact eof(fh) --> true
     seekstart(fh)
     seek(fh, "dolor")
-    @fact readline(fh) --> "sit\n"
+    @fact readline(fh) --> "sit"
     seekstart(fh)
     seek(fh, "dolor", false)
-    @fact readline(fh) --> "dolor\n"
+    @fact readline(fh) --> "dolor"
     close(fh)
     rm(fname)
 end
