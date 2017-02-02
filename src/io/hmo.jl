@@ -28,7 +28,6 @@ function readhmo_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     readline(stream) # skip first line
     for line in eachline(stream)
         line == "END_NODL_DATA" && break
-	println(split(line))
         push!(nodes, [parse(T, a) for a in split(line)[2:end]])
     end
     nodes
