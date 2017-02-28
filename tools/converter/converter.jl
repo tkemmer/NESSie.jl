@@ -3,7 +3,7 @@ include("../../src/ProteinES.jl")
 using ProteinES
 using ProteinES.IO
 
-abstract MeshType
+abstract type MeshType end
 type Nodes <: MeshType end
 type Surface <: MeshType end
 type Volume <: MeshType end

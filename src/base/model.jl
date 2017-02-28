@@ -1,7 +1,7 @@
 #=
     Elements
 =#
-abstract Element{T <: AbstractFloat}
+abstract type Element{T <: AbstractFloat} end
 
 #=
     Representation of a single surface triangle
@@ -42,7 +42,7 @@ Charge(T::DataType, args...) = Charge{T}(convert(Vector{T}, [args[1:end-1]...]),
 #=
     Models
 =#
-abstract Model{T <: AbstractFloat}
+abstract type Model{T <: AbstractFloat} end
 
 #=
     Surface model

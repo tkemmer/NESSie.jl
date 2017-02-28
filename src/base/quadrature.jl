@@ -1,7 +1,7 @@
 #=
     Quadrature points
 =#
-abstract QuadraturePoints{T <: AbstractFloat}
+abstract type QuadraturePoints{T <: AbstractFloat} end
 
 #=
     Quadrature points and weights for triangles.

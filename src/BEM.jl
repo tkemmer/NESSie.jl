@@ -7,7 +7,7 @@ using Distances: euclidean
 import ..ProteinES: φΩ, φΣ
 export solve, φΩ, φΣ
 
-abstract BEMResult{T <: AbstractFloat}
+abstract type BEMResult{T <: AbstractFloat} end
 
 include("bem/local/solver.jl")
 include("bem/local/potentials.jl")

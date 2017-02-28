@@ -9,7 +9,7 @@ export laplacecoll!
     Enum-like representation of the obseration point's position relative to the corresponding
     surface element.
 =#
-abstract ObservationPosition
+abstract type ObservationPosition end
 type InPlane <: ObservationPosition end
 type InSpace <: ObservationPosition end
 

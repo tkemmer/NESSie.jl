@@ -1,7 +1,7 @@
 #=
     Enum-like representation of potential types
 =#
-abstract PotentialType
+abstract type PotentialType end
 type SingleLayer <: PotentialType end
 type DoubleLayer <: PotentialType end
 
@@ -10,7 +10,7 @@ type DoubleLayer <: PotentialType end
     ▶ Local electrostatics:    Complete independence of solvent molecules
     ▶ Nonlocal electrostatics: Allow solvent molecule correlation effects (with area-of-effect radius λ)
 =#
-abstract LocalityType
+abstract type LocalityType end
 type NonlocalES <: LocalityType end
 type LocalES <: LocalityType end
 
