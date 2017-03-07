@@ -59,7 +59,7 @@ function φΣ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     const yuk = yukawa(bem.opt)
     const elements = bem.model.elements
 
-    buf = Array(T, length(elements))
+    buf = Array{T}(length(elements))
 
     # φ  = -V[εΩ/ε∞ ⋅ (q + qmol)](ξ)
     copy!(buf, bem.q)

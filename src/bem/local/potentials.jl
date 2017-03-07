@@ -51,7 +51,7 @@ end
 function φΣ{T}(Ξ::Vector{Vector{T}}, bem::LocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
     # result vector
     φ = zeros(T, length(Ξ))
-    buf = Array(T, length(bem.model.elements))
+    buf = Array{T}(length(bem.model.elements))
 
     # φ  = -εΩ/εΣ ⋅ [Vtilde ⋅ (q + qmol)](ξ)
     copy!(buf, bem.q)
