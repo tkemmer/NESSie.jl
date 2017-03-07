@@ -12,6 +12,7 @@ const tests = [
     "base/util.jl",
     "bem/local.jl",
     "bem/nonlocal.jl",
+    "fem/nonlocal.jl",
     "format/hmo.jl",
     "format/mcsf.jl",
     "format/msms.jl",

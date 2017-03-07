@@ -1,0 +1,97 @@
+using NESSie.FEM: basisfunctions, reverseprojection
+
+context("basisfunctions") do
+    for T in testtypes
+        # reference tetrahedron
+        elem = Tetrahedron(T[0, 0, 0], T[1, 0, 0], T[0, 1, 0], T[0, 0, 1])
+        d, ∇f = basisfunctions(elem)
+        @fact typeof(d) --> T
+        @fact d --> 1
+        @fact typeof(∇f) --> Vector{Vector{T}}
+        @fact ∇f[1] --> d * T[-1, -1, -1]
+        @fact ∇f[2] --> d * T[1, 0, 0]
+        @fact ∇f[3] --> d * T[0, 1, 0]
+        @fact ∇f[4] --> d * T[0, 0, 1]
+
+        # tetrahedron to be mapped onto the reference
+        elem = Tetrahedron(T[1, 1, 1], T[3, 1, 1], T[1, 3, 1], T[1, 1, 3])
+        d, ∇f = basisfunctions(elem)
+        @fact typeof(d) --> T
+        @fact d --> 8
+        @fact typeof(∇f) --> Vector{Vector{T}}
+        @fact ∇f[1] --> d * T[-.5, -.5, -.5]
+        @fact ∇f[2] --> d * T[.5, 0, 0]
+        @fact ∇f[3] --> d * T[0, .5, 0]
+        @fact ∇f[4] --> d * T[0, 0, .5]
+
+        # tetrahedron crossing all quadrants
+        elem = Tetrahedron(T[1, -1, -1], T[0, 1, -1], T[-1, -1, -1], T[0, 0, 1])
+        d, ∇f = basisfunctions(elem)
+        @fact typeof(d) --> T
+        @fact d --> 8
+        @fact typeof(∇f) --> Vector{Vector{T}}
+        @fact ∇f[1] --> d * T[.5, -.25, -.125]
+        @fact ∇f[2] --> d * T[0, .5, -.25]
+        @fact ∇f[3] --> d * T[-.5, -.25, -.125]
+        @fact ∇f[4] --> d * T[0, 0, .5]
+
+        @pending negative_det --> :nothing
+    end
+end
+
+context("reverseprojection") do
+    for T in testtypes
+        # reference tetrahedron
+        elem = Tetrahedron(T[0, 0, 0], T[1, 0, 0], T[0, 1, 0], T[0, 0, 1])
+        rev  = reverseprojection(elem)
+        @fact rev(T[0.0, 0.0, 0.0]) --> T[0.0, 0.0, 0.0]
+        @fact rev(T[0.5, 0.0, 0.0]) --> T[0.5, 0.0, 0.0]
+        @fact rev(T[1.0, 0.0, 0.0]) --> T[1.0, 0.0, 0.0]
+        @fact rev(T[0.0, 0.5, 0.0]) --> T[0.0, 0.5, 0.0]
+        @fact rev(T[0.0, 1.0, 0.0]) --> T[0.0, 1.0, 0.0]
+        @fact rev(T[0.0, 0.0, 0.5]) --> T[0.0, 0.0, 0.5]
+        @fact rev(T[0.0, 0.0, 1.0]) --> T[0.0, 0.0, 1.0]
+        @fact rev(T[0.5, 0.5, 0.5]) --> T[0.5, 0.5, 0.5]
+
+        # some other tetrahedron
+        elem = Tetrahedron(T[1, 1, 1], T[3, 1, 1], T[1, 3, 1], T[1, 1, 3])
+        rev  = reverseprojection(elem)
+        @fact rev(T[0.0, 0.0, 0.0]) --> T[1.0, 1.0, 1.0]
+        @fact rev(T[0.5, 0.0, 0.0]) --> T[2.0, 1.0, 1.0]
+        @fact rev(T[1.0, 0.0, 0.0]) --> T[3.0, 1.0, 1.0]
+        @fact rev(T[0.0, 0.5, 0.0]) --> T[1.0, 2.0, 1.0]
+        @fact rev(T[0.0, 1.0, 0.0]) --> T[1.0, 3.0, 1.0]
+        @fact rev(T[0.0, 0.0, 0.5]) --> T[1.0, 1.0, 2.0]
+        @fact rev(T[0.0, 0.0, 1.0]) --> T[1.0, 1.0, 3.0]
+        @fact rev(T[0.5, 0.5, 0.5]) --> T[2.0, 2.0, 2.0]
+
+        # tetrahedron crossing all quadrants
+        elem = Tetrahedron(T[1, -1, -1], T[0, 1, -1], T[-1, -1, -1], T[0, 0, 1])
+        rev  = reverseprojection(elem)
+        @fact rev(T[0.0, 0.0, 0.0]) --> T[ 1.0, -1.0, -1.0]
+        @fact rev(T[0.5, 0.0, 0.0]) --> T[ 0.5,  0.0, -1.0]
+        @fact rev(T[1.0, 0.0, 0.0]) --> T[ 0.0,  1.0, -1.0]
+        @fact rev(T[0.0, 0.5, 0.0]) --> T[ 0.0, -1.0, -1.0]
+        @fact rev(T[0.0, 1.0, 0.0]) --> T[-1.0, -1.0, -1.0]
+        @fact rev(T[0.0, 0.0, 0.5]) --> T[ 0.5, -0.5,  0.0]
+        @fact rev(T[0.0, 0.0, 1.0]) --> T[ 0.0,  0.0,  1.0]
+    end
+end
+
+#=
+context("localstiffnessmatrix_v") do
+    for T in testtypes
+        # reference tetrahedron
+        k = localstiffnessmatrix_v(Vector{T}[T[-1, -1, -1], T[1, 0, 0], T[0, 1, 0], T[0, 0, 1]])
+        @fact typeof(k) --> Symmetric{T, Array{T, 2}}
+        @fact k --> Symmetric(6 \ T[3 -1 -1 -1; 0 1 0 0; 0 0 1 0; 0 0 0 1], :U)
+
+        # tetrahedron to be mapped onto the reference
+        k = localstiffnessmatrix_v(Vector{T}[T[-4, -4, -4], T[4, 0, 0], T[0, 4, 0], T[0, 0, 4]])
+        @fact typeof(k) --> Symmetric{T, Array{T, 2}}
+        @fact k --> Symmetric(6 \ T[48 -16 -16 -16; 0 16 0 0; 0 0 16 0; 0 0 0 16], :U)
+    end
+end
+=#
+
+@pending espotential --> :nothing

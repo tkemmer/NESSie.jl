@@ -35,6 +35,9 @@ export Rjasanow
 include("BEM.jl")
 export BEM
 
+include("FEM.jl")
+export FEM
+
 include("TestModel.jl")
 export TestModel
 
