@@ -17,5 +17,6 @@ include("bem/local/energy.jl")
 # nonlocal electrostatics
 include("bem/nonlocal/solver.jl")
 include("bem/nonlocal/potentials.jl")
+include("bem/nonlocal/energy.jl")
 
 end # module
