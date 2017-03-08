@@ -6,7 +6,7 @@
     where φ* is the reaction field and ρ is the corresponding charge distribution.
 
     @param bem
-        Result of `solvenonlocal`
+        Nonlocal BEM result
     @param LaplaceMod
         Module to be used for Laplace potential; Valid values: Radon, Rjasanow
     @return T ([W*] = kJ/mol)

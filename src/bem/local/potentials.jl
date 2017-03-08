@@ -5,7 +5,7 @@
     @param Ξ
         List of observation points
     @param bem
-        Result of `solvelocal`
+        Local BEM result
     @param LaplaceMod
         Module to be used for Laplace potential; Valid values: Radon, Rjasanow
     @return Vector{T}  ([φΩ] = V = C/F)
@@ -43,7 +43,7 @@ end
     @param Ξ
         List of observation points
     @param bem
-        Result of `solvelocal`
+        Local BEM result
     @param LaplaceMod
         Module to be used for Laplace potential; Valid values: Radon, Rjasanow
     @return Vector{T}  ([φΣ] = V = C/F)
