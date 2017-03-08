@@ -25,10 +25,7 @@ function rfenergy{T}(bem::LocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
     # W* += [V ⋅ q](ξ)
     LaplaceMod.laplacecoll!(SingleLayer, wstar, bem.model.elements, qposs, bem.q)
 
-    # Apply ρ
-    wstar .*= qvals
-
-    # Integrate and apply remaining prefactors (in order)
+    # Apply ρ, integrate over Ω and apply remaining prefactors (in order)
     # ▶ 4π        for Vtilde, W
     # (in potprefactor:)
     # ▶ 4π⋅ε0     for u and q
@@ -37,7 +34,7 @@ function rfenergy{T}(bem::LocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
     #
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 6.022e23  for Avogadro constant Nₐ; [Nₐ] = 1/mol
-    # ▶ 1e-3       for the conversion 1/J → 1/kJ
+    # ▶ 1e-3      for the conversion 1/J → 1/kJ
     # ▶ 0.5       since we have counted all interactions twice
-    sum(wstar) / 4π * potprefactor(T) * ec * 6.022140857e10 / 2
+    wstar ⋅ qvals / 4π * potprefactor(T) * ec * 6.022140857e10 / 2
 end
