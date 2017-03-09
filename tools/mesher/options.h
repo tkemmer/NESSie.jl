@@ -61,7 +61,6 @@ const std::map<std::string, Option> options {
     }}
 };
 
-void printUsage();
 Options parseOptions(char** first, char** last);
 
 #endif // MESHER_OPTIONS_H
