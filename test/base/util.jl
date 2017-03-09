@@ -257,6 +257,29 @@ context("obspoints_line") do
     end
 end
 
+context("obspoints_plane") do
+    for T in testtypes
+        Ξ = [collect(Ξ) for Ξ in obspoints_plane(T[1, 1, 1], T[1, 1, 1], T[1, 1, 1], 3, 3)]
+        @fact typeof(Ξ) --> Vector{Vector{Vector{T}}}
+        @fact length(Ξ) --> 3
+        for row in Ξ
+            @fact row --> [T[1, 1, 1], T[1, 1, 1], T[1, 1, 1]]
+        end
+        Ξ = [collect(Ξ) for Ξ in obspoints_plane(T[1, 0, 0], T[0, 0, -1], T[0, 1, 0], 3, 3)]
+        @fact typeof(Ξ) --> Vector{Vector{Vector{T}}}
+        @fact length(Ξ) --> 3
+        @fact Ξ[1] --> [T[0, 0, -1], T[0, 0.5, -0.5], T[0, 1, 0]]
+        @fact Ξ[2] --> [T[0.5, 0, -0.5], T[0.5, 0.5, 0], T[0.5, 1, 0.5]]
+        @fact Ξ[3] --> [T[1, 0, 0], T[1, 0.5, 0.5], T[1, 1, 1]]
+        Ξ = [collect(Ξ) for Ξ in obspoints_plane(T[1, 0, 0], T[1, 1, 1], T[0, 1, 0], 3, 3)]
+        @fact typeof(Ξ) --> Vector{Vector{Vector{T}}}
+        @fact length(Ξ) --> 3
+        @fact Ξ[1] --> [T[1, 1, 1], T[0.5, 1, 0.5], T[0, 1, 0]]
+        @fact Ξ[2] --> [T[1, 0.5, 0.5], T[0.5, 0.5, 0], T[0, 0.5, -0.5]]
+        @fact Ξ[3] --> [T[1, 0, 0], T[0.5, 0, -0.5], T[0, 0, -1]]
+    end
+end
+
 @pending cathetus --> :nothing
 @pending sign --> :nothing
 @pending distance --> :nothing

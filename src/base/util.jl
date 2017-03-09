@@ -276,6 +276,33 @@ reverseindex{T}(v::Vector{T}) = Dict{UInt, UInt}(object_id(e) => i for (i,e) in 
 =#
 obspoints_line{T}(u::Vector{T}, v::Vector{T}, n::Int) = (u + T(i) * (v - u) for i in linspace(0, 1, n))
 
+#=
+    Generates nba ⋅ nbc evenly distributed observation points on the parallelogram with the sides
+    BA and BC and a, b, c being the location vectors to the points A, B, and C, respectively.
+
+    Example:
+    ```
+    for Ξ in obspoints_plane(...)
+        for ξ in Ξ
+            ...
+        end
+    end
+    ```
+
+    @param a
+        Location of point A
+    @param b
+        Location of point B
+    @param c
+        Location of point C
+    @param nba
+        Number of observation points along the BA axis
+    @param nbc
+        Number of observation points along the BC axis
+    @return Function
+=#
+obspoints_plane{T}(a::Vector{T}, b::Vector{T}, c::Vector{T}, nba::Int, nbc::Int) = (obspoints_line(ξ, c + (ξ - b), nbc) for ξ in obspoints_line(b, a, nba))
+
 # Convenience aliases
 gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!(α, m, v, one(T), dest)
 gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, β::T, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!('N', α, m, v, β, dest)
