@@ -234,6 +234,29 @@ context("meshunion") do
     end
 end
 
+context("obspoints_line") do
+    for T in testtypes
+        Ξ = [ξ for ξ in obspoints_line(T[1, 1, 1], T[1, 1, 1], 3)]
+        @fact typeof(Ξ) --> Vector{Vector{T}}
+        @fact length(Ξ) --> 3
+        for ξ in Ξ
+            @fact ξ --> T[1, 1, 1]
+        end
+        Ξ = [ξ for ξ in obspoints_line(T[0, 0, 0], T[2, 2, 2], 3)]
+        @fact typeof(Ξ) --> Vector{Vector{T}}
+        @fact length(Ξ) --> 3
+        @fact Ξ[1] --> T[0, 0, 0]
+        @fact Ξ[2] --> T[1, 1, 1]
+        @fact Ξ[3] --> T[2, 2, 2]
+        Ξ = [ξ for ξ in obspoints_line(T[2, 2, 2], T[0, 0, 0], 3)]
+        @fact typeof(Ξ) --> Vector{Vector{T}}
+        @fact length(Ξ) --> 3
+        @fact Ξ[3] --> T[0, 0, 0]
+        @fact Ξ[2] --> T[1, 1, 1]
+        @fact Ξ[1] --> T[2, 2, 2]
+    end
+end
+
 @pending cathetus --> :nothing
 @pending sign --> :nothing
 @pending distance --> :nothing

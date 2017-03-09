@@ -256,6 +256,26 @@ ddot{T}(u::Vector{T}, v::Vector{T}, n::Vector{T}) = (u[1] - v[1]) * n[1] + (u[2]
 =#
 reverseindex{T}(v::Vector{T}) = Dict{UInt, UInt}(object_id(e) => i for (i,e) in enumerate(v))
 
+#=
+    Generates n evenly distributed observation points along the line segment from u to v.
+
+    Example:
+    ```
+    for ξ in obspoints_line([0, 0, 0], [1, 1, 1], 10)
+        ...
+    end
+    ```
+
+    @param u
+        Start vector
+    @param v
+        End vector
+    @param n
+        Number of observation points
+    @return Function
+=#
+obspoints_line{T}(u::Vector{T}, v::Vector{T}, n::Int) = (u + T(i) * (v - u) for i in linspace(0, 1, n))
+
 # Convenience aliases
 gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!(α, m, v, one(T), dest)
 gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, β::T, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!('N', α, m, v, β, dest)

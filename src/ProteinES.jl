@@ -14,7 +14,7 @@ include("base/constants.jl")
 export ε0, Option, defaultopt
 
 include("base/util.jl")
-export props!, meshunion
+export props!, meshunion, obspoints_line
 
 include("base/potentials.jl")
 export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES, φmol, ∂ₙφmol
