@@ -1,6 +1,6 @@
 CXXFLAGS = -Wall -std=c++14
 
-.PHONY: clean
+.PHONY: clean all
 all: mesher
 
 types.o: types.cpp
