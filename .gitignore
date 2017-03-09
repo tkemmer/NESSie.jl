@@ -4,5 +4,6 @@
 *.o
 data/
 tools/mesher/mesher
+tools/mesher/sphere
 work/
 
