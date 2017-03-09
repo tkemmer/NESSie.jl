@@ -41,6 +41,8 @@ int main(int argc, char** argv) {
     cout << "\033[1mGenerating bounding sphere...\033[0m\n";
     auto center = SurfaceMesh_getCenterRadius(molsurf.data());
     auto sphere = generateBoundingSphere(center, opt);
+    cout << "Molecule radius: " << center.radius << ", Center: ["
+         << center.x << ", " << center.y << ", " << center.z << "]\n";
 
     cout << "\033[1mGenerating volume mesh...\033[0m\n";
     Surface mesh = SurfaceMesh_merge(molsurf.data(), sphere.data());
