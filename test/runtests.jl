@@ -9,11 +9,21 @@ const tests = [
     "radon", "rjasanow"]
 const testtypes = (Float64, Float32)
 
+# Check command line arguments
+ok = true
+for arg in ARGS
+    arg in tests || begin
+        println("\n\e[1;31mERROR: Invalid test file $arg\e[0m\n")
+        ok = false
+    end
+end
+ok || exit(1)
+
+# Run tests
 for t in (length(ARGS) > 0 ? ARGS : tests)
     facts(t) do
         include(endswith(t, ".jl") ? t : "$(t).jl")
     end
     println()
 end
-
 FactCheck.exitstatus()
