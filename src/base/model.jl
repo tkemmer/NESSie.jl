@@ -49,6 +49,7 @@ abstract type Model{T <: AbstractFloat} end
     Protein immersed in a structured solvent, represented by the protein surface and its partial point charges.
 =#
 type SurfaceModel{T} <: Model{T}
+    nodes::Vector{Vector{T}}
     elements::Vector{Triangle{T}}
     charges::Vector{Charge{T}}
 end
@@ -59,6 +60,7 @@ end
     tetrahedra and the protein's partial point charges.
 =#
 type VolumeModel{T} <: Model{T}
+    nodes::Vector{Vector{T}}
     elements::Vector{Tetrahedron{T}}
     charges::Vector{Charge{T}}
 end
