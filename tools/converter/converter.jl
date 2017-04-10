@@ -16,26 +16,28 @@ const formats = Dict{String, String}(
 )
 
 const fin = Dict{String, Tuple{DataType, Function, String}}(
-    "hmo"   =>  (Surface, readhmo, "HyperMesh/.hmo"),
-    "mcsf"  =>  (Volume, readmcsf, "GAMer/.m"),
+    "hmo"   =>  (Surface, readhmo,  "HyperMesh/.hmo"),
+    "mcsf"  =>  (Volume,  readmcsf, "GAMer/.m"),
     "msms"  =>  (Surface, readmsms, "MSMS/.{face,vert}"),
-    "off"   =>  (Surface, readoff, "GAMer/.off")
+    "off"   =>  (Surface, readoff,  "GAMer/.off")
 )
 
 const fout = Dict{String, Tuple{DataType, Function, String}}(
-    "nodes.json"    =>  (Nodes, writexml3d_json, "XML3D/.json"),
-    "nodes.xml"     =>  (Nodes, writexml3d_xml, "XML3D/.xml"),
-    "surface.json"  =>  (Surface, writexml3d_json, "XML3D/.json")
+    "nodes.json"    =>  (Nodes,   writexml3d_json, "XML3D/.json"),
+    "nodes.xml"     =>  (Nodes,   writexml3d_xml,  "XML3D/.xml"),
+    "surface.json"  =>  (Surface, writexml3d_json, "XML3D/.json"),
+    "surface.skel"  =>  (Surface, writeskel,       "SKEL/.skel"),
+    "volume.skel"   =>  (Volume,  writeskel,       "SKEL/.skel")
 )
 
 writeOutput{T}(ofname::String, ::Type{Nodes}, f::Function, nodes::Vector{Vector{T}}, ::Union{Vector{Triangle{T}}, Vector{Tetrahedron{T}}}) = f(ofname, nodes)
 
 writeOutput{T}(ofname::String, ::Type{Surface}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}) = begin
     map(props!, elements)
-    f(ofname, nodes, elements)
+    f(ofname, SurfaceModel(nodes, elements, Charge{T}[]))
 end
 
-writeOutput{T}(ofname::String, ::Type{Surface}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T}})  = println("\e[1;31mERROR: Volume-to-surface mesh conversion is currently not supported\e[0m")
+writeOutput{T}(ofname::String, ::Type{Volume}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T}})  = f(ofname, VolumeModel(nodes, elements, Charge{T}[]))
 
 iformat = ""; ifname = ""; oformat = ""; ofname = ""
 
