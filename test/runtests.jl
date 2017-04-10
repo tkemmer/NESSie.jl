@@ -20,6 +20,7 @@ end
 ok || exit(1)
 
 # Run tests
+include("testutils.jl")
 for t in (length(ARGS) > 0 ? ARGS : tests)
     facts(t) do
         include(endswith(t, ".jl") ? t : "$(t).jl")
