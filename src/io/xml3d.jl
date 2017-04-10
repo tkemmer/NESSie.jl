@@ -8,7 +8,7 @@
         Path or handle to (writable) JSON file
     @param nodes
         List of nodes
-    @return String
+    @return nothing
 =#
 function writexml3d_json{T}(stream::IOStream, nodes::Vector{Vector{T}})
     println(stream, json(Dict(
@@ -21,6 +21,7 @@ function writexml3d_json{T}(stream::IOStream, nodes::Vector{Vector{T}})
             )
         )
     )))
+    nothing
 end
 writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexml3d_json(fh, nodes), fname, "w")
 
@@ -34,7 +35,7 @@ writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexm
         Path or handle to (writable) JSON file
     @param model
         Surface model
-    @return String
+    @return nothing
 =#
 function writexml3d_json{T}(stream::IOStream, model::SurfaceModel{T}, invertnormals::Bool=false)
     revidx = reverseindex(model.nodes)
@@ -56,6 +57,7 @@ function writexml3d_json{T}(stream::IOStream, model::SurfaceModel{T}, invertnorm
             )
         )
     )))
+    nothing
 end
 writexml3d_json{T}(fname::String, model::SurfaceModel{T}, invertnormals::Bool=false) =
     open(fh -> writexml3d_json(fh, model, invertnormals), fname, "w")
@@ -70,7 +72,7 @@ writexml3d_json{T}(fname::String, model::SurfaceModel{T}, invertnormals::Bool=fa
         Path or handle to (writable) XML file
     @param nodes
         List of nodes
-    @return String
+    @return nothing
 =#
 function writexml3d_xml{T}(stream::IOStream, nodes::Vector{Vector{T}})
     xdoc = XMLDocument()
@@ -82,5 +84,6 @@ function writexml3d_xml{T}(stream::IOStream, nodes::Vector{Vector{T}})
     set_attribute(xpos, "name", "position")
     add_text(xpos, join(unpack(nodes), " "))
     println(stream, string(xdoc))
+    nothing
 end
 writexml3d_xml{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexml3d_xml(fh, nodes), fname, "w")
