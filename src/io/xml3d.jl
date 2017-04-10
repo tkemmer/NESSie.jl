@@ -19,7 +19,7 @@ function writexml3d_json{T}(stream::IOStream, nodes::Vector{Vector{T}})
         )
     )))
 end
-writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexml3d_json(fh, nodes), fname)
+writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexml3d_json(fh, nodes), fname, "w")
 
 #=
     Returns a mesh representation of the given system in a XML3D-specific JSON format.
@@ -54,7 +54,7 @@ function writexml3d_json{T}(stream::IOStream, nodes::Vector{Vector{T}}, elements
     )))
 end
 writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false) =
-    open(fh -> writexml3d_json(fh, nodes, elements, invertnormals), fname)
+    open(fh -> writexml3d_json(fh, nodes, elements, invertnormals), fname, "w")
 
 #=
     Returns a point cloud representation of the given system in a XML3D-specific XML format.
@@ -76,4 +76,4 @@ function writexml3d_xml{T}(stream::IOStream, nodes::Vector{Vector{T}})
     add_text(xpos, join(unpack(nodes), " "))
     println(stream, string(xdoc))
 end
-writexml3d_xml{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexml3d_xml(fh, nodes), fname)
+writexml3d_xml{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexml3d_xml(fh, nodes), fname, "w")

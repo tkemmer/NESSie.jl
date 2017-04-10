@@ -25,7 +25,7 @@ function writeskel{T}(stream::IOStream, model::SurfaceModel{T})
     end
     nothing
 end
-writeskel{T}(fname::String, model::SurfaceModel{T}) = open(fh -> writeskel(fh, model), fname)
+writeskel{T}(fname::String, model::SurfaceModel{T}) = open(fh -> writeskel(fh, model), fname, "w")
 
 #=
     Creates a SKEL file from a given volume model, representing the model as a collection of points and polylines.
@@ -55,4 +55,4 @@ function writeskel{T}(stream::IOStream, model::VolumeModel{T})
     end
     nothing
 end
-writeskel{T}(fname::String, model::VolumeModel{T}) = open(fh -> writeskel(fh, model), fname)
+writeskel{T}(fname::String, model::VolumeModel{T}) = open(fh -> writeskel(fh, model), fname, "w")
