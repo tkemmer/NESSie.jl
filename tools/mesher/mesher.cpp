@@ -4,7 +4,7 @@
 using namespace std;
 
 void printUsage() {
-    std::cout << "\n\033[1mProteinES.jl molecule mesher (using GAMer)\033[0m\n"
+    cout << "\n\033[1mProteinES.jl molecule mesher (using GAMer)\033[0m\n"
          << "==========================================\n\n"
          << "\033[1mUsage:\033[0m\n\n"
          << "\tmesher <file in> <dir out> [<option>...]\n"
@@ -13,9 +13,9 @@ void printUsage() {
          << "\t\033[1mPQR\033[0m\t*.pqr\n"
          << "\n\033[1mSupported options (with default values):\033[0m\n\n";
     for(const auto& e: options)
-        std::cout << "\t\033[1m--" << e.first << "=<" << e.second.type << ">\033[0m\t"
+        cout << "\t\033[1m--" << e.first << "=<" << e.second.type << ">\033[0m\t"
              << e.second.defval << "\t" << e.second.desc << "\n";
-    std::cout << std::endl;
+    cout << endl;
 }
 
 int main(int argc, char** argv) {
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     cout << "\033[1mGenerating surface mesh...\033[0m\n";
     Surface molsurf;
     AtomList atoms;
-    std::tie(molsurf, atoms) = gaussianSurfaceFromPDB(pdb_in, opt.iso_value);
+    tie(molsurf, atoms) = gaussianSurfaceFromPDB(pdb_in, opt.iso_value);
 
     cout << "\033[1mSmoothen surface mesh...\033[0m\n";
     smoothSurfaceMesh(molsurf, opt);
