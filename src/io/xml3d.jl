@@ -26,35 +26,33 @@ writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexm
 
     @param fname/stream
         Path or handle to (writable) JSON file
-    @param nodes
-        List of nodes
-    @param elements
-        List of surface elements
+    @param model
+        Surface model
     @return String
 =#
-function writexml3d_json{T}(stream::IOStream, nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false)
-    revidx = reverseindex(nodes)
+function writexml3d_json{T}(stream::IOStream, model::SurfaceModel{T}, invertnormals::Bool=false)
+    revidx = reverseindex(model.nodes)
     println(stream, json(Dict(
         "format" => "xml3d-json",
         "version" => "0.4.0",
         "data" => Dict(
             "index" => Dict(
                 "type" => "int",
-                "seq" => [Dict{String, Vector{Int}}("value" => [revidx[object_id(n)]-1 for n in unpack([Vector{T}[o.v1, o.v2, o.v3] for o in elements])])]
+                "seq" => [Dict{String, Vector{Int}}("value" => [revidx[object_id(n)]-1 for n in unpack([Vector{T}[o.v1, o.v2, o.v3] for o in model.elements])])]
             ),
             "position" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(nodes))]
+                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(model.nodes))]
             ),
             "normal" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(vertexnormals(nodes, elements, invertnormals)))]
+                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(vertexnormals(model.nodes, model.elements, invertnormals)))]
             )
         )
     )))
 end
-writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false) =
-    open(fh -> writexml3d_json(fh, nodes, elements, invertnormals), fname, "w")
+writexml3d_json{T}(fname::String, model::SurfaceModel{T}, invertnormals::Bool=false) =
+    open(fh -> writexml3d_json(fh, model, invertnormals), fname, "w")
 
 #=
     Returns a point cloud representation of the given system in a XML3D-specific XML format.
