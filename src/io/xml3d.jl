@@ -1,12 +1,14 @@
 #=
     Returns a point cloud representation of the given system in a XML3D-specific JSON format.
 
+    @param fname/stream
+        Path or handle to (writable) JSON file
     @param nodes
         List of nodes
     @return String
 =#
-function xml3djson{T}(nodes::Vector{Vector{T}})
-    json(Dict(
+function writexml3d_json{T}(stream::IOStream, nodes::Vector{Vector{T}})
+    println(stream, json(Dict(
         "format" => "xml3d-json",
         "version" => "0.4.0",
         "data" => Dict(
@@ -15,21 +17,24 @@ function xml3djson{T}(nodes::Vector{Vector{T}})
                 "seq" => [Dict{String, Vector{Float64}}("value" => unpack(nodes))]
             )
         )
-    ))
+    )))
 end
+writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexml3d_json(fh, nodes), fname)
 
 #=
     Returns a mesh representation of the given system in a XML3D-specific JSON format.
 
+    @param fname/stream
+        Path or handle to (writable) JSON file
     @param nodes
         List of nodes
     @param elements
         List of surface elements
     @return String
 =#
-function xml3djson{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false)
+function writexml3d_json{T}(stream::IOStream, nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false)
     revidx = reverseindex(nodes)
-    json(Dict(
+    println(stream, json(Dict(
         "format" => "xml3d-json",
         "version" => "0.4.0",
         "data" => Dict(
@@ -46,17 +51,21 @@ function xml3djson{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, i
                 "seq" => [Dict{String, Vector{Float64}}("value" => unpack(vertexnormals(nodes, elements, invertnormals)))]
             )
         )
-    ))
+    )))
 end
+writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invertnormals::Bool=false) =
+    open(fh -> writexml3d_json(fh, nodes, elements, invertnormals), fname)
 
 #=
     Returns a point cloud representation of the given system in a XML3D-specific XML format.
 
+    @param fname/stream
+        Path or handle to (writable) JSON file
     @param nodes
         List of nodes
     @return String
 =#
-function xml3dmesh{T}(nodes::Vector{Vector{T}})
+function writexml3d_xml{T}(stream::IOStream, nodes::Vector{Vector{T}})
     xdoc = XMLDocument()
     xroot = create_root(xdoc, "xml3d")
     set_attribute(xroot, "xmlns", "http://www.xml3d.org/2009/xml3d")
@@ -65,5 +74,6 @@ function xml3dmesh{T}(nodes::Vector{Vector{T}})
     xpos = new_child(xmesh, "float3")
     set_attribute(xpos, "name", "position")
     add_text(xpos, join(unpack(nodes), " "))
-    string(xdoc)
+    println(stream, string(xdoc))
 end
+writexml3d_xml{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexml3d_xml(fh, nodes), fname)
