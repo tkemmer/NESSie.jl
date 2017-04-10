@@ -23,49 +23,51 @@ const fin = Dict{String, Tuple{DataType, Function, String}}(
 )
 
 const fout = Dict{String, Tuple{DataType, Function, String}}(
-    "nodes.json"    =>  (Nodes, xml3djson, "XML3D/.json"),
-    "nodes.xml"     =>  (Nodes, xml3dmesh, "XML3D/.xml"),
-    "surface.json"  =>  (Surface, xml3djson, "XML3D/.json")
+    "nodes.json"    =>  (Nodes, writexml3d_json, "XML3D/.json"),
+    "nodes.xml"     =>  (Nodes, writexml3d_xml, "XML3D/.xml"),
+    "surface.json"  =>  (Surface, writexml3d_json, "XML3D/.json")
 )
 
-writeOutput{T}(::Type{Nodes}, f::Function, nodes::Vector{Vector{T}}, ::Union{Vector{Triangle{T}}, Vector{Tetrahedron{T}}}) = println(f(nodes))
+writeOutput{T}(ofname::String, ::Type{Nodes}, f::Function, nodes::Vector{Vector{T}}, ::Union{Vector{Triangle{T}}, Vector{Tetrahedron{T}}}) = f(ofname, nodes)
 
-writeOutput{T}(::Type{Surface}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}) = begin
+writeOutput{T}(ofname::String, ::Type{Surface}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}) = begin
     map(props!, elements)
-    println(f(nodes, elements))
+    f(ofname, nodes, elements)
 end
 
-writeOutput{T}(::Type{Surface}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T}})  = println("\033[1m\033[31mERROR: Volume-to-surface mesh conversion is not supported\033[0m")
+writeOutput{T}(ofname::String, ::Type{Surface}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T}})  = println("\e[1;31mERROR: Volume-to-surface mesh conversion is currently not supported\e[0m")
 
-iformat = ""; ifname = ""; oformat = ""
+iformat = ""; ifname = ""; oformat = ""; ofname = ""
 
-if length(ARGS) == 2
-    ifname = ARGS[1]
+if length(ARGS) == 3
+    ifname  = ARGS[1]
     oformat = ARGS[2]
+    ofname  = ARGS[3]
     spl = split(split(ifname, "/")[end], ".")
     iformat = length(spl) == 1 ? formats[""] : formats[spl[end]]
-elseif length(ARGS) == 3
+elseif length(ARGS) == 4
     iformat = ARGS[1]
-    ifname = ARGS[2]
+    ifname  = ARGS[2]
     oformat = ARGS[3]
+    ofname  = ARGS[4]
 else
-    println("\n\033[1mProteinES.jl file format converter\033[0m")
+    println("\n\e[1mProteinES.jl file format converter\e[0m")
     println("==================================\n")
-    println("\033[1mUsage:\033[0m\n")
-    println("\tconverter.jl [<format in>] <file in> <format out>\n")
+    println("\e[1mUsage:\e[0m\n")
+    println("\tconverter.jl [<format in>] <file in> <format out> <file out>\n")
     println("If not specified, the input format will be guessed by file extension.\nMulti-file input, as provided by some file formats (e.g., MSMS), has\nto be specified without file extension. For instance,")
-    println("\n\tconverter.jl msms mymesh surface.json\n")
+    println("\n\tconverter.jl msms mymesh surface.json mymesh.json\n")
     println("will read the MSMS-generated surface mesh from both files mymesh.face\nand mymesh.vert and convert it into a XML3D-compatible JSON format.")
-    println("\n\033[1mAvailable input formats:\033[0m\n")
+    println("\n\e[1mAvailable input formats:\e[0m\n")
     for (format, (mesh, _, desc)) in fin
-        println("\t\033[1m$format\033[0m\t\t$mesh\t\t$desc")
+        println("\t\e[1m$format\e[0m\t\t$mesh\t\t$desc")
     end
-    println("\n\033[1mAvailable output formats:\033[0m\n")
+    println("\n\e[1mAvailable output formats:\e[0m\n")
     for (format, (mesh, _, desc)) in fout
-        println("\t\033[1m$format\033[0m\t$mesh\t\t$desc")
+        println("\t\e[1m$format\e[0m\t$mesh\t\t$desc")
     end
     println()
     exit(1)
 end
 
-writeOutput(fout[oformat][1:2]..., fin[iformat][2](ifname)...)
+writeOutput(ofname, fout[oformat][1:2]..., fin[iformat][2](ifname)...)
