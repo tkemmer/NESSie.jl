@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 
     cout << "\033[1mGenerating volume mesh...\033[0m\n";
     Surface mesh = SurfaceMesh_merge(molsurf.data(), sphere.data());
-    auto domain = generateVolumeMesh(molsurf, atoms);
+    auto domain = generateVolumeMesh(mesh, atoms);
 
     cout << "\033[1mWriting volume mesh...\033[0m\n";
     cout << "\033[1m * Inner mesh...\033[0m\n";
