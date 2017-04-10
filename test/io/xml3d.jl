@@ -1,11 +1,11 @@
 using ProteinES.IO
-using JSON: parse
+using JSON
 using LightXML: parse_string, root, name, child_elements, attribute, content
 
 context("writexml3d_json (nodes)") do
     for T in testtypes
         # empty system
-        js = parse(readback(fh -> writexml3d_json(fh, Vector{T}[])))
+        js = JSON.parse(readback(fh -> writexml3d_json(fh, Vector{T}[])))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
         @fact js["data"]["position"]["type"] --> "float3"
@@ -13,7 +13,7 @@ context("writexml3d_json (nodes)") do
         @fact js["data"]["position"]["seq"][1]["value"] --> []
         # small system
         nodes = Vector{T}[T[0, 0, 0], T[0, 0, 3], T[0, 3, 0], T[1, -3, 3]]
-        js = parse(readback(fh -> writexml3d_json(fh, nodes)))
+        js = JSON.parse(readback(fh -> writexml3d_json(fh, nodes)))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
         @fact js["data"]["position"]["type"] --> "float3"
@@ -25,7 +25,7 @@ end
 context("writexml3d_json (surface model)") do
     for T in testtypes
         # empty system
-        js = parse(readback(fh -> writexml3d_json(fh, Vector{T}[], Triangle{T}[])))
+        js = JSON.parse(readback(fh -> writexml3d_json(fh, SurfaceModel(Vector{T}[], Triangle{T}[], Charge{T}[]))))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
         @fact js["data"]["index"]["type"] --> "int"
@@ -42,7 +42,7 @@ context("writexml3d_json (surface model)") do
         elements = [Triangle(nodes[1], nodes[2], nodes[3]),
                     Triangle(nodes[1], nodes[4], nodes[2])]
         map(props!, elements)
-        js = parse(readback(fh -> writexml3d_json(fh, nodes, elements)))
+        js = JSON.parse(readback(fh -> writexml3d_json(fh, SurfaceModel(nodes, elements, Charge{T}[]))))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
         @fact js["data"]["index"]["type"] --> "int"
@@ -57,7 +57,7 @@ context("writexml3d_json (surface model)") do
             [√360 \ [-9 - √90, -3, 0]; √360 \ [-9 - √90, -3, 0]; [-1, 0, 0]; √90 \ [-9, -3, 0]]
         ))
         # small system, inverted normals
-        js = parse(readback(fh -> writexml3d_json(fh, nodes, elements, true)))
+        js = JSON.parse(readback(fh -> writexml3d_json(fh, SurfaceModel(nodes, elements, Charge{T}[]), true)))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
         @fact js["data"]["index"]["type"] --> "int"
