@@ -1,5 +1,8 @@
 #=
-    Returns a point cloud representation of the given system in a XML3D-specific JSON format.
+    Creates a XML3D-specific JSON file from a given collection of nodes, representing the latter as point cloud.
+
+    File fomat specification:
+    https://github.com/xml3d/xml3d.js/wiki/External-resources
 
     @param fname/stream
         Path or handle to (writable) JSON file
@@ -22,7 +25,10 @@ end
 writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexml3d_json(fh, nodes), fname, "w")
 
 #=
-    Returns a mesh representation of the given system in a XML3D-specific JSON format.
+    Creates a XML3D-specific JSON file from a given surface model.
+
+    File fomat specification:
+    https://github.com/xml3d/xml3d.js/wiki/External-resources
 
     @param fname/stream
         Path or handle to (writable) JSON file
@@ -55,10 +61,13 @@ writexml3d_json{T}(fname::String, model::SurfaceModel{T}, invertnormals::Bool=fa
     open(fh -> writexml3d_json(fh, model, invertnormals), fname, "w")
 
 #=
-    Returns a point cloud representation of the given system in a XML3D-specific XML format.
+    Creates a XML3D-specific XML file from a given collection of nodes, representing the latter as point cloud.
+
+    File fomat specification:
+    https://github.com/xml3d/xml3d.js/wiki/External-resources
 
     @param fname/stream
-        Path or handle to (writable) JSON file
+        Path or handle to (writable) XML file
     @param nodes
         List of nodes
     @return String
