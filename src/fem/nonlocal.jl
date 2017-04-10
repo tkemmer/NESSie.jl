@@ -21,8 +21,6 @@ function basisfunctions{T}(elem::Tetrahedron{T})
         println(d)
     end
 
-
-
     @assert d != 0
 
     # compute base functions
@@ -61,7 +59,7 @@ end
     @return Symmetric{T, Array{T,2}}
 =#
 # TODO devectorize, deduplicate (v is symmetric!)
-localstiffnessmatrix_v{T}(𝛁f::Vector{T}) = Symmetric(6 \ [𝛁f[row]⋅𝛁f[col] for row in 1:length(𝛁f), col in 1:length(𝛁f)], :U)
+localstiffnessmatrix_k{T}(𝛁f::Vector{T}) = Symmetric(6 \ [𝛁f[row]⋅𝛁f[col] for row in 1:length(𝛁f), col in 1:length(𝛁f)], :U)
 
 #=
     TODO
@@ -82,10 +80,10 @@ function stiffnessmatrix{T}(elements::Vector{Tetrahedron{T}}, revidx::Dict{UInt,
     end
     m
 end
-stiffnessmatrix_v{T}(elements::Vector{Tetrahedron{T}}, revidx::Dict{UInt,UInt}, domain::Symbol=:all) = stiffnessmatrix(elements, revidx, elem -> localstiffnessmatrix_v(elem), domain) # TODO
-stiffnessmatrix_k{T}(elements::Vector{Tetrahedron{T}}, revidx::Dict{UInt,UInt}, domain::Symbol=:all) = stiffnessmatrix(elements, revidx, elem -> [2 1 1 1; 1 2 1 1; 1 1 2 1; 1 1 1 2], domain) # TODO
+stiffnessmatrix_k{T}(elements::Vector{Tetrahedron{T}}, revidx::Dict{UInt,UInt}, domain::Symbol=:all) = stiffnessmatrix(elements, revidx, elem -> localstiffnessmatrix_k(elem), domain) # TODO
+stiffnessmatrix_v{T}(elements::Vector{Tetrahedron{T}}, revidx::Dict{UInt,UInt}, domain::Symbol=:all) = stiffnessmatrix(elements, revidx, elem -> [2 1 1 1; 1 2 1 1; 1 1 2 1; 1 1 1 2], domain) # TODO
 
-function localstiffnessmatrix_v{T}(elem::Tetrahedron{T})
+function localstiffnessmatrix_k{T}(elem::Tetrahedron{T})
     d, ∇f = basisfunctions(elem)
     #println(abs(d) \ Symmetric(6 \ [∇f[row]⋅∇f[col] for row in 1:length(∇f), col in 1:length(∇f)], :U))
 
@@ -96,7 +94,7 @@ function localstiffnessmatrix_v{T}(elem::Tetrahedron{T})
             res[row, col] = ∇f[row]⋅∇f[col]
         end
     end
-    scale!(res, 1 / (abs(d) * 6)) # pure evil!
+    scale!(res, 1 / (abs(d) * 6)) # FIXME pure evil!
 
     #=
     @inbounds for row in 1:len
@@ -120,7 +118,7 @@ end
 =#
 function quadrature_ρ{T}(elem::Tetrahedron{T}, rproj::Function, charges::Vector{Charge{T}})
     qpts = quadraturepoints(Tetrahedron, T)
-    # base functions evaluated at cubature point
+    # basis functions evaluated at cubature point
     const bt = Vector{T}[[.25, 1/6, .5, 1/6, 1/6], qpts.x, qpts.y, qpts.z]
 
     ρlocal = zeros(T, 4)
@@ -178,7 +176,7 @@ function rhs_γ{T}(elements::Vector{Tetrahedron{T}}, charges::Vector{Charge{T}},
 
         rproj  = reverseprojection(elem)
         d, ∇f  = basisfunctions(elem)
-        γlocal = d \ quadrature_γ(elem, rproj, ∇f, charges) # pure evil
+        γlocal = d \ quadrature_γ(elem, rproj, ∇f, charges) # FIXME pure evil
         idx    = [revidx[object_id(e)] for e in (elem.v1, elem.v2, elem.v3, elem.v4)]
 
         @inbounds for row in 1:4
@@ -195,30 +193,37 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
     # TODO reuse memory
     revidx = reverseindex(nodes)
     numnodes = length(nodes)
-    k  = stiffnessmatrix_k(elements, revidx) / 120 # TODO
-    vΩ = stiffnessmatrix_v(elements, revidx, :Ω)
-    vΣ = stiffnessmatrix_v(elements, revidx, :Σ)
+    v  = stiffnessmatrix_v(elements, revidx) / 120 # TODO
+    kΩ = stiffnessmatrix_k(elements, revidx, :Ω)
+    kΣ = stiffnessmatrix_k(elements, revidx, :Σ)
+
+    @assert size(kΣ) == (numnodes, numnodes)
+
 
     ρ = rhs_ρ(elements, charges, revidx)
 
     #=
         1. Compute u₀
     =#
+    println("Step 1: Solving for u0...")
 
     # stiffness matrix M₀
     m0 = spzeros(T, numnodes, numnodes)
 
-    # m0 = λ² * V + K
-    copy!(m0, vΩ)
-    axpy!(1, vΣ, m0)
+    # m0 = λ² * K + V
+    copy!(m0, kΩ)
+    axpy!(1, kΣ, m0)
     scale!(m0, opt.λ^2)
-    axpy!(1, k, m0)
+    axpy!(1, v, m0)
 
     u0 = m0 \ ρ
+    @assert isa(u0, Vector{T})
+    @assert length(u0) == numnodes
 
     #=
         2. Assemble system matrix M
     =#
+    println("Step 2: Assembling system matrix M...")
     m = spzeros(T, 2 * numnodes, 2 * numnodes)
 
     # convenient access to the matrix blocks
@@ -227,29 +232,30 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
     m21 = view(m, 1+numnodes:2numnodes,          1: numnodes)
     m22 = view(m, 1+numnodes:2numnodes, 1+numnodes:2numnodes)
 
-    # m11 = ε∞ * VΣ + εΩ * VΩ
-    axpy!(opt.ε∞, vΣ, m11)
-    axpy!(opt.εΩ, vΩ, m11)
+    # m11 = ε∞ * KΣ + εΩ * KΩ
+    axpy!(opt.ε∞, kΣ, m11)
+    axpy!(opt.εΩ, kΩ, m11)
 
-    # m12 = (εΣ - ε∞)VΣ
-    axpy!(opt.εΣ - opt.ε∞, vΣ, m12)
+    # m12 = (εΣ - ε∞)KΣ
+    axpy!(opt.εΣ - opt.ε∞, kΣ, m12)
 
-    # m21 = -K
-    axpy!(-1, k, m21)
+    # m21 = -V
+    axpy!(-1, v, m21)
 
-    # m22 = λ² * V + K = M₀
+    # m22 = λ² * K + V = M₀
     copy!(m22, m0)
 
     #=
         3. Compute (Ψ,u₁)
     =#
+    println("Step 3: Solving for Ψ...")
     rhs = zeros(T, 2 * numnodes)
     β   = view(rhs, 1:numnodes)
     γΣ  = rhs_γ(elements, charges, revidx, :Σ) # TODO
 
-    # β = (ε∞ - εΣ) * (VΣ * u₀) + (εΩ - ε∞) * γΣ
+    # β = (ε∞ - εΣ) * (KΣ * u₀) + (εΩ - ε∞) * γΣ
     #gemv!(opt.ε∞ - opt.εΣ, vΣ, u0, β) # BLAS does not support sparse matrices :\
-    axpy!(opt.ε∞ - opt.εΣ, vΣ * u0, β) # TODO in-place solution
+    axpy!(opt.ε∞ - opt.εΣ, kΣ * u0, β) # TODO in-place solution
     axpy!(opt.εΩ - opt.ε∞, γΣ, β)
 
     Ψu1 = m \ rhs
@@ -258,7 +264,9 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
         4. Compute (Φ*,u₂)
         TODO check if this can be ignored as long as we don't have ions in the solvent
     =#
-    #Φu2 = m \ zeros(T, 2 * numnodes)
+    println("Step 4: Solving for Φ...")
+    Φu2 = m \ zeros(T, 2 * numnodes)
 
+    println("Step 5: Aggregating results...")
     ec / (4π * ε0 * opt.εΩ) * (view(Ψu1, 1:numnodes) + φmol(nodes, charges))
 end
