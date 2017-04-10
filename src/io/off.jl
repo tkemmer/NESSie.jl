@@ -1,6 +1,9 @@
 #=
     Reads all data from the given OFF file.
 
+    File specification:
+    http://www.geomview.org/docs/html/OFF.html
+
     @param stream
         Handle to OFF file
     @param _
