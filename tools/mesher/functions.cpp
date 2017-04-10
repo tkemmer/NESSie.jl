@@ -136,6 +136,6 @@ void writeMcsf(const string& out_dir, Volume& mesh, bool inner, float sphere_rat
         nullptr,
         inner ? 2 : 3
     );
-    GemMesh_writeMcsf(out, &(out_dir + "/out." + (inner ? "in" : "out") + ".m")[0]);
+    GemMesh_writeMcsf(out, &(out_dir + "/mesh." + (inner ? "in" : "out") + ".m")[0]);
     GemMesh_dtor(out);
 }

@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
     smoothSurfaceMesh(molsurf, opt);
 
     cout << "\033[1mWriting surface mesh...\033[0m\n";
-    SurfaceMesh_writeOFF(molsurf.data(), &(out_dir + "/out.off")[0]);
+    SurfaceMesh_writeOFF(molsurf.data(), &(out_dir + "/mesh.off")[0]);
 
     cout << "\033[1mGenerating bounding sphere...\033[0m\n";
     auto center = SurfaceMesh_getCenterRadius(molsurf.data());
