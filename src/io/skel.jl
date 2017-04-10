@@ -4,8 +4,8 @@
     File specification:
     http://www.geomview.org/docs/html/SKEL.html
 
-    @param stream
-        Handle to (writable) SKEL file
+    @param fname/stream
+        Path or handle to (writable) SKEL file
     @param model
         A surface model
     @return nothing
@@ -33,8 +33,8 @@ writeskel{T}(fname::String, model::SurfaceModel{T}) = open(fh -> writeskel(fh, m
     File specification:
     http://www.geomview.org/docs/html/SKEL.html
 
-    @param stream
-        Handle to (writable) SKEL file
+    @param fname/stream
+        Path or handle to (writable) SKEL file
     @param model
         A volume model
     @return nothing
