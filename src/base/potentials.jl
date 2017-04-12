@@ -35,7 +35,7 @@ type LocalES <: LocalityType end
 #=
     Computes the molecular potential of the given system of point charges in a structureless medium.
 
-    TODO φmol(r) =
+    φmol(r) = - 1/(4π * ε0 * εΩ) * Σ (qᵢ * (rᵢ-r)⋅n / |rᵢ-r|³)
 
     Note that the results are premultiplied by 4π * εΩ * ε0!
 
