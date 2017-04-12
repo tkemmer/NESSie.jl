@@ -132,7 +132,7 @@ void writeMcsf(const string& out_dir, Volume& mesh, bool inner, float sphere_rat
         center.radius * sphere_ratio,
         center.x,
         center.y,
-        center.y,
+        center.z,
         nullptr,
         inner ? 2 : 3
     );
