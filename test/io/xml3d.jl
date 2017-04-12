@@ -83,9 +83,9 @@ context("writexml3d_xml") do
         @fact length(xchildren) --> 1
         @fact name(xchildren[1]) --> "data"
         @fact attribute(xchildren[1], "id") --> "mesh"
-        xchildred = collect(child_elements(xchildren[1]))
+        xchildren = collect(child_elements(xchildren[1]))
         @fact length(xchildren) --> 1
-        @fact name(xchildred[1]) --> "float3"
+        @fact name(xchildren[1]) --> "float3"
         @fact strip(content(xchildren[1])) --> ""
         # small system
         nodes    = Vector{T}[T[0, 0, 0], T[0, 0, 3], T[0, 3, 0], T[1, -3, 3]]
@@ -95,9 +95,9 @@ context("writexml3d_xml") do
         @fact length(xchildren) --> 1
         @fact name(xchildren[1]) --> "data"
         @fact attribute(xchildren[1], "id") --> "mesh"
-        xchildred = collect(child_elements(xchildren[1]))
+        xchildren = collect(child_elements(xchildren[1]))
         @fact length(xchildren) --> 1
-        @fact name(xchildred[1]) --> "float3"
+        @fact name(xchildren[1]) --> "float3"
         @fact T[float(e) for e in split(strip(content(xchildren[1])))] --> T[0, 0, 0, 0, 0, 3, 0, 3, 0, 1, -3, 3]
     end
 end
