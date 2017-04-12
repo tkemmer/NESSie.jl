@@ -15,7 +15,7 @@ include("io/msms.jl")
 export readmsms
 
 include("io/off.jl")
-export readoff
+export readoff, writeoff
 
 include("io/pqr.jl")
 export readpqr

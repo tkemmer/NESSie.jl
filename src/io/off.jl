@@ -49,3 +49,34 @@ readoff_nodes{T <: AbstractFloat}(stream::IOStream, n::Int, ::Type{T}=Float64) =
     @return Vector{Triangle{T}}
 =#
 readoff_elements{T <: AbstractFloat}(stream::IOStream, n::Int, nodes::Vector{Vector{T}}, ::Type{T}=Float64) = Triangle{T}[Triangle([nodes[parse(Int, e) + 1] for e in split(readline(stream))[2:end]]...) for _ in 1:n]
+
+#=
+    TODO
+=#
+function writeoff{T}(stream::IOStream, model::SurfaceModel{T})
+
+end
+
+#=
+    TODO
+=#
+function writeoff{T}(stream::IOStream, model::VolumeModel{T})
+    println(stream, "OFF")
+    println(stream, "$(length(model.nodes))\t$(length(model.elements) * 4)\t$(length(model.elements) * 12)")
+    for node in model.nodes
+        println(stream, "$(node[1])\t$(node[2])\t$(node[3])")
+    end
+    revidx = reverseindex(model.nodes)
+    for elem in model.elements
+        (v1, v2, v3, v4) = (revidx[object_id(elem.v1)] - 1,
+                            revidx[object_id(elem.v2)] - 1,
+                            revidx[object_id(elem.v3)] - 1,
+                            revidx[object_id(elem.v4)] - 1)
+        println(stream, "3\t$v1\t$v3\t$v2")
+        println(stream, "3\t$v1\t$v2\t$v4")
+        println(stream, "3\t$v2\t$v3\t$v4")
+        println(stream, "3\t$v3\t$v1\t$v4")
+    end
+    nothing
+end
+writeoff{T}(fname::String, model::VolumeModel{T}) = open(fh -> writeoff(fh, model), fname, "w")
