@@ -3,6 +3,7 @@
 *.log
 *.o
 data/
+doc/build
 tools/mesher/mesher
 tools/mesher/sphere
 work/
