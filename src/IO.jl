@@ -23,6 +23,9 @@ export readpqr
 include("io/skel.jl")
 export writeskel
 
+include("io/vtk.jl")
+export writevtk
+
 include("io/xml3d.jl")
 export writexml3d_json, writexml3d_xml
 
