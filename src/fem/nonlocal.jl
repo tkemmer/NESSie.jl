@@ -13,17 +13,13 @@ function basisfunctions{T}(elem::Tetrahedron{T})
     # x = Aα + b ⇔ α = A^(-1)⋅(x-b)
     a  = [elem.v2 - elem.v1 elem.v3 - elem.v1 elem.v4 - elem.v1]
     aᵢ = [(a[:,2] × a[:,3])'; (a[:,3] × a[:,1])'; (a[:,1] × a[:,2])'] # /det(a) # TODO devectorize
-    bᵢ = aᵢ * elem.v1
+    #bᵢ = aᵢ * elem.v1
+    #d = a[:,1] ⋅ (a[:,2] × a[:,3])
+
     d = det(a)
-    #d = a[:,1] ⋅ (a[:,2] × a[:,3]) # TODO check! (this is different to det(a))
-
-    if(d < 0)
-        println(d)
-    end
-
     @assert d != 0
 
-    # compute base functions
+    # compute basis functions
     #f = Function[x::Vector{T} -> aᵢ[i,:] ⋅ x - bᵢ[i] for i in 1:3]
     #insert!(f, 1, x::Vector{T} -> d - f[1](x) - f[2](x) - f[3](x))
 
@@ -40,26 +36,6 @@ end
 function reverseprojection{T}(elem::Tetrahedron{T})
     α -> [elem.v2 - elem.v1 elem.v3 - elem.v1 elem.v4 - elem.v1] * α + elem.v1 # TODO devectorize
 end
-
-#=
-    Returns the (local) stiffness matrix for the gradients of the
-    linear basis functions of a single tetrahedron. The matrix does
-    only represent the nodes present in the given element (all other
-    entries would be zero anyway).
-
-    ∫𝛁fᵢ⋅𝛁fⱼdx (for all nodes i, j of the element)
-    = 𝛁fᵢ⋅𝛁fⱼ∫dx (since our base functions are linear)
-    = 𝛁fᵢ⋅𝛁fⱼ⋅|det(A)|/6 (since our elements are tetrahedra)
-
-    Note that the stiffness matrix is premultiplied by the absolute
-    value of the determinant!
-
-    @param ∇f
-        Basis function gradients of the tetrahedron nodes v1 to v4
-    @return Symmetric{T, Array{T,2}}
-=#
-# TODO devectorize, deduplicate (v is symmetric!)
-localstiffnessmatrix_k{T}(𝛁f::Vector{T}) = Symmetric(6 \ [𝛁f[row]⋅𝛁f[col] for row in 1:length(𝛁f), col in 1:length(𝛁f)], :U)
 
 #=
     TODO
@@ -83,32 +59,34 @@ end
 stiffnessmatrix_k{T}(elements::Vector{Tetrahedron{T}}, revidx::Dict{UInt,UInt}, domain::Symbol=:all) = stiffnessmatrix(elements, revidx, elem -> localstiffnessmatrix_k(elem), domain) # TODO
 stiffnessmatrix_v{T}(elements::Vector{Tetrahedron{T}}, revidx::Dict{UInt,UInt}, domain::Symbol=:all) = stiffnessmatrix(elements, revidx, elem -> [2 1 1 1; 1 2 1 1; 1 1 2 1; 1 1 1 2], domain) # TODO
 
+#=
+    Returns the (local) stiffness matrix for the gradients of the
+    linear basis functions of a single tetrahedron. The matrix does
+    only represent the nodes present in the given element (all other
+    entries would be zero anyway).
+
+    ∫𝛁fᵢ⋅𝛁fⱼdx (for all nodes i, j of the element)
+    = 𝛁fᵢ⋅𝛁fⱼ∫dx (since our base functions are linear)
+    = 𝛁fᵢ⋅𝛁fⱼ⋅|det(A)|/6 (since our elements are tetrahedra)
+
+    #Note that the stiffness matrix is premultiplied by the absolute
+    #value of the determinant!
+
+    @param ∇f
+        Basis function gradients of the tetrahedron nodes v1 to v4
+    @return Symmetric{T, Array{T,2}}
+=#
 function localstiffnessmatrix_k{T}(elem::Tetrahedron{T})
     d, ∇f = basisfunctions(elem)
-    #println(abs(d) \ Symmetric(6 \ [∇f[row]⋅∇f[col] for row in 1:length(∇f), col in 1:length(∇f)], :U))
 
     len = length(∇f)
     res = Array{T}(len, len)
     @inbounds for row in 1:len
         for col in row:len
-            res[row, col] = ∇f[row]⋅∇f[col]
+            res[row, col] = ∇f[row] ⋅ ∇f[col]
         end
     end
-    scale!(res, 1 / (abs(d) * 6)) # FIXME pure evil!
-
-    #=
-    @inbounds for row in 1:len
-        for col in row:len
-            if(abs(res[row, col]) < 1e-10)
-                res[row, col] = zero(T)
-            end
-        end
-    end
-    =#
-    if(sum(res) > 100)
-        println(res)
-    end
-
+    scale!(res, 1 / (abs(d) * 6))
 
     Symmetric(res, :U)
 end
@@ -197,16 +175,11 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
     kΩ = stiffnessmatrix_k(elements, revidx, :Ω)
     kΣ = stiffnessmatrix_k(elements, revidx, :Σ)
 
-    @assert size(kΣ) == (numnodes, numnodes)
-
-
     ρ = rhs_ρ(elements, charges, revidx)
 
     #=
         1. Compute u₀
     =#
-    println("Step 1: Solving for u0...")
-
     # stiffness matrix M₀
     m0 = spzeros(T, numnodes, numnodes)
 
@@ -217,13 +190,10 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
     axpy!(1, v, m0)
 
     u0 = m0 \ ρ
-    @assert isa(u0, Vector{T})
-    @assert length(u0) == numnodes
 
     #=
         2. Assemble system matrix M
     =#
-    println("Step 2: Assembling system matrix M...")
     m = spzeros(T, 2 * numnodes, 2 * numnodes)
 
     # convenient access to the matrix blocks
@@ -248,7 +218,6 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
     #=
         3. Compute (Ψ,u₁)
     =#
-    println("Step 3: Solving for Ψ...")
     rhs = zeros(T, 2 * numnodes)
     β   = view(rhs, 1:numnodes)
     γΣ  = rhs_γ(elements, charges, revidx, :Σ) # TODO
@@ -264,9 +233,7 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
         4. Compute (Φ*,u₂)
         TODO check if this can be ignored as long as we don't have ions in the solvent
     =#
-    println("Step 4: Solving for Φ...")
     Φu2 = m \ zeros(T, 2 * numnodes)
 
-    println("Step 5: Aggregating results...")
-    ec / (4π * ε0 * opt.εΩ) * (view(Ψu1, 1:numnodes) + φmol(nodes, charges))
+    potprefactor(T) / opt.εΩ * (view(Ψu1, 1:numnodes) + view(Φu2, 1:numnodes) + φmol(nodes, charges))
 end
