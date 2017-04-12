@@ -1,4 +1,62 @@
 #=
+    Creates a VTK PolyData file from a given surface model.
+
+    File format specification:
+    http://www.vtk.org/VTK/img/file-formats.pdf
+
+    @param fname/stream
+        Path or handle to (writable) VTK file
+    @param model
+        A surface model
+    @return nothing
+=#
+function writevtk{T}(stream::IOStream, model::SurfaceModel{T})
+    xdoc = XMLDocument()
+    revidx = reverseindex(model.nodes)
+
+    # VTKFile
+    xroot = create_root(xdoc, "VTKFile")
+    set_attribute(xroot, "type", "PolyData")
+
+    # PolyData/Piece
+    xpiece = new_child(new_child(xroot, "PolyData"), "Piece")
+    set_attribute(xpiece, "NumberOfPoints", length(model.nodes))
+    set_attribute(xpiece, "NumberOfVerts",  0)
+    set_attribute(xpiece, "NumberOfLines",  0)
+    set_attribute(xpiece, "NumberOfStrips", 0)
+    set_attribute(xpiece, "NumberOfPolys", length(model.elements))
+
+    # Points
+    xpoints = new_child(new_child(xpiece, "Points"), "DataArray")
+    set_attribute(xpoints, "type", "$T")
+    set_attribute(xpoints, "NumberOfComponents", "3")
+    set_attribute(xpoints, "format", "ascii")
+    add_text(xpoints, join(unpack(model.nodes), " "))
+
+    # Polys
+    xpolys = new_child(xpiece, "Polys")
+
+    # Polys/connectivity
+    xconn = new_child(xpolys, "DataArray")
+    set_attribute(xconn, "type", "Int32")
+    set_attribute(xconn, "Name", "connectivity")
+    set_attribute(xconn, "format", "ascii")
+    add_text(xconn, join([revidx[object_id(n)]-1 for n in unpack([Vector{T}[o.v1, o.v2, o.v3] for o in model.elements])], " "))
+
+    # Polys/offsets
+    xoffs = new_child(xpolys, "DataArray")
+    set_attribute(xoffs, "type", "Int32")
+    set_attribute(xoffs, "Name", "offsets")
+    set_attribute(xoffs, "format", "ascii")
+    add_text(xoffs, join([3i for i in 1:length(model.elements)], " "))
+
+    # create .vtp file
+    println(stream, string(xdoc))
+    nothing
+end
+writevtk{T}(fname::String, model::SurfaceModel{T}) = open(fh -> writevtk(fh, model), fname, "w")
+
+#=
     Creates a VTK UnstructuredGrid file from a given volume model.
 
     File format specification:
