@@ -27,7 +27,8 @@ const fout = Dict{String, Tuple{DataType, Function, String}}(
     "nodes.xml"     =>  (Nodes,   writexml3d_xml,  "XML3D/.xml"),
     "surface.json"  =>  (Surface, writexml3d_json, "XML3D/.json"),
     "surface.skel"  =>  (Surface, writeskel,       "SKEL/.skel"),
-    "volume.skel"   =>  (Volume,  writeskel,       "SKEL/.skel")
+    "volume.skel"   =>  (Volume,  writeskel,       "SKEL/.skel"),
+    "volume.vtu"    =>  (Volume,  writevtk,        "VTK/.vtu")
 )
 
 writeOutput{T}(ofname::String, ::Type{Nodes}, f::Function, nodes::Vector{Vector{T}}, ::Union{Vector{Triangle{T}}, Vector{Tetrahedron{T}}}) = f(ofname, nodes)
