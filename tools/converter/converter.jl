@@ -27,6 +27,7 @@ const fout = Dict{String, Tuple{DataType, Function, String}}(
     "nodes.xml"     =>  (Nodes,   writexml3d_xml,  "XML3D/.xml"),
     "surface.json"  =>  (Surface, writexml3d_json, "XML3D/.json"),
     "surface.skel"  =>  (Surface, writeskel,       "SKEL/.skel"),
+    "surface.vtp"   =>  (Surface, writevtk,        "VTK/.vtp"),
     "volume.skel"   =>  (Volume,  writeskel,       "SKEL/.skel"),
     "volume.vtu"    =>  (Volume,  writevtk,        "VTK/.vtu")
 )
