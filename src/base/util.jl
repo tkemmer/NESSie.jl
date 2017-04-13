@@ -1,3 +1,4 @@
+# =========================================================================================
 """
     props!{T}(
         elem::Triangle{T}
@@ -30,6 +31,7 @@ function props!{T}(elem::Triangle{T})
 end
 
 
+# =========================================================================================
 """
     meshunion{T}(
         model1::VolumeModel{T},
@@ -71,6 +73,7 @@ function meshunion{T}(
 end
 
 
+# =========================================================================================
 """
     unpack{T}(data::Vector{Vector{T}})
 
@@ -94,6 +97,7 @@ function unpack{T}(data::Vector{Vector{T}})
 end
 
 
+# =========================================================================================
 """
     vertexnormals{T}(model::SurfaceModel{T})
 
@@ -117,6 +121,7 @@ function vertexnormals{T}(model::SurfaceModel{T})
 end
 
 
+# =========================================================================================
 """
     eye!{T}(
         m::Union{DenseArray{T,2}, SubArray{T,2}},
@@ -153,6 +158,7 @@ function eye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T))
 end
 
 
+# =========================================================================================
 """
     pluseye!{T}(
         m::Union{DenseArray{T,2}, SubArray{T,2}},
@@ -191,6 +197,7 @@ function pluseye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T)
 end
 
 
+# =========================================================================================
 """
     isdegenerate{T}(elem::Triangle{T})
 
@@ -209,6 +216,7 @@ function isdegenerate{T}(elem::Triangle{T})
 end
 
 
+# =========================================================================================
 """
     seek(
         fh         ::IOStream,
@@ -236,6 +244,7 @@ function seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
 end
 
 
+# =========================================================================================
 """
     cos{T}(
         u    ::Vector{T},
@@ -255,6 +264,7 @@ function cos{T}(u::Vector{T}, v::Vector{T}, unorm::T=vecnorm(u), vnorm::T=vecnor
 end
 
 
+# =========================================================================================
 """
     cathetus{T}(hyp::T, cosθ::T)
 
@@ -275,6 +285,7 @@ function cathetus{T}(hyp::T, cosθ::T)
 end
 
 
+# =========================================================================================
 """
     sign{T}(
         u::Vector{T},
@@ -299,6 +310,7 @@ function sign{T}(u::Vector{T}, v::Vector{T}, n::Vector{T})
 end
 
 
+# =========================================================================================
 """
     distance{T}(
         q   ::Vector{T},
@@ -316,6 +328,7 @@ function distance{T}(q::Vector{T}, elem::Triangle{T})
 end
 
 
+# =========================================================================================
 """
     ddot{T}(
         u::Vector{T},
@@ -347,6 +360,7 @@ function reverseindex{T}(v::Vector{T})
 end
 
 
+# =========================================================================================
 """
     obspoints_line{T}(
         u::Vector{T},
@@ -371,6 +385,7 @@ function obspoints_line{T}(u::Vector{T}, v::Vector{T}, n::Int)
 end
 
 
+# =========================================================================================
 """
     obspoints_plane{T}(
         a  ::Vector{T},
@@ -405,8 +420,31 @@ function obspoints_plane{T}(a::Vector{T}, b::Vector{T}, c::Vector{T}, nba::Int, 
 end
 
 
+# =========================================================================================
 # Convenience aliases
-gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!(α, m, v, one(T), dest)
-gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, β::T, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!('N', α, m, v, β, dest)
-gemv{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}) = gemv('N', α, m, v)
-gemm{T}(α::T, a::Union{DenseArray{T,2}, SubArray{T, 2}}, b::Union{DenseArray{T,2}, SubArray{T,2}}) = gemm('N', 'N', α, a, b)
+gemv!{T}(
+    α::T,
+    m::Union{DenseArray{T,2}, SubArray{T,2}},
+    v::Vector{T},
+    dest::Union{DenseArray{T,1}, SubArray{T,1}}
+) = gemv!(α, m, v, one(T), dest)
+
+gemv!{T}(
+    α::T,
+    m::Union{DenseArray{T,2}, SubArray{T,2}},
+    v::Vector{T},
+    β::T,
+    dest::Union{DenseArray{T,1}, SubArray{T,1}}
+) = gemv!('N', α, m, v, β, dest)
+
+gemv{T}(
+    α::T,
+    m::Union{DenseArray{T,2}, SubArray{T,2}},
+    v::Vector{T}
+) = gemv('N', α, m, v)
+
+gemm{T}(
+    α::T,
+    a::Union{DenseArray{T,2}, SubArray{T,2}},
+    b::Union{DenseArray{T,2}, SubArray{T,2}}
+) = gemm('N', 'N', α, a, b)
