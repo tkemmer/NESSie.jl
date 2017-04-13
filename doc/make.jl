@@ -8,6 +8,7 @@ const pages = [
         "man/introduction.md"
     ],
     "ProteinES" => [
+        "base/model.md",
         "base/util.md"
     ]
 ]
