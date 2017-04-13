@@ -1,24 +1,49 @@
-#=
-    Global constants
+# =========================================================================================
+"""
+Vacuum permittivity
 
-    References:
-    [1] O. Steinbach, Numerische Näherungsverfahren für elliptische Randwertprobleme -
-        Finite Elemente und Randelemente (in German). Advances in Numerical Matheamtics.
-        Teubner Verlag/GWV Fachverlage GmbH, Wiesbaden, 2003.
-=#
-const ε0 = 1 / (4π * 1e-7 * 299792458^2)    # vacuum permittivity [ε0] = F/m
-const σ  = 0.5                              # σ(ξ) = lim_{ε→0} 1/4πε² ∫dΓᵣ = 1/2 for almost all ξ ∈ Γ [1]
-const ec = 1.602176e-9                      # 10^10 times the elementary charge (10^10 for Å → m conversion); [ec] = C
+# Unit
+``\\frac{F}{m}``
+"""
+const ε0 = 1 / (4π * 1e-7 * 299792458^2)
 
-#=
-    Common prefactor for all potentials φΩ and φΣ:
 
-        1.602e-19 / 10e-10 / 4π / ε0 ≈ 1.145 * 4π
+# =========================================================================================
+"""
+Geometric quantity ``σ(ξ)``
 
-    @param T
-        Return type
-    @return T
-=#
+```math
+σ(ξ) = \\lim_{ε→0} \\frac{1}{4πε²} ∫_{r ∈ Ω:|r-ξ|=ε} dΓᵣ = \\frac{1}{2}
+```
+for almost all ``ξ ∈ Γ`` (cf. [[Ste03]](@ref Bibliography)).
+"""
+const σ  = 0.5
+
+
+# =========================================================================================
+"""
+``10^{10}`` times the elementary charge (for ``Å → m`` conversion)
+
+# Unit
+``C``
+"""
+const ec = 1.602176e-9
+
+
+# =========================================================================================
+@doc """
+    potprefactor(T::Type{Float64})
+    potprefactor(T::Type{Float32})
+
+Common prefactor for all potentials ``φ\_Ω`` and ``φ\_Σ``:
+
+```math
+\\frac{1.602 ⋅ 10^{-19}}{10^{-10} ⋅ 4π  ⋅ ε₀} ≈ 1.145 ⋅ 4π
+```
+
+# Return type
+`T`
+""" potprefactor
 for T in [:Float64, :Float32]
     varname = Symbol("potprefactor_", T)
     @eval begin
@@ -27,17 +52,46 @@ for T in [:Float64, :Float32]
     end
 end
 
-#=
-    Model parameters
-=#
+
+# =========================================================================================
+"""
+    immutable Option{T <: AbstractFloat}
+        εΩ::T       # dielectric constant of the solute
+        εΣ::T       # dielectric constant of the solvent
+        ε∞::T       # large-scale (bulk) solvent response
+        λ ::T       # correlation length scale [λ] = Å
+    end
+
+System parameters
+"""
 immutable Option{T <: AbstractFloat}
-    εΩ::T       # dielectric constant of the solute []
-    εΣ::T       # dielectric constant of the solvent []
-    ε∞::T       # large-scale (bulk) solvent response []
-    λ::T        # correlation length scale [Å]
+    "dielectric constant of the solute"
+    εΩ::T
+    "dielectric constant of the solvent"
+    εΣ::T
+    "large-scale (bulk) solvent response"
+    ε∞::T
+    "correlation length scale [λ] = Å"
+    λ::T
 end
 
-# Default options
+
+# =========================================================================================
+@doc """
+    defaultopt(T::Type{Float64})
+    defaultopt(T::Type{Float32})
+
+Default system parameters
+
+# Return type
+[`Option{T}`](@ref ProteinES.Option)
+
+# Default values
+ * ``ε\_Ω = 2``
+ * ``ε\_Σ = 78``
+ * ``ε\_∞ = 1.8``
+ * ``λ = 20 Å``
+""" defaultopt
 for T in [:Float64, :Float32]
     varname = Symbol("defaultopt_", T)
     @eval begin
@@ -46,5 +100,18 @@ for T in [:Float64, :Float32]
     end
 end
 
-# exponent for fundamental solution of yukawa operator -1/Λ = -1/(λ√(ε∞/εΣ))
+
+# =========================================================================================
+"""
+    yukawa{T}(opt::Option{T})
+
+Exponent ``-Λ^{-1}`` for the fundamental solution of the yukawa operator
+
+```math
+Λ := λ\\sqrt{\\frac{ε\_∞}{ε\_Σ}}
+```
+
+# Return type
+`T`
+"""
 yukawa{T}(opt::Option{T}) = √(opt.εΣ/opt.ε∞)/opt.λ

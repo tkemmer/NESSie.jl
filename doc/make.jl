@@ -5,9 +5,11 @@ using Documenter, ProteinES
 const pages = [
     "Home" => "index.md",
     "Manual" => [
-        "man/introduction.md"
+        "man/introduction.md",
+        "man/references.md"
     ],
     "ProteinES" => [
+        "base/constants.md",
         "base/model.md",
         "base/util.md"
     ]
