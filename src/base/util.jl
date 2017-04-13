@@ -314,25 +314,21 @@ function sign{T}(u::Vector{T}, v::Vector{T}, n::Vector{T})
 end
 
 
-# TODO remove
 """
     distance{T}(
-        q       ::Vector{T},
-        normal  ::Vector{T},
-        distorig::T
+        q   ::Vector{T},
+        elem::Triangle{T}
     )
 
-Calculates the (positive or negative) distance from the given point `q` to the plane given
-in Hesse normal form, that is, in the form of a unit normal vector and its distance to the
-origin.
+Calculates the (positive or negative) distance from the given point `q` to the plane the
+given triangle `elem` is located in.
 
 # Return type
 `T`
 """
-function distance{T}(q::Vector{T}, normal::Vector{T}, distorig::T)
-    q ⋅ normal - distorig
+function distance{T}(q::Vector{T}, elem::Triangle{T})
+    q ⋅ elem.normal - elem.distorig
 end
-distance{T}(q::Vector{T}, elem::Triangle{T}) = distance(q, elem.normal, elem.distorig)
 
 
 """
