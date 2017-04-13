@@ -251,13 +251,12 @@ function seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
 end
 
 
-# TODO merge
 """
     cos{T}(
         u    ::Vector{T},
-        unorm::T,
         v    ::Vector{T},
-        vnorm::T
+        unorm::T=vecnorm(u),
+        vnorm::T=vecnorm(v)
     )
 
 Computes the cosine of the angle between the given vectors `u` and `v` with lengths `unorm`
@@ -266,10 +265,9 @@ and `vnorm`, respectively.
 # Return type
 `T`
 """
-function cos{T}(u::Vector{T}, unorm::T, v::Vector{T}, vnorm::T)
+function cos{T}(u::Vector{T}, v::Vector{T}, unorm::T=vecnorm(u), vnorm::T=vecnorm(v))
     u ⋅ v / (unorm * vnorm)
 end
-cos{T}(u::Vector{T}, v::Vector{T}) = cos(u, vecnorm(u), v, vecnorm(v))
 
 
 """
