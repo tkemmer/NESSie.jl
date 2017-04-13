@@ -17,7 +17,7 @@ context("φmol and ∂ₙφmol") do
         @fact typeof(qmol) --> Vector{T}
         @fact qmol --> zeros(T, 2)
         # single charge
-        model.charges = [Charge(T, 0, 0, 0, √2)]
+        model.charges = [Charge(T[0, 0, 0, √2]...)]
         umol = φmol(model)
         @fact typeof(umol) --> Vector{T}
         @fact umol --> roughly(T[1, .6])
@@ -25,7 +25,7 @@ context("φmol and ∂ₙφmol") do
         @fact typeof(qmol) --> Vector{T}
         @fact qmol --> roughly(T[0, -162/25/√769])
         # multiple charges
-        push!(model.charges, Charge(T, 1, 1, 1, -√5))
+        push!(model.charges, Charge(T[1, 1, 1, -√5]...))
         umol = φmol(model)
         @fact typeof(umol) --> Vector{T}
         @fact umol --> roughly(T[1 - √5, -2.4])

@@ -122,8 +122,6 @@ type Charge{T <: AbstractFloat}
     val::T
 end
 Charge{T}(posx::T, posy::T, posz::T, val::T) = Charge{T}([posx, posy, posz], val)
-# TODO remove
-Charge(T::DataType, args...) = Charge{T}(convert(Vector{T}, [args[1:end-1]...]), convert(T, args[end]))
 
 
 # =========================================================================================
