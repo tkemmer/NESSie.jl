@@ -202,31 +202,41 @@ end
 
 context("meshunion") do
     for T in testtypes
-        # empty lists
-        nodes, elements = meshunion(Vector{T}[], Tetrahedron{T}[], Vector{T}[], Tetrahedron{T}[])
-        @fact typeof(nodes) --> Vector{Vector{T}}
-        @fact typeof(elements) --> Vector{Tetrahedron{T}}
-        @fact length(nodes) --> 0
-        @fact length(elements) --> 0
+        # empty system
+        empty = VolumeModel(Vector{T}[], Tetrahedron{T}[], Charge{T}[])
+        res = meshunion(empty, empty)
+        @fact typeof(res.nodes) --> Vector{Vector{T}}
+        @fact typeof(res.elements) --> Vector{Tetrahedron{T}}
+        @fact length(res.nodes) --> 0
+        @fact length(res.elements) --> 0
+
         # small system
         nodesΩ = Vector{T}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        modelΩ = VolumeModel{T}(
+            nodesΩ,
+            [Tetrahedron(nodesΩ...), Tetrahedron(nodesΩ...)],
+            Charge{T}[]
+        )
         nodesΣ = Vector{T}[[0, 0, 0], [-1, 0, 0], [0, -1, 0], [0, 0, -1]]
-        elementsΩ = [Tetrahedron(nodesΩ...), Tetrahedron(nodesΩ...)]
-        elementsΣ = [Tetrahedron(nodesΣ...)]
-        nodes, elements = meshunion(nodesΩ, elementsΩ, nodesΣ, elementsΣ)
-        oids = Set([object_id(e) for e in nodes])
-        @fact typeof(nodes) --> Vector{Vector{T}}
-        @fact typeof(elements) --> Vector{Tetrahedron{T}}
-        @fact length(nodes) --> 7
-        @fact length(elements) --> 3
+        modelΣ = VolumeModel{T}(
+            nodesΣ,
+            [Tetrahedron(nodesΣ...)],
+            Charge{T}[]
+        )
+        res = meshunion(modelΩ, modelΣ)
+        oids = Set([object_id(e) for e in res.nodes])
+        @fact typeof(res.nodes) --> Vector{Vector{T}}
+        @fact typeof(res.elements) --> Vector{Tetrahedron{T}}
+        @fact length(res.nodes) --> 7
+        @fact length(res.elements) --> 3
         for node in nodesΩ ∪ nodesΣ
-            @fact node ∈ nodes --> true
+            @fact node ∈ res.nodes --> true
         end
-        @fact elementsΩ[1] ∈ elements --> true
-        @fact elementsΩ[2] ∈ elements --> true
-        @fact elementsΣ[1] ∈ elements --> true
-        @fact elementsΣ[1].v1 --> exactly(nodesΩ[1])
-        for elem in elements
+        @fact modelΩ.elements[1] ∈ res.elements --> true
+        @fact modelΩ.elements[2] ∈ res.elements --> true
+        @fact modelΣ.elements[1] ∈ res.elements --> true
+        @fact modelΣ.elements[1].v1 --> exactly(nodesΩ[1])
+        for elem in res.elements
             for v in (elem.v1, elem.v2, elem.v3, elem.v4)
                 v ∈ oids
             end

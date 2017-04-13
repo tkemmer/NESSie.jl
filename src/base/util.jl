@@ -30,45 +30,44 @@ function props!{T}(elem::Triangle{T})
 end
 
 
-#TODO VolumeModel
 """
     meshunion{T}(
-        nodesΩ   ::Vector{Vector{T}},
-        elementsΩ::Vector{Tetrahedron{T}},
-        nodesΣ   ::Vector{Vector{T}},
-        elementsΣ::Vector{Tetrahedron{T}}
+        model1::VolumeModel{T},
+        model2::VolumeModel{T}
     )
 
-Merges two lists of nodes and elements, e.g., the volume meshes of a protein and the
-solvent. Duplicate nodes (e.g., the nodes on the protein surface) are merged into a single
-node, duplicate elements (if any) are retained.
+Merges two volume models, e.g., the models of a protein and the solvent. Duplicate nodes
+(e.g., the nodes on the protein surface) are merged into a single node, duplicate elements
+and charges (if any) are retained.
 
 # Return type
-`(Vector{Vector{T}}, Vector{Tetrahedron{T}})`
+`VolumeModel{T}`
 
 !!! note
     This function assumes that there are no duplicates within either of the node lists!
 """
 function meshunion{T}(
-        nodesΩ::Vector{Vector{T}},
-        elementsΩ::Vector{Tetrahedron{T}},
-        nodesΣ::Vector{Vector{T}},
-        elementsΣ::Vector{Tetrahedron{T}}
+        model1::VolumeModel{T},
+        model2::VolumeModel{T}
     )
     # find nodes that are to be replaced (tbr)
-    obsolete = nodesΣ ∩ nodesΩ
-    tbr = Dict{Vector{T}, Int}(zip(obsolete, indexin(obsolete, nodesΩ)))
+    obsolete = model1.nodes ∩ model2.nodes
+    tbr = Dict{Vector{T}, Int}(zip(obsolete, indexin(obsolete, model1.nodes)))
 
-    elements = copy(elementsΣ)
-    for elem in elementsΣ
-        haskey(tbr, elem.v1) && (elem.v1 = nodesΩ[tbr[elem.v1]])
-        haskey(tbr, elem.v2) && (elem.v2 = nodesΩ[tbr[elem.v2]])
-        haskey(tbr, elem.v3) && (elem.v3 = nodesΩ[tbr[elem.v3]])
-        haskey(tbr, elem.v4) && (elem.v4 = nodesΩ[tbr[elem.v4]])
+    elements = copy(model2.elements)
+    for elem in model2.elements
+        haskey(tbr, elem.v1) && (elem.v1 = model1.nodes[tbr[elem.v1]])
+        haskey(tbr, elem.v2) && (elem.v2 = model1.nodes[tbr[elem.v2]])
+        haskey(tbr, elem.v3) && (elem.v3 = model1.nodes[tbr[elem.v3]])
+        haskey(tbr, elem.v4) && (elem.v4 = model1.nodes[tbr[elem.v4]])
     end
-    append!(elements, elementsΩ)
+    append!(elements, model1.elements)
 
-    collect(Set(nodesΣ) ∪ Set(nodesΩ)), elements
+    VolumeModel(
+        collect(Set(model2.nodes) ∪ Set(model1.nodes)),
+        elements,
+        model1.charges ∪ model2.charges
+    )
 end
 
 
