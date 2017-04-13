@@ -153,22 +153,29 @@ context("vertexnormals") do
         elements = [Triangle(nodes[1], nodes[2], nodes[3]),
                     Triangle(nodes[1], nodes[4], nodes[2])]
         map(props!, elements)
-        d = vertexnormals(Vector{T}[], Triangle{T}[])
+        model = SurfaceModel(Vector{T}[], Triangle{T}[], Charge{T}[])
+        d = vertexnormals(model)
         @fact typeof(d) --> Vector{Vector{T}}
         @fact d --> []
-        d = vertexnormals(Vector{T}[nodes[1], nodes[2], nodes[3]], Triangle{T}[elements[1]])
+        model.nodes = Vector{T}[nodes[1], nodes[2], nodes[3]]
+        model.elements = Triangle{T}[elements[1]]
+        d = vertexnormals(model)
         @fact typeof(d) --> Vector{Vector{T}}
         @fact length(d) --> 3
         @fact d[1] --> roughly([-1, 0, 0])
         @fact d[2] --> roughly([-1, 0, 0])
         @fact d[3] --> roughly([-1, 0, 0])
-        d = vertexnormals(Vector{T}[nodes[1], nodes[2], nodes[4]], Triangle{T}[elements[2]])
+        model.nodes = Vector{T}[nodes[1], nodes[2], nodes[4]]
+        model.elements = Triangle{T}[elements[2]]
+        d = vertexnormals(model)
         @fact typeof(d) --> Vector{Vector{T}}
         @fact length(d) --> 3
         @fact d[1] --> roughly(map(T, √90 \ [-9, -3, 0]))
         @fact d[2] --> roughly(map(T, √90 \ [-9, -3, 0]))
         @fact d[3] --> roughly(map(T, √90 \ [-9, -3, 0]))
-        d = vertexnormals(nodes, elements)
+        model.nodes = nodes
+        model.elements = elements
+        d = vertexnormals(model)
         @fact typeof(d) --> Vector{Vector{T}}
         @fact length(d) --> 4
         @fact d[1] --> roughly(map(T, √360 \ [-9 - √90, -3, 0]))

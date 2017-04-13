@@ -53,7 +53,7 @@ function writexml3d_json{T}(stream::IOStream, model::SurfaceModel{T})
             ),
             "normal" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(vertexnormals(model.nodes, model.elements)))]
+                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(vertexnormals(model)))]
             )
         )
     )))

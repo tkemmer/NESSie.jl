@@ -95,27 +95,19 @@ function unpack{T}(data::Vector{Vector{T}})
 end
 
 
-# TODO SurfaceModel
 """
-    vertexnormals{T}(
-        nodes   ::Vector{Vector{T}},
-        elements::Vector{Triangle{T}}
-    )
+    vertexnormals{T}(model::SurfaceModel{T})
 
-Returns a vector containing the normal vectors of the given nodes with respect to the given
-surface elements.
+Returns a vector containing the normal vectors of the given surface model's nodes.
 
 # Return type
 `Vector{Vector{T}}`
 """
-function vertexnormals{T}(
-        nodes::Vector{Vector{T}},
-        elements::Vector{Triangle{T}}
-    )
-    revidx = reverseindex(nodes)
-    normals = Vector{T}[zeros(T, 3) for _ in 1:length(nodes)]
-    count = zeros(T, length(nodes))
-    @inbounds for elem in elements, node in (elem.v1, elem.v2, elem.v3)
+function vertexnormals{T}(model::SurfaceModel{T})
+    revidx = reverseindex(model.nodes)
+    normals = Vector{T}[zeros(T, 3) for _ in 1:length(model.nodes)]
+    count = zeros(T, length(model.nodes))
+    @inbounds for elem in model.elements, node in (elem.v1, elem.v2, elem.v3)
         idx = revidx[object_id(node)]
         count[idx] += 1
         for i in 1:3
