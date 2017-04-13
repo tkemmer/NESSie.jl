@@ -96,27 +96,21 @@ end
 
 
 # TODO SurfaceModel
-# TODO remove invert
 """
     vertexnormals{T}(
         nodes   ::Vector{Vector{T}},
-        elements::Vector{Triangle{T}},
-        invert  ::Bool=false
+        elements::Vector{Triangle{T}}
     )
 
 Returns a vector containing the normal vectors of the given nodes with respect to the given
 surface elements.
-
-# Arguments
- * `invert` Specifies whether all normals should be inverted
 
 # Return type
 `Vector{Vector{T}}`
 """
 function vertexnormals{T}(
         nodes::Vector{Vector{T}},
-        elements::Vector{Triangle{T}},
-        invert::Bool=false
+        elements::Vector{Triangle{T}}
     )
     revidx = reverseindex(nodes)
     normals = Vector{T}[zeros(T, 3) for _ in 1:length(nodes)]
@@ -128,7 +122,7 @@ function vertexnormals{T}(
             normals[idx][i] += (elem.normal[i]-normals[idx][i]) / count[idx]
         end
     end
-    invert ? -normals : normals
+    normals
 end
 
 

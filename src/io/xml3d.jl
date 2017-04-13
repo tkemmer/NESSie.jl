@@ -37,7 +37,7 @@ writexml3d_json{T}(fname::String, nodes::Vector{Vector{T}}) = open(fh -> writexm
         Surface model
     @return nothing
 =#
-function writexml3d_json{T}(stream::IOStream, model::SurfaceModel{T}, invertnormals::Bool=false)
+function writexml3d_json{T}(stream::IOStream, model::SurfaceModel{T})
     revidx = reverseindex(model.nodes)
     println(stream, json(Dict(
         "format" => "xml3d-json",
@@ -53,14 +53,13 @@ function writexml3d_json{T}(stream::IOStream, model::SurfaceModel{T}, invertnorm
             ),
             "normal" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(vertexnormals(model.nodes, model.elements, invertnormals)))]
+                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(vertexnormals(model.nodes, model.elements)))]
             )
         )
     )))
     nothing
 end
-writexml3d_json{T}(fname::String, model::SurfaceModel{T}, invertnormals::Bool=false) =
-    open(fh -> writexml3d_json(fh, model, invertnormals), fname, "w")
+writexml3d_json{T}(fname::String, model::SurfaceModel{T}) = open(fh -> writexml3d_json(fh, model), fname, "w")
 
 #=
     Creates a XML3D-specific XML file from a given collection of nodes, representing the latter as point cloud.

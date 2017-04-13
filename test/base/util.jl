@@ -175,13 +175,6 @@ context("vertexnormals") do
         @fact d[2] --> roughly(map(T, √360 \ [-9 - √90, -3, 0]))
         @fact d[3] --> roughly([-1, 0, 0])
         @fact d[4] --> roughly(map(T, √90 \ [-9, -3, 0]))
-        d = vertexnormals(nodes, elements, true)
-        @fact typeof(d) --> Vector{Vector{T}}
-        @fact length(d) --> 4
-        @fact d[1] --> roughly(map(T, -√360 \ [-9 - √90, -3, 0]))
-        @fact d[2] --> roughly(map(T, -√360 \ [-9 - √90, -3, 0]))
-        @fact d[3] --> roughly([1, 0, 0])
-        @fact d[4] --> roughly(map(T, -√90 \ [-9, -3, 0]))
     end
 end
 

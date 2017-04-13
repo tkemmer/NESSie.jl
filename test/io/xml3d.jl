@@ -56,21 +56,6 @@ context("writexml3d_json (surface model)") do
         @fact map(T, js["data"]["normal"]["seq"][1]["value"]) --> roughly(map(T,
             [√360 \ [-9 - √90, -3, 0]; √360 \ [-9 - √90, -3, 0]; [-1, 0, 0]; √90 \ [-9, -3, 0]]
         ))
-        # small system, inverted normals
-        js = JSON.parse(readback(fh -> writexml3d_json(fh, SurfaceModel(nodes, elements, Charge{T}[]), true)))
-        @fact js["format"] --> "xml3d-json"
-        @fact haskey(js, "version") --> true
-        @fact js["data"]["index"]["type"] --> "int"
-        @fact length(js["data"]["index"]["seq"]) --> 1
-        @fact js["data"]["index"]["seq"][1]["value"] --> [0, 1, 2, 0, 3, 1]
-        @fact js["data"]["position"]["type"] --> "float3"
-        @fact length(js["data"]["position"]["seq"]) --> 1
-        @fact js["data"]["position"]["seq"][1]["value"] --> [0, 0, 0, 0, 0, 3, 0, 3, 0, 1, -3, 3]
-        @fact js["data"]["normal"]["type"] --> "float3"
-        @fact length(js["data"]["normal"]["seq"]) --> 1
-        @fact map(T, js["data"]["normal"]["seq"][1]["value"]) --> roughly(map(T,
-            [-√360 \ [-9 - √90, -3, 0]; -√360 \ [-9 - √90, -3, 0]; [1, 0, 0]; -√90 \ [-9, -3, 0]]
-        ))
     end
 end
 
