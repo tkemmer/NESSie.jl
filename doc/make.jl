@@ -7,11 +7,15 @@ const pages = [
     "Manual" => [
         "man/introduction.md"
     ],
+    "ProteinES" => [
+        "base/util.md"
+    ]
 ]
 
 makedocs(
     modules   = [ProteinES],
     clean     = true,
+    doctest   = true,
     linkcheck = true,
     checkdocs = :all,
     pages     = pages,

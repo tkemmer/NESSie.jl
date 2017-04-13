@@ -1,10 +1,14 @@
-#=
-    Computes the element properties, that is, centroid, normal, distance to origin, and
-    area.
+"""
+    props!{T}(
+        elem::Triangle{T}
+    )
 
-    @param elem
-        Triangle of interest
-=#
+Computes the given triangle's properties, that is, centroid, normal, distance to origin,
+and area.
+
+# Return type
+`Void`
+"""
 function props!{T}(elem::Triangle{T})
     # reject degenerate triangles
     @assert !isdegenerate(elem) "Degenerate triangle $(elem)"
@@ -25,25 +29,32 @@ function props!{T}(elem::Triangle{T})
     nothing
 end
 
-#=
-    Merges two lists of nodes and elements, e.g., the volume meshes of a protein and the
-    solvent. Duplicate nodes (e.g., the nodes on the protein surface) are merged into a
-    single node, duplicate elements (if any) are retained.
 
-    Note that this function assumes that there are no duplicates within either of the
-    node lists.
+#TODO VolumeModel
+"""
+    meshunion{T}(
+        nodesΩ   ::Vector{Vector{T}},
+        elementsΩ::Vector{Tetrahedron{T}},
+        nodesΣ   ::Vector{Vector{T}},
+        elementsΣ::Vector{Tetrahedron{T}}
+    )
 
-    @param nodesΩ
-        First node list
-    @param elementsΩ
-        First element list
-    @param nodesΣ
-        Second node list
-    @param elementsΣ
-        Second element list
-    @return (Vector{Vector{T}}, Vector{Tetrahedron{T}})
-=#
-function meshunion{T}(nodesΩ::Vector{Vector{T}}, elementsΩ::Vector{Tetrahedron{T}}, nodesΣ::Vector{Vector{T}}, elementsΣ::Vector{Tetrahedron{T}})
+Merges two lists of nodes and elements, e.g., the volume meshes of a protein and the
+solvent. Duplicate nodes (e.g., the nodes on the protein surface) are merged into a single
+node, duplicate elements (if any) are retained.
+
+# Return type
+`(Vector{Vector{T}}, Vector{Tetrahedron{T}})`
+
+!!! note
+    This function assumes that there are no duplicates within either of the node lists!
+"""
+function meshunion{T}(
+        nodesΩ::Vector{Vector{T}},
+        elementsΩ::Vector{Tetrahedron{T}},
+        nodesΣ::Vector{Vector{T}},
+        elementsΣ::Vector{Tetrahedron{T}}
+    )
     # find nodes that are to be replaced (tbr)
     obsolete = nodesΣ ∩ nodesΩ
     tbr = Dict{Vector{T}, Int}(zip(obsolete, indexin(obsolete, nodesΩ)))
@@ -60,30 +71,53 @@ function meshunion{T}(nodesΩ::Vector{Vector{T}}, elementsΩ::Vector{Tetrahedron
     collect(Set(nodesΣ) ∪ Set(nodesΩ)), elements
 end
 
-#=
-    Unpacks the given vector of vectors into a single vector:
-    [[1, 2, 3], [4, 5, 6]] => [1, 2, 3, 4, 5, 6]
 
-    @param data
-        Vector of vectors
-    @return Vector{T}
-=#
-unpack{T}(data::Vector{Vector{T}}) = isempty(data) ?  T[] : T[x for y in data for x in y]
+"""
+    unpack{T}(data::Vector{Vector{T}})
 
-#=
-    Returns a list containing the normal vectors of the given nodes with respect to the
-    given surface elements.
+Unpacks the given vector of vectors into a single vector.
 
-    @param nodes
-        List of nodes
-    @param elements
-        List of surface elements
-    @param invert
-        Specifies whether all normals should be inverted
-    @return
-        Vector{Vector{T}}
-=#
-function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}, invert::Bool=false)
+# Return type
+`Vector{T}`
+
+# Example
+
+```jldoctest
+julia> unpack([[1, 2], [3]])
+3-element Array{Int64,1}:
+ 1
+ 2
+ 3
+```
+"""
+function unpack{T}(data::Vector{Vector{T}})
+    isempty(data) ?  T[] : T[x for y in data for x in y]
+end
+
+
+# TODO SurfaceModel
+# TODO remove invert
+"""
+    vertexnormals{T}(
+        nodes   ::Vector{Vector{T}},
+        elements::Vector{Triangle{T}},
+        invert  ::Bool=false
+    )
+
+Returns a vector containing the normal vectors of the given nodes with respect to the given
+surface elements.
+
+# Arguments
+ * `invert` Specifies whether all normals should be inverted
+
+# Return type
+`Vector{Vector{T}}`
+"""
+function vertexnormals{T}(
+        nodes::Vector{Vector{T}},
+        elements::Vector{Triangle{T}},
+        invert::Bool=false
+    )
     revidx = reverseindex(nodes)
     normals = Vector{T}[zeros(T, 3) for _ in 1:length(nodes)]
     count = zeros(T, length(nodes))
@@ -97,28 +131,72 @@ function vertexnormals{T}(nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}
     invert ? -normals : normals
 end
 
-#=
-    Initializes the given matrix m with αI, with I being an identity
-    matrix with the same dimensions as m.
 
-    @param m
-        Corresponding matrix
-    @param α
-        Coefficient of the identity matrix
-=#
+"""
+    eye!{T}(
+        m::Union{DenseArray{T,2}, SubArray{T,2}},
+        α::Number=one(T)
+    )
+
+Initializes the given matrix `m` with `αI`, with `I` being an identity matrix with the same
+dimensions as `m`.
+
+# Return type
+`Void`
+
+# Example
+```jldoctest
+julia> m = 2 * ones(2, 2)
+2×2 Array{Float64,2}:
+ 2.0  2.0
+ 2.0  2.0
+
+julia> eye!(m); m
+2×2 Array{Float64,2}:
+ 1.0  0.0
+ 0.0  1.0
+
+julia> eye!(m, 2); m
+2×2 Array{Float64,2}:
+ 2.0  0.0
+ 0.0  2.0
+```
+"""
 function eye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T))
     fill!(m, zero(T))
     pluseye!(m, α)
 end
 
-#=
-    Adds α to all diagonal elements of matrix m.
 
-    @param m
-        Matrix to be modified in-place
-    @param α
-        Some number
-=#
+"""
+    pluseye!{T}(
+        m::Union{DenseArray{T,2}, SubArray{T,2}},
+        α::Number=one(T)
+    )
+
+Adds `α` to all diagonal elements of matrix `m`.
+
+# Return type
+`Void`
+
+# Example
+```jldoctest
+julia> m = 2 * ones(2, 2)
+2×2 Array{Float64,2}:
+ 2.0  2.0
+ 2.0  2.0
+
+julia> pluseye!(m); m
+2×2 Array{Float64,2}:
+ 3.0  2.0
+ 2.0  3.0
+
+julia> pluseye!(m, 2); m
+2×2 Array{Float64,2}:
+ 5.0  2.0
+ 2.0  5.0
+```
+"""
 function pluseye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T))
     α = convert(T, α)
     @inbounds for i in 1:min(size(m)...)
@@ -127,38 +205,47 @@ function pluseye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T)
     nothing
 end
 
-#=
-    Tests whether the triangle with the given nodes is degenerate.
 
-    @param v1
-        First node of the triangle
-    @param v2
-        Second node of the triangle
-    @param v3
-        Third node of the triangle
-    @return bool
-=#
+# TODO Triangle{T}
+"""
+    isdegenerate{T <: AbstractFloat}(
+        v1::Vector{T},
+        v2::Vector{T},
+        v3::Vector{T}
+    )
+
+Tests whether the triangle with the given nodes is degenerate.
+
+# Return type
+`Void`
+"""
 function isdegenerate{T <: AbstractFloat}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T})
     @assert length(v1) == length(v2) == length(v3) == 3
     u1 = v2 - v1
     u2 = v3 - v1
     cosine = u1 ⋅ u2 / vecnorm(u1) / vecnorm(u2)
-    vecnorm(v1 - v2) < 1e-10 || vecnorm(v1 - v3) < 1e-10 || vecnorm(v2 - v3) < 1e-10 || 1 - abs(cosine) <= 1e-10
+    vecnorm(v1 - v2) < 1e-10 || vecnorm(v1 - v3) < 1e-10 ||
+    vecnorm(v2 - v3) < 1e-10 || 1 - abs(cosine) <= 1e-10
 end
 isdegenerate{T}(elem::Triangle{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
 
-#=
-    Fast-forwards an IOStream to the next line starting with the
-    given prefix. In case there is no such line. the stream handle
-    will be set to EOF.
 
-    @param fh
-        A stream object
-    @param
-        Prefix of interest
-    @param skiptheline
-        If true, said line will also be skipped
-=#
+"""
+    seek(
+        fh         ::IOStream,
+        prefix     ::String,
+        skiptheline::Bool = true
+    )
+
+Fast-forwards an IOStream to the next line starting with the given `prefix`. In case there
+is no such line, the stream handle will be set to EOF.
+
+# Arguments
+ * `skiptheline`    If true, said line will also be skipped
+
+# Return type
+`Void`
+"""
 function seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
     m = -1
     while !eof(fh)
@@ -169,139 +256,181 @@ function seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
     nothing
 end
 
-#=
-    Computes the cosine of the angle between the given vectors.
 
-    @param u
-        First vector
-    @param unorm
-        Length of the first vector
-    @param v
-        Second vector
-    @param vnorm
-        Length of the second vector
-    @return T
-=#
-cos{T}(u::Vector{T}, unorm::T, v::Vector{T}, vnorm::T) = (u ⋅ v / (unorm * vnorm))
+# TODO merge
+"""
+    cos{T}(
+        u    ::Vector{T},
+        unorm::T,
+        v    ::Vector{T},
+        vnorm::T
+    )
+
+Computes the cosine of the angle between the given vectors `u` and `v` with lengths `unorm`
+and `vnorm`, respectively.
+
+# Return type
+`T`
+"""
+function cos{T}(u::Vector{T}, unorm::T, v::Vector{T}, vnorm::T)
+    u ⋅ v / (unorm * vnorm)
+end
 cos{T}(u::Vector{T}, v::Vector{T}) = cos(u, vecnorm(u), v, vecnorm(v))
 
-#=
-    Computes the cathetus c1 of a triangle given the hypotenuse h and the cosine of the
-    exterior angle θ between the hypotenuse and the other cathetus c2.
 
-    c2 = h * cos θ
-    h² = c1² + c2²
-    <=> c1 = √(h² * (1 - cos² θ))
+"""
+    cathetus{T}(hyp::T, cosθ::T)
 
-    @param hyp
-        Hypotenuse of the triangle
-    @param cosθ
-        Cosine of the exterior angle between the hypotenuse and the other cathetus
-    @return T
-=#
-cathetus{T}(hyp::T, cosθ::T) = √(hyp^2 * (1 - cosθ^2))
+Computes the cathetus ``c₁`` of a triangle given the hypotenuse ``h`` and the cosine of the
+exterior angle ``θ`` between the hypotenuse and the other cathetus ``c₂``.
 
-#=
-    Determines whether the normal vector of the plane specified by the vectors u and v
-    has the same orientation as the given normal vector.
+```math
+c₂ = h ⋅ \\cos(θ) \\\\
+h² = c₁² + c₂² \\\\
+⇔ c₁ = \\sqrt{h² ⋅ (1 - \\cos²(θ))}
+```
 
-    @param u
-        First vector
-    @param v
-        Second vector
-    @param n
-        Normal vector to compare against
-    @return 1 if both normals have the same orientation, 0 if at least one of the
-        vectors is zero, -1 otherwise.
-=#
-# Devectorized version of sign((u1 × u2) ⋅ normal)
-sign{T}(u::Vector{T}, v::Vector{T}, n::Vector{T}) = sign((u[2]*v[3] - u[3]*v[2]) * n[1] + (u[3]*v[1] - u[1]*v[3]) * n[2] + (u[1]*v[2] - u[2]*v[1]) * n[3])
+# Return type
+`T`
+"""
+function cathetus{T}(hyp::T, cosθ::T)
+    √(hyp^2 * (1 - cosθ^2))
+end
 
-#=
-    Calculates the (positive or negative) distance from the given point q to the plane
-    given in Hesse normal form, that is, in the form of a unit normal vector and its
-    distance to the origin.
 
-    @param q
-        Point of interest
-    @param normal
-        Unit normal vector of the plane
-    @param distorig
-        Distance from the origin to the plane (≥ 0)
-    @return T
-=#
-distance{T}(q::Vector{T}, normal::Vector{T}, distorig::T) = q ⋅ normal - distorig
+"""
+    sign{T}(
+        u::Vector{T},
+        v::Vector{T},
+        n::Vector{T}
+    )
+
+Determines whether the normal vector of the plane specified by the vectors `u` and `v` has
+the same orientation as the given normal vector `n`. Returns ``1`` if both normals have the
+same orientation, ``0`` if at least one of the vectors is zero, and ``-1`` otherwise.
+
+# Return type
+`T`
+"""
+function sign{T}(u::Vector{T}, v::Vector{T}, n::Vector{T})
+    # Devectorized version of sign((u1 × u2) ⋅ normal)
+    sign(
+        (u[2]*v[3] - u[3]*v[2]) * n[1] +
+        (u[3]*v[1] - u[1]*v[3]) * n[2] +
+        (u[1]*v[2] - u[2]*v[1]) * n[3]
+    )
+end
+
+
+# TODO remove
+"""
+    distance{T}(
+        q       ::Vector{T},
+        normal  ::Vector{T},
+        distorig::T
+    )
+
+Calculates the (positive or negative) distance from the given point `q` to the plane given
+in Hesse normal form, that is, in the form of a unit normal vector and its distance to the
+origin.
+
+# Return type
+`T`
+"""
+function distance{T}(q::Vector{T}, normal::Vector{T}, distorig::T)
+    q ⋅ normal - distorig
+end
 distance{T}(q::Vector{T}, elem::Triangle{T}) = distance(q, elem.normal, elem.distorig)
 
-#=
-    Devectorized computation of (u-v)⋅n.
 
-    @param u
-        First vector
-    @param v
-        Second vector
-    @param n
-        Third vector
-    @return T
-=#
-ddot{T}(u::Vector{T}, v::Vector{T}, n::Vector{T}) = (u[1] - v[1]) * n[1] + (u[2] - v[2]) * n[2] + (u[3] - v[3]) * n[3]
+"""
+    ddot{T}(
+        u::Vector{T},
+        v::Vector{T},
+        n::Vector{T}
+    )
 
-#=
-    Creates a reverse index for the given vector, that is, a dictionary linking the
-    object IDs of the vector elements to the corresponding position in the vector.
+Devectorized computation of `(u-v)⋅n`.
 
-    @param v
-        A vector
-    @return Dict{UInt, UInt}
-=#
-reverseindex{T}(v::Vector{T}) = Dict{UInt, UInt}(object_id(e) => i for (i,e) in enumerate(v))
+# Return type
+`T`
+"""
+function ddot{T}(u::Vector{T}, v::Vector{T}, n::Vector{T})
+    (u[1] - v[1]) * n[1] + (u[2] - v[2]) * n[2] + (u[3] - v[3]) * n[3]
+end
 
-#=
-    Generates n evenly distributed observation points along the line segment from u to v.
 
-    Example:
-    ```
-    for ξ in obspoints_line([0, 0, 0], [1, 1, 1], 10)
+"""
+    reverseindex{T}(v::Vector{T})
+
+Creates a reverse index for the given vector `v`, that is, a dictionary linking the object
+IDs of the vector elements to the corresponding position in the vector.
+
+# Return type
+`Dict{UInt, UInt}`
+"""
+function reverseindex{T}(v::Vector{T})
+    Dict{UInt, UInt}(object_id(e) => i for (i,e) in enumerate(v))
+end
+
+
+"""
+    obspoints_line{T}(
+        u::Vector{T},
+        v::Vector{T},
+        n::Int
+    )
+
+Generates `n` evenly distributed observation points along the line segment from `u` to `v`.
+
+# Return type
+`Function`
+
+# Example
+```julia
+for ξ in obspoints_line([0, 0, 0], [1, 1, 1], 10)
+    ...
+end
+```
+"""
+function obspoints_line{T}(u::Vector{T}, v::Vector{T}, n::Int)
+    (u + T(i) * (v - u) for i in linspace(0, 1, n))
+end
+
+
+"""
+    obspoints_plane{T}(
+        a  ::Vector{T},
+        b  ::Vector{T},
+        c  ::Vector{T},
+        nba::Int,
+        nbc::Int
+    )
+
+Generates `nba` ⋅ `nbc` evenly distributed observation points on the parallelogram with the
+sides ``\\overline{BA}`` and ``\\overline{BC}`` and `a`, `b`, `c` being the location vectors
+to the points ``A``, ``B``, and ``C``, respectively.
+
+# Arguments
+ * `nba`   Number of observation points along ``\\overline{BA}``
+ * `nbc`   Number of observation points along ``\\overline{BC}``
+
+# Return type
+`Function`
+
+# Example
+```julia
+for Ξ in obspoints_plane(...)
+    for ξ in Ξ
         ...
     end
-    ```
+end
+```
+"""
+function obspoints_plane{T}(a::Vector{T}, b::Vector{T}, c::Vector{T}, nba::Int, nbc::Int)
+    (obspoints_line(ξ, c + (ξ - b), nbc) for ξ in obspoints_line(b, a, nba))
+end
 
-    @param u
-        Start vector
-    @param v
-        End vector
-    @param n
-        Number of observation points
-    @return Function
-=#
-obspoints_line{T}(u::Vector{T}, v::Vector{T}, n::Int) = (u + T(i) * (v - u) for i in linspace(0, 1, n))
-
-#=
-    Generates nba ⋅ nbc evenly distributed observation points on the parallelogram with the sides
-    BA and BC and a, b, c being the location vectors to the points A, B, and C, respectively.
-
-    Example:
-    ```
-    for Ξ in obspoints_plane(...)
-        for ξ in Ξ
-            ...
-        end
-    end
-    ```
-
-    @param a
-        Location of point A
-    @param b
-        Location of point B
-    @param c
-        Location of point C
-    @param nba
-        Number of observation points along the BA axis
-    @param nbc
-        Number of observation points along the BC axis
-    @return Function
-=#
-obspoints_plane{T}(a::Vector{T}, b::Vector{T}, c::Vector{T}, nba::Int, nbc::Int) = (obspoints_line(ξ, c + (ξ - b), nbc) for ξ in obspoints_line(b, a, nba))
 
 # Convenience aliases
 gemv!{T}(α::T, m::Union{DenseArray{T,2}, SubArray{T,2}}, v::Vector{T}, dest::Union{DenseArray{T,1}, SubArray{T,1}}) = gemv!(α, m, v, one(T), dest)
