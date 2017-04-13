@@ -41,9 +41,9 @@ context("eye! and pluseye!") do
 end
 
 context("props! and isdegenerate") do
-    @fact_throws AssertionError isdegenerate([1., 1.], [1., 1., 1.], [1., 1., 1.])
-    @fact_throws AssertionError isdegenerate([1., 1., 1.], [1., 1.], [1., 1., 1.])
-    @fact_throws AssertionError isdegenerate([1., 1., 1.], [1., 1., 1.], [1., 1.])
+    @fact_throws AssertionError isdegenerate(Triangle([1., 1.], [1., 1., 1.], [1., 1., 1.]))
+    @fact_throws AssertionError isdegenerate(Triangle([1., 1., 1.], [1., 1.], [1., 1., 1.]))
+    @fact_throws AssertionError isdegenerate(Triangle([1., 1., 1.], [1., 1., 1.], [1., 1.]))
     for T in testtypes
         # degenerate triangles
         elem = Triangle(T[0, 0, 0], T[0, 0, 0], T[1, 0, 0])

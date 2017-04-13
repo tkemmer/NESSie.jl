@@ -206,28 +206,22 @@ function pluseye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T)
 end
 
 
-# TODO Triangle{T}
 """
-    isdegenerate{T <: AbstractFloat}(
-        v1::Vector{T},
-        v2::Vector{T},
-        v3::Vector{T}
-    )
+    isdegenerate{T}(elem::Triangle{T})
 
-Tests whether the triangle with the given nodes is degenerate.
+Tests whether the given triangle is degenerate.
 
 # Return type
-`Void`
+`Bool`
 """
-function isdegenerate{T <: AbstractFloat}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T})
-    @assert length(v1) == length(v2) == length(v3) == 3
-    u1 = v2 - v1
-    u2 = v3 - v1
+function isdegenerate{T}(elem::Triangle{T})
+    @assert length(elem.v1) == length(elem.v2) == length(elem.v3) == 3
+    u1 = elem.v2 - elem.v1
+    u2 = elem.v3 - elem.v1
     cosine = u1 ⋅ u2 / vecnorm(u1) / vecnorm(u2)
-    vecnorm(v1 - v2) < 1e-10 || vecnorm(v1 - v3) < 1e-10 ||
-    vecnorm(v2 - v3) < 1e-10 || 1 - abs(cosine) <= 1e-10
+    vecnorm(elem.v1 - elem.v2) < 1e-10 || vecnorm(elem.v1 - elem.v3) < 1e-10 ||
+    vecnorm(elem.v2 - elem.v3) < 1e-10 || 1 - abs(cosine) <= 1e-10
 end
-isdegenerate{T}(elem::Triangle{T}) = isdegenerate(elem.v1, elem.v2, elem.v3)
 
 
 """
