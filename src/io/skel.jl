@@ -1,15 +1,28 @@
-#=
-    Creates a SKEL file from a given surface model, representing the model as a collection of points and polylines.
+# =========================================================================================
+"""
+    writeskel{T, M <: Model{T}}(
+        stream::IOStream,
+        model ::M
+    )
 
-    File specification:
-    http://www.geomview.org/docs/html/SKEL.html
+Creates a SKEL file from a given surface or volume model, representing the model as a
+collection of points and polylines.
 
-    @param fname/stream
-        Path or handle to (writable) SKEL file
-    @param model
-        A surface model
-    @return nothing
-=#
+# Specification
+<http://www.geomview.org/docs/html/SKEL.html>
+
+# Return type
+`Void`
+
+# Alias
+
+    writeskel{T, M <: Model{T}}(
+        fname::String,
+        model::M
+    )
+
+Creates the SKEL file by name rather than `IOStream` object.
+"""
 function writeskel{T}(stream::IOStream, model::SurfaceModel{T})
     println(stream, "SKEL")
     println(stream, "$(length(model.nodes))\t$(length(model.elements))")
@@ -25,20 +38,7 @@ function writeskel{T}(stream::IOStream, model::SurfaceModel{T})
     end
     nothing
 end
-writeskel{T}(fname::String, model::SurfaceModel{T}) = open(fh -> writeskel(fh, model), fname, "w")
 
-#=
-    Creates a SKEL file from a given volume model, representing the model as a collection of points and polylines.
-
-    File specification:
-    http://www.geomview.org/docs/html/SKEL.html
-
-    @param fname/stream
-        Path or handle to (writable) SKEL file
-    @param model
-        A volume model
-    @return nothing
-=#
 function writeskel{T}(stream::IOStream, model::VolumeModel{T})
     println(stream, "SKEL")
     println(stream, "$(length(model.nodes))\t$(length(model.elements))")
@@ -55,4 +55,7 @@ function writeskel{T}(stream::IOStream, model::VolumeModel{T})
     end
     nothing
 end
-writeskel{T}(fname::String, model::VolumeModel{T}) = open(fh -> writeskel(fh, model), fname, "w")
+
+function writeskel{T, M <: Model{T}}(fname::String, model::M)
+    open(fh -> writeskel(fh, model), fname, "w")
+end

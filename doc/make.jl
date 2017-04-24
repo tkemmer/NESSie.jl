@@ -8,18 +8,22 @@ const pages = [
         "man/introduction.md",
         "man/references.md"
     ],
-    "ProteinES" => [
+    "ProteinES module" => [
         "base/born.md",
         "base/constants.md",
         "base/model.md",
         "base/potentials.md",
         "base/quadrature.md",
         "base/util.md"
+    ],
+    "ProteinES.IO module" => [
+        "io/input.md",
+        "io/output.md"
     ]
 ]
 
 makedocs(
-    modules   = [ProteinES],
+    modules   = [ProteinES, ProteinES.IO],
     clean     = true,
     doctest   = true,
     linkcheck = true,
