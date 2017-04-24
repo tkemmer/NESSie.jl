@@ -12,6 +12,7 @@ const pages = [
         "base/constants.md",
         "base/model.md",
         "base/potentials.md",
+        "base/quadrature.md",
         "base/util.md"
     ]
 ]
