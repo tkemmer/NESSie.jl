@@ -9,6 +9,7 @@ const pages = [
         "man/references.md"
     ],
     "ProteinES" => [
+        "base/born.md",
         "base/constants.md",
         "base/model.md",
         "base/potentials.md",

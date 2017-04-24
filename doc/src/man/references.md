@@ -1,5 +1,9 @@
 # Bibliography
 
+ * **[Åqv90]**
+   J. Åqvist, Ion-water interaction potentials derived from free energy pertubation
+   simulations. J. Phys. Chem. 94: 8021, 1990.
+
  * **[Kea86]**
    P. Keast, Moderate degree tetrahedral quadrature formulas. CMAME 55: 339-348, 1986.
 
