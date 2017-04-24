@@ -1,11 +1,21 @@
-#=
-    Reads protein partial charges from the given PQR file.
+# =========================================================================================
+"""
+    readpqr{T <: AbstractFloat}(
+        stream::IOStream,
+              ::Type{T}=Float64
+    )
 
-    @param stream
-        Handle to PQR file
-    @param _
-        Data type T for return value
-=#
+Reads a charge model from the given PQR file.
+
+# Return type
+`Vector{Charge{T}}`
+
+# Alias
+
+    readpqr{T}(fname::String, ::Type{T}=Float64)
+
+Reads the charge model using a file name rather than a `IOStream` object.
+"""
 function readpqr{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     charges = Charge{T}[]
     for line in eachline(stream)
