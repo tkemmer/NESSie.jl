@@ -1,15 +1,33 @@
-#=
-    Creates a VTK PolyData file from a given surface model.
+# =========================================================================================
+"""
+    function writevtk{T, M <: Model{T}}(
+        stream::IOStream,
+        model ::M
+    )
 
-    File format specification:
-    http://www.vtk.org/VTK/img/file-formats.pdf
+Creates a VTK-compatible output file from a given surface or volume model. The exact file
+type is determined by the given model:
 
-    @param fname/stream
-        Path or handle to (writable) VTK file
-    @param model
-        A surface model
-    @return nothing
-=#
+| Model type    | Resulting file type  |
+|---------------|----------------------|
+| Surface model | VTK PolyData         |
+| Volume model  | VTK UnstructuredGrid |
+
+# Specification
+<http://www.vtk.org/VTK/img/file-formats.pdf>
+
+# Return type
+`Void`
+
+# Alias
+
+    writevtk{T, M <: Model{T}}(
+        fname::String,
+        model::SurfaceModel{T}
+    )
+
+Creates the VTK file by name rather than `IOStream` object.
+"""
 function writevtk{T}(stream::IOStream, model::SurfaceModel{T})
     xdoc = XMLDocument()
     revidx = reverseindex(model.nodes)
@@ -41,7 +59,8 @@ function writevtk{T}(stream::IOStream, model::SurfaceModel{T})
     set_attribute(xconn, "type", "Int32")
     set_attribute(xconn, "Name", "connectivity")
     set_attribute(xconn, "format", "ascii")
-    add_text(xconn, join([revidx[object_id(n)]-1 for n in unpack([Vector{T}[o.v1, o.v2, o.v3] for o in model.elements])], " "))
+    add_text(xconn, join([revidx[object_id(n)]-1 for n in
+        unpack([Vector{T}[o.v1, o.v2, o.v3] for o in model.elements])], " "))
 
     # Polys/offsets
     xoffs = new_child(xpolys, "DataArray")
@@ -54,20 +73,7 @@ function writevtk{T}(stream::IOStream, model::SurfaceModel{T})
     println(stream, string(xdoc))
     nothing
 end
-writevtk{T}(fname::String, model::SurfaceModel{T}) = open(fh -> writevtk(fh, model), fname, "w")
 
-#=
-    Creates a VTK UnstructuredGrid file from a given volume model.
-
-    File format specification:
-    http://www.vtk.org/VTK/img/file-formats.pdf
-
-    @param fname/stream
-        Path or handle to (writable) VTK file
-    @param model
-        A volume model
-    @return nothing
-=#
 function writevtk{T}(stream::IOStream, model::VolumeModel{T})
     xdoc = XMLDocument()
     revidx = reverseindex(model.nodes)
@@ -96,7 +102,8 @@ function writevtk{T}(stream::IOStream, model::VolumeModel{T})
     set_attribute(xconn, "type", "Int32")
     set_attribute(xconn, "Name", "connectivity")
     set_attribute(xconn, "format", "ascii")
-    add_text(xconn, join([revidx[object_id(n)]-1 for n in unpack([Vector{T}[o.v1, o.v2, o.v3, o.v4] for o in model.elements])], " "))
+    add_text(xconn, join([revidx[object_id(n)]-1 for n in
+        unpack([Vector{T}[o.v1, o.v2, o.v3, o.v4] for o in model.elements])], " "))
 
     # Cells/offsets
     xoffs = new_child(xcells, "DataArray")
@@ -116,4 +123,7 @@ function writevtk{T}(stream::IOStream, model::VolumeModel{T})
     println(stream, string(xdoc))
     nothing
 end
-writevtk{T}(fname::String, model::VolumeModel{T}) = open(fh -> writevtk(fh, model), fname, "w")
+
+function writevtk{T, M <: Model{T}}(fname::String, model::M)
+    open(fh -> writevtk(fh, model), fname, "w")
+end
