@@ -13,3 +13,9 @@
 ```@docs
     writevtk
 ```
+
+## XML3D
+```@docs
+    writexml3d_json
+    writexml3d_xml
+```
