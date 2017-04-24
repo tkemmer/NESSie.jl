@@ -17,7 +17,8 @@ include("base/util.jl")
 export props!, meshunion, obspoints_line, obspoints_plane
 
 include("base/potentials.jl")
-export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES, φmol, ∂ₙφmol
+export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES, φmol,
+    ∂ₙφmol, ∇φmol
 
 include("base/born.jl")
 export BornIon, bornion, φΩ, φΣ
