@@ -1,15 +1,28 @@
-#=
-    Reads all data from the given OFF file.
+# =========================================================================================
+"""
+    readoff{T <: AbstractFloat}(
+        stream::IOStream,
+              ::Type{T}=Float64
+    )
 
-    File specification:
-    http://www.geomview.org/docs/html/OFF.html
+Reads a surface model from the given OFF file.
 
-    @param stream
-        Handle to OFF file
-    @param _
-        Data type T for return value
-    @return SurfaceModel w/o charges
-=#
+!!! note
+    This file type does not support charge models! Hence, the charge list of the returning
+    `SurfaceModel` object is empty and has to be set separately.
+
+# Specification
+<http://www.geomview.org/docs/html/OFF.html>
+
+# Return type
+`SurfaceModel{T}`
+
+# Alias
+
+    readoff{T}(fname::String, ::Type{T}=Float64)
+
+Reads the model using a file name rather than a `IOStream` object.
+"""
 function readoff{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     eof(stream) && return SurfaceModel(Vector{T}[], Triangle{T}[], Charge{T}[])
     @assert readline(stream) == "OFF" "Invalid OFF file"
@@ -22,30 +35,48 @@ function readoff{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
 end
 readoff{T}(fname::String, ::Type{T}=Float64) = open(fh -> readoff(fh, T), fname)
 
-#=
-    Reads all node data from the given OFF file.
 
-    @param stream
-        Handle to OFF file
-    @param n
-        Total number of nodes
-    @param _
-        Data type T for return value
-    @return Vector{Vector{T}}
-=#
-readoff_nodes{T <: AbstractFloat}(stream::IOStream, n::Int, ::Type{T}=Float64) = Vector{T}[[parse(T, e) for e in split(readline(stream))] for _ in 1:n]
+# =========================================================================================
+"""
+    readoff_nodes{T <: AbstractFloat}(
+        stream::IOStream,
+        n     ::Int,
+              ::Type{T}=Float64
+    )
 
-#=
-    Reads all element data from the given OFF file.
+Reads the first `n` nodes from the given OFF file.
 
-    @param stream
-        Handle to OFF file
-    @param n
-        Total number of elements
-    @param nodes
-        List of reference nodes
-    @param _
-        Data type T for return value
-    @return Vector{Triangle{T}}
-=#
-readoff_elements{T <: AbstractFloat}(stream::IOStream, n::Int, nodes::Vector{Vector{T}}, ::Type{T}=Float64) = Triangle{T}[Triangle([nodes[parse(Int, e) + 1] for e in split(readline(stream))[2:end]]...) for _ in 1:n]
+# Return type
+`Vector{Vector{T}}`
+"""
+function readoff_nodes{T <: AbstractFloat}(stream::IOStream, n::Int, ::Type{T}=Float64)
+    Vector{T}[[parse(T, e) for e in split(readline(stream))] for _ in 1:n]
+end
+
+
+# =========================================================================================
+"""
+    readoff_elements{T <: AbstractFloat}(
+        stream::IOStream,
+        n     ::Int,
+        nodes ::Vector{Vector{T}},
+              ::Type{T}=Float64
+    )
+
+Reads the first `n` elements from the given OFF file.
+
+# Return type
+`Vector{Triangle{T}}`
+"""
+function readoff_elements{T <: AbstractFloat}(
+        stream::IOStream,
+        n::Int,
+        nodes::Vector{Vector{T}},
+        ::Type{T}=Float64
+    )
+    Triangle{T}[
+        Triangle(
+            [nodes[parse(Int, e) + 1] for e in split(readline(stream))[2:end]]...
+        ) for _ in 1:n
+    ]
+end
