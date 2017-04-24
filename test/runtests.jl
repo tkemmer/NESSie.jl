@@ -3,10 +3,10 @@ using FactCheck
 
 # All tests. Will be used if no command line arguments are given.
 const tests = [
-    "base/born", "base/constants", "base/model", "base/potentials", "base/quadrature", "base/util",
-    "bem/local", "bem/nonlocal",
-    "io/hmo", "io/mcsf", "io/msms", "io/off", "io/pqr", "io/skel", "io/vtk", "io/xml3d",
-    "radon", "rjasanow"]
+    "base/born.jl", "base/constants.jl", "base/model.jl", "base/potentials.jl", "base/quadrature.jl", "base/util.jl",
+    "bem/local.jl", "bem/nonlocal.jl",
+    "io/hmo.jl", "io/mcsf.jl", "io/msms.jl", "io/off.jl", "io/pqr.jl", "io/skel.jl", "io/vtk.jl", "io/xml3d.jl",
+    "radon.jl", "rjasanow.jl"]
 const testtypes = (Float64, Float32)
 
 # Check command line arguments
