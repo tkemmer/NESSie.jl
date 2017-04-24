@@ -11,6 +11,7 @@ const pages = [
     "ProteinES" => [
         "base/constants.md",
         "base/model.md",
+        "base/potentials.md",
         "base/util.md"
     ]
 ]
