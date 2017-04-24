@@ -41,7 +41,8 @@ context("readhmo") do
                 charges = readhmo_charges(fh, T)
             elseif fn == "bulk"
                 # check bulk method (implicit single methods with atstart=true)
-                nodes, elements, charges = readhmo(fh, T)
+                model = readhmo(fh, T)
+                nodes, elements, charges = (model.nodes, model.elements, model.charges)
             end
             # check return types
             @fact typeof(nodes) --> Vector{Vector{T}}

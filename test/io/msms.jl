@@ -32,7 +32,8 @@ context("readmsms") do
                 elements = readmsms_elements(ff, nodes, T)
             elseif fn == "bulk"
                 # check bulk method (implicit single methods with atstart=true)
-                nodes, elements = readmsms(fv, ff, T)
+                model = readmsms(fv, ff, T)
+                nodes, elements = (model.nodes, model.elements)
             end
             # check return types
             @fact typeof(nodes) --> Vector{Vector{T}}

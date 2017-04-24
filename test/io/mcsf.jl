@@ -39,7 +39,8 @@ context("readmcsf") do
                 elements = readmcsf_elements(fh, nodes, T)
             elseif fn == "bulk"
                 # check bulk method
-                nodes, elements = readmcsf(fh, T)
+                model = readmcsf(fh, T)
+                nodes, elements = (model.nodes, model.elements)
             end
             # check return types
             @fact typeof(nodes) --> Vector{Vector{T}}

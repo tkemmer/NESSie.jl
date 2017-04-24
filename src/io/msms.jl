@@ -7,11 +7,11 @@
         Handle to MSMS .face file
     @param _
         Data type T for return value
-    @return (Vector{Vector{T}}, Vector{Tetrahedron{T}})
+    @return SurfaceModel{T} w/o charges
 =#
 function readmsms{T <: AbstractFloat}(vertstream::IOStream, facestream::IOStream, ::Type{T}=Float64)
     nodes = readmsms_nodes(vertstream, T)
-    (nodes, readmsms_elements(facestream, nodes, T))
+    SurfaceModel(nodes, readmsms_elements(facestream, nodes, T), Charge{T}[])
 end
 
 #=

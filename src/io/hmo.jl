@@ -5,11 +5,11 @@
         Handle to HMO file
     @param _
         Data type T for return value
-    @return (Vector{Vector{T}}, Vector{Triangle{T}}, Vector{Charge{T}})
+    @return SurfaceModel{T}
 =#
 function readhmo{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     nodes = readhmo_nodes(stream, T)
-    (nodes, readhmo_elements(stream, nodes, T), readhmo_charges(stream, T))
+    SurfaceModel(nodes, readhmo_elements(stream, nodes, T), readhmo_charges(stream, T))
 end
 readhmo{T}(fname::String, ::Type{T}=Float64) = open(fh -> readhmo(fh, T), fname)
 

@@ -8,17 +8,17 @@
         Handle to OFF file
     @param _
         Data type T for return value
-    @return (Vector{Vector{T}}, Vector{Triangle{T}})
+    @return SurfaceModel w/o charges
 =#
 function readoff{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
-    eof(stream) && return (Vector{T}[], Triangle{T}[])
+    eof(stream) && return SurfaceModel(Vector{T}[], Triangle{T}[], Charge{T}[])
     @assert readline(stream) == "OFF" "Invalid OFF file"
 
     # read number of nodes and elements
     numnodes, numelem = [parse(Int, s) for s in split(readline(stream))]
 
     nodes = readoff_nodes(stream, numnodes, T)
-    (nodes, readoff_elements(stream, numelem, nodes, T))
+    SurfaceModel(nodes, readoff_elements(stream, numelem, nodes, T), Charge{T}[])
 end
 readoff{T}(fname::String, ::Type{T}=Float64) = open(fh -> readoff(fh, T), fname)
 

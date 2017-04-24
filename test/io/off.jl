@@ -26,7 +26,8 @@ context("readoff") do
                 elements = readoff_elements(fh, len[2], nodes, T)
             elseif fn == "bulk"
                 # check bulk method
-                nodes, elements = readoff(fh, T)
+                model = ProteinES.IO.readoff(fh, T)
+                nodes, elements = (model.nodes, model.elements)
             end
             # check return types
             @fact typeof(nodes) --> Vector{Vector{T}}

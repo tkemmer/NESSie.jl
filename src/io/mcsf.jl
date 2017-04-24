@@ -7,14 +7,14 @@
         Data type T for return value
     @param domain
         Element domain
-    @return (Vector{Vector{T}}, Vector{Tetrahedron{T}})
+    @return VolumeModel{T} w/o charges
 =#
 function readmcsf{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64; domain::Symbol=:none)
     nodes = readmcsf_nodes(stream, T)
-    (nodes, readmcsf_elements(stream, nodes, T, domain=domain))
+    VolumeModel(nodes, readmcsf_elements(stream, nodes, T, domain=domain), Charge{T}[])
 end
 readmcsf{T}(fname::String, ::Type{T}=Float64; domain::Symbol=:none) = open(fh -> readmcsf(fh, T, domain=domain), fname)
-readmcsf{T}(fnameΩ::String, fnameΣ::String, ::Type{T}) = meshunion(VolumeModel(readmcsf(fnameΩ, T, domain=:Ω)..., Charge{T}[]), VolumeModel(readmcsf(fnameΣ, T, domain=:Σ)..., Charge{T}[]))
+readmcsf{T}(fnameΩ::String, fnameΣ::String, ::Type{T}) = meshunion(readmcsf(fnameΩ, T, domain=:Ω), readmcsf(fnameΣ, T, domain=:Σ))
 
 #=
     Reads the nodes of a GAMer-generated volume mesh from the given mcsf file.
