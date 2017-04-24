@@ -5,7 +5,7 @@ using FactCheck
 const tests = [
     "base/born", "base/constants", "base/model", "base/potentials", "base/quadrature", "base/util",
     "bem/local", "bem/nonlocal",
-    "io/hmo", "io/mcsf", "io/off", "io/pqr", "io/skel", "io/vtk", "io/xml3d",
+    "io/hmo", "io/mcsf", "io/msms", "io/off", "io/pqr", "io/skel", "io/vtk", "io/xml3d",
     "radon", "rjasanow"]
 const testtypes = (Float64, Float32)
 
