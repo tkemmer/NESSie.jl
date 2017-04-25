@@ -1,7 +1,7 @@
 # =========================================================================================
 for T in [:PotentialType, :SingleLayer, :DoubleLayer]
     @eval @doc """
-        abstract type PotentialType
+        abstract type PotentialType end
         type SingleLayer <: PotentialType end
         type DoubleLayer <: PotentialType end
 
@@ -16,9 +16,9 @@ type DoubleLayer <: PotentialType end
 # =========================================================================================
 for T in [:LocalityType, :LocalES, :NonlocalES]
     @eval @doc """
-        abstract type PotentialType
-        type SingleLayer <: PotentialType end
-        type DoubleLayer <: PotentialType end
+        abstract type LocalityType end
+        type NonlocalES <: LocalityType end
+        type LocalES    <: LocalityType end
 
     Enum-like representation of locality assumption:
      * *Local electrostatics*:
