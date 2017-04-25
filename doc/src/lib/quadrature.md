@@ -15,6 +15,7 @@
 ## Laplace potential
 ```@docs
     ProteinES.Radon.laplacecoll!
+    ProteinES.Rjasanow.laplacecoll!
 ```
 
 ## Yukawa potential

@@ -10,6 +10,11 @@
  * **[Rad48]**
    J. Radon, Zur mechanischen Kubatur (in German). Monatsh. für Math. 52(4): 286-300, 1948.
 
+ * **[Rja90]**
+   S. Rjasanow, Vorkonditionierte iterative Auflösung von Randelementgleichungen für die
+   Dirichlet-Aufgabe (in German). Wissenschaftliche Schriftreihe der Technischen
+   Universität Karl-Marx-Stadt, 7/1990.
+
  * **[Ste03]**
    O. Steinbach, Numerische Näherungsverfahren für elliptische Randwertprobleme - Finite
    Elemente und Randelemente (in German). Advances in Numerical Matheamtics. Teubner
