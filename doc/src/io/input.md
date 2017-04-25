@@ -1,4 +1,4 @@
-# Input file support
+# Input formats
 
 ```@meta
     CurrentModule = ProteinES.IO
@@ -37,29 +37,4 @@ Currently supported input file formats with different models:
 ## PQR
 ```@docs
     readpqr
-```
-
-## Internal
-```@meta
-    DocTestSetup = quote
-        using ProteinES.IO: readhmo_nodes, readhmo_elements, readhmo_charges,
-                            readmcsf_nodes, readmcsf_elements, readmsms_nodes,
-                            readmsms_elements, readoff_nodes, readoff_elements
-    end
-```
-
-```@docs
-    readhmo_nodes
-    readhmo_elements
-    readhmo_charges
-    readmcsf_nodes
-    readmcsf_elements
-    readmsms_nodes
-    readmsms_elements
-    readoff_nodes
-    readoff_elements
-```
-
-```@meta
-    DocTestSetup = nothing
 ```

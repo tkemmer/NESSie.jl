@@ -8,7 +8,11 @@ const pages = [
         "man/introduction.md",
         "man/references.md"
     ],
-    "ProteinES module" => [
+    "Data formats" => [
+        "io/input.md",
+        "io/output.md"
+    ],
+    "Library" => [
         "base/born.md",
         "base/constants.md",
         "base/model.md",
@@ -16,9 +20,10 @@ const pages = [
         "base/quadrature.md",
         "base/util.md"
     ],
-    "ProteinES.IO module" => [
-        "io/input.md",
-        "io/output.md"
+    "Internals" => [
+        "intern/constants.md",
+        "intern/input.md",
+        "intern/util.md"
     ]
 ]
 

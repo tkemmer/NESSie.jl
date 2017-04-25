@@ -1,4 +1,4 @@
-# Output file support
+# Output formats
 
 ```@meta
     CurrentModule = ProteinES.IO
