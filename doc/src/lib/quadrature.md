@@ -11,3 +11,13 @@
 ```@docs
     quadraturepoints
 ```
+
+## Laplace potential
+```@docs
+    ProteinES.Radon.laplacecoll!
+```
+
+## Yukawa potential
+```@docs
+    ProteinES.Radon.regularyukawacoll!
+```

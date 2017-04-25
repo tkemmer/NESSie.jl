@@ -105,10 +105,10 @@ end
 """
     yukawa{T}(opt::Option{T})
 
-Exponent ``-Λ^{-1}`` for the fundamental solution of the yukawa operator
+Exponent ``Λ`` for the fundamental solution of the yukawa operator
 
 ```math
-Λ := λ\\sqrt{\\frac{ε\_∞}{ε\_Σ}}
+Λ := -\\frac{1}{λ}\\sqrt{\\frac{ε\_Σ}{ε\_∞}}
 ```
 
 # Return type

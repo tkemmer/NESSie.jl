@@ -6,19 +6,22 @@ using Distances: euclidean
 
 export laplacecoll!, regularyukawacoll!
 
-#=
-    Compute the Laplace potential 1 / |x-ξ|.
 
-    Note that the result is premultiplied by 4π!
+# =========================================================================================
+"""
+    laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
 
-    TODO regularize
+Computes the Laplace potential:
+```math
+\\frac{1}{|x-ξ|}
+```
 
-    @param x
-        Integration variable
-    @param ξ
-        Observation point
-    @return T
-=#
+!!! note
+    The result is premultiplied by 4π.
+
+# Return type
+`T`
+"""
 function laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
     rnorm = euclidean(x, ξ)
@@ -26,6 +29,7 @@ function laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
     # limit for |x-ξ| → 0
     rnorm <= 1e-10 && return zero(T)
 
+    # TODO check
     # guard against small rnorm
     if rnorm < .1
         # use alternating series to approximate
@@ -46,22 +50,25 @@ function laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T})
 end
 laplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, ::T) = laplacepot(x, ξ)
 
-#=
-    Compute the normal derivative of the Laplace potential:
-    - 1 / |x-ξ|^2   * (x-ξ) ⋅ n / |x-ξ|
 
-    Note that the result is premultiplied by 4π!
+# =========================================================================================
+"""
+    ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
 
-    TODO regularize
+Computes the normal derivative of the Laplace potential:
+```math
+\\frac{(x - ξ) ⋅ n}{|x-ξ|³}
+```
 
-    @param x
-        Integration variable
-    @param ξ
-        Observation point
-    @param normal
-        Normal unit vector at x
-    @return T
-=#
+!!! note
+    The result is premultiplied by 4π.
+
+# Arguments
+ * `normal` Normal unit vector at `x`
+
+# Return type
+`T`
+"""
 function ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T})
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
     rnorm = euclidean(x, ξ)
@@ -69,6 +76,7 @@ function ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T
     # limit for |x-ξ| → 0
     rnorm <= 1e-10 && return zero(T)
 
+    # TODO check
     # guard against small rnorm
     if rnorm < .1
         # use alternating series to approximate
@@ -87,22 +95,30 @@ function ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T
 
     -1 / rnorm^3 * ddot(x, ξ, normal)
 end
-∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::T) = ∂ₙlaplacepot(x, ξ, normal)
 
-#=
-    Compute the regular part of the yukawa potential, that is, Yukawa minus Laplace:
-    e^[-√(εΣ/ε∞)/λ * |x-ξ|] / |x-ξ|  -  1 / |x-ξ|
+function ∂ₙlaplacepot{T}(x::DenseArray{T,1}, ξ::Vector{T}, normal::Vector{T}, ::T)
+    ∂ₙlaplacepot(x, ξ, normal)
+end
 
-    Note that the result is premultiplied by 4π!
 
-    @param x
-        Integration variable
-    @param ξ
-        Observation point
-    @param yukawa
-        Exponent of the fundamental solution of the Yukawa operator (see base/constants.jl)
-    @return T
-=#
+# =========================================================================================
+"""
+    regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, yukawa::T)
+
+Computes the regular part of the Yukawa potential, that is, Yukawa minus Laplace:
+```math
+\\frac{e\^{Λ |x - ξ|} - 1}{|x-ξ|}
+```
+
+!!! note
+    The result is premultiplied by 4π.
+
+# Arguments
+ * `yukawa` [Exponent](@ref int-constants) of the Yukawa operator's fundamental solution
+
+# Return type
+`T`
+"""
 function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, yukawa::T)
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
     rnorm = euclidean(x, ξ)
@@ -131,28 +147,32 @@ function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, yukawa::T)
     # no danger of cancellation
     (exp(-scalednorm) - 1) / rnorm
 end
-regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, yukawa::T) = regularyukawapot(x, ξ, yukawa)
 
-#=
-    Compute the normal derivative of the regular part of the yukawa potential, that is,
-    Yukawa minus Laplace:
-    d/dn [e^[-√(εΣ/ε∞)/λ * |x-ξ|] / |x-ξ|  -  1 / |x-ξ|]
-    = [1 - (1 + √(εΣ/ε∞)/λ * |x-ξ|)e^(√(εΣ/ε∞)/λ * |x-ξ|)] / |x-ξ|²   * (x-ξ)⋅n / |x-ξ|
-    = [1 - (1 + c)e^(-c)] / |x-ξ|²   * (x-ξ)⋅n / |x-ξ|
-    with c ≔ √(εΣ/ε∞)/λ * |x-ξ|
+function regularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, ::Vector{T}, yukawa::T)
+        regularyukawapot(x, ξ, yukawa)
+end
 
-    Note that the result is premultiplied by 4π!
 
-    @param x
-        Integration variable
-    @param ξ
-        Observation point
-    @param normal
-        Normal unit vector at x
-    @param yukawa
-        Exponent of the fundamental solution of the Yukawa operator (see base/constants.jl)
-    @return T
-=#
+# =========================================================================================
+"""
+    ∂ₙregularyukawapot{T}(x::DenseArray{T,1}, ξ::Vector{T}, yukawa::T)
+
+Computes the normal derivative of the regular part of the Yukawa potential, that is, Yukawa
+minus Laplace:
+```math
+\\frac{∂}{∂n} \\frac{e\^{Λ  |x - ξ|} - 1}{|x-ξ|}
+= \\frac{1 - (1 - Λ  |x - ξ|)e\^{Λ  |x - ξ|}}{|x-ξ|²} \\frac{(x - ξ) ⋅ n}{|x - ξ|}
+```
+
+!!! note
+    The result is premultiplied by 4π.
+
+# Arguments
+ * `yukawa` [Exponent](@ref int-constants) of the Yukawa operator's fundamental solution
+
+# Return type
+`T`
+"""
 function ∂ₙregularyukawapot{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T}, yukawa::T)
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
     rnorm = euclidean(x, ξ)
@@ -183,37 +203,37 @@ function ∂ₙregularyukawapot{T}(x::Vector{T}, ξ::Vector{T}, normal::Vector{T
     (1 - (1 + scalednorm) * exp(-scalednorm)) * cosovernorm2
 end
 
-#=
-    Seven-point Radon cubature for a given function and a list of triangles and
-    observation points. If `dest` is a vector, the function values f for each
-    surface triangle have to be specified, since each element of the vector
-    represents the dot product of the corresponding coefficient matrix row and
-    the `fvals` vector.
 
-    If you intend computing single/double layer potentials with this function,
-    you might want to use the shorthand signatures `laplacecoll!` and
-    `regularyukawacoll` instead.
+# =========================================================================================
+"""
+    radoncoll!{T}(
+            dest    ::Union{DenseArray{T,1}, DenseArray{T,2}},
+            elements::Vector{Triangle{T}},
+            Ξ       ::Vector{Vector{T}},
+            solution::Function,
+            fvals   ::DenseArray{T,1}=T[],
+            yukawa  ::T=zero(T)
+    )
 
-    Note that the result is premultiplied by 4π.
+Seven-point Radon cubature [[Rad48]](@ref Bibliography) for a given function and a list of
+triangles and observation points `Ξ`. If `dest` is a vector, the function values f for each
+surface triangle have to be specified, since each element of the vector represents the dot
+product of the corresponding coefficient matrix row and the `fvals` vector.
 
-    References:
-    [1] V. I. Krilov. Priblizhennoe vichislenie integralov. Moskva, Nauka, 1967.
-    [2] J. Radon. Zur mechanischen Kubatur. Monatsh. für Math. 52(4): 286-300, 1948.
+If you intend computing single/double layer potentials with this function, you might want
+to use the shorthand signatures `laplacecoll!` and `regularyukawacoll!` instead.
 
-    @param dest
-        Destination matrix/vector
-    @param elements
-        Surface elements
-    @param Ξ
-        Observation points
-    @param solution
-        Fundamental solution. Supported functions: regularyukawapot, ∂ₙregularyukawapot,
-        laplacepot, ∂ₙlaplacepot
-    @param fvals
-        Function values of the elements
-    @param yukawa
-        Exponent of the fundamental solution of the Yukawa operator (see base/constants.jl)
-=#
+!!! note
+    The result is premultiplied by 4π.
+
+# Arguments
+ * `solution` Fundamental solution; supported functions: `regularyukawapot`,
+   `∂ₙregularyukawapot`, `laplacepot`, `∂ₙlaplacepot`
+ * `yukawa` [Exponent](@ref int-constants) of the Yukawa operator's fundamental solution
+
+# Return type
+`Void`
+"""
 function radoncoll!{T}(
         dest::Union{DenseArray{T,1}, DenseArray{T,2}},
         elements::Vector{Triangle{T}},
@@ -238,7 +258,8 @@ function radoncoll!{T}(
         area = 2 * elem.area
 
         # compute cubature points
-        # devectorized version of cubpts = [u * qpts.x[i] + v * qpts.y[i] + elem.v1 for i in 1:7]
+        # devectorized version of
+        # cubpts = [u * qpts.x[i] + v * qpts.y[i] + elem.v1 for i in 1:7]
         for i in 1:qpts.num, j in 1:3
             cubpts[i][j] = qpts.x[i] * u[j] + qpts.y[i] * v[j] + elem.v1[j]
         end
@@ -256,14 +277,131 @@ function radoncoll!{T}(
     nothing
 end
 
-laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::Union{DenseArray{T,1},SubArray{T,1}}) = radoncoll!(dest, elements, Ξ, laplacepot, fvals)
-laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::Union{DenseArray{T,1},SubArray{T,1}}) = radoncoll!(dest, elements, Ξ, ∂ₙlaplacepot, fvals)
-laplacecoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}) = radoncoll!(dest, elements, Ξ, laplacepot)
-laplacecoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}) = radoncoll!(dest, elements, Ξ, ∂ₙlaplacepot)
 
-regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::Union{DenseArray{T,1},SubArray{T,1}}, yukawa::T) = radoncoll!(dest, elements, Ξ, regularyukawapot, fvals, yukawa)
-regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,1}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, fvals::Union{DenseArray{T,1},SubArray{T,1}}, yukawa::T) = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, fvals, yukawa)
-regularyukawacoll!{T}(::Type{SingleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, yukawa::T) = radoncoll!(dest, elements, Ξ, regularyukawapot, T[], yukawa)
-regularyukawacoll!{T}(::Type{DoubleLayer}, dest::DenseArray{T,2}, elements::Vector{Triangle{T}}, Ξ::Vector{Vector{T}}, yukawa::T) = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, T[], yukawa)
+# ========================================================================================
+"""
+    laplacecoll!{T, P <: PotentialType}(
+                ::Type{P},
+        dest    ::DenseArray{T,1},
+        elements::Vector{Triangle{T}},
+        Ξ       ::Vector{Vector{T}},
+        fvals   ::Union{DenseArray{T,1},SubArray{T,1}}
+    )
+
+    laplacecoll!{T, P <: PotentialType}(
+                ::Type{P},
+        dest    ::DenseArray{T,2},
+        elements::Vector{Triangle{T}},
+        Ξ       ::Vector{Vector{T}}
+    )
+
+Computes the single or double layer Laplace potential using a seven-point Radon cubature
+[[Rad48]](@ref Bibliography) for a given list of triangles and observation points `Ξ`.
+
+The first version of this function uses a vector as destination `dest`, where each element
+represents the dot product of the corresponding coefficient matrix row and the `fvals`
+vector.
+
+!!! note
+    The result is premultiplied by 4π.
+
+# Return type
+`Void`
+"""
+laplacecoll!{T}(
+    ::Type{SingleLayer},
+    dest::DenseArray{T,1},
+    elements::Vector{Triangle{T}},
+    Ξ::Vector{Vector{T}},
+    fvals::Union{DenseArray{T,1},SubArray{T,1}}
+) = radoncoll!(dest, elements, Ξ, laplacepot, fvals)
+
+laplacecoll!{T}(
+    ::Type{DoubleLayer},
+    dest::DenseArray{T,1},
+    elements::Vector{Triangle{T}},
+    Ξ::Vector{Vector{T}},
+    fvals::Union{DenseArray{T,1},SubArray{T,1}}
+) = radoncoll!(dest, elements, Ξ, ∂ₙlaplacepot, fvals)
+
+laplacecoll!{T}(
+    ::Type{SingleLayer},
+    dest::DenseArray{T,2},
+    elements::Vector{Triangle{T}},
+    Ξ::Vector{Vector{T}}
+) = radoncoll!(dest, elements, Ξ, laplacepot)
+
+laplacecoll!{T}(
+    ::Type{DoubleLayer},
+    dest::DenseArray{T,2},
+    elements::Vector{Triangle{T}},
+    Ξ::Vector{Vector{T}}
+) = radoncoll!(dest, elements, Ξ, ∂ₙlaplacepot)
+
+
+# ========================================================================================
+"""
+    regularyukawacoll!{T, P <: PotentialType}(
+                ::Type{P},
+        dest    ::DenseArray{T,1},
+        elements::Vector{Triangle{T}},
+        Ξ       ::Vector{Vector{T}},
+        fvals   ::Union{DenseArray{T,1},SubArray{T,1}}
+    )
+
+    regularyukawacoll!{T, P <: PotentialType}(
+                ::Type{P},
+        dest    ::DenseArray{T,2},
+        elements::Vector{Triangle{T}},
+        Ξ       ::Vector{Vector{T}}
+    )
+
+Computes the regular part of the single or double layer Yukawa potential (that is, Yukawa
+minus Laplace) using a seven-point Radon cubature [[Rad48]](@ref Bibliography) for a given
+list of triangles and observation points `Ξ`.
+
+The first version of this function uses a vector as destination `dest`, where each element
+represents the dot product of the corresponding coefficient matrix row and the `fvals`
+vector.
+
+!!! note
+    The result is premultiplied by 4π.
+
+# Return type
+`Void`
+"""
+regularyukawacoll!{T}(
+    ::Type{SingleLayer},
+    dest::DenseArray{T,1},
+    elements::Vector{Triangle{T}},
+    Ξ::Vector{Vector{T}},
+    fvals::Union{DenseArray{T,1},SubArray{T,1}},
+    yukawa::T
+) = radoncoll!(dest, elements, Ξ, regularyukawapot, fvals, yukawa)
+
+regularyukawacoll!{T}(
+    ::Type{DoubleLayer},
+    dest::DenseArray{T,1},
+    elements::Vector{Triangle{T}},
+    Ξ::Vector{Vector{T}},
+    fvals::Union{DenseArray{T,1},SubArray{T,1}},
+    yukawa::T
+) = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, fvals, yukawa)
+
+regularyukawacoll!{T}(
+    ::Type{SingleLayer},
+    dest::DenseArray{T,2},
+    elements::Vector{Triangle{T}},
+    Ξ::Vector{Vector{T}},
+    yukawa::T
+) = radoncoll!(dest, elements, Ξ, regularyukawapot, T[], yukawa)
+
+regularyukawacoll!{T}(
+    ::Type{DoubleLayer},
+    dest::DenseArray{T,2},
+    elements::Vector{Triangle{T}},
+    Ξ::Vector{Vector{T}},
+    yukawa::T
+) = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, T[], yukawa)
 
 end # module

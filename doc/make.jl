@@ -23,6 +23,7 @@ const pages = [
     "Internals" => [
         "intern/constants.md",
         "intern/input.md",
+        "intern/quadrature.md",
         "intern/util.md"
     ]
 ]
