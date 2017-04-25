@@ -28,7 +28,7 @@ const pages = [
 ]
 
 makedocs(
-    modules   = [ProteinES, ProteinES.BEM, ProteinES.IO],
+    modules   = [ProteinES, ProteinES.BEM, ProteinES.Born, ProteinES.IO],
     clean     = true,
     doctest   = true,
     linkcheck = true,

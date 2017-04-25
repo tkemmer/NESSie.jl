@@ -25,13 +25,15 @@
 
 ### Interior potentials
 ```@docs
-    φΩ
+    ProteinES.BEM.φΩ
+    ProteinES.Born.φΩ
 ```
 
 
 ### Exterior potentials
 ```@docs
-    φΣ
+    ProteinES.BEM.φΣ
+    ProteinES.Born.φΣ
 ```
 
 ## Energies

@@ -10,7 +10,7 @@
 ## Charge models
 ```@docs
     Charge
-    BornIon
+    ProteinES.Born.BornIon
 ```
 
 ## System models

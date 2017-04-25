@@ -5,7 +5,6 @@ using ..ProteinES: Radon, Rjasanow, σ, ec, potprefactor, pluseye!, gemv!, gemv,
                    yukawa
 using Distances: euclidean
 
-import ..ProteinES: φΩ, φΣ
 export solve, φΩ, φΣ, rfenergy
 
 """

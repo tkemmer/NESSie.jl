@@ -20,13 +20,11 @@ include("base/potentials.jl")
 export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES, φmol,
     ∂ₙφmol, ∇φmol
 
-include("base/born.jl")
-export BornIon, bornion, φΩ, φΣ
-
 # Submodules
 include("IO.jl")
 include("Radon.jl")
 include("Rjasanow.jl")
+include("Born.jl")
 include("BEM.jl")
 #include("FEM.jl")
 
