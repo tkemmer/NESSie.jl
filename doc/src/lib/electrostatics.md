@@ -1,4 +1,4 @@
-# Potentials
+# Electrostatics
 
 ## Potential types
 ```@docs
@@ -14,19 +14,21 @@
     NonlocalES
 ```
 
-## Molecular potentials
+## Potentials
+
+### Molecular potentials
 ```@docs
     φmol
     ∂ₙφmol
     ProteinES.∇φmol
 ```
 
-## Interior potentials
+### Interior potentials
 ```@docs
     φΩ
 ```
 
-## Exterior potentials
+### Exterior potentials
 ```@docs
     φΣ
 ```

@@ -9,15 +9,15 @@ const pages = [
         "man/references.md"
     ],
     "Data formats" => [
-        "io/input.md",
-        "io/output.md"
+        "formats/input.md",
+        "formats/output.md"
     ],
     "Library" => [
-        "base/constants.md",
-        "base/model.md",
-        "base/potentials.md",
-        "base/quadrature.md",
-        "base/util.md"
+        "lib/constants.md",
+        "lib/electrostatics.md",
+        "lib/models.md",
+        "lib/quadrature.md",
+        "lib/util.md"
     ],
     "Internals" => [
         "intern/constants.md",

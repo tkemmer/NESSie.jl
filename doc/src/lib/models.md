@@ -1,4 +1,4 @@
-# Model
+# Models
 
 ## Elements
 ```@docs
