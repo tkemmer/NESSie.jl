@@ -1,16 +1,5 @@
-#=
-    Computes the nonlocal reaction field energy W* as
-
-        W* = ∫φ*⋅ρ dΩ
-
-    where φ* is the reaction field and ρ is the corresponding charge distribution.
-
-    @param bem
-        Nonlocal BEM result
-    @param LaplaceMod
-        Module to be used for Laplace potential; Valid values: Radon, Rjasanow
-    @return T ([W*] = kJ/mol)
-=#
+# ========================================================================================
+# Documented in bem/local/energy.jl
 function rfenergy{T}(bem::NonlocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
     qposs = [charge.pos for charge in bem.model.charges]
     qvals = [charge.val for charge in bem.model.charges]

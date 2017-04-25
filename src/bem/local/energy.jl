@@ -1,16 +1,25 @@
-#=
-    Computes the local reaction field energy W* as
+# =========================================================================================
+"""
+    rfenergy{T, B <: BEMResult{T}}(
+        bem       ::B,
+        LaplaceMod::Module=Rjasanow
+    )
 
-        W* = ∫φ*⋅ρ dΩ
+Computes the local or nonlocal reaction field energy W* as
+```math
+W\^* = ∫φ\^* ρ \\quad dΩ
+```
+where ``φ\^*`` is the reaction field and ``ρ`` is the corresponding charge distribution.
 
-    where φ* is the reaction field and ρ is the corresponding charge distribution.
+# Arguments
+ * `LaplaceMod` Module to be used for Laplace potential; Valid values: `Radon`, `Rjasanow`
 
-    @param bem
-        Local BEM result
-    @param LaplaceMod
-        Module to be used for Laplace potential; Valid values: Radon, Rjasanow
-    @return T ([W*] = kJ/mol)
-=#
+# Unit
+``\\frac{kJ}{mol}``
+
+# Return type
+`T`
+"""
 function rfenergy{T}(bem::LocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
     qposs = [charge.pos for charge in bem.model.charges]
     qvals = [charge.val for charge in bem.model.charges]

@@ -28,7 +28,13 @@
     φΩ
 ```
 
+
 ### Exterior potentials
 ```@docs
     φΣ
+```
+
+## Energies
+```@docs
+    ProteinES.BEM.rfenergy
 ```

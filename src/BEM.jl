@@ -1,12 +1,18 @@
 module BEM
 
 using ..ProteinES
-using ..ProteinES: Radon, Rjasanow, σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
+using ..ProteinES: Radon, Rjasanow, σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!,
+                   yukawa
 using Distances: euclidean
 
 import ..ProteinES: φΩ, φΣ
 export solve, φΩ, φΣ, rfenergy
 
+"""
+    abstract type BEMResult{T <: AbstractFloat} end
+
+Abstract base type for all BEM solver results
+"""
 abstract type BEMResult{T <: AbstractFloat} end
 
 # local electrostatics

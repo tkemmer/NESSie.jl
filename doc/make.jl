@@ -17,6 +17,7 @@ const pages = [
         "lib/electrostatics.md",
         "lib/models.md",
         "lib/quadrature.md",
+        "lib/solvers.md",
         "lib/util.md"
     ],
     "Internals" => [
@@ -27,7 +28,7 @@ const pages = [
 ]
 
 makedocs(
-    modules   = [ProteinES, ProteinES.IO],
+    modules   = [ProteinES, ProteinES.BEM, ProteinES.IO],
     clean     = true,
     doctest   = true,
     linkcheck = true,

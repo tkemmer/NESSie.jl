@@ -1,12 +1,19 @@
-#=
-    Result data of the nonlocal solving process to be used for potential computation and post-processing.
-    ▶ u:    [γ0int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
-    ▶ q:    [γ1int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
-    ▶ w:    [γ0ext(Ψ)](ξ)     ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
-    ▶ umol: [γ0int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
-    ▶ qmol: [γ1int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
-    with Ξ being the list of observation points, that is, the set of triangle centroids.
-=#
+# =========================================================================================
+"""
+    type NonlocalBEMResult{T} <: BEMResult{T}
+        model::SurfaceModel{T}
+        opt  ::Option{T}
+        u    ::SubArray{T,1}   # [γ₀int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+        q    ::SubArray{T,1}   # [γ₁int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+        w    ::SubArray{T,1}   # [γ₀ext(Ψ)](ξ)     ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+        umol ::Vector{T}       # [γ₀int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+        qmol ::Vector{T}       # [γ₁int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+    end
+
+Result data of the nonlocal solving process to be used for potential computation and
+post-processing, with `Ξ` being the list of observation points, that is, the set of
+triangle centroids.
+"""
 type NonlocalBEMResult{T} <: BEMResult{T}
     model::SurfaceModel{T}
     opt::Option{T}
@@ -17,19 +24,9 @@ type NonlocalBEMResult{T} <: BEMResult{T}
     qmol::Vector{T}
 end
 
-#=
-    Computes the full cauchy data on the surface of the biomolecule.
 
-    See `NonlocalBEMResult` for remarks on the present prefactors.
-
-    @param model
-            Surface model
-    @param LaplaceMod
-            Module to be used for Laplace potential; Valid values: Radon, Rjasanow
-    @param opt
-            Constants to be used
-    @return NonlocalBEMResult{T}
-=#
+# =========================================================================================
+# Documented in bem/local/solver.jl
 function solve{T}(
         ::Type{NonlocalES},
         model::SurfaceModel{T},
@@ -59,7 +56,8 @@ function solve{T}(
     m33 = view(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
 
     # initialize the system matrix;
-    # since all other components of the system matrix will be premultiplied by 4π, do the same for σ here
+    # since all other components of the system matrix will be premultiplied by 4π,
+    # do the same for σ here
     pluseye!(m11, 4π * σ)
     pluseye!(m21, 4π * σ)
     pluseye!(m33, 4π * σ)

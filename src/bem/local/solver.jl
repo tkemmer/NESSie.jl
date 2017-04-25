@@ -1,33 +1,51 @@
-#=
-    Result data of the local solving process to be used for potential computation and post-processing:
-    ▶ u:    [γ0int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
-    ▶ q:    [γ1int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
-    ▶ umol: [γ0int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
-    ▶ qmol: [γ1int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
-    with Ξ being the list of observation points, that is, the set of triangle centroids.
-=#
+# =========================================================================================
+"""
+    type LocalBEMResult{T} <: BEMResult{T}
+        model::SurfaceModel{T}
+        opt  ::Option{T}
+        u    ::Vector{T}   # [γ₀int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+        q    ::Vector{T}   # [γ₁int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+        umol ::Vector{T}   # [γ₀int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+        qmol ::Vector{T}   # [γ₁int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
+    end
+
+Result data of the local solving process to be used for potential computation and
+post-processing, with `Ξ` being the list of observation points, that is, the set of
+triangle centroids.
+"""
 type LocalBEMResult{T} <: BEMResult{T}
+    """Surface model"""
     model::SurfaceModel{T}
+    """Parameters used to generate the result"""
     opt::Option{T}
+    """[γ₀int(φ*)](ξ) for all observation points ξ"""
     u::Vector{T}
+    """[γ₁int(φ*)](ξ) for all observation points ξ"""
     q::Vector{T}
+    """[γ₀int(φ*mol)](ξ) for all observation points ξ"""
     umol::Vector{T}
+    """[γ₁int(φ*mol)](ξ) for all observation points ξ"""
     qmol::Vector{T}
 end
 
-#=
-    Computes the full cauchy data on the surface of the biomolecule.
 
-    See `LocalBEMResult` for remarks on the present prefactors.
+# =========================================================================================
+"""
+    solve{T, L <: LocalityType}(
+                  ::L,
+        model     ::SurfaceModel{T},
+        LaplaceMod::Module=Rjasanow,
+        opt       ::Option{T}=defaultopt(T)
+    )
 
-    @param model
-            Surface model
-    @param LaplaceMod
-            Module to be used for Laplace potential; Valid values: Radon, Rjasanow
-    @param opt
-            Constants to be used
-    @return LocalBEMResult{T}
-=#
+Computes the full local or nonlocal cauchy data on the surface of the biomolecule.
+
+# Arguments
+ * `LaplaceMod` Module to be used for Laplace potential; Valid values: `Radon`, `Rjasanow`
+
+# Return type
+`LocalBEMResult{T}` or `NonlocalBEMResult{T}`
+"""
 function solve{T}(
         ::Type{LocalES},
         model::SurfaceModel{T},
@@ -56,7 +74,8 @@ function solve{T}(
     b = zeros(T, numelem)
 
     # Mᵤ = (1 + εΩ/εΣ) ⋅ σ;
-    # since all other components of the system matrix will be premultiplied by 4π, do the same for σ here
+    # since all other components of the system matrix will be premultiplied by 4π,
+    # do the same for σ here
     pluseye!(m, (1 + εΩ/εΣ) * 4π * σ)
 
     #=
