@@ -20,3 +20,13 @@
     ∂ₙφmol
     ProteinES.∇φmol
 ```
+
+## Interior potentials
+```@docs
+    φΩ
+```
+
+## Exterior potentials
+```@docs
+    φΣ
+```

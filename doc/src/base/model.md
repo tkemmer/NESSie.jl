@@ -10,6 +10,7 @@
 ## Charge models
 ```@docs
     Charge
+    BornIon
 ```
 
 ## System models

@@ -13,7 +13,6 @@ const pages = [
         "io/output.md"
     ],
     "Library" => [
-        "base/born.md",
         "base/constants.md",
         "base/model.md",
         "base/potentials.md",
