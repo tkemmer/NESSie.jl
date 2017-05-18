@@ -1,6 +1,8 @@
 module Born
 
 using ..ProteinES
+using ..ProteinES: potprefactor
+using Distances: euclidean
 
 include("born/model.jl")
 export BornIon, bornion
