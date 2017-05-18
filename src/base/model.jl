@@ -24,13 +24,15 @@ Representation of a single surface triangle.
 # Special constructors
 ```julia
 Triangle{T}(
-    v1::Vector{T},
-    v2::Vector{T},
-    v3::Vector{T}
+    v1  ::Vector{T},
+    v2  ::Vector{T},
+    v3  ::Vector{T},
+    init::Bool=true
 )
 ```
-Most commonly used constructor variant. Can be used in combination with a subsequent call
-to [`props!`](@ref ProteinES.props!) to fully initialize the object.
+Most commonly used constructor variant for creating a triangle by only specifying its nodes.
+If `init` is set to `true`, the remaining member variables will automatically be computed
+via [`props!`](@ref ProteinES.props!) to fully initialize the object.
 
 !!! warning
     Most ProteinES.jl functions assume that given triangles are fully initialized. Using
@@ -52,8 +54,11 @@ type Triangle{T} <: Element{T}
     "distance to the origin"
     distorig::T
 end
-Triangle{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}) =
-    Triangle(v1, v2, v3, T[], T[], zero(T), zero(T))
+Triangle{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}, init::Bool=true) = begin
+    r = Triangle(v1, v2, v3, T[], T[], zero(T), zero(T))
+    init && props!(r)
+    r
+end
 
 
 # =========================================================================================
