@@ -1,3 +1,5 @@
+__precompile__()
+
 module ProteinES
 
 import Base: cos, sign, seek
