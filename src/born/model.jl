@@ -49,16 +49,16 @@ for T in [:Float64, :Float32]
     varname = Symbol("bornions_", T)
     @eval begin
         const $(varname) = Dict{String, BornIon{$(T)}}(
-            "Li" => BornIon($(T)[1, 0.645]...),
-            "Na" => BornIon($(T)[1, 1.005]...),
-            "K"  => BornIon($(T)[1, 1.365]...),
-            "Rb" => BornIon($(T)[1, 1.505]...),
-            "Cs" => BornIon($(T)[1, 1.715]...),
-            "Mg" => BornIon($(T)[2, 0.615]...),
-            "Ca" => BornIon($(T)[2, 1.015]...),
-            "Sr" => BornIon($(T)[2, 1.195]...),
-            "Ba" => BornIon($(T)[2, 1.385]...)
+            "li" => BornIon($(T)[1, 0.645]...),
+            "na" => BornIon($(T)[1, 1.005]...),
+            "k"  => BornIon($(T)[1, 1.365]...),
+            "rb" => BornIon($(T)[1, 1.505]...),
+            "cs" => BornIon($(T)[1, 1.715]...),
+            "mg" => BornIon($(T)[2, 0.615]...),
+            "ca" => BornIon($(T)[2, 1.015]...),
+            "sr" => BornIon($(T)[2, 1.195]...),
+            "ba" => BornIon($(T)[2, 1.385]...)
         )
-        bornion(::Type{$(T)}, name::String) = $(varname)[name]
+        bornion(::Type{$(T)}, name::String) = $(varname)[lowercase(name)]
     end
 end
