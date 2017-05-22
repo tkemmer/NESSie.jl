@@ -10,7 +10,7 @@ include("base/constants.jl")
 export ε0, Option, defaultopt
 
 include("base/model.jl")
-export Element, Triangle, Tetrahedron, Charge, Model, SurfaceModel, VolumeModel
+export Element, SurfaceElement, VolumeElement, Triangle, Tetrahedron, Charge, Model, SurfaceModel, VolumeModel
 
 include("base/quadrature.jl")
 export QuadraturePoints, QuadPts2D, QuadPts3D, quadraturepoints
