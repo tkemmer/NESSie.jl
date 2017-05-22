@@ -15,6 +15,7 @@
     eye!
     isdegenerate
     pluseye!
+    props
     reverseindex
     seek
     sign

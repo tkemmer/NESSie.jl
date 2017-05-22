@@ -1,33 +1,37 @@
 # =========================================================================================
 """
-    props!{T}(
+    props{T}(
         elem::Triangle{T}
     )
 
 Computes the given triangle's properties, that is, centroid, normal, distance to origin,
-and area.
+and area. Returns the completely initialized Triangle as a copy.
+
+!!! warning
+    The given triangle remains unchanged!
 
 # Return type
-`Void`
+`Triangle`
 """
-function props!{T}(elem::Triangle{T})
+function props{T}(elem::Triangle{T})
     # reject degenerate triangles
     @assert !isdegenerate(elem) "Degenerate triangle $(elem)"
 
     # compute centroid
-    elem.center = 3 \ (elem.v1 + elem.v2 + elem.v3)
+    center = 3 \ (elem.v1 + elem.v2 + elem.v3)
 
     # compute normal
-    elem.normal = (elem.v2 - elem.v1) × (elem.v3 - elem.v1)
-    vnorm = vecnorm(elem.normal)
-    elem.normal /= vnorm
+    normal = (elem.v2 - elem.v1) × (elem.v3 - elem.v1)
+    vnorm = vecnorm(normal)
+    normal /= vnorm
 
     # compute distance to origin
-    elem.distorig = elem.normal ⋅ elem.v1
+    distorig = normal ⋅ elem.v1
 
     # compute area
-    elem.area = 2 \ vnorm
-    nothing
+    area = 2 \ vnorm
+
+    Triangle(elem.v1, elem.v2, elem.v3, center, normal, area, distorig)
 end
 
 
@@ -43,7 +47,7 @@ Merges two volume models, e.g., the models of a protein and the solvent. Duplica
 and charges (if any) are retained as well as the system constants of the first model.
 
 # Return type
-`Model{T, Tetrahedron}`
+`Model{T, Tetrahedron{T}}`
 
 !!! note
     This function assumes that there are no duplicates within either of the node lists!
@@ -56,14 +60,14 @@ function meshunion{T}(
     obsolete = model1.nodes ∩ model2.nodes
     tbr = Dict{Vector{T}, Int}(zip(obsolete, indexin(obsolete, model1.nodes)))
 
-    elements = copy(model2.elements)
+    elements = copy(model1.elements)
     for elem in model2.elements
-        haskey(tbr, elem.v1) && (elem.v1 = model1.nodes[tbr[elem.v1]])
-        haskey(tbr, elem.v2) && (elem.v2 = model1.nodes[tbr[elem.v2]])
-        haskey(tbr, elem.v3) && (elem.v3 = model1.nodes[tbr[elem.v3]])
-        haskey(tbr, elem.v4) && (elem.v4 = model1.nodes[tbr[elem.v4]])
+        v1 = haskey(tbr, elem.v1) ? model1.nodes[tbr[elem.v1]] : elem.v1
+        v2 = haskey(tbr, elem.v2) ? model1.nodes[tbr[elem.v2]] : elem.v2
+        v3 = haskey(tbr, elem.v3) ? model1.nodes[tbr[elem.v3]] : elem.v3
+        v4 = haskey(tbr, elem.v4) ? model1.nodes[tbr[elem.v4]] : elem.v4
+        push!(elements, Tetrahedron(v1, v2, v3, v4, elem.domain))
     end
-    append!(elements, model1.elements)
 
     Model(
         collect(Set(model2.nodes) ∪ Set(model1.nodes)),

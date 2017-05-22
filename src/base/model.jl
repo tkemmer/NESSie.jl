@@ -13,7 +13,7 @@ abstract type VolumeElement{T}  <: Element{T} end
 
 # =========================================================================================
 """
-    type Triangle{T} <: SurfaceElement{T}
+    struct Triangle{T} <: SurfaceElement{T}
         v2      ::Vector{T}   # position of the second node
         v1      ::Vector{T}   # position of the first node
         v3      ::Vector{T}   # position of the third node
@@ -30,19 +30,14 @@ Representation of a single surface triangle.
 Triangle{T}(
     v1  ::Vector{T},
     v2  ::Vector{T},
-    v3  ::Vector{T},
-    init::Bool=true
+    v3  ::Vector{T}
 )
 ```
 Most commonly used constructor variant for creating a triangle by only specifying its nodes.
-If `init` is set to `true`, the remaining member variables will automatically be computed
-via [`props!`](@ref ProteinES.props!) to fully initialize the object.
-
-!!! warning
-    Most ProteinES.jl functions assume that given triangles are fully initialized. Using
-    these functions with partly initialized triangles can lead to undefined behavior!
+The remaining member variables will automatically be computed via
+[`props`](@ref ProteinES.props).
 """
-type Triangle{T} <: SurfaceElement{T}
+struct Triangle{T} <: SurfaceElement{T}
     "position of the first node"
     v1::Vector{T}
     "position of the second node"
@@ -58,16 +53,14 @@ type Triangle{T} <: SurfaceElement{T}
     "distance to the origin"
     distorig::T
 end
-Triangle{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}, init::Bool=true) = begin
-    r = Triangle(v1, v2, v3, T[], T[], zero(T), zero(T))
-    init && props!(r)
-    r
+Triangle{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}) = begin
+    props(Triangle(v1, v2, v3, T[], T[], zero(T), zero(T)))
 end
 
 
 # =========================================================================================
 """
-    type Tetrahedron{T} <: VolumeElement{T}
+    struct Tetrahedron{T} <: VolumeElement{T}
         v1::Vector{T}       # position of the first node
         v2::Vector{T}       # position of the second node
         v3::Vector{T}       # position of the third node
@@ -88,7 +81,7 @@ Tetrahedron{T}(
 ```
 Sets domain to `:none`.
 """
-type Tetrahedron{T} <: VolumeElement{T}
+struct Tetrahedron{T} <: VolumeElement{T}
     "position of the first node"
     v1::Vector{T}
     "position of the second node"
@@ -106,7 +99,7 @@ Tetrahedron{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}, v4::Vector{T}) =
 
 # =========================================================================================
 """
-    type Charge{T <: AbstractFloat}
+    struct Charge{T <: AbstractFloat}
         pos::Vector{T}  # position of the charge
         val::T          # charge value
     end
@@ -124,7 +117,7 @@ Charge{T}(
 ```
 Constructor variant with flat argument list for `pos`.
 """
-type Charge{T <: AbstractFloat}
+struct Charge{T <: AbstractFloat}
     "position of the charge"
     pos::Vector{T}
     "charge value"
@@ -135,7 +128,7 @@ Charge{T}(posx::T, posy::T, posz::T, val::T) = Charge{T}([posx, posy, posz], val
 
 # =========================================================================================
 """
-    type Model{T, E <: Element{T}}
+    mutable struct Model{T, E <: Element{T}}
         nodes   ::Vector{Vector{T}  = Vector{T}[]    # mesh nodes
         elements::Vector{E}         = E[]            # mesh elements
         charges ::Vector{Charge{T}} = Charge{T}[]    # point charges in the molecule
@@ -147,7 +140,7 @@ charges in the molecule and a set of system constants. The system can either be 
 as a surface model (e.g., a collection of molecule surface triangles) or as a volume model
 (e.g., a collection of tetrahedra for the molecule and its surrounding space).
 """
-type Model{T, E <: Element{T}}
+mutable struct Model{T, E <: Element{T}}
     """mesh nodes"""
     nodes   ::Vector{Vector{T}}
     """mesh elements"""

@@ -2,23 +2,23 @@
 for T in [:PotentialType, :SingleLayer, :DoubleLayer]
     @eval @doc """
         abstract type PotentialType end
-        type SingleLayer <: PotentialType end
-        type DoubleLayer <: PotentialType end
+        struct SingleLayer <: PotentialType end
+        struct DoubleLayer <: PotentialType end
 
     Enum-like representation of single and double layer potentials
     """ $T
 end
 abstract type PotentialType end
-type SingleLayer <: PotentialType end
-type DoubleLayer <: PotentialType end
+struct SingleLayer <: PotentialType end
+struct DoubleLayer <: PotentialType end
 
 
 # =========================================================================================
 for T in [:LocalityType, :LocalES, :NonlocalES]
     @eval @doc """
         abstract type LocalityType end
-        type NonlocalES <: LocalityType end
-        type LocalES    <: LocalityType end
+        struct NonlocalES <: LocalityType end
+        struct LocalES    <: LocalityType end
 
     Enum-like representation of locality assumption:
      * *Local electrostatics*:
@@ -28,8 +28,8 @@ for T in [:LocalityType, :LocalES, :NonlocalES]
     """ $T
 end
 abstract type LocalityType end
-type NonlocalES <: LocalityType end
-type LocalES <: LocalityType end
+struct NonlocalES <: LocalityType end
+struct LocalES <: LocalityType end
 
 
 # =========================================================================================

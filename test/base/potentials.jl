@@ -7,9 +7,9 @@ context("φmol and ∂ₙφmol") do
         model = Model{T, Triangle{T}}()
         @fact φmol(model) --> T[]
         # empty charge list
-        model.elements = [Triangle(T[0, 0, 0], T[0, 0, 3], T[0, 3, 0]),
-                          Triangle(T[3, 0, 0], T[0, 4, 0], T[0, 0, 5])]
-        map(props!, model.elements)
+        elements = [Triangle(T[0, 0, 0], T[0, 0, 3], T[0, 3, 0]),
+                    Triangle(T[3, 0, 0], T[0, 4, 0], T[0, 0, 5])]
+        model = Model(Vector{T}[], elements)
         umol = φmol(model)
         @fact typeof(umol) --> Vector{T}
         @fact umol --> zeros(T, 2)
@@ -17,7 +17,8 @@ context("φmol and ∂ₙφmol") do
         @fact typeof(qmol) --> Vector{T}
         @fact qmol --> zeros(T, 2)
         # single charge
-        model.charges = [Charge(T[0, 0, 0, √2]...)]
+        charges = [Charge(T[0, 0, 0, √2]...)]
+        model = Model(Vector{T}[], elements, charges)
         umol = φmol(model)
         @fact typeof(umol) --> Vector{T}
         @fact umol --> roughly(T[1, .6])

@@ -40,7 +40,7 @@ context("eye! and pluseye!") do
     end
 end
 
-context("props! and isdegenerate") do
+context("props and isdegenerate") do
     @fact_throws AssertionError isdegenerate(Triangle([1., 1.], [1., 1., 1.], [1., 1., 1.]))
     @fact_throws AssertionError isdegenerate(Triangle([1., 1., 1.], [1., 1.], [1., 1., 1.]))
     @fact_throws AssertionError isdegenerate(Triangle([1., 1., 1.], [1., 1., 1.], [1., 1.]))
@@ -53,7 +53,6 @@ context("props! and isdegenerate") do
         @fact_throws AssertionError Triangle(T[0, 1, 0], T[1e-11, 1, 0], T[0, 3, 0])
         # simple 2D triangle
         elem = Triangle(T[0, 0, 0], T[0, 0, 3], T[0, 3, 0])
-        props!(elem)
         @fact typeof(elem.center) --> Vector{T}
         @fact length(elem.center) --> 3
         @fact typeof(elem.normal) --> Vector{T}
@@ -66,7 +65,6 @@ context("props! and isdegenerate") do
         @fact elem.area --> roughly(4.5)
         # simple 3D triangle
         elem = Triangle(T[3, 0, 0], T[0, 4, 0], T[0, 0, 5])
-        props!(elem)
         @fact typeof(elem.center) --> Vector{T}
         @fact length(elem.center) --> 3
         @fact typeof(elem.normal) --> Vector{T}
@@ -147,30 +145,28 @@ context("vertexnormals") do
         nodes    = Vector{T}[T[0, 0, 0], T[0, 0, 3], T[0, 3, 0], T[1, -3, 3]]
         elements = [Triangle(nodes[1], nodes[2], nodes[3]),
                     Triangle(nodes[1], nodes[4], nodes[2])]
-        map(props!, elements)
-        model = Model{T, Triangle{T}}()
-        d = vertexnormals(model)
+        d = vertexnormals(Model{T, Triangle{T}}())
         @fact typeof(d) --> Vector{Vector{T}}
         @fact d --> []
-        model.nodes = Vector{T}[nodes[1], nodes[2], nodes[3]]
-        model.elements = Triangle{T}[elements[1]]
-        d = vertexnormals(model)
+        d = vertexnormals(Model(
+            Vector{T}[nodes[1], nodes[2], nodes[3]],
+            Triangle{T}[elements[1]]
+        ))
         @fact typeof(d) --> Vector{Vector{T}}
         @fact length(d) --> 3
         @fact d[1] --> roughly([-1, 0, 0])
         @fact d[2] --> roughly([-1, 0, 0])
         @fact d[3] --> roughly([-1, 0, 0])
-        model.nodes = Vector{T}[nodes[1], nodes[2], nodes[4]]
-        model.elements = Triangle{T}[elements[2]]
-        d = vertexnormals(model)
+        d = vertexnormals(Model(
+            Vector{T}[nodes[1], nodes[2], nodes[4]],
+            Triangle{T}[elements[2]]
+        ))
         @fact typeof(d) --> Vector{Vector{T}}
         @fact length(d) --> 3
         @fact d[1] --> roughly(map(T, √90 \ [-9, -3, 0]))
         @fact d[2] --> roughly(map(T, √90 \ [-9, -3, 0]))
         @fact d[3] --> roughly(map(T, √90 \ [-9, -3, 0]))
-        model.nodes = nodes
-        model.elements = elements
-        d = vertexnormals(model)
+        d = vertexnormals(Model(nodes, elements))
         @fact typeof(d) --> Vector{Vector{T}}
         @fact length(d) --> 4
         @fact d[1] --> roughly(map(T, √360 \ [-9 - √90, -3, 0]))
@@ -218,17 +214,18 @@ context("meshunion") do
         )
         res = meshunion(modelΩ, modelΣ)
         oids = Set([object_id(e) for e in res.nodes])
-        @fact typeof(res.nodes) --> Vector{Vector{T}}
-        @fact typeof(res.elements) --> Vector{Tetrahedron{T}}
+        @fact typeof(res) --> Model{T, Tetrahedron{T}}
         @fact length(res.nodes) --> 7
         @fact length(res.elements) --> 3
         for node in nodesΩ ∪ nodesΣ
             @fact node ∈ res.nodes --> true
         end
-        @fact modelΩ.elements[1] ∈ res.elements --> true
-        @fact modelΩ.elements[2] ∈ res.elements --> true
-        @fact modelΣ.elements[1] ∈ res.elements --> true
-        @fact modelΣ.elements[1].v1 --> exactly(nodesΩ[1])
+        @fact res.elements[1] --> modelΩ.elements[1]
+        @fact res.elements[2] --> modelΩ.elements[2]
+        @fact res.elements[3].v1 --> exactly(nodesΩ[1])
+        @fact res.elements[3].v2 --> exactly(nodesΣ[2])
+        @fact res.elements[3].v3 --> exactly(nodesΣ[3])
+        @fact res.elements[3].v4 --> exactly(nodesΣ[4])
         for elem in res.elements
             for v in (elem.v1, elem.v2, elem.v3, elem.v4)
                 v ∈ oids

@@ -55,7 +55,7 @@ end
 
 # =========================================================================================
 """
-    immutable Option{T <: AbstractFloat}
+    struct Option{T <: AbstractFloat}
         εΩ::T       # dielectric constant of the solute
         εΣ::T       # dielectric constant of the solvent
         ε∞::T       # large-scale (bulk) solvent response
@@ -64,7 +64,7 @@ end
 
 System parameters
 """
-immutable Option{T <: AbstractFloat}
+struct Option{T <: AbstractFloat}
     "dielectric constant of the solute"
     εΩ::T
     "dielectric constant of the solvent"
