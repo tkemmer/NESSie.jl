@@ -8,11 +8,11 @@ using Distances: euclidean
 export solve, φΩ, φΣ, rfenergy
 
 """
-    abstract type BEMResult{T <: AbstractFloat} end
+    abstract type BEMResult{T, E <: SurfaceElement{T}} end
 
 Abstract base type for all BEM solver results
 """
-abstract type BEMResult{T <: AbstractFloat} end
+abstract type BEMResult{T, E <: SurfaceElement{T}} end
 
 # local electrostatics
 include("bem/local/solver.jl")

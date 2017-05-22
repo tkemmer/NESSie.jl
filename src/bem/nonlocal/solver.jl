@@ -1,7 +1,7 @@
 # =========================================================================================
 """
-    type NonlocalBEMResult{T} <: BEMResult{T}
-        model::SurfaceModel{T}
+    type NonlocalBEMResult{T, E} <: BEMResult{T, E}
+        model::Model{T, E}
         u    ::SubArray{T,1}   # [γ₀int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
         q    ::SubArray{T,1}   # [γ₁int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
         w    ::SubArray{T,1}   # [γ₀ext(Ψ)](ξ)     ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
@@ -13,8 +13,8 @@ Result data of the nonlocal solving process to be used for potential computation
 post-processing, with `Ξ` being the list of observation points, that is, the set of
 triangle centroids.
 """
-type NonlocalBEMResult{T} <: BEMResult{T}
-    model::SurfaceModel{T}
+type NonlocalBEMResult{T, E} <: BEMResult{T, E}
+    model::Model{T, E}
     u::SubArray{T,1}
     q::SubArray{T,1}
     w::SubArray{T,1}
@@ -27,7 +27,7 @@ end
 # Documented in bem/local/solver.jl
 function solve{T}(
         ::Type{NonlocalES},
-        model::SurfaceModel{T},
+        model::Model{T, Triangle{T}},
         LaplaceMod::Module=Rjasanow
     )
     # convenient access

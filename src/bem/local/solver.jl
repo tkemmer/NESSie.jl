@@ -1,7 +1,7 @@
 # =========================================================================================
 """
-    type LocalBEMResult{T} <: BEMResult{T}
-        model::SurfaceModel{T}
+    type LocalBEMResult{T, E} <: BEMResult{T, E}
+        model::Model{T, E}
         u    ::Vector{T}   # [γ₀int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
         q    ::Vector{T}   # [γ₁int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
         umol ::Vector{T}   # [γ₀int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
@@ -12,9 +12,9 @@ Result data of the local solving process to be used for potential computation an
 post-processing, with `Ξ` being the list of observation points, that is, the set of
 triangle centroids.
 """
-type LocalBEMResult{T} <: BEMResult{T}
+type LocalBEMResult{T, E} <: BEMResult{T, E}
     """Surface model"""
-    model::SurfaceModel{T}
+    model::Model{T, E}
     """[γ₀int(φ*)](ξ) for all observation points ξ"""
     u::Vector{T}
     """[γ₁int(φ*)](ξ) for all observation points ξ"""
@@ -30,7 +30,7 @@ end
 """
     solve{T, L <: LocalityType}(
                   ::L,
-        model     ::SurfaceModel{T},
+        model     ::Model{T, Triangle{T}},
         LaplaceMod::Module=Rjasanow
     )
 
@@ -40,11 +40,11 @@ Computes the full local or nonlocal cauchy data on the surface of the biomolecul
  * `LaplaceMod` Module to be used for Laplace potential; Valid values: `Radon`, `Rjasanow`
 
 # Return type
-`LocalBEMResult{T}` or `NonlocalBEMResult{T}`
+`LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
 """
 function solve{T}(
         ::Type{LocalES},
-        model::SurfaceModel{T},
+        model::Model{T, Triangle{T}},
         LaplaceMod::Module=Rjasanow
     )
     # observation points ξ
