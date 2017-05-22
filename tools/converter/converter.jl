@@ -32,15 +32,6 @@ const fout = Dict{String, Tuple{DataType, Function, String}}(
     "volume.vtu"    =>  (Volume,  writevtk,        "VTK/.vtu")
 )
 
-writeOutput{T}(ofname::String, ::Type{Nodes}, f::Function, nodes::Vector{Vector{T}}, ::Union{Vector{Triangle{T}}, Vector{Tetrahedron{T}}}) = f(ofname, nodes)
-
-writeOutput{T}(ofname::String, ::Type{Surface}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}) = begin
-    map(props!, elements)
-    f(ofname, SurfaceModel(nodes, elements))
-end
-
-writeOutput{T}(ofname::String, ::Type{Volume}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T}})  = f(ofname, VolumeModel(nodes, elements))
-
 iformat = ""; ifname = ""; oformat = ""; ofname = ""
 
 if length(ARGS) == 3
@@ -59,9 +50,12 @@ else
     println("==================================\n")
     println("\e[1mUsage:\e[0m\n")
     println("\tconverter.jl [<format in>] <file in> <format out> <file out>\n")
-    println("If not specified, the input format will be guessed by file extension.\nMulti-file input, as provided by some file formats (e.g., MSMS), has\nto be specified without file extension. For instance,")
+    println("If not specified, the input format will be guessed by file extension.")
+    println("Multi-file input, as provided by some file formats (e.g., MSMS), has")
+    println("to be specified without file extension. For instance,")
     println("\n\tconverter.jl msms mymesh surface.json mymesh.json\n")
-    println("will read the MSMS-generated surface mesh from both files mymesh.face\nand mymesh.vert and convert it into a XML3D-compatible JSON format.")
+    println("will read the MSMS-generated surface mesh from both files mymesh.face")
+    println("and mymesh.vert and convert it into a XML3D-compatible JSON format.")
     println("\n\e[1mAvailable input formats:\e[0m\n")
     for (format, (mesh, _, desc)) in fin
         println("\t\e[1m$format\e[0m\t\t$mesh\t\t$desc")
@@ -74,4 +68,6 @@ else
     exit(1)
 end
 
-writeOutput(ofname, fout[oformat][1:2]..., fin[iformat][2](ifname)...)
+mtype, f = fout[oformat][1:2]
+model    = fin[iformat][2](ifname)
+f(ofname, mtype === Nodes ? model.nodes : model)
