@@ -54,7 +54,7 @@ structureless medium for the given observation point ξ:
 
 Computes the molecular potentials for a list of observation points.
 
-    φmol{T}(model::SurfaceModel{T})
+    φmol{T}(model::Model{T, Triangle{T}})
 
 Computes the molecular potentials for the given surface model, using each triangle center
 as observation point.
@@ -64,7 +64,7 @@ function φmol{T}(ξ::Vector{T}, charges::Vector{Charge{T}})
     sum([q.val / euclidean(ξ, q.pos) for q in charges])
 end
 φmol{T}(Ξ::Vector{Vector{T}}, charges::Vector{Charge{T}}) = [φmol(ξ, charges) for ξ in Ξ]
-φmol{T}(model::SurfaceModel{T}) = [φmol(ξ.center, model.charges) for ξ in model.elements]
+φmol{T}(model::Model{T, Triangle{T}}) = [φmol(ξ.center, model.charges) for ξ in model.elements]
 
 
 # =========================================================================================
@@ -86,7 +86,7 @@ triangle's normal as reference normal.
 `T`
 
 ## Aliases
-    ∂ₙφmol{T}(model::SurfaceModel{T})
+    ∂ₙφmol{T}(model::Model{T, Triangle{T}})
 
 Computes the normal derivatives of the molecular potentials for the given surface model,
 using each triangle center and normal as observation point.
@@ -96,7 +96,7 @@ function ∂ₙφmol{T}(ξ::Triangle{T}, charges::Vector{Charge{T}})
     - sum([q.val * ddot(ξ.center, q.pos, ξ.normal) /
         euclidean(ξ.center, q.pos)^3 for q in charges])
 end
-∂ₙφmol{T}(model::SurfaceModel{T}) = [∂ₙφmol(ξ, model.charges) for ξ in model.elements]
+∂ₙφmol{T}(model::Model{T, Triangle{T}}) = [∂ₙφmol(ξ, model.charges) for ξ in model.elements]
 
 
 # =========================================================================================

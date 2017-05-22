@@ -135,77 +135,35 @@ Charge{T}(posx::T, posy::T, posz::T, val::T) = Charge{T}([posx, posy, posz], val
 
 # =========================================================================================
 """
-    abstract type Model{T <: AbstractFloat} end
-
-Abstract base type for all models.
-"""
-abstract type Model{T <: AbstractFloat} end
-
-
-# =========================================================================================
-"""
-    type SurfaceModel{T} <: Model{T}
-        nodes   ::Vector{Vector{T}    = Vector{T}[]
-        elements::Vector{Triangle{T}} = Triangle{T}[]
-        charges ::Vector{Charge{T}}   = Charge{T}[]
-        params  ::Option{T}           = defaultopt(T)
+    type Model{T, E <: Element{T}}
+        nodes   ::Vector{Vector{T}  = Vector{T}[]
+        elements::Vector{E}         = E[]
+        charges ::Vector{Charge{T}} = Charge{T}[]
+        params  ::Option{T}         = defaultopt(T)
     end
 
-Surface model; Typically a protein immersed in a structured solvent, represented by the
-protein surface and its partial point charges.
+System model representing a biomelecule in solvation, including a collection of point
+charges in the molecule and a set of system constants. The system can either be represented
+as a surface model (e.g., a collection of molecule surface triangles) or as a volume model
+(e.g., a collection of tetrahedra for the molecule and its surrounding space).
 """
-type SurfaceModel{T} <: Model{T}
+type Model{T, E <: Element{T}}
     nodes   ::Vector{Vector{T}}
-    elements::Vector{Triangle{T}}
+    elements::Vector{E}
     charges ::Vector{Charge{T}}
     params  ::Option{T}
 
-    SurfaceModel{T}(
-        nodes   ::Vector{Vector{T}}   = Vector{T}[],
-        elements::Vector{Triangle{T}} = Triangle{T}[],
-        charges ::Vector{Charge{T}}   = Charge{T}[],
-        params  ::Option{T}           = defaultopt(T)
-    ) where T = new(nodes, elements, charges, params)
+    Model{T, E}(
+        nodes   ::Vector{Vector{T}} = Vector{T}[],
+        elements::Vector{E}         = E[],
+        charges ::Vector{Charge{T}} = Charge{T}[],
+        params  ::Option{T}         = defaultopt(T)
+    ) where {T, E <: Element{T}}    = new(nodes, elements, charges, params)
 end
 
-SurfaceModel(
-    nodes   ::Vector{Vector{T}}   = Vector{T}[],
-    elements::Vector{Triangle{T}} = Triangle{T}[],
-    charges ::Vector{Charge{T}}   = Charge{T}[],
-    params  ::Option{T}           = defaultopt(T)
-) where T = SurfaceModel{T}(nodes, elements, charges, params)
-
-
-# =========================================================================================
-"""
-    type VolumeModel{T} <: Model{T}
-        nodes   ::Vector{Vector{T}}      = Vector{T}[]
-        elements::Vector{Tetrahedron{T}} = Tetrahedron{T}[]
-        charges ::Vector{Charge{T}}      = Charge{T}[]
-        params  ::Option{T}              = defaultopt(T)
-    end
-
-Volume model; Typically a protein immersed in a structured solvent. The protein and a sphere
-of surrounding space are represented as a collection of tetrahedra and the protein's partial
-point charges.
-"""
-type VolumeModel{T} <: Model{T}
-    nodes   ::Vector{Vector{T}}
-    elements::Vector{Tetrahedron{T}}
-    charges ::Vector{Charge{T}}
-    params  ::Option{T}
-
-    VolumeModel{T}(
-        nodes   ::Vector{Vector{T}}      = Vector{T}[],
-        elements::Vector{Tetrahedron{T}} = Tetrahedron{T}[],
-        charges ::Vector{Charge{T}}      = Charge{T}[],
-        params  ::Option{T}              = defaultopt(T)
-    ) where T = new(nodes, elements, charges, params)
-end
-
-VolumeModel(
-    nodes   ::Vector{Vector{T}}      = Vector{T}[],
-    elements::Vector{Tetrahedron{T}} = Tetrahedron{T}[],
-    charges ::Vector{Charge{T}}      = Charge{T}[],
-    params  ::Option{T}              = defaultopt(T)
-) where T = VolumeModel{T}(nodes, elements, charges, params)
+Model(
+    nodes   ::Vector{Vector{T}},
+    elements::Vector{E}         = E[],
+    charges ::Vector{Charge{T}} = Charge{T}[],
+    params  ::Option{T}         = defaultopt(T)
+) where {T, E <: Element{T}}    = Model{T, E}(nodes, elements, charges, params)

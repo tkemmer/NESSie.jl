@@ -4,7 +4,7 @@ context("φmol and ∂ₙφmol") do
     # TODO check list variants of the functions
     for T in testtypes
         # empty lists
-        model = SurfaceModel{T}()
+        model = Model{T, Triangle{T}}()
         @fact φmol(model) --> T[]
         # empty charge list
         model.elements = [Triangle(T[0, 0, 0], T[0, 0, 3], T[0, 3, 0]),

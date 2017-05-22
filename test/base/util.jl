@@ -148,7 +148,7 @@ context("vertexnormals") do
         elements = [Triangle(nodes[1], nodes[2], nodes[3]),
                     Triangle(nodes[1], nodes[4], nodes[2])]
         map(props!, elements)
-        model = SurfaceModel{T}()
+        model = Model{T, Triangle{T}}()
         d = vertexnormals(model)
         @fact typeof(d) --> Vector{Vector{T}}
         @fact d --> []
@@ -198,7 +198,7 @@ end
 context("meshunion") do
     for T in testtypes
         # empty system
-        empty = VolumeModel{T}()
+        empty = Model{T, Tetrahedron{T}}()
         res = meshunion(empty, empty)
         @fact typeof(res.nodes) --> Vector{Vector{T}}
         @fact typeof(res.elements) --> Vector{Tetrahedron{T}}
@@ -207,12 +207,12 @@ context("meshunion") do
 
         # small system
         nodesΩ = Vector{T}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        modelΩ = VolumeModel{T}(
+        modelΩ = Model(
             nodesΩ,
             [Tetrahedron(nodesΩ...), Tetrahedron(nodesΩ...)]
         )
         nodesΣ = Vector{T}[[0, 0, 0], [-1, 0, 0], [0, -1, 0], [0, 0, -1]]
-        modelΣ = VolumeModel{T}(
+        modelΣ = Model(
             nodesΣ,
             [Tetrahedron(nodesΣ...)]
         )

@@ -34,23 +34,23 @@ end
 # =========================================================================================
 """
     meshunion{T}(
-        model1::VolumeModel{T},
-        model2::VolumeModel{T}
+        model1::Model{T, Tetrahedron{T}},
+        model2::Model{T, Tetrahedron{T}}
     )
 
 Merges two volume models, e.g., the models of a protein and the solvent. Duplicate nodes
 (e.g., the nodes on the protein surface) are merged into a single node, duplicate elements
-and charges (if any) are retained.
+and charges (if any) are retained as well as the system constants of the first model.
 
 # Return type
-`VolumeModel{T}`
+`Model{T, Tetrahedron}`
 
 !!! note
     This function assumes that there are no duplicates within either of the node lists!
 """
 function meshunion{T}(
-        model1::VolumeModel{T},
-        model2::VolumeModel{T}
+        model1::Model{T, Tetrahedron{T}},
+        model2::Model{T, Tetrahedron{T}}
     )
     # find nodes that are to be replaced (tbr)
     obsolete = model1.nodes ∩ model2.nodes
@@ -65,10 +65,11 @@ function meshunion{T}(
     end
     append!(elements, model1.elements)
 
-    VolumeModel(
+    Model(
         collect(Set(model2.nodes) ∪ Set(model1.nodes)),
         elements,
-        model1.charges ∪ model2.charges
+        model1.charges ∪ model2.charges,
+        model1.params
     )
 end
 
@@ -99,14 +100,14 @@ end
 
 # =========================================================================================
 """
-    vertexnormals{T}(model::SurfaceModel{T})
+    vertexnormals{T}(model::Model{T, Triangle{T}})
 
-Returns a vector containing the normal vectors of the given surface model's nodes.
+Returns a vector containing the normal vectors of the given model's triangles.
 
 # Return type
 `Vector{Vector{T}}`
 """
-function vertexnormals{T}(model::SurfaceModel{T})
+function vertexnormals{T}(model::Model{T, Triangle{T}})
     revidx = reverseindex(model.nodes)
     normals = Vector{T}[zeros(T, 3) for _ in 1:length(model.nodes)]
     count = zeros(T, length(model.nodes))

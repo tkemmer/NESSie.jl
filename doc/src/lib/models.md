@@ -16,6 +16,4 @@
 ## System models
 ```@docs
     Model
-    SurfaceModel
-    VolumeModel
 ```
