@@ -41,7 +41,6 @@ context("writexml3d_json (surface model)") do
         nodes    = Vector{T}[T[0, 0, 0], T[0, 0, 3], T[0, 3, 0], T[1, -3, 3]]
         elements = [Triangle(nodes[1], nodes[2], nodes[3]),
                     Triangle(nodes[1], nodes[4], nodes[2])]
-        map(props!, elements)
         js = JSON.parse(readback(fh -> writexml3d_json(fh, Model(nodes, elements))))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
