@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    type LocalBEMResult{T, E} <: BEMResult{T, E}
+    struct LocalBEMResult{T, E} <: BEMResult{T, E}
         model::Model{T, E}
         u    ::Vector{T}   # [γ₀int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
         q    ::Vector{T}   # [γ₁int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
@@ -12,7 +12,7 @@ Result data of the local solving process to be used for potential computation an
 post-processing, with `Ξ` being the list of observation points, that is, the set of
 triangle centroids.
 """
-type LocalBEMResult{T, E} <: BEMResult{T, E}
+struct LocalBEMResult{T, E} <: BEMResult{T, E}
     """Surface model"""
     model::Model{T, E}
     """[γ₀int(φ*)](ξ) for all observation points ξ"""
