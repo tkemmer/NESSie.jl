@@ -2,7 +2,7 @@
 """
     writexml3d_json{T}(
         stream::IOStream,
-        model ::Union{Vector{Vector{T}}, SurfaceModel{T}}
+        model ::Union{Vector{Vector{T}}, Model{T, Triangle{T}}}
     )
 
 Creates a XML3D-specific JSON file either from a given collection of nodes (representing the
@@ -18,7 +18,7 @@ latter as point cloud) or from a given surface model.
 
     writexml3d_json{T}(
         fname::String,
-        nodes::Union{Vector{Vector{T}}), SurfaceModel{T}}
+        nodes::Union{Vector{Vector{T}}), Model{T, Triangle{T}}}
     )
 
 Creates the JSON file by name rather than `IOStream` object.
@@ -37,7 +37,7 @@ function writexml3d_json{T}(stream::IOStream, nodes::Vector{Vector{T}})
     nothing
 end
 
-function writexml3d_json{T}(stream::IOStream, model::SurfaceModel{T})
+function writexml3d_json{T}(stream::IOStream, model::Model{T, Triangle{T}})
     revidx = reverseindex(model.nodes)
     println(stream, json(Dict(
         "format" => "xml3d-json",
@@ -66,7 +66,10 @@ function writexml3d_json{T}(stream::IOStream, model::SurfaceModel{T})
     nothing
 end
 
-function writexml3d_json{T}(fname::String, model::Union{Vector{Vector{T}}, SurfaceModel{T}})
+function writexml3d_json{T}(
+        fname::String,
+        model::Union{Vector{Vector{T}},Model{T, Triangle{T}}}
+    )
     open(fh -> writexml3d_json(fh, model), fname, "w")
 end
 

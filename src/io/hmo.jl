@@ -8,7 +8,7 @@
 Reads a complete surface model from the given HMO file.
 
 # Return type
-`SurfaceModel{T}`
+`Model{T, Triangle{T}}`
 
 # Alias
 
@@ -18,7 +18,7 @@ Reads the model using a file name rather than a `IOStream` object.
 """
 function readhmo{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     nodes = readhmo_nodes(stream, T)
-    SurfaceModel(nodes, readhmo_elements(stream, nodes, T), readhmo_charges(stream, T))
+    Model(nodes, readhmo_elements(stream, nodes, T), readhmo_charges(stream, T))
 end
 readhmo{T}(fname::String, ::Type{T}=Float64) = open(fh -> readhmo(fh, T), fname)
 

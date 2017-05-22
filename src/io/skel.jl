@@ -23,7 +23,7 @@ collection of points and polylines.
 
 Creates the SKEL file by name rather than `IOStream` object.
 """
-function writeskel{T}(stream::IOStream, model::SurfaceModel{T})
+function writeskel{T}(stream::IOStream, model::Model{T, Triangle{T}})
     println(stream, "SKEL")
     println(stream, "$(length(model.nodes))\t$(length(model.elements))")
     for node in model.nodes
@@ -39,7 +39,7 @@ function writeskel{T}(stream::IOStream, model::SurfaceModel{T})
     nothing
 end
 
-function writeskel{T}(stream::IOStream, model::VolumeModel{T})
+function writeskel{T}(stream::IOStream, model::Model{T, Tetrahedron{T}})
     println(stream, "SKEL")
     println(stream, "$(length(model.nodes))\t$(length(model.elements))")
     for node in model.nodes

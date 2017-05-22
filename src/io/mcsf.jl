@@ -11,13 +11,13 @@ Reads a volume model from the given GAMer-generated mcsf file.
 
 !!! note
     This file type does not support charge models! Hence, the charge list of the returning
-    `VolumeModel` object is empty and has to be set separately.
+    `Model` object is empty and has to be set separately.
 
 # Arguments
  * `domain` Element domain (solute `:Ω`, solvent `:Σ`, or `:none`)
 
 # Return type
-`VolumeModel{T}`
+`Model{T, Tetrahedron{T}}`
 
 # Aliases
 
@@ -37,7 +37,7 @@ Reads the model using a file name rather than a `IOStream` object.
     )
 
 Reads the contents of two separate files (given by name), sets the element domains to `:Ω`
-or `:Σ`, respectively, and returns a single (merged) `VolumeModel` object.
+or `:Σ`, respectively, and returns a single (merged) `Model` object.
 """
 function readmcsf{T <: AbstractFloat}(
         stream::IOStream,
@@ -45,7 +45,7 @@ function readmcsf{T <: AbstractFloat}(
         domain::Symbol=:none
     )
     nodes = readmcsf_nodes(stream, T)
-    VolumeModel(nodes, readmcsf_elements(stream, nodes, T, domain=domain))
+    Model(nodes, readmcsf_elements(stream, nodes, T, domain=domain))
 end
 
 function readmcsf{T}(

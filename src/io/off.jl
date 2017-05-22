@@ -9,13 +9,13 @@ Reads a surface model from the given OFF file.
 
 !!! note
     This file type does not support charge models! Hence, the charge list of the returning
-    `SurfaceModel` object is empty and has to be set separately.
+    `Model` object is empty and has to be set separately.
 
 # Specification
 <http://www.geomview.org/docs/html/OFF.html>
 
 # Return type
-`SurfaceModel{T}`
+`Model{T}`
 
 # Alias
 
@@ -24,14 +24,14 @@ Reads a surface model from the given OFF file.
 Reads the model using a file name rather than a `IOStream` object.
 """
 function readoff{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
-    eof(stream) && return SurfaceModel{T}()
+    eof(stream) && return Model{T, Triangle{T}}()
     @assert readline(stream) == "OFF" "Invalid OFF file"
 
     # read number of nodes and elements
     numnodes, numelem = [parse(Int, s) for s in split(readline(stream))]
 
     nodes = readoff_nodes(stream, numnodes, T)
-    SurfaceModel(nodes, readoff_elements(stream, numelem, nodes, T))
+    Model(nodes, readoff_elements(stream, numelem, nodes, T))
 end
 readoff{T}(fname::String, ::Type{T}=Float64) = open(fh -> readoff(fh, T), fname)
 

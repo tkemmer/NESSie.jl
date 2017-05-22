@@ -23,12 +23,12 @@ type is determined by the given model:
 
     writevtk{T, M <: Model{T}}(
         fname::String,
-        model::SurfaceModel{T}
+        model::M
     )
 
 Creates the VTK file by name rather than `IOStream` object.
 """
-function writevtk{T}(stream::IOStream, model::SurfaceModel{T})
+function writevtk{T}(stream::IOStream, model::Model{T, Triangle{T}})
     xdoc = XMLDocument()
     revidx = reverseindex(model.nodes)
 
@@ -74,7 +74,7 @@ function writevtk{T}(stream::IOStream, model::SurfaceModel{T})
     nothing
 end
 
-function writevtk{T}(stream::IOStream, model::VolumeModel{T})
+function writevtk{T}(stream::IOStream, model::Model{T, Tetrahedron{T}})
     xdoc = XMLDocument()
     revidx = reverseindex(model.nodes)
 

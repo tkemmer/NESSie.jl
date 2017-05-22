@@ -10,10 +10,10 @@ Reads a surface model from the given MSMS-generated `.face` and `.vert` files.
 
 !!! note
     This file type does not support charge models! Hence, the charge list of the returning
-    `SurfaceModel` object is empty and has to be set separately.
+    `Model` object is empty and has to be set separately.
 
 # Return type
-`SurfaceModel{T}`
+`Model{T, Triangle{T}}`
 
 # Alias
 
@@ -29,7 +29,7 @@ function readmsms{T <: AbstractFloat}(
         ::Type{T}=Float64
     )
     nodes = readmsms_nodes(vertstream, T)
-    SurfaceModel(nodes, readmsms_elements(facestream, nodes, T))
+    Model(nodes, readmsms_elements(facestream, nodes, T))
 end
 
 function readmsms{T <: AbstractFloat}(fname::String, ::Type{T}=Float64)

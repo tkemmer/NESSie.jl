@@ -25,7 +25,7 @@ end
 context("writexml3d_json (surface model)") do
     for T in testtypes
         # empty system
-        js = JSON.parse(readback(fh -> writexml3d_json(fh, SurfaceModel{T}())))
+        js = JSON.parse(readback(fh -> writexml3d_json(fh, Model{T, Triangle{T}}())))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
         @fact js["data"]["index"]["type"] --> "int"
@@ -42,7 +42,7 @@ context("writexml3d_json (surface model)") do
         elements = [Triangle(nodes[1], nodes[2], nodes[3]),
                     Triangle(nodes[1], nodes[4], nodes[2])]
         map(props!, elements)
-        js = JSON.parse(readback(fh -> writexml3d_json(fh, SurfaceModel(nodes, elements))))
+        js = JSON.parse(readback(fh -> writexml3d_json(fh, Model(nodes, elements))))
         @fact js["format"] --> "xml3d-json"
         @fact haskey(js, "version") --> true
         @fact js["data"]["index"]["type"] --> "int"

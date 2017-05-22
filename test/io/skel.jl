@@ -3,7 +3,7 @@ using ProteinES.IO
 context("writeskel (surface model)") do
     for T in testtypes
         nodes = Vector{T}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        model = SurfaceModel(
+        model = Model(
             nodes,
             Triangle{T}[
                 Triangle(nodes[1], nodes[2], nodes[3]),
@@ -33,7 +33,7 @@ end
 context("writeskel (volume model)") do
     for T in testtypes
         nodes = Vector{T}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1], [-2, 0, 0]]
-        model = VolumeModel(
+        model = Model(
             nodes,
             Tetrahedron{T}[
                 Tetrahedron(nodes[1], nodes[2], nodes[3], nodes[4]),
