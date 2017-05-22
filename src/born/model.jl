@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    type BornIon{T <: AbstractFloat}
+    struct BornIon{T <: AbstractFloat}
         charge::Charge{T}  # point charge at the sphere's center
         radius::T          # sphere radius in Å
     end
@@ -14,7 +14,7 @@ with a single point charge located at its center (``ε\_Ω = 1``).
 
 Centers the sphere at ``(0, 0, 0)\^T``.
 """
-type BornIon{T <: AbstractFloat}
+struct BornIon{T <: AbstractFloat}
     """Point charge at the sphere's center"""
     charge::Charge{T}
     """Sphere radius in Å"""
