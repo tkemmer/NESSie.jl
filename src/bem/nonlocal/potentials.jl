@@ -17,7 +17,7 @@ function φΩ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
 
     # φ += 1/εΩ ⋅ φ*mol(ξ)
     # (φ*mol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
-    axpy!(1/bem.opt.εΩ, φmol(Ξ, bem.model.charges), φ)
+    axpy!(1/bem.model.params.εΩ, φmol(Ξ, bem.model.charges), φ)
 
     # Apply remaining prefactors:
     # ▶ 4π⋅ε0     for u, q, and umol
@@ -36,10 +36,10 @@ function φΣ{T}(Ξ::Vector{Vector{T}}, bem::NonlocalBEMResult{T}, LaplaceMod::M
     φ = zeros(T, length(Ξ))
 
     # convenience aliases
-    const εΩ  = bem.opt.εΩ
-    const εΣ  = bem.opt.εΣ
-    const ε∞  = bem.opt.ε∞
-    const yuk = yukawa(bem.opt)
+    const εΩ  = bem.model.params.εΩ
+    const εΣ  = bem.model.params.εΣ
+    const ε∞  = bem.model.params.ε∞
+    const yuk = yukawa(bem.model.params)
     const elements = bem.model.elements
 
     buf = Array{T}(length(elements))

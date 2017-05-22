@@ -2,7 +2,6 @@
 """
     type NonlocalBEMResult{T} <: BEMResult{T}
         model::SurfaceModel{T}
-        opt  ::Option{T}
         u    ::SubArray{T,1}   # [γ₀int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
         q    ::SubArray{T,1}   # [γ₁int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
         w    ::SubArray{T,1}   # [γ₀ext(Ψ)](ξ)     ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
@@ -16,7 +15,6 @@ triangle centroids.
 """
 type NonlocalBEMResult{T} <: BEMResult{T}
     model::SurfaceModel{T}
-    opt::Option{T}
     u::SubArray{T,1}
     q::SubArray{T,1}
     w::SubArray{T,1}
@@ -30,15 +28,14 @@ end
 function solve{T}(
         ::Type{NonlocalES},
         model::SurfaceModel{T},
-        LaplaceMod::Module=Rjasanow,
-        opt::Option{T}=defaultopt(T)
+        LaplaceMod::Module=Rjasanow
     )
     # convenient access
     const elements = model.elements
-    const εΩ       = opt.εΩ
-    const εΣ       = opt.εΣ
-    const ε∞       = opt.ε∞
-    const yuk      = yukawa(opt)
+    const εΩ       = model.params.εΩ
+    const εΣ       = model.params.εΣ
+    const ε∞       = model.params.ε∞
+    const yuk      = yukawa(model.params)
 
     # create system matrix
     const numelem = length(elements)
@@ -145,7 +142,6 @@ function solve{T}(
     cauchy = m\rhs
     NonlocalBEMResult(
         model,
-        opt,
         view(cauchy, 1:          numelem),
         view(cauchy, 1+numelem: 2numelem),
         view(cauchy, 1+2numelem:3numelem),

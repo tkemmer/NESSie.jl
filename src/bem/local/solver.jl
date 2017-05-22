@@ -2,7 +2,6 @@
 """
     type LocalBEMResult{T} <: BEMResult{T}
         model::SurfaceModel{T}
-        opt  ::Option{T}
         u    ::Vector{T}   # [γ₀int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
         q    ::Vector{T}   # [γ₁int(φ*)](ξ)    ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
         umol ::Vector{T}   # [γ₀int(φ*mol)](ξ) ∀ ξ ∈ Ξ; premultiplied by 4π⋅ε0
@@ -16,8 +15,6 @@ triangle centroids.
 type LocalBEMResult{T} <: BEMResult{T}
     """Surface model"""
     model::SurfaceModel{T}
-    """Parameters used to generate the result"""
-    opt::Option{T}
     """[γ₀int(φ*)](ξ) for all observation points ξ"""
     u::Vector{T}
     """[γ₁int(φ*)](ξ) for all observation points ξ"""
@@ -34,8 +31,7 @@ end
     solve{T, L <: LocalityType}(
                   ::L,
         model     ::SurfaceModel{T},
-        LaplaceMod::Module=Rjasanow,
-        opt       ::Option{T}=defaultopt(T)
+        LaplaceMod::Module=Rjasanow
     )
 
 Computes the full local or nonlocal cauchy data on the surface of the biomolecule.
@@ -49,20 +45,19 @@ Computes the full local or nonlocal cauchy data on the surface of the biomolecul
 function solve{T}(
         ::Type{LocalES},
         model::SurfaceModel{T},
-        LaplaceMod::Module=Rjasanow,
-        opt::Option{T}=defaultopt(T)
+        LaplaceMod::Module=Rjasanow
     )
     # observation points ξ
     const Ξ = [e.center for e in model.elements]
 
     # compute molecular potentials for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    const umol = opt.εΩ \   φmol(model)
-    const qmol = opt.εΩ \ ∂ₙφmol(model)
+    const umol = model.params.εΩ \   φmol(model)
+    const qmol = model.params.εΩ \ ∂ₙφmol(model)
 
     # convenience aliases
-    const εΩ = opt.εΩ
-    const εΣ = opt.εΣ
+    const εΩ = model.params.εΩ
+    const εΣ = model.params.εΣ
     const numelem = length(model.elements)
 
     # system matrix M
@@ -117,5 +112,5 @@ function solve{T}(
     =#
     q = v \ b
 
-    LocalBEMResult(model, opt, u, q, umol, qmol)
+    LocalBEMResult(model, u, q, umol, qmol)
 end

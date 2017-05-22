@@ -38,7 +38,7 @@ function φΩ{T}(Ξ::Vector{Vector{T}}, bem::LocalBEMResult{T}, LaplaceMod::Modu
 
     # φ += 1/εΩ ⋅ φ*mol(ξ)
     # (φ*mol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
-    axpy!(1/bem.opt.εΩ, φmol(Ξ, bem.model.charges), φ)
+    axpy!(1/bem.model.params.εΩ, φmol(Ξ, bem.model.charges), φ)
 
     # Apply remaining prefactors:
     # ▶ 4π⋅ε0     for u, q, and umol
@@ -82,7 +82,7 @@ function φΣ{T}(Ξ::Vector{Vector{T}}, bem::LocalBEMResult{T}, LaplaceMod::Modu
     copy!(buf, bem.q)
     axpy!(1, bem.qmol, buf)
     LaplaceMod.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, buf)
-    scale!(φ, -bem.opt.εΩ/bem.opt.εΣ)
+    scale!(φ, -bem.model.params.εΩ/bem.model.params.εΣ)
 
     # φ += [W ⋅ (u + umol)](ξ)
     copy!(buf, bem.u)
