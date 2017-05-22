@@ -1,15 +1,19 @@
 # =========================================================================================
 """
     abstract type Element{T <: AbstractFloat} end
+    abstract type SurfaceElement{T} <: Element{T} end
+    abstract type VolumeElement{T}  <: Element{T} end
 
-Abstract base type for all elements.
+Abstract base types for all elements.
 """
 abstract type Element{T <: AbstractFloat} end
+abstract type SurfaceElement{T} <: Element{T} end
+abstract type VolumeElement{T}  <: Element{T} end
 
 
 # =========================================================================================
 """
-    type Triangle{T} <: Element{T}
+    type Triangle{T} <: SurfaceElement{T}
         v2      ::Vector{T}   # position of the second node
         v1      ::Vector{T}   # position of the first node
         v3      ::Vector{T}   # position of the third node
@@ -38,7 +42,7 @@ via [`props!`](@ref ProteinES.props!) to fully initialize the object.
     Most ProteinES.jl functions assume that given triangles are fully initialized. Using
     these functions with partly initialized triangles can lead to undefined behavior!
 """
-type Triangle{T} <: Element{T}
+type Triangle{T} <: SurfaceElement{T}
     "position of the first node"
     v1::Vector{T}
     "position of the second node"
@@ -63,7 +67,7 @@ end
 
 # =========================================================================================
 """
-    type Tetrahedron{T} <: Element{T}
+    type Tetrahedron{T} <: VolumeElement{T}
         v1::Vector{T}       # position of the first node
         v2::Vector{T}       # position of the second node
         v3::Vector{T}       # position of the third node
@@ -84,7 +88,7 @@ Tetrahedron{T}(
 ```
 Sets domain to `:none`.
 """
-type Tetrahedron{T} <: Element{T}
+type Tetrahedron{T} <: VolumeElement{T}
     "position of the first node"
     v1::Vector{T}
     "position of the second node"
