@@ -8,8 +8,7 @@ context("writeskel (surface model)") do
             Triangle{T}[
                 Triangle(nodes[1], nodes[2], nodes[3]),
                 Triangle(nodes[1], nodes[2], nodes[4])
-            ],
-            Charge{T}[]
+            ]
         )
         (fname, fh) = mktemp()
         try
@@ -39,8 +38,7 @@ context("writeskel (volume model)") do
             Tetrahedron{T}[
                 Tetrahedron(nodes[1], nodes[2], nodes[3], nodes[4]),
                 Tetrahedron(nodes[1], nodes[2], nodes[3], nodes[5])
-            ],
-            Charge{T}[]
+            ]
         )
         (fname, fh) = mktemp()
         try

@@ -4,7 +4,7 @@ using LightXML: parse_string, root, name, child_elements, attribute, content
 context("writevtk (surface model)") do
     for T in testtypes
         # empty system
-        model = SurfaceModel(Vector{T}[], Triangle{T}[], Charge{T}[])
+        model = SurfaceModel{T}()
         (fname, fh) = mktemp()
         try
             xroot = root(parse_string(readback(fh -> writevtk(fh, model))))
@@ -56,8 +56,7 @@ context("writevtk (surface model)") do
             Triangle{T}[
                 Triangle(nodes[1], nodes[2], nodes[3]),
                 Triangle(nodes[1], nodes[4], nodes[2])
-            ],
-            Charge{T}[]
+            ]
         )
         (fname, fh) = mktemp()
         try
@@ -108,7 +107,7 @@ end
 context("writevtk (volume model)") do
     for T in testtypes
         # empty system
-        model = VolumeModel(Vector{T}[], Tetrahedron{T}[], Charge{T}[])
+        model = VolumeModel{T}()
         (fname, fh) = mktemp()
         try
             xroot = root(parse_string(readback(fh -> writevtk(fh, model))))
@@ -162,8 +161,7 @@ context("writevtk (volume model)") do
             Tetrahedron{T}[
                 Tetrahedron(nodes[1], nodes[2], nodes[3], nodes[4]),
                 Tetrahedron(nodes[1], nodes[2], nodes[3], nodes[5])
-            ],
-            Charge{T}[]
+            ]
         )
         (fname, fh) = mktemp()
         try

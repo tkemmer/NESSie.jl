@@ -45,7 +45,7 @@ function readmcsf{T <: AbstractFloat}(
         domain::Symbol=:none
     )
     nodes = readmcsf_nodes(stream, T)
-    VolumeModel(nodes, readmcsf_elements(stream, nodes, T, domain=domain), Charge{T}[])
+    VolumeModel(nodes, readmcsf_elements(stream, nodes, T, domain=domain))
 end
 
 function readmcsf{T}(

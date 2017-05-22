@@ -29,7 +29,7 @@ function readmsms{T <: AbstractFloat}(
         ::Type{T}=Float64
     )
     nodes = readmsms_nodes(vertstream, T)
-    SurfaceModel(nodes, readmsms_elements(facestream, nodes, T), Charge{T}[])
+    SurfaceModel(nodes, readmsms_elements(facestream, nodes, T))
 end
 
 function readmsms{T <: AbstractFloat}(fname::String, ::Type{T}=Float64)

@@ -24,14 +24,14 @@ Reads a surface model from the given OFF file.
 Reads the model using a file name rather than a `IOStream` object.
 """
 function readoff{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
-    eof(stream) && return SurfaceModel(Vector{T}[], Triangle{T}[], Charge{T}[])
+    eof(stream) && return SurfaceModel{T}()
     @assert readline(stream) == "OFF" "Invalid OFF file"
 
     # read number of nodes and elements
     numnodes, numelem = [parse(Int, s) for s in split(readline(stream))]
 
     nodes = readoff_nodes(stream, numnodes, T)
-    SurfaceModel(nodes, readoff_elements(stream, numelem, nodes, T), Charge{T}[])
+    SurfaceModel(nodes, readoff_elements(stream, numelem, nodes, T))
 end
 readoff{T}(fname::String, ::Type{T}=Float64) = open(fh -> readoff(fh, T), fname)
 
