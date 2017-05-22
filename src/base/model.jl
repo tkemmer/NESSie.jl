@@ -136,10 +136,10 @@ Charge{T}(posx::T, posy::T, posz::T, val::T) = Charge{T}([posx, posy, posz], val
 # =========================================================================================
 """
     type Model{T, E <: Element{T}}
-        nodes   ::Vector{Vector{T}  = Vector{T}[]
-        elements::Vector{E}         = E[]
-        charges ::Vector{Charge{T}} = Charge{T}[]
-        params  ::Option{T}         = defaultopt(T)
+        nodes   ::Vector{Vector{T}  = Vector{T}[]    # mesh nodes
+        elements::Vector{E}         = E[]            # mesh elements
+        charges ::Vector{Charge{T}} = Charge{T}[]    # point charges in the molecule
+        params  ::Option{T}         = defaultopt(T)  # system constants
     end
 
 System model representing a biomelecule in solvation, including a collection of point
@@ -148,9 +148,13 @@ as a surface model (e.g., a collection of molecule surface triangles) or as a vo
 (e.g., a collection of tetrahedra for the molecule and its surrounding space).
 """
 type Model{T, E <: Element{T}}
+    """mesh nodes"""
     nodes   ::Vector{Vector{T}}
+    """mesh elements"""
     elements::Vector{E}
+    """point charges in the molecule"""
     charges ::Vector{Charge{T}}
+    """system constants"""
     params  ::Option{T}
 
     Model{T, E}(
