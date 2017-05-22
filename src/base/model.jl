@@ -144,6 +144,7 @@ abstract type Model{T <: AbstractFloat} end
         nodes   ::Vector{Vector{T}    = Vector{T}[]
         elements::Vector{Triangle{T}} = Triangle{T}[]
         charges ::Vector{Charge{T}}   = Charge{T}[]
+        params  ::Option{T}           = defaultopt(T)
     end
 
 Surface model; Typically a protein immersed in a structured solvent, represented by the
@@ -153,19 +154,22 @@ type SurfaceModel{T} <: Model{T}
     nodes   ::Vector{Vector{T}}
     elements::Vector{Triangle{T}}
     charges ::Vector{Charge{T}}
+    params  ::Option{T}
 
     SurfaceModel{T}(
         nodes   ::Vector{Vector{T}}   = Vector{T}[],
         elements::Vector{Triangle{T}} = Triangle{T}[],
-        charges ::Vector{Charge{T}}   = Charge{T}[]
-    ) where T = new(nodes, elements, charges)
+        charges ::Vector{Charge{T}}   = Charge{T}[],
+        params  ::Option{T}           = defaultopt(T)
+    ) where T = new(nodes, elements, charges, params)
 end
 
 SurfaceModel(
     nodes   ::Vector{Vector{T}}   = Vector{T}[],
     elements::Vector{Triangle{T}} = Triangle{T}[],
     charges ::Vector{Charge{T}}   = Charge{T}[],
-) where T = SurfaceModel{T}(nodes, elements, charges)
+    params  ::Option{T}           = defaultopt(T)
+) where T = SurfaceModel{T}(nodes, elements, charges, params)
 
 
 # =========================================================================================
@@ -174,6 +178,7 @@ SurfaceModel(
         nodes   ::Vector{Vector{T}}      = Vector{T}[]
         elements::Vector{Tetrahedron{T}} = Tetrahedron{T}[]
         charges ::Vector{Charge{T}}      = Charge{T}[]
+        params  ::Option{T}              = defaultopt(T)
     end
 
 Volume model; Typically a protein immersed in a structured solvent. The protein and a sphere
@@ -189,12 +194,14 @@ type VolumeModel{T} <: Model{T}
     VolumeModel{T}(
         nodes   ::Vector{Vector{T}}      = Vector{T}[],
         elements::Vector{Tetrahedron{T}} = Tetrahedron{T}[],
-        charges ::Vector{Charge{T}}      = Charge{T}[]
-    ) where T = new(nodes, elements, charges)
+        charges ::Vector{Charge{T}}      = Charge{T}[],
+        params  ::Option{T}              = defaultopt(T)
+    ) where T = new(nodes, elements, charges, params)
 end
 
 VolumeModel(
     nodes   ::Vector{Vector{T}}      = Vector{T}[],
     elements::Vector{Tetrahedron{T}} = Tetrahedron{T}[],
-    charges ::Vector{Charge{T}}      = Charge{T}[]
-) where T = VolumeModel{T}(nodes, elements, charges)
+    charges ::Vector{Charge{T}}      = Charge{T}[],
+    params  ::Option{T}              = defaultopt(T)
+) where T = VolumeModel{T}(nodes, elements, charges, params)
