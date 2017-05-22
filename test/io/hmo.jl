@@ -2,13 +2,14 @@ using ProteinES.IO
 using ProteinES.IO: readhmo_nodes, readhmo_elements, readhmo_charges
 
 testfiles = ((mktemp()..., (0,0,0)), # empty file
-             (mktemp()..., (2,2,2))) # dummy file
+             (mktemp()..., (3,2,2))) # dummy file
 write(testfiles[2][2], """
 # stuffing
 stuffing
 
 BEG_NODL_DATA
 	stuffing
+    x 0.0 0.0 0.0
 	x 1.0 2.0 3.0
 	x -2.00001 1.337 42.0
 END_NODL_DATA
@@ -16,8 +17,8 @@ stuffing
 
 BEG_ELEM_DATA
 	stuffing
-	x x x 1 2 1
-	x x x 2 1 2
+	x x x 1 2 3
+	x x x 2 3 1
 END_ELEM_DATA
 stuffing
 
@@ -55,14 +56,15 @@ context("readhmo") do
 
             # check content
             if fname == testfiles[2][1]
-                @fact nodes[1] --> T[1, 2, 3]
-                @fact nodes[2] --> T[-2.00001, 1.337, 42]
-                @fact elements[1].v1 --> exactly(elements[1].v3)
-                @fact elements[1].v1 --> exactly(elements[2].v2)
+                @fact nodes[1] --> T[0, 0, 0]
+                @fact nodes[2] --> T[1, 2, 3]
+                @fact nodes[3] --> T[-2.00001, 1.337, 42]
                 @fact elements[1].v1 --> exactly(nodes[1])
-                @fact elements[1].v2 --> exactly(elements[2].v1)
-                @fact elements[1].v2 --> exactly(elements[2].v3)
                 @fact elements[1].v2 --> exactly(nodes[2])
+                @fact elements[1].v3 --> exactly(nodes[3])
+                @fact elements[2].v1 --> exactly(nodes[2])
+                @fact elements[2].v2 --> exactly(nodes[3])
+                @fact elements[2].v3 --> exactly(nodes[1])
                 @fact charges[1].pos --> T[1, 2, 3]
                 @fact charges[1].val --> T(999)
                 @fact charges[2].pos --> T[-2.00001, 1.337, 42]

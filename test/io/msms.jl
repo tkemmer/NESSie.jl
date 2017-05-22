@@ -2,12 +2,13 @@ using ProteinES.IO
 using ProteinES.IO: readmsms_nodes, readmsms_elements
 
 testfiles = ((mktemp()..., mktemp()..., (0,0)), # empty file
-             (mktemp()..., mktemp()..., (2,2))) # dummy file
+             (mktemp()..., mktemp()..., (3,2))) # dummy file
 
 write(testfiles[2][2], """
 # MSMS solvent excluded surface vertices
 #vertex #sphere density probe_r
   x  x  x  x
+  0.0 0.0 0.0 x x x x x x
   1.0 2.0 3.0 x x x x x x
   -2.00001 1.337 42.0 x x x x x x
 """)
@@ -16,8 +17,8 @@ write(testfiles[2][4], """
 # MSMS solvent excluded surface faces
 #faces  #sphere density probe_r
   x  x  x  x
-  1 2 1 x x
-  2 1 2 x x
+  1 2 3 x x
+  2 3 1 x x
 """)
 
 context("readmsms") do
@@ -44,14 +45,15 @@ context("readmsms") do
 
             # check content
             if fnamev == testfiles[2][1]
-                @fact nodes[1] --> T[1, 2, 3]
-                @fact nodes[2] --> T[-2.00001, 1.337, 42]
-                @fact elements[1].v1 --> exactly(elements[1].v3)
-                @fact elements[1].v1 --> exactly(elements[2].v2)
+                @fact nodes[1] --> T[0, 0, 0]
+                @fact nodes[2] --> T[1, 2, 3]
+                @fact nodes[3] --> T[-2.00001, 1.337, 42]
                 @fact elements[1].v1 --> exactly(nodes[1])
-                @fact elements[1].v2 --> exactly(elements[2].v1)
-                @fact elements[1].v2 --> exactly(elements[2].v3)
                 @fact elements[1].v2 --> exactly(nodes[2])
+                @fact elements[1].v3 --> exactly(nodes[3])
+                @fact elements[2].v1 --> exactly(nodes[2])
+                @fact elements[2].v2 --> exactly(nodes[3])
+                @fact elements[2].v3 --> exactly(nodes[1])
             end
         end
     finally

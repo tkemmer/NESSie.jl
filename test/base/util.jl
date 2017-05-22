@@ -46,16 +46,11 @@ context("props! and isdegenerate") do
     @fact_throws AssertionError isdegenerate(Triangle([1., 1., 1.], [1., 1., 1.], [1., 1.]))
     for T in testtypes
         # degenerate triangles
-        elem = Triangle(T[0, 0, 0], T[0, 0, 0], T[1, 0, 0])
-        @fact_throws AssertionError props!(elem)
-        elem = Triangle(T[0, 0, 0], T[0, 0, 1], T[0, 0, 0])
-        @fact_throws AssertionError props!(elem)
-        elem = Triangle(T[1, 0, 0], T[0, 0, 0], T[0, 0, 0])
-        @fact_throws AssertionError props!(elem)
-        elem = Triangle(T[0, 1, 0], T[0, 2, 0], T[0, 3, 0])
-        @fact_throws AssertionError props!(elem)
-        elem = Triangle(T[0, 1, 0], T[1e-11, 1, 0], T[0, 3, 0])
-        @fact_throws AssertionError props!(elem)
+        @fact_throws AssertionError Triangle(T[0, 0, 0], T[0, 0, 0], T[1, 0, 0])
+        @fact_throws AssertionError Triangle(T[0, 0, 0], T[0, 0, 1], T[0, 0, 0])
+        @fact_throws AssertionError Triangle(T[1, 0, 0], T[0, 0, 0], T[0, 0, 0])
+        @fact_throws AssertionError Triangle(T[0, 1, 0], T[0, 2, 0], T[0, 3, 0])
+        @fact_throws AssertionError Triangle(T[0, 1, 0], T[1e-11, 1, 0], T[0, 3, 0])
         # simple 2D triangle
         elem = Triangle(T[0, 0, 0], T[0, 0, 3], T[0, 3, 0])
         props!(elem)
