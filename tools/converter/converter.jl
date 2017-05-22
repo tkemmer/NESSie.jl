@@ -4,9 +4,9 @@ using ProteinES
 using ProteinES.IO
 
 abstract type MeshType end
-type Nodes <: MeshType end
-type Surface <: MeshType end
-type Volume <: MeshType end
+struct Nodes   <: MeshType end
+struct Surface <: MeshType end
+struct Volume  <: MeshType end
 
 const formats = Dict{String, String}(
     "hmo"  =>  "hmo",
