@@ -10,16 +10,16 @@ export laplacecoll!
 for T in [:ObservationPosition, :InPlane, :InSpace]
     @eval @doc """
         abstract type ObservationPosition end
-        type InPlane <: ObservationPosition end
-        type InSpace <: ObservationPosition end
+        struct InPlane <: ObservationPosition end
+        stryct InSpace <: ObservationPosition end
 
     Enum-like representation of the obseration point's position relative to the
     corresponding surface element
     """ $T
 end
 abstract type ObservationPosition end
-type InPlane <: ObservationPosition end
-type InSpace <: ObservationPosition end
+struct InPlane <: ObservationPosition end
+struct InSpace <: ObservationPosition end
 
 
 # =========================================================================================

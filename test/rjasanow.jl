@@ -8,7 +8,6 @@ context("laplacepot") do
         # 1. Single layer potentials
         # 1.1 ξ is a triangle vertex
         elem = Triangle(T[0, 0, 0], T[0, 1, 0], T[0, 0, 1])
-        props!(elem)
         ξ = elem.v1     # h = √2, φ1 = -π/4, φ2=π/4
         res = laplacepot(SingleLayer, ξ, elem, zero(T))
         @fact typeof(res) --> T
