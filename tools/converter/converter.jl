@@ -36,10 +36,10 @@ writeOutput{T}(ofname::String, ::Type{Nodes}, f::Function, nodes::Vector{Vector{
 
 writeOutput{T}(ofname::String, ::Type{Surface}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Triangle{T}}) = begin
     map(props!, elements)
-    f(ofname, SurfaceModel(nodes, elements, Charge{T}[]))
+    f(ofname, SurfaceModel(nodes, elements))
 end
 
-writeOutput{T}(ofname::String, ::Type{Volume}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T}})  = f(ofname, VolumeModel(nodes, elements, Charge{T}[]))
+writeOutput{T}(ofname::String, ::Type{Volume}, f::Function, nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T}})  = f(ofname, VolumeModel(nodes, elements))
 
 iformat = ""; ifname = ""; oformat = ""; ofname = ""
 
