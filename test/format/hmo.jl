@@ -38,7 +38,7 @@ context("readhmo") do
             if fn == "single"
                 # check single methods (atstart=false)
                 nodes = readhmo_nodes(fh, T)
-                elements = readhmo_elements(fh, nodes, T)
+                elements = readhmo_elements(fh, nodes)
                 charges = readhmo_charges(fh, T)
             elseif fn == "bulk"
                 # check bulk method (implicit single methods with atstart=true)

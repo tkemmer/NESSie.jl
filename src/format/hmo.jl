@@ -21,7 +21,7 @@ function readhmo(
               ::Type{T}=Float64
     ) where T <: AbstractFloat
     nodes = readhmo_nodes(stream, T)
-    Model(nodes, readhmo_elements(stream, nodes, T), readhmo_charges(stream, T))
+    Model(nodes, readhmo_elements(stream, nodes), readhmo_charges(stream, T))
 end
 
 function readhmo(
@@ -63,8 +63,7 @@ end
 """
     readhmo_elements{T <: AbstractFloat}(
         stream::IOStream,
-        nodes ::Vector{Vector{T}},
-              ::Type{T}=Float64
+        nodes ::Vector{Vector{T}}
     )
 
 Reads all elements from the given HMO file.
@@ -74,8 +73,7 @@ Reads all elements from the given HMO file.
 """
 function readhmo_elements(
         stream::IOStream,
-        nodes ::Vector{Vector{T}},
-              ::Type{T}=T
+        nodes ::Vector{Vector{T}}
     ) where T <: AbstractFloat
     elements = Triangle{T}[]
     seek(stream, "BEG_ELEM_DATA")

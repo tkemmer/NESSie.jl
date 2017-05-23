@@ -23,7 +23,7 @@ context("readoff") do
                 readline(fh)
                 readline(fh)
                 nodes = readoff_nodes(fh, len[1], T)
-                elements = readoff_elements(fh, len[2], nodes, T)
+                elements = readoff_elements(fh, len[2], nodes)
             elseif fn == "bulk"
                 # check bulk method
                 model = readoff(fh, T)

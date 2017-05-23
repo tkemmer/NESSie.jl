@@ -29,7 +29,7 @@ function readmsms(
                   ::Type{T}=Float64
     ) where T <: AbstractFloat
     nodes = readmsms_nodes(vertstream, T)
-    Model(nodes, readmsms_elements(facestream, nodes, T))
+    Model(nodes, readmsms_elements(facestream, nodes))
 end
 
 function readmsms(
@@ -70,8 +70,7 @@ end
 """
     readmsms_elements{T <: AbstractFloat}(
         stream::IOStream,
-        nodes ::Vector{Vector{T}},
-              ::Type{T}=Float64
+        nodes ::Vector{Vector{T}}
     )
 
 Reads all elements from the given MSMS-generated `.face` file.
@@ -81,8 +80,7 @@ Reads all elements from the given MSMS-generated `.face` file.
 """
 function readmsms_elements(
         stream::IOStream,
-        nodes ::Vector{Vector{T}},
-              ::Type{T}=Float64
+        nodes ::Vector{Vector{T}}
     ) where T <: AbstractFloat
     elements = Triangle{T}[]
     # skip header lines

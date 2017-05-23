@@ -45,7 +45,7 @@ function readmcsf(
         domain::Symbol=:none
     ) where T <: AbstractFloat
     nodes = readmcsf_nodes(stream, T)
-    Model(nodes, readmcsf_elements(stream, nodes, T, domain=domain))
+    Model(nodes, readmcsf_elements(stream, nodes, domain=domain))
 end
 
 function readmcsf(
@@ -96,8 +96,7 @@ end
 """
     readmcsf_elements{T <: AbstractFloat}(
         stream::IOStream,
-        nodes ::Vector{Vector{T}},
-              ::Type{T}=Float64;
+        nodes ::Vector{Vector{T}};
         # kwargs
         domain::Symbol=:none
     )
@@ -109,8 +108,7 @@ Reads all elements from the given GAMer-generated mcsf file.
 """
 function readmcsf_elements(
         stream::IOStream,
-        nodes ::Vector{Vector{T}},
-              ::Type{T}=Float64;
+        nodes ::Vector{Vector{T}};
         domain::Symbol=:none
     ) where T <: AbstractFloat
     elements = Tetrahedron{T}[]

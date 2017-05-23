@@ -30,7 +30,7 @@ context("readmsms") do
             if fn == "single"
                 # check single methods
                 nodes = readmsms_nodes(fv, T)
-                elements = readmsms_elements(ff, nodes, T)
+                elements = readmsms_elements(ff, nodes)
             elseif fn == "bulk"
                 # check bulk method (implicit single methods with atstart=true)
                 model = readmsms(fv, ff, T)

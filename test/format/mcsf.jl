@@ -36,7 +36,7 @@ context("readmcsf") do
             if fn == "single"
                 # check single methods
                 nodes = readmcsf_nodes(fh, T)
-                elements = readmcsf_elements(fh, nodes, T)
+                elements = readmcsf_elements(fh, nodes)
             elseif fn == "bulk"
                 # check bulk method
                 model = readmcsf(fh, T)

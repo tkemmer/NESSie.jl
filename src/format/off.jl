@@ -34,7 +34,7 @@ function readoff(
     numnodes, numelem = [parse(Int, s) for s in split(readline(stream))]
 
     nodes = readoff_nodes(stream, numnodes, T)
-    Model(nodes, readoff_elements(stream, numelem, nodes, T))
+    Model(nodes, readoff_elements(stream, numelem, nodes))
 end
 
 function readoff(
@@ -84,8 +84,7 @@ Reads the first `n` elements from the given OFF file.
 function readoff_elements(
         stream::IOStream,
         n     ::Int,
-        nodes ::Vector{Vector{T}},
-              ::Type{T}=Float64
+        nodes ::Vector{Vector{T}}
     ) where T <: AbstractFloat
     Triangle{T}[
         Triangle(
