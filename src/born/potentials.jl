@@ -19,22 +19,22 @@ observation point ``ξ``.
 !!! warning
     This function does not verify whether ξ is located inside of the sphere!
 """
-function φΩ{T}(
+function φΩ(
         ::Type{LocalES},
         ξ::Vector{T},
         ion::BornIon{T},
         opt::Option{T}=defaultopt(T)
-    )
+    ) where T
     potprefactor(T) * ion.charge.val *
         (1/euclidean(ion.charge.pos, ξ) + 1/ion.radius * (1/opt.εΣ - 1))
 end
 
-function φΩ{T}(
+function φΩ(
         ::Type{NonlocalES},
         ξ::Vector{T},
         ion::BornIon{T},
         opt::Option{T}=defaultopt(T)
-    )
+    ) where T
     r = euclidean(ion.charge.pos, ξ)
     ν = sqrt(opt.εΣ/opt.ε∞) * ion.radius / opt.λ
     potprefactor(T) * ion.charge.val * (1/r + 1/ion.radius/opt.εΣ *
@@ -63,21 +63,21 @@ observation point ``ξ``.
 !!! warning
     This function does not verify whether ξ is located outside of the sphere!
 """
-function φΣ{T}(
+function φΣ(
         ::Type{LocalES},
         ξ::Vector{T},
         ion::BornIon{T},
         opt::Option{T}=defaultopt(T)
-    )
+    ) where T
     potprefactor(T) * ion.charge.val / opt.εΣ / euclidean(ion.charge.pos, ξ)
 end
 
-function φΣ{T}(
+function φΣ(
         ::Type{NonlocalES},
         ξ::Vector{T},
         ion::BornIon{T},
         opt::Option{T}=defaultopt(T)
-    )
+    ) where T
     r = euclidean(ion.charge.pos, ξ)
     ν = sqrt(opt.εΣ/opt.ε∞) * ion.radius / opt.λ
     potprefactor(T) * ion.charge.val / opt.εΣ /

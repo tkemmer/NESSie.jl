@@ -20,7 +20,7 @@ struct BornIon{T <: AbstractFloat}
     """Sphere radius in Å"""
     radius::T
 end
-BornIon{T}(charge::T, radius::T) = BornIon(Charge(T[0, 0, 0], charge), radius)
+BornIon(charge::T, radius::T) where T = BornIon(Charge(T[0, 0, 0], charge), radius)
 
 
 # =========================================================================================
