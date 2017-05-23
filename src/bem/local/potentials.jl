@@ -2,7 +2,8 @@
 """
     φΩ{T, B <: BEMResult{T}}(
         Ξ         ::Vector{Vector{T}},
-        bem       ::B,
+        bem       ::B;
+        # kwargs
         LaplaceMod::Module=Rjasanow
     )
 
@@ -23,7 +24,7 @@ of observation points `Ξ`.
 """
 function φΩ(
         Ξ         ::Vector{Vector{T}},
-        bem       ::LocalBEMResult{T},
+        bem       ::LocalBEMResult{T};
         LaplaceMod::Module=Rjasanow
     ) where T
     # result vector
@@ -79,7 +80,7 @@ of observation points `Ξ`.
 """
 function φΣ(
         Ξ         ::Vector{Vector{T}},
-        bem       ::LocalBEMResult{T},
+        bem       ::LocalBEMResult{T};
         LaplaceMod::Module=Rjasanow
     ) where T
     # result vector

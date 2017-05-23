@@ -2,7 +2,7 @@
 # Documented in bem/local/potentials.jl
 function φΩ(
         Ξ         ::Vector{Vector{T}},
-        bem       ::NonlocalBEMResult{T},
+        bem       ::NonlocalBEMResult{T};
         LaplaceMod::Module=Rjasanow
     ) where T
     # result vector
@@ -37,7 +37,7 @@ end
 # Documented in bem/local/potentials.jl
 function φΣ(
         Ξ         ::Vector{Vector{T}},
-        bem       ::NonlocalBEMResult{T},
+        bem       ::NonlocalBEMResult{T};
         LaplaceMod::Module=Rjasanow
     ) where T
     # result vector

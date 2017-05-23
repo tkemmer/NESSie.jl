@@ -27,7 +27,7 @@ end
 # Documented in bem/local/solver.jl
 function solve(
                   ::Type{NonlocalES},
-        model     ::Model{T, Triangle{T}},
+        model     ::Model{T, Triangle{T}};
         LaplaceMod::Module=Rjasanow
     ) where T
     # convenient access

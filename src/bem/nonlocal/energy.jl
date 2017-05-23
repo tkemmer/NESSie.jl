@@ -1,6 +1,6 @@
 # ========================================================================================
 # Documented in bem/local/energy.jl
-function rfenergy(bem::NonlocalBEMResult{T}, LaplaceMod::Module=Rjasanow) where T
+function rfenergy(bem::NonlocalBEMResult{T}; LaplaceMod::Module=Rjasanow) where T
     qposs = [charge.pos for charge in bem.model.charges]
     qvals = [charge.val for charge in bem.model.charges]
 

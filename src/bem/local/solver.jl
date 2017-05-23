@@ -30,7 +30,8 @@ end
 """
     solve{T, L <: LocalityType}(
                   ::L,
-        model     ::Model{T, Triangle{T}},
+        model     ::Model{T, Triangle{T}};
+        # kwargs
         LaplaceMod::Module = Rjasanow
     )
 
@@ -44,7 +45,7 @@ Computes the full local or nonlocal cauchy data on the surface of the biomolecul
 """
 function solve(
                   ::Type{LocalES},
-        model     ::Model{T, Triangle{T}},
+        model     ::Model{T, Triangle{T}};
         LaplaceMod::Module=Rjasanow
     ) where T
     # observation points ξ
