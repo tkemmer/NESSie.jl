@@ -29,7 +29,7 @@ const pages = [
 ]
 
 makedocs(
-    modules   = [ProteinES, ProteinES.BEM, ProteinES.Born, ProteinES.IO],
+    modules   = [ProteinES, ProteinES.BEM, ProteinES.Born, ProteinES.Format],
     clean     = true,
     doctest   = true,
     linkcheck = true,

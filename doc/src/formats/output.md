@@ -1,7 +1,7 @@
 # Output formats
 
 ```@meta
-    CurrentModule = ProteinES.IO
+    CurrentModule = ProteinES.Format
 ```
 
 Currently supported output file formats with different models:

@@ -7,9 +7,9 @@ push!(LOAD_PATH,"../../src/")
 =#
 
 using ProteinES
-using ProteinES.IO
 using ProteinES.BEM
 using ProteinES.Born
+using ProteinES.Format
 using PyPlot: figure, plot, show, legend, xlabel, ylabel, title, axvline
 
 function plotexterior(name::String, maxdist::Float64=10., resolution::Int=100)

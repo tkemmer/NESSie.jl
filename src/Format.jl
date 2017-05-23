@@ -1,32 +1,32 @@
-module IO
+module Format
 
 using ..ProteinES
 using ..ProteinES: reverseindex, unpack, vertexnormals
 using JSON: json
 using LightXML: XMLDocument, create_root, new_child, add_text, set_attribute
 
-include("io/hmo.jl")
+include("format/hmo.jl")
 export readhmo
 
-include("io/mcsf.jl")
+include("format/mcsf.jl")
 export readmcsf
 
-include("io/msms.jl")
+include("format/msms.jl")
 export readmsms
 
-include("io/off.jl")
+include("format/off.jl")
 export readoff
 
-include("io/pqr.jl")
+include("format/pqr.jl")
 export readpqr
 
-include("io/skel.jl")
+include("format/skel.jl")
 export writeskel
 
-include("io/vtk.jl")
+include("format/vtk.jl")
 export writevtk
 
-include("io/xml3d.jl")
+include("format/xml3d.jl")
 export writexml3d_json, writexml3d_xml
 
 end # module

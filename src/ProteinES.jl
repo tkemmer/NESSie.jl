@@ -23,7 +23,7 @@ export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalE
     ∂ₙφmol, ∇φmol
 
 # Submodules
-include("IO.jl")
+include("Format.jl")
 include("Radon.jl")
 include("Rjasanow.jl")
 include("Born.jl")

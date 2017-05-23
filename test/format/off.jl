@@ -1,5 +1,5 @@
-using ProteinES.IO
-using ProteinES.IO: readoff_nodes, readoff_elements
+using ProteinES.Format
+using ProteinES.Format: readoff_nodes, readoff_elements
 
 testfiles = ((mktemp()..., (0,0)), # empty file
              (mktemp()..., (3,2))) # dummy file
@@ -26,7 +26,7 @@ context("readoff") do
                 elements = readoff_elements(fh, len[2], nodes, T)
             elseif fn == "bulk"
                 # check bulk method
-                model = ProteinES.IO.readoff(fh, T)
+                model = readoff(fh, T)
                 nodes, elements = (model.nodes, model.elements)
             end
             # check return types

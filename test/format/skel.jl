@@ -1,4 +1,4 @@
-using ProteinES.IO
+using ProteinES.Format
 
 context("writeskel (surface model)") do
     for T in testtypes

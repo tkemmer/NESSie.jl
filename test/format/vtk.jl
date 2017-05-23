@@ -1,4 +1,4 @@
-using ProteinES.IO
+using ProteinES.Format
 using LightXML: parse_string, root, name, child_elements, attribute, content
 
 context("writevtk (surface model)") do

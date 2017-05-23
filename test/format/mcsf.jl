@@ -1,5 +1,5 @@
-using ProteinES.IO
-using ProteinES.IO: readmcsf_nodes, readmcsf_elements
+using ProteinES.Format
+using ProteinES.Format: readmcsf_nodes, readmcsf_elements
 
 testfiles = ((mktemp()..., (0,0)), # empty file
              (mktemp()..., (4,2))) # dummy file

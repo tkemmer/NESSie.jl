@@ -1,4 +1,4 @@
-using ProteinES.IO
+using ProteinES.Format
 using JSON
 using LightXML: parse_string, root, name, child_elements, attribute, content
 

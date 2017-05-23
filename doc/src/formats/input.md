@@ -1,7 +1,7 @@
 # Input formats
 
 ```@meta
-    CurrentModule = ProteinES.IO
+    CurrentModule = ProteinES.Format
 ```
 
 Currently supported input file formats with different models:
