@@ -31,7 +31,7 @@ end
     solve{T, L <: LocalityType}(
                   ::L,
         model     ::Model{T, Triangle{T}},
-        LaplaceMod::Module=Rjasanow
+        LaplaceMod::Module = Rjasanow
     )
 
 Computes the full local or nonlocal cauchy data on the surface of the biomolecule.
@@ -42,11 +42,11 @@ Computes the full local or nonlocal cauchy data on the surface of the biomolecul
 # Return type
 `LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
 """
-function solve{T}(
-        ::Type{LocalES},
-        model::Model{T, Triangle{T}},
+function solve(
+                  ::Type{LocalES},
+        model     ::Model{T, Triangle{T}},
         LaplaceMod::Module=Rjasanow
-    )
+    ) where T
     # observation points ξ
     const Ξ = [e.center for e in model.elements]
 

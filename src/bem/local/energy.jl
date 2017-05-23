@@ -20,7 +20,7 @@ where ``φ\^*`` is the reaction field and ``ρ`` is the corresponding charge dis
 # Return type
 `T`
 """
-function rfenergy{T}(bem::LocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
+function rfenergy(bem::LocalBEMResult{T}, LaplaceMod::Module=Rjasanow) where T
     qposs = [charge.pos for charge in bem.model.charges]
     qvals = [charge.val for charge in bem.model.charges]
 

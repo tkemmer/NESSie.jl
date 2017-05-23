@@ -21,7 +21,11 @@ of observation points `Ξ`.
 # Return type
 `Vector{T}`
 """
-function φΩ{T}(Ξ::Vector{Vector{T}}, bem::LocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
+function φΩ(
+        Ξ         ::Vector{Vector{T}},
+        bem       ::LocalBEMResult{T},
+        LaplaceMod::Module=Rjasanow
+    ) where T
     # result vector
     φ = zeros(T, length(Ξ))
 
@@ -73,7 +77,11 @@ of observation points `Ξ`.
 # Return type
 `Vector{T}`
 """
-function φΣ{T}(Ξ::Vector{Vector{T}}, bem::LocalBEMResult{T}, LaplaceMod::Module=Rjasanow)
+function φΣ(
+        Ξ         ::Vector{Vector{T}},
+        bem       ::LocalBEMResult{T},
+        LaplaceMod::Module=Rjasanow
+    ) where T
     # result vector
     φ = zeros(T, length(Ξ))
     buf = Array{T}(length(bem.model.elements))

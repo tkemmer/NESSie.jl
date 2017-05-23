@@ -25,11 +25,11 @@ end
 
 # =========================================================================================
 # Documented in bem/local/solver.jl
-function solve{T}(
-        ::Type{NonlocalES},
-        model::Model{T, Triangle{T}},
+function solve(
+                  ::Type{NonlocalES},
+        model     ::Model{T, Triangle{T}},
         LaplaceMod::Module=Rjasanow
-    )
+    ) where T
     # convenient access
     const elements = model.elements
     const εΩ       = model.params.εΩ
