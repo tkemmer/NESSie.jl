@@ -259,7 +259,7 @@ function radoncoll!(
     isvec || @assert size(dest) == (length(Ξ), length(elements))
 
     # pre-allocate memory for cubature points
-    qpts = quadraturepoints(Triangle, T)
+    qpts = quadraturepoints(Triangle{T})
     cubpts = [zeros(T, 3) for _ in 1:qpts.num]
 
     @inbounds for (eidx, elem) in enumerate(elements)

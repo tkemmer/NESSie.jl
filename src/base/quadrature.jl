@@ -58,10 +58,10 @@ end
 
 # =========================================================================================
 @doc """
-    quadraturepoints(::Type{Tetrahedron}, ::Type{Float64})
-    quadraturepoints(::Type{Tetrahedron}, ::Type{Float32})
-    quadraturepoints(::Type{Triangle},    ::Type{Float64})
-    quadraturepoints(::Type{Triangle},    ::Type{Float32})
+    quadraturepoints(::Type{Tetrahedron{Float64}})
+    quadraturepoints(::Type{Tetrahedron{Float32}})
+    quadraturepoints(::Type{Triangle{Float64}})
+    quadraturepoints(::Type{Triangle{Float32}})
 
 Generator function for quadrature points:
  * *Triangles*: 7 points per element [[Rad48]](@ref Bibliography)
@@ -81,7 +81,7 @@ for T in [:Float64, :Float32]
             $(T)[9/80, (155+√15)/2400, (155+√15)/2400, (155+√15)/2400,
                 (155-√15)/2400, (155-√15)/2400, (155-√15)/2400]
         )
-        quadraturepoints(::Type{Triangle}, ::Type{$(T)}) = $(varname)
+        quadraturepoints(::Type{Triangle{$(T)}}) = $(varname)
     end
 end
 
@@ -94,6 +94,6 @@ for T in [:Float64, :Float32]
             $(T)[.25, 1/6, 1/6, .5, 1/6],
             $(T)[-.8, .45, .45, .45, .45]/6
         )
-        quadraturepoints(::Type{Tetrahedron}, ::Type{$(T)}) = $(varname)
+        quadraturepoints(::Type{Tetrahedron{$(T)}}) = $(varname)
     end
 end
