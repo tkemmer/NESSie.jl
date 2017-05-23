@@ -32,7 +32,7 @@ const ec = 1.602176e-9
 
 # =========================================================================================
 @doc """
-    potprefactor(T::Type{Float64})
+    potprefactor(T::Type{Float64} = Float64)
     potprefactor(T::Type{Float32})
 
 Common prefactor for all potentials ``φ\_Ω`` and ``φ\_Σ``:
@@ -51,6 +51,7 @@ for T in [:Float64, :Float32]
         potprefactor(::Type{$(T)}) = $(varname)
     end
 end
+potprefactor() = potprefactor(Float64)
 
 
 # =========================================================================================
@@ -78,7 +79,7 @@ end
 
 # =========================================================================================
 @doc """
-    defaultopt(T::Type{Float64})
+    defaultopt(T::Type{Float64} = Float64)
     defaultopt(T::Type{Float32})
 
 Default system parameters
@@ -99,6 +100,7 @@ for T in [:Float64, :Float32]
         defaultopt(::Type{$(T)}) = $(varname)
     end
 end
+defaultopt() = defaultopt(Float64)
 
 
 # =========================================================================================
