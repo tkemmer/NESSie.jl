@@ -14,7 +14,7 @@ using PyPlot: figure, plot, show, legend, xlabel, ylabel, title, axvline
 
 function plotexterior(name::String, maxdist::Float64=10., resolution::Int=100)
     name          = lowercase(name)
-    born          = bornion(Float64, name)
+    born          = bornion(name)
     model         = readoff("../../data/born/$name.off")
     model.charges = readpqr("../../data/born/$name.pqr")
     model.params  = Option(1., 78., 1., 23.)

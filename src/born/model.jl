@@ -25,8 +25,8 @@ BornIon(charge::T, radius::T) where T = BornIon(Charge(T[0, 0, 0], charge), radi
 
 # =========================================================================================
 @doc """
-    bornion(::Type{Float64}, name::String)
-    bornion(::Type{Float32}, name::String)
+    bornion(name::String, ::Type{Float64} = Float64)
+    bornion(name::String, ::Type{Float32})
 
 Generator function for built-in Born ions:
 
@@ -59,6 +59,7 @@ for T in [:Float64, :Float32]
             "sr" => BornIon($(T)[2, 1.195]...),
             "ba" => BornIon($(T)[2, 1.385]...)
         )
-        bornion(::Type{$(T)}, name::String) = $(varname)[lowercase(name)]
+        bornion(name::String, ::Type{$(T)}) = $(varname)[lowercase(name)]
     end
 end
+bornion(name::String) = bornion(name, Float64)

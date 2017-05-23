@@ -2,7 +2,7 @@ using ProteinES.Born
 
 context("bornion") do
     for T in testtypes
-        @fact typeof(bornion(T, "Na")) --> BornIon{T}
+        @fact typeof(bornion("Na", T)) --> BornIon{T}
     end
 end
 
