@@ -44,12 +44,12 @@ observation point `ξ`. The latter needs to be projected onto the surface elemen
 # Return type
 `T`
 """
-function laplacepot{T, P <: PotentialType}(
+function laplacepot(
         ptype::Type{P},
-        ξ::Vector{T},
-        elem::Triangle{T},
-        dist::T
-    )
+        ξ    ::Vector{T},
+        elem ::Triangle{T},
+        dist ::T
+    ) where {T, P <: PotentialType}
     laplacepot(ptype, ξ, elem.v1, elem.v2, elem.normal, dist) +
     laplacepot(ptype, ξ, elem.v2, elem.v3, elem.normal, dist) +
     laplacepot(ptype, ξ, elem.v3, elem.v1, elem.normal, dist)
@@ -82,14 +82,14 @@ onto the surface element plane  [[Rja90]](@ref Bibliography).
 # Return type
 `T`
 """
-function laplacepot{T, P <: PotentialType}(
-        ptype::Type{P},
-        ξ::Vector{T},
-        x1::Vector{T},
-        x2::Vector{T},
+function laplacepot(
+        ptype ::Type{P},
+        ξ     ::Vector{T},
+        x1    ::Vector{T},
+        x2    ::Vector{T},
         normal::Vector{T},
-        dist::T
-    )
+        dist ::T
+    ) where {T, P <: PotentialType}
     # Construct triangle sides. Later on, we will use the height h of the triangle at point
     # ξ as well as the angles φ1 abd φ2 between h and the triangle sides extending from ξ.
     u1 = x1 - ξ
@@ -160,7 +160,14 @@ sines of the angles ``φ₁`` and ``φ₂`` between `h` and the triangle sides e
 # Return type
 `T`
 """
-function laplacepot{T}(::Type{SingleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, d::T)
+function laplacepot(
+             ::Type{SingleLayer},
+             ::Type{InPlane},
+        sinφ1::T,
+        sinφ2::T,
+        h    ::T,
+        d    ::T
+    ) where T
     #=
         h/8π * [ln((1 + sin(φ))/(1 - sin(φ)))]   from φ1 to φ2
         = h/8π * [ln((1 + sin(φ2))/(1 - sin(φ2))) - ln((1 + sin(φ1))/(1 - sin(φ1)))]
@@ -171,7 +178,14 @@ function laplacepot{T}(::Type{SingleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::
     2 \ h * log((1+sinφ2) * (1-sinφ1) / ((1-sinφ2) * (1+sinφ1)))
 end
 
-function laplacepot{T}(::Type{SingleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, d::T)
+function laplacepot(
+             ::Type{SingleLayer},
+             ::Type{InSpace},
+        sinφ1::T,
+        sinφ2::T,
+        h    ::T,
+        d    ::T
+    ) where T
     #=
         h/8π * <1> + d/4π * <2>
 
@@ -199,7 +213,14 @@ function laplacepot{T}(::Type{SingleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::
     result + d * (asin(χ * sinφ2) - asin(sinφ2) - asin(χ * sinφ1) + asin(sinφ1))
 end
 
-function laplacepot{T}(::Type{DoubleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::T, h::T, d::T)
+function laplacepot(
+             ::Type{DoubleLayer},
+             ::Type{InPlane},
+        sinφ1::T,
+        sinφ2::T,
+        h    ::T,
+        d    ::T
+    ) where T
     #=
         1/4π * ∫-1/|ξ-r'|^3 * (ξ-r')⋅n dr'
         = 1/4π * ∫-1/|ξ-r'|^3 * 0 dr'
@@ -208,7 +229,14 @@ function laplacepot{T}(::Type{DoubleLayer}, ::Type{InPlane}, sinφ1::T, sinφ2::
     zero(T)
 end
 
-function laplacepot{T}(::Type{DoubleLayer}, ::Type{InSpace}, sinφ1::T, sinφ2::T, h::T, d::T)
+function laplacepot(
+             ::Type{DoubleLayer},
+             ::Type{InSpace},
+        sinφ1::T,
+        sinφ2::T,
+        h    ::T,
+        d    ::T
+    ) where T
     χ  = abs(d) / √(d^2 + h^2)
     sign(d) * (asin(χ * sinφ1) - asin(sinφ1) - asin(χ * sinφ2) + asin(sinφ2))
 end
@@ -244,13 +272,13 @@ vector.
 # Return type
 `Void`
 """
-function laplacecoll!{T, P <: PotentialType}(
-        ptype::Type{P},
-        dest::Union{DenseArray{T,1}, DenseArray{T, 2}},
+function laplacecoll!(
+        ptype   ::Type{P},
+        dest    ::Union{DenseArray{T,1}, DenseArray{T, 2}},
         elements::Vector{Triangle{T}},
-        Ξ::Vector{Vector{T}},
-        fvals::Union{DenseArray{T,1},SubArray{T,1}}=T[]
-    )
+        Ξ       ::Vector{Vector{T}},
+        fvals   ::Union{DenseArray{T,1},SubArray{T,1}}=T[]
+    ) where {T, P <: PotentialType}
     isvec  = isa(dest, DenseArray{T, 1})
     isvec && @assert length(dest) == length(Ξ)
     isvec && @assert length(fvals) == length(elements)
@@ -295,7 +323,7 @@ Helper function to compute
 # Return type
 `T`
 """
-function logterm{T}(χ2::T, sinφ::T)
+function logterm(χ2::T, sinφ::T) where T
     term1 = √(1 - χ2 * sinφ^2)
     term2 = √(1 - χ2) * sinφ
     (term1 + term2) / (term1 - term2)
