@@ -23,7 +23,10 @@ Reads a surface model from the given OFF file.
 
 Reads the model using a file name rather than a `IOStream` object.
 """
-function readoff{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
+function readoff(
+        stream::IOStream,
+              ::Type{T}=Float64
+    ) where T <: AbstractFloat
     eof(stream) && return Model{T, Triangle{T}}()
     @assert readline(stream) == "OFF" "Invalid OFF file"
 
@@ -33,7 +36,13 @@ function readoff{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
     nodes = readoff_nodes(stream, numnodes, T)
     Model(nodes, readoff_elements(stream, numelem, nodes, T))
 end
-readoff{T}(fname::String, ::Type{T}=Float64) = open(fh -> readoff(fh, T), fname)
+
+function readoff(
+        fname::String,
+             ::Type{T}=Float64
+    ) where T
+    open(fh -> readoff(fh, T), fname)
+end
 
 
 # =========================================================================================
@@ -49,7 +58,11 @@ Reads the first `n` nodes from the given OFF file.
 # Return type
 `Vector{Vector{T}}`
 """
-function readoff_nodes{T <: AbstractFloat}(stream::IOStream, n::Int, ::Type{T}=Float64)
+function readoff_nodes(
+        stream::IOStream,
+        n     ::Int,
+              ::Type{T}=Float64
+    ) where T <: AbstractFloat
     Vector{T}[[parse(T, e) for e in split(readline(stream))] for _ in 1:n]
 end
 
@@ -68,12 +81,12 @@ Reads the first `n` elements from the given OFF file.
 # Return type
 `Vector{Triangle{T}}`
 """
-function readoff_elements{T <: AbstractFloat}(
+function readoff_elements(
         stream::IOStream,
-        n::Int,
-        nodes::Vector{Vector{T}},
-        ::Type{T}=Float64
-    )
+        n     ::Int,
+        nodes ::Vector{Vector{T}},
+              ::Type{T}=Float64
+    ) where T <: AbstractFloat
     Triangle{T}[
         Triangle(
             [nodes[parse(Int, e) + 1] for e in split(readline(stream))[2:end]]...

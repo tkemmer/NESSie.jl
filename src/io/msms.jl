@@ -23,16 +23,19 @@ Reads the model using a common file name prefix (`fname.{vert,face}`) for both f
 rather than `IOStream` objects.
 
 """
-function readmsms{T <: AbstractFloat}(
+function readmsms(
         vertstream::IOStream,
         facestream::IOStream,
-        ::Type{T}=Float64
-    )
+                  ::Type{T}=Float64
+    ) where T <: AbstractFloat
     nodes = readmsms_nodes(vertstream, T)
     Model(nodes, readmsms_elements(facestream, nodes, T))
 end
 
-function readmsms{T <: AbstractFloat}(fname::String, ::Type{T}=Float64)
+function readmsms(
+        fname::String,
+             ::Type{T}=Float64
+    ) where T <: AbstractFloat
     open(ff -> open(fv -> readmsms(fv, ff, T), "$fname.vert"), "$fname.face")
 end
 
@@ -49,7 +52,10 @@ Reads all nodes from the given MSMS-generated `.vert` file.
 # Return type
 `Vector{Vector{T}}`
 """
-function readmsms_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
+function readmsms_nodes(
+        stream::IOStream,
+              ::Type{T}=Float64
+    ) where T <: AbstractFloat
     nodes = Vector{T}[]
     # skip header lines
     [readline(stream) for i in 1:3]
@@ -73,11 +79,11 @@ Reads all elements from the given MSMS-generated `.face` file.
 # Return type
 `Vector{Triangle{T}}`
 """
-function readmsms_elements{T <: AbstractFloat}(
+function readmsms_elements(
         stream::IOStream,
-        nodes::Vector{Vector{T}},
-        ::Type{T}=Float64
-    )
+        nodes ::Vector{Vector{T}},
+              ::Type{T}=Float64
+    ) where T <: AbstractFloat
     elements = Triangle{T}[]
     # skip header lines
     [readline(stream) for i in 1:3]

@@ -23,7 +23,10 @@ latter as point cloud) or from a given surface model.
 
 Creates the JSON file by name rather than `IOStream` object.
 """
-function writexml3d_json{T}(stream::IOStream, nodes::Vector{Vector{T}})
+function writexml3d_json(
+        stream::IOStream,
+        nodes ::Vector{Vector{T}}
+    ) where T
     println(stream, json(Dict(
         "format" => "xml3d-json",
         "version" => "0.4.0",
@@ -37,7 +40,10 @@ function writexml3d_json{T}(stream::IOStream, nodes::Vector{Vector{T}})
     nothing
 end
 
-function writexml3d_json{T}(stream::IOStream, model::Model{T, Triangle{T}})
+function writexml3d_json(
+        stream::IOStream,
+        model ::Model{T, Triangle{T}}
+    ) where T
     revidx = reverseindex(model.nodes)
     println(stream, json(Dict(
         "format" => "xml3d-json",
@@ -66,10 +72,10 @@ function writexml3d_json{T}(stream::IOStream, model::Model{T, Triangle{T}})
     nothing
 end
 
-function writexml3d_json{T}(
+function writexml3d_json(
         fname::String,
         model::Union{Vector{Vector{T}},Model{T, Triangle{T}}}
-    )
+    ) where T
     open(fh -> writexml3d_json(fh, model), fname, "w")
 end
 
@@ -99,7 +105,10 @@ as point cloud.
 
 Creates the XML file by name rather than `IOStream` object.
 """
-function writexml3d_xml{T}(stream::IOStream, nodes::Vector{Vector{T}})
+function writexml3d_xml(
+        stream::IOStream,
+        nodes ::Vector{Vector{T}}
+    ) where T
     xdoc = XMLDocument()
     xroot = create_root(xdoc, "xml3d")
     set_attribute(xroot, "xmlns", "http://www.xml3d.org/2009/xml3d")
@@ -112,6 +121,9 @@ function writexml3d_xml{T}(stream::IOStream, nodes::Vector{Vector{T}})
     nothing
 end
 
-function writexml3d_xml{T}(fname::String, nodes::Vector{Vector{T}})
+function writexml3d_xml(
+        fname::String,
+        nodes::Vector{Vector{T}}
+    ) where T
     open(fh -> writexml3d_xml(fh, nodes), fname, "w")
 end

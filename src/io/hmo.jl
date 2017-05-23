@@ -16,11 +16,20 @@ Reads a complete surface model from the given HMO file.
 
 Reads the model using a file name rather than a `IOStream` object.
 """
-function readhmo{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
+function readhmo(
+        stream::IOStream,
+              ::Type{T}=Float64
+    ) where T <: AbstractFloat
     nodes = readhmo_nodes(stream, T)
     Model(nodes, readhmo_elements(stream, nodes, T), readhmo_charges(stream, T))
 end
-readhmo{T}(fname::String, ::Type{T}=Float64) = open(fh -> readhmo(fh, T), fname)
+
+function readhmo(
+        fname::String,
+             ::Type{T}=Float64
+    ) where T
+    open(fh -> readhmo(fh, T), fname)
+end
 
 
 # =========================================================================================
@@ -35,7 +44,10 @@ Reads all nodes from the given HMO file.
 # Return type
 `Vector{Vector{T}}`
 """
-function readhmo_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
+function readhmo_nodes(
+        stream::IOStream,
+              ::Type{T}=Float64
+    ) where T <: AbstractFloat
     nodes = Vector{T}[]
     seek(stream, "BEG_NODL_DATA")
     readline(stream) # skip first line
@@ -60,11 +72,11 @@ Reads all elements from the given HMO file.
 # Return type
 `Vector{Triangle{T}}`
 """
-function readhmo_elements{T <: AbstractFloat}(
+function readhmo_elements(
         stream::IOStream,
-        nodes::Vector{Vector{T}},
-        ::Type{T}=T
-    )
+        nodes ::Vector{Vector{T}},
+              ::Type{T}=T
+    ) where T <: AbstractFloat
     elements = Triangle{T}[]
     seek(stream, "BEG_ELEM_DATA")
     readline(stream) # skip first line
@@ -88,7 +100,10 @@ Reads all charges from the given HMO file.
 # Return type
 `Vector{Charge{T}}`
 """
-function readhmo_charges{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
+function readhmo_charges(
+        stream::IOStream,
+              ::Type{T}=Float64
+    ) where T <: AbstractFloat
     charges = Charge{T}[]
     seek(stream, "BEG_CHARGE_DATA")
     readline(stream) # skip first line

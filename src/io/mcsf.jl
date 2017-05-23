@@ -33,30 +33,34 @@ Reads the model using a file name rather than a `IOStream` object.
     readmcsf{T}(
         fnameΩ::String,
         fnameΣ::String,
-        ::Type{T}=Float64
+              ::Type{T}=Float64
     )
 
 Reads the contents of two separate files (given by name), sets the element domains to `:Ω`
 or `:Σ`, respectively, and returns a single (merged) `Model` object.
 """
-function readmcsf{T <: AbstractFloat}(
+function readmcsf(
         stream::IOStream,
-        ::Type{T}=Float64;
+              ::Type{T}=Float64;
         domain::Symbol=:none
-    )
+    ) where T <: AbstractFloat
     nodes = readmcsf_nodes(stream, T)
     Model(nodes, readmcsf_elements(stream, nodes, T, domain=domain))
 end
 
-function readmcsf{T}(
-        fname::String,
-        ::Type{T}=Float64;
+function readmcsf(
+        fname ::String,
+              ::Type{T}=Float64;
         domain::Symbol=:none
-    )
+    ) where T
     open(fh -> readmcsf(fh, T, domain=domain), fname)
 end
 
-function readmcsf{T}(fnameΩ::String, fnameΣ::String, ::Type{T}=Float64)
+function readmcsf(
+        fnameΩ::String,
+        fnameΣ::String,
+              ::Type{T}=Float64
+    ) where T
     meshunion(readmcsf(fnameΩ, T, domain=:Ω), readmcsf(fnameΣ, T, domain=:Σ))
 end
 
@@ -73,7 +77,10 @@ Reads all nodes from the given GAMer-generated mcsf file.
 # Return type
 `Vector{Vector{T}}`
 """
-function readmcsf_nodes{T <: AbstractFloat}(stream::IOStream, ::Type{T}=Float64)
+function readmcsf_nodes(
+        stream::IOStream,
+              ::Type{T}=Float64
+    ) where T <: AbstractFloat
     nodes = Vector{T}[]
     seek(stream, "vert=[")
     for line in eachline(stream)
@@ -100,12 +107,12 @@ Reads all elements from the given GAMer-generated mcsf file.
 # Return type
 `Vector{Tetrahedron{T}}`
 """
-function readmcsf_elements{T <: AbstractFloat}(
+function readmcsf_elements(
         stream::IOStream,
-        nodes::Vector{Vector{T}},
-        ::Type{T}=Float64;
+        nodes ::Vector{Vector{T}},
+              ::Type{T}=Float64;
         domain::Symbol=:none
-    )
+    ) where T <: AbstractFloat
     elements = Tetrahedron{T}[]
     seek(stream, "simp=[")
     for line in eachline(stream)
