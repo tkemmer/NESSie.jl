@@ -9,7 +9,7 @@ abstract type QuadraturePoints{T <: AbstractFloat} end
 
 # =========================================================================================
 """
-    immutable QuadPts2D{T} <: QuadraturePoints{T}
+    struct QuadPts2D{T} <: QuadraturePoints{T}
         num   ::Int         # number of points
         x     ::Vector{T}   # x values
         y     ::Vector{T}   # y values
@@ -18,7 +18,7 @@ abstract type QuadraturePoints{T <: AbstractFloat} end
 
 Quadrature points and weights for triangles
 """
-immutable QuadPts2D{T} <: QuadraturePoints{T}
+struct QuadPts2D{T} <: QuadraturePoints{T}
     """Number of points"""
     num::Int
     """x values"""
@@ -32,7 +32,7 @@ end
 
 # =========================================================================================
 """
-    immutable QuadPts3D{T} <: QuadraturePoints{T}
+    struct QuadPts3D{T} <: QuadraturePoints{T}
         num   ::Int         # number of points
         x     ::Vector{T}   # x values
         y     ::Vector{T}   # y values
@@ -42,7 +42,7 @@ end
 
 Quadrature points and weights for tetrahedra
 """
-immutable QuadPts3D{T} <: QuadraturePoints{T}
+struct QuadPts3D{T} <: QuadraturePoints{T}
     """Number of points"""
     num::Int
     """x values"""
