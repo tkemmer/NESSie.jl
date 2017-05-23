@@ -114,4 +114,4 @@ Exponent ``Λ`` for the fundamental solution of the yukawa operator
 # Return type
 `T`
 """
-yukawa{T}(opt::Option{T}) = √(opt.εΣ/opt.ε∞)/opt.λ
+yukawa(opt::Option{T}) where T = √(opt.εΣ/opt.ε∞)/opt.λ

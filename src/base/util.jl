@@ -13,7 +13,7 @@ and area. Returns the completely initialized Triangle as a copy.
 # Return type
 `Triangle`
 """
-function props{T}(elem::Triangle{T})
+function props(elem::Triangle{T}) where T
     # reject degenerate triangles
     @assert !isdegenerate(elem) "Degenerate triangle $(elem)"
 
@@ -52,10 +52,10 @@ and charges (if any) are retained as well as the system constants of the first m
 !!! note
     This function assumes that there are no duplicates within either of the node lists!
 """
-function meshunion{T}(
+function meshunion(
         model1::Model{T, Tetrahedron{T}},
         model2::Model{T, Tetrahedron{T}}
-    )
+    ) where T
     # find nodes that are to be replaced (tbr)
     obsolete = model1.nodes ∩ model2.nodes
     tbr = Dict{Vector{T}, Int}(zip(obsolete, indexin(obsolete, model1.nodes)))
@@ -97,7 +97,7 @@ julia> unpack([[1, 2], [3]])
  3
 ```
 """
-function unpack{T}(data::Vector{Vector{T}})
+function unpack(data::Vector{Vector{T}}) where T
     isempty(data) ?  T[] : T[x for y in data for x in y]
 end
 
@@ -111,7 +111,7 @@ Returns a vector containing the normal vectors of the given model's triangles.
 # Return type
 `Vector{Vector{T}}`
 """
-function vertexnormals{T}(model::Model{T, Triangle{T}})
+function vertexnormals(model::Model{T, Triangle{T}}) where T
     revidx = reverseindex(model.nodes)
     normals = Vector{T}[zeros(T, 3) for _ in 1:length(model.nodes)]
     count = zeros(T, length(model.nodes))
@@ -157,7 +157,10 @@ julia> eye!(m, 2); m
  0.0  2.0
 ```
 """
-function eye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T))
+function eye!(
+        m::Union{DenseArray{T,2}, SubArray{T,2}},
+        α::Number=one(T)
+    ) where T
     fill!(m, zero(T))
     pluseye!(m, α)
 end
@@ -193,7 +196,10 @@ julia> pluseye!(m, 2); m
  2.0  5.0
 ```
 """
-function pluseye!{T}(m::Union{DenseArray{T,2}, SubArray{T,2}}, α::Number=one(T))
+function pluseye!(
+        m::Union{DenseArray{T,2}, SubArray{T,2}},
+        α::Number=one(T)
+    ) where T
     α = convert(T, α)
     @inbounds for i in 1:min(size(m)...)
         m[i, i] += α
@@ -211,7 +217,7 @@ Tests whether the given triangle is degenerate.
 # Return type
 `Bool`
 """
-function isdegenerate{T}(elem::Triangle{T})
+function isdegenerate(elem::Triangle{T}) where T
     @assert length(elem.v1) == length(elem.v2) == length(elem.v3) == 3
     u1 = elem.v2 - elem.v1
     u2 = elem.v3 - elem.v1
@@ -264,7 +270,12 @@ and `vnorm`, respectively.
 # Return type
 `T`
 """
-function cos{T}(u::Vector{T}, v::Vector{T}, unorm::T=vecnorm(u), vnorm::T=vecnorm(v))
+function cos(
+        u    ::Vector{T},
+        v    ::Vector{T},
+        unorm::T=vecnorm(u),
+        vnorm::T=vecnorm(v)
+    ) where T
     u ⋅ v / (unorm * vnorm)
 end
 
@@ -285,7 +296,7 @@ h² = c₁² + c₂² \\\\
 # Return type
 `T`
 """
-function cathetus{T}(hyp::T, cosθ::T)
+function cathetus(hyp::T, cosθ::T) where T
     √(hyp^2 * (1 - cosθ^2))
 end
 
@@ -305,7 +316,7 @@ same orientation, ``0`` if at least one of the vectors is zero, and ``-1`` other
 # Return type
 `T`
 """
-function sign{T}(u::Vector{T}, v::Vector{T}, n::Vector{T})
+function sign(u::Vector{T}, v::Vector{T}, n::Vector{T}) where T
     # Devectorized version of sign((u1 × u2) ⋅ normal)
     sign(
         (u[2]*v[3] - u[3]*v[2]) * n[1] +
@@ -328,7 +339,7 @@ given triangle `elem` is located in.
 # Return type
 `T`
 """
-function distance{T}(q::Vector{T}, elem::Triangle{T})
+function distance(q::Vector{T}, elem::Triangle{T}) where T
     q ⋅ elem.normal - elem.distorig
 end
 
@@ -346,7 +357,7 @@ Devectorized computation of `(u-v)⋅n`.
 # Return type
 `T`
 """
-function ddot{T}(u::Vector{T}, v::Vector{T}, n::Vector{T})
+function ddot(u::Vector{T}, v::Vector{T}, n::Vector{T}) where T
     (u[1] - v[1]) * n[1] + (u[2] - v[2]) * n[2] + (u[3] - v[3]) * n[3]
 end
 
@@ -385,7 +396,7 @@ for ξ in obspoints_line([0, 0, 0], [1, 1, 1], 10)
 end
 ```
 """
-function obspoints_line{T}(u::Vector{T}, v::Vector{T}, n::Int)
+function obspoints_line(u::Vector{T}, v::Vector{T}, n::Int) where T
     (u + T(i) * (v - u) for i in linspace(0, 1, n))
 end
 
@@ -420,36 +431,42 @@ for Ξ in obspoints_plane(...)
 end
 ```
 """
-function obspoints_plane{T}(a::Vector{T}, b::Vector{T}, c::Vector{T}, nba::Int, nbc::Int)
+function obspoints_plane(
+        a  ::Vector{T},
+        b  ::Vector{T},
+        c  ::Vector{T},
+        nba::Int,
+        nbc::Int
+    ) where T
     (obspoints_line(ξ, c + (ξ - b), nbc) for ξ in obspoints_line(b, a, nba))
 end
 
 
 # =========================================================================================
 # Convenience aliases
-gemv!{T}(
+gemv!(
     α::T,
     m::Union{DenseArray{T,2}, SubArray{T,2}},
     v::Vector{T},
     dest::Union{DenseArray{T,1}, SubArray{T,1}}
-) = gemv!(α, m, v, one(T), dest)
+) where T = gemv!(α, m, v, one(T), dest)
 
-gemv!{T}(
+gemv!(
     α::T,
     m::Union{DenseArray{T,2}, SubArray{T,2}},
     v::Vector{T},
     β::T,
     dest::Union{DenseArray{T,1}, SubArray{T,1}}
-) = gemv!('N', α, m, v, β, dest)
+) where T = gemv!('N', α, m, v, β, dest)
 
-gemv{T}(
+gemv(
     α::T,
     m::Union{DenseArray{T,2}, SubArray{T,2}},
     v::Vector{T}
-) = gemv('N', α, m, v)
+) where T = gemv('N', α, m, v)
 
-gemm{T}(
+gemm(
     α::T,
     a::Union{DenseArray{T,2}, SubArray{T,2}},
     b::Union{DenseArray{T,2}, SubArray{T,2}}
-) = gemm('N', 'N', α, a, b)
+) where T = gemm('N', 'N', α, a, b)

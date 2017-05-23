@@ -29,7 +29,7 @@ for T in [:LocalityType, :LocalES, :NonlocalES]
 end
 abstract type LocalityType end
 struct NonlocalES <: LocalityType end
-struct LocalES <: LocalityType end
+struct LocalES    <: LocalityType end
 
 
 # =========================================================================================
@@ -59,12 +59,24 @@ Computes the molecular potentials for a list of observation points.
 Computes the molecular potentials for the given surface model, using each triangle center
 as observation point.
 """
-function φmol{T}(ξ::Vector{T}, charges::Vector{Charge{T}})
+function φmol(
+        ξ      ::Vector{T},
+        charges::Vector{Charge{T}}
+    ) where T
     # TODO devectorize!
     sum([q.val / euclidean(ξ, q.pos) for q in charges])
 end
-φmol{T}(Ξ::Vector{Vector{T}}, charges::Vector{Charge{T}}) = [φmol(ξ, charges) for ξ in Ξ]
-φmol{T}(model::Model{T, Triangle{T}}) = [φmol(ξ.center, model.charges) for ξ in model.elements]
+
+function φmol(
+        Ξ      ::Vector{Vector{T}},
+        charges::Vector{Charge{T}}
+    ) where T
+    [φmol(ξ, charges) for ξ in Ξ]
+end
+
+function φmol(model::Model{T, Triangle{T}}) where T
+    [φmol(ξ.center, model.charges) for ξ in model.elements]
+end
 
 
 # =========================================================================================
@@ -91,12 +103,18 @@ triangle's normal as reference normal.
 Computes the normal derivatives of the molecular potentials for the given surface model,
 using each triangle center and normal as observation point.
 """
-function ∂ₙφmol{T}(ξ::Triangle{T}, charges::Vector{Charge{T}})
+function ∂ₙφmol(
+        ξ      ::Triangle{T},
+        charges::Vector{Charge{T}}
+    ) where T
     # TODO devectorize!
     - sum([q.val * ddot(ξ.center, q.pos, ξ.normal) /
         euclidean(ξ.center, q.pos)^3 for q in charges])
 end
-∂ₙφmol{T}(model::Model{T, Triangle{T}}) = [∂ₙφmol(ξ, model.charges) for ξ in model.elements]
+
+function ∂ₙφmol(model::Model{T, Triangle{T}}) where T
+    [∂ₙφmol(ξ, model.charges) for ξ in model.elements]
+end
 
 
 # =========================================================================================
@@ -121,8 +139,17 @@ structureless medium for the given observation point ξ.
 
 Computes the molecular potential gradients for a list of observation points.
 """
-function ∇φmol{T}(ξ::Vector{T}, charges::Vector{Charge{T}})
+function ∇φmol(
+        ξ      ::Vector{T},
+        charges::Vector{Charge{T}}
+    ) where T
     # TODO devectorize!
     -sum([q.val * (ξ - q.pos) / euclidean(ξ, q.pos)^3 for q in charges])
 end
-∇φmol{T}(Ξ::Vector{Vector{T}}, charges::Vector{Charge{T}}) = [∇φmol(ξ, charges) for ξ in Ξ]
+
+function ∇φmol(
+        Ξ      ::Vector{Vector{T}},
+        charges::Vector{Charge{T}}
+    ) where T
+    [∇φmol(ξ, charges) for ξ in Ξ]
+end

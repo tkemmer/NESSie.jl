@@ -53,9 +53,12 @@ struct Triangle{T} <: SurfaceElement{T}
     "distance to the origin"
     distorig::T
 end
-Triangle{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}) = begin
-    props(Triangle(v1, v2, v3, T[], T[], zero(T), zero(T)))
-end
+
+Triangle(
+    v1::Vector{T},
+    v2::Vector{T},
+    v3::Vector{T}
+) where T = props(Triangle(v1, v2, v3, T[], T[], zero(T), zero(T)))
 
 
 # =========================================================================================
@@ -93,8 +96,13 @@ struct Tetrahedron{T} <: VolumeElement{T}
     "element domain (solvent :Σ, solute :Ω, or :none)"
     domain::Symbol
 end
-Tetrahedron{T}(v1::Vector{T}, v2::Vector{T}, v3::Vector{T}, v4::Vector{T}) =
-    Tetrahedron(v1, v2, v3, v4, :none)
+
+Tetrahedron(
+    v1::Vector{T},
+    v2::Vector{T},
+    v3::Vector{T},
+    v4::Vector{T}
+) where T = Tetrahedron{T}(v1, v2, v3, v4, :none)
 
 
 # =========================================================================================
@@ -123,7 +131,13 @@ struct Charge{T <: AbstractFloat}
     "charge value"
     val::T
 end
-Charge{T}(posx::T, posy::T, posz::T, val::T) = Charge{T}([posx, posy, posz], val)
+
+Charge(
+    posx::T,
+    posy::T,
+    posz::T,
+    val ::T
+) where T = Charge{T}([posx, posy, posz], val)
 
 
 # =========================================================================================
