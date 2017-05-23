@@ -1,7 +1,7 @@
 include("../../src/ProteinES.jl")
 
 using ProteinES
-using ProteinES.IO
+using ProteinES.Format
 
 abstract type MeshType end
 struct Nodes   <: MeshType end
