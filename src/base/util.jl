@@ -246,11 +246,12 @@ is no such line, the stream handle will be set to EOF.
 """
 function seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
     m = -1
+    found = false
     while !eof(fh)
         skiptheline || (m = position(fh))
-        startswith(readline(fh), prefix) && break
+        startswith(readline(fh), prefix) && (found = true) && break
     end
-    eof(fh) || skiptheline || seek(fh, m)
+    found && (skiptheline || seek(fh, m))
     nothing
 end
 
