@@ -274,22 +274,43 @@ vector.
 """
 function laplacecoll!(
         ptype   ::Type{P},
-        dest    ::Union{DenseArray{T,1}, DenseArray{T, 2}},
+        dest    ::DenseArray{T,1},
         elements::Vector{Triangle{T}},
         Ξ       ::Vector{Vector{T}},
-        fvals   ::Union{DenseArray{T,1},SubArray{T,1}}=T[]
+        fvals   ::Union{DenseArray{T,1},SubArray{T,1}}
     ) where {T, P <: PotentialType}
-    isvec  = isa(dest, DenseArray{T, 1})
-    isvec && @assert length(dest) == length(Ξ)
-    isvec && @assert length(fvals) == length(elements)
-    isvec || @assert size(dest) == (length(Ξ), length(elements))
+    @assert length(dest) == length(Ξ)
+    @assert length(fvals) == length(elements)
+
+    @inbounds for (eidx, elem) in enumerate(elements)
+        Threads.@threads for oidx in 1:length(Ξ)
+            ξ = Ξ[oidx]
+            dist = distance(ξ, elem)
+
+            # Project ξ onto the surface element plane if necessary
+            # Devectorized version of ξ -= dist * elem.normal
+            abs(dist) >= 1e-10 && (ξ = [ξ[i] - dist * elem.normal[i] for i in 1:3])
+
+            dest[oidx] += laplacepot(ptype, ξ, elem, dist) * fvals[eidx]
+        end
+    end
+    nothing
+end
+
+function laplacecoll!(
+        ptype   ::Type{P},
+        dest    ::DenseArray{T, 2},
+        elements::Vector{Triangle{T}},
+        Ξ       ::Vector{Vector{T}},
+    ) where {T, P <: PotentialType}
+    @assert size(dest) == (length(Ξ), length(elements))
 
     @inbounds for (eidx, elem) in enumerate(elements)
         Threads.@threads for oidx in 1:length(Ξ)
             ξ = Ξ[oidx]
 
             #TODO check whether zerodiag is necessary
-            if !isvec && ptype == DoubleLayer && eidx == oidx
+            if ptype == DoubleLayer && eidx == oidx
                 dest[oidx, eidx] = zero(T)
                 continue
             end
@@ -300,9 +321,7 @@ function laplacecoll!(
             # Devectorized version of ξ -= dist * elem.normal
             abs(dist) >= 1e-10 && (ξ = [ξ[i] - dist * elem.normal[i] for i in 1:3])
 
-            isvec ?
-                dest[oidx] += laplacepot(ptype, ξ, elem, dist) * fvals[eidx] :
-                dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist)
+            dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist)
         end
     end
     nothing
