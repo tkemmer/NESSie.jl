@@ -216,12 +216,47 @@ end
 
 # =========================================================================================
 """
+    setcubpts!{T}(
+        dest::Vector{Vector{T}},
+        qpts::QuadPts2D{T},
+        elem::Triangle{T}
+    )
+
+Prepare cubature points for one surface element.
+
+# Return type
+`Void`
+"""
+function setcubpts!(dest::Vector{Vector{T}}, qpts::QuadPts2D{T}, elem::Triangle{T}) where T
+    const u = elem.v2 - elem.v1
+    const v = elem.v3 - elem.v1
+
+    # devectorized version of
+    # cubpts = [u * qpts.x[i] + v * qpts.y[i] + elem.v1 for i in 1:7]
+    for i in 1:qpts.num, j in 1:3
+        dest[i][j] = qpts.x[i] * u[j] + qpts.y[i] * v[j] + elem.v1[j]
+    end
+    nothing
+end
+
+
+# =========================================================================================
+"""
     radoncoll!{T}(
-            dest    ::Union{DenseArray{T,1}, DenseArray{T,2}},
+            dest    ::DenseArray{T,1},
             elements::Vector{Triangle{T}},
             Ξ       ::Vector{Vector{T}},
             solution::Function,
-            fvals   ::DenseArray{T,1}=T[];
+            fvals   ::DenseArray{T,1};
+            # kwargs
+            yukawa  ::T=zero(T)
+    )
+
+    radoncoll!{T}(
+            dest    ::DenseArray{T,2},
+            elements::Vector{Triangle{T}},
+            Ξ       ::Vector{Vector{T}},
+            solution::Function;
             # kwargs
             yukawa  ::T=zero(T)
     )
@@ -246,43 +281,60 @@ to use the shorthand signatures `laplacecoll!` and `regularyukawacoll!` instead.
 `Void`
 """
 function radoncoll!(
-        dest    ::Union{DenseArray{T,1}, DenseArray{T,2}},
+        dest    ::DenseArray{T,1},
         elements::Vector{Triangle{T}},
         Ξ       ::Vector{Vector{T}},
         solution::Function,
-        fvals   ::DenseArray{T,1}=T[];
+        fvals   ::DenseArray{T,1};
         yukawa  ::T=zero(T)
     ) where T
     #=== MEMORY-CRITICAL CODE! ===#
-    isvec  = isa(dest, DenseArray{T,1})
-    isvec && @assert length(fvals) == length(elements)
-    isvec && @assert length(dest) == length(Ξ)
-    isvec || @assert size(dest) == (length(Ξ), length(elements))
+    @assert length(fvals) == length(elements)
+    @assert length(dest) == length(Ξ)
 
     # pre-allocate memory for cubature points
-    qpts = quadraturepoints(Triangle{T})
+    const qpts = quadraturepoints(Triangle{T})
     cubpts = [zeros(T, 3) for _ in 1:qpts.num]
 
     @inbounds for (eidx, elem) in enumerate(elements)
-        u = elem.v2 - elem.v1
-        v = elem.v3 - elem.v1
         area = 2 * elem.area
-
-        # compute cubature points
-        # devectorized version of
-        # cubpts = [u * qpts.x[i] + v * qpts.y[i] + elem.v1 for i in 1:7]
-        for i in 1:qpts.num, j in 1:3
-            cubpts[i][j] = qpts.x[i] * u[j] + qpts.y[i] * v[j] + elem.v1[j]
-        end
+        setcubpts!(cubpts, qpts, elem)
 
         for (oidx, ξ) in enumerate(Ξ)
             value = zero(T)
             for i in 1:qpts.num
                 value += solution(cubpts[i], ξ, elem.normal, yukawa) * qpts.weight[i]
             end
-            isvec ?
-                dest[oidx] += value * area * fvals[eidx] :
-                dest[oidx, eidx] = value * area
+            dest[oidx] += value * area * fvals[eidx]
+        end
+    end
+    nothing
+end
+
+function radoncoll!(
+        dest    ::DenseArray{T,2},
+        elements::Vector{Triangle{T}},
+        Ξ       ::Vector{Vector{T}},
+        solution::Function;
+        yukawa  ::T=zero(T)
+    ) where T
+    #=== MEMORY-CRITICAL CODE! ===#
+    @assert size(dest) == (length(Ξ), length(elements))
+
+    # pre-allocate memory for cubature points
+    const qpts = quadraturepoints(Triangle{T})
+    cubpts = [zeros(T, 3) for _ in 1:qpts.num]
+
+    @inbounds for (eidx, elem) in enumerate(elements)
+        area = 2 * elem.area
+        setcubpts!(cubpts, qpts, elem)
+
+        for (oidx, ξ) in enumerate(Ξ)
+            value = zero(T)
+            for i in 1:qpts.num
+                value += solution(cubpts[i], ξ, elem.normal, yukawa) * qpts.weight[i]
+            end
+            dest[oidx, eidx] = value * area
         end
     end
     nothing

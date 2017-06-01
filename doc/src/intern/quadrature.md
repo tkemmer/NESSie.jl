@@ -11,6 +11,7 @@
     ∂ₙlaplacepot
     regularyukawapot
     ∂ₙregularyukawapot
+    setcubpts!
 ```
 
 ## Rjasanow
