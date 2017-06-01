@@ -221,7 +221,8 @@ end
             elements::Vector{Triangle{T}},
             Ξ       ::Vector{Vector{T}},
             solution::Function,
-            fvals   ::DenseArray{T,1}=T[],
+            fvals   ::DenseArray{T,1}=T[];
+            # kwargs
             yukawa  ::T=zero(T)
     )
 
@@ -249,7 +250,7 @@ function radoncoll!(
         elements::Vector{Triangle{T}},
         Ξ       ::Vector{Vector{T}},
         solution::Function,
-        fvals   ::DenseArray{T,1}=T[],
+        fvals   ::DenseArray{T,1}=T[];
         yukawa  ::T=zero(T)
     ) where T
     #=== MEMORY-CRITICAL CODE! ===#
@@ -387,7 +388,7 @@ regularyukawacoll!(
     Ξ       ::Vector{Vector{T}},
     fvals   ::Union{DenseArray{T,1},SubArray{T,1}},
     yukawa  ::T
-) where T = radoncoll!(dest, elements, Ξ, regularyukawapot, fvals, yukawa)
+) where T = radoncoll!(dest, elements, Ξ, regularyukawapot, fvals, yukawa=yukawa)
 
 regularyukawacoll!(
             ::Type{DoubleLayer},
@@ -396,7 +397,7 @@ regularyukawacoll!(
     Ξ       ::Vector{Vector{T}},
     fvals   ::Union{DenseArray{T,1},SubArray{T,1}},
     yukawa  ::T
-) where T = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, fvals, yukawa)
+) where T = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, fvals, yukawa=yukawa)
 
 regularyukawacoll!(
             ::Type{SingleLayer},
@@ -404,7 +405,7 @@ regularyukawacoll!(
     elements::Vector{Triangle{T}},
     Ξ       ::Vector{Vector{T}},
     yukawa  ::T
-) where T = radoncoll!(dest, elements, Ξ, regularyukawapot, T[], yukawa)
+) where T = radoncoll!(dest, elements, Ξ, regularyukawapot, yukawa=yukawa)
 
 regularyukawacoll!(
             ::Type{DoubleLayer},
@@ -412,6 +413,6 @@ regularyukawacoll!(
     elements::Vector{Triangle{T}},
     Ξ       ::Vector{Vector{T}},
     yukawa  ::T
-) where T = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, T[], yukawa)
+) where T = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, yukawa=yukawa)
 
 end # module
