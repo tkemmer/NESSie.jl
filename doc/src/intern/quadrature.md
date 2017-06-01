@@ -24,4 +24,5 @@
     InSpace
     laplacepot
     logterm
+    projectξ
 ```

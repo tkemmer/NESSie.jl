@@ -284,13 +284,7 @@ function laplacecoll!(
 
     @inbounds for (eidx, elem) in enumerate(elements)
         Threads.@threads for oidx in 1:length(Ξ)
-            ξ = Ξ[oidx]
-            dist = distance(ξ, elem)
-
-            # Project ξ onto the surface element plane if necessary
-            # Devectorized version of ξ -= dist * elem.normal
-            abs(dist) >= 1e-10 && (ξ = [ξ[i] - dist * elem.normal[i] for i in 1:3])
-
+            ξ, dist = projectξ(Ξ[oidx], elem)
             dest[oidx] += laplacepot(ptype, ξ, elem, dist) * fvals[eidx]
         end
     end
@@ -307,20 +301,13 @@ function laplacecoll!(
 
     @inbounds for (eidx, elem) in enumerate(elements)
         Threads.@threads for oidx in 1:length(Ξ)
-            ξ = Ξ[oidx]
-
             #TODO check whether zerodiag is necessary
             if ptype == DoubleLayer && eidx == oidx
                 dest[oidx, eidx] = zero(T)
                 continue
             end
 
-            dist = distance(ξ, elem)
-
-            # Project ξ onto the surface element plane if necessary
-            # Devectorized version of ξ -= dist * elem.normal
-            abs(dist) >= 1e-10 && (ξ = [ξ[i] - dist * elem.normal[i] for i in 1:3])
-
+            ξ, dist = projectξ(Ξ[oidx], elem)
             dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist)
         end
     end
@@ -332,7 +319,7 @@ end
 """
     logterm{T}(χ2::T, sinφ::T)
 
-Helper function to compute
+Utility function to compute
 ```math
 \\frac
 {\\sqrt{1 - χ² \\sin²(φ)} + \\sqrt{1 - χ² \\sin(φ)}}
@@ -346,6 +333,24 @@ function logterm(χ2::T, sinφ::T) where T
     term1 = √(1 - χ2 * sinφ^2)
     term2 = √(1 - χ2) * sinφ
     (term1 + term2) / (term1 - term2)
+end
+
+
+# =========================================================================================
+"""
+    projectξ{T}(ξ::Vector{T}, elem::Triangle{T})
+
+Projects ξ onto the surface element plane. Returns the projection and the original distance
+to the plane.
+
+# Return type
+`Tuple{Vector{T}, T}`
+"""
+function projectξ(ξ::Vector{T}, elem::Triangle{T}) where T
+    dist = distance(ξ, elem)
+    abs(dist) < 1e-10 && return (ξ, dist)
+    # Devectorized version of ξ -= dist * elem.normal
+    ([ξ[i] - dist * elem.normal[i] for i in 1:3], dist)
 end
 
 end # module
