@@ -283,7 +283,7 @@ function laplacecoll!(
     @assert length(fvals) == length(elements)
 
     @inbounds for (eidx, elem) in enumerate(elements)
-        Threads.@threads for oidx in 1:length(Ξ)
+        for oidx in 1:length(Ξ)
             ξ, dist = projectξ(Ξ[oidx], elem)
             dest[oidx] += laplacepot(ptype, ξ, elem, dist) * fvals[eidx]
         end
@@ -300,7 +300,7 @@ function laplacecoll!(
     @assert size(dest) == (length(Ξ), length(elements))
 
     @inbounds for (eidx, elem) in enumerate(elements)
-        Threads.@threads for oidx in 1:length(Ξ)
+        for oidx in 1:length(Ξ)
             #TODO check whether zerodiag is necessary
             if ptype == DoubleLayer && eidx == oidx
                 dest[oidx, eidx] = zero(T)
