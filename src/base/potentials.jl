@@ -63,8 +63,13 @@ function φmol(
         ξ      ::Vector{T},
         charges::Vector{Charge{T}}
     ) where T
-    # TODO devectorize!
-    sum([q.val / euclidean(ξ, q.pos) for q in charges])
+    # devectorized version of
+    # sum([q.val / euclidean(ξ, q.pos) for q in charges])
+    ret = zero(T)
+    for q in charges
+        ret += q.val / euclidean(ξ, q.pos)
+    end
+    ret
 end
 
 function φmol(
@@ -107,9 +112,11 @@ function ∂ₙφmol(
         ξ      ::Triangle{T},
         charges::Vector{Charge{T}}
     ) where T
-    # TODO devectorize!
-    - sum([q.val * ddot(ξ.center, q.pos, ξ.normal) /
-        euclidean(ξ.center, q.pos)^3 for q in charges])
+    ret = zero(T)
+    for q in charges
+        ret -= q.val * ddot(ξ.center, q.pos, ξ.normal) / euclidean(ξ.center, q.pos)^3
+    end
+    ret
 end
 
 function ∂ₙφmol(model::Model{T, Triangle{T}}) where T
