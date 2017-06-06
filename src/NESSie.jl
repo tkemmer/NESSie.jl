@@ -24,10 +24,18 @@ export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalE
 
 # Submodules
 include("Format.jl")
+export Format
+
 include("Radon.jl")
+export Radon
+
 include("Rjasanow.jl")
+export Rjasanow
+
 include("Born.jl")
+export Born
+
 include("BEM.jl")
-#include("FEM.jl")
+export BEM
 
 end # module
