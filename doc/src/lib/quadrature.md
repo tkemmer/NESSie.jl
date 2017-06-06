@@ -14,11 +14,11 @@
 
 ## Laplace potential
 ```@docs
-    ProteinES.Radon.laplacecoll!
-    ProteinES.Rjasanow.laplacecoll!
+    NESSie.Radon.laplacecoll!
+    NESSie.Rjasanow.laplacecoll!
 ```
 
 ## Yukawa potential
 ```@docs
-    ProteinES.Radon.regularyukawacoll!
+    NESSie.Radon.regularyukawacoll!
 ```

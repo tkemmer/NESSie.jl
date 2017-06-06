@@ -1,5 +1,5 @@
-using ProteinES.Format
-using ProteinES.Format: readhmo_nodes, readhmo_elements, readhmo_charges
+using NESSie.Format
+using NESSie.Format: readhmo_nodes, readhmo_elements, readhmo_charges
 
 testfiles = ((mktemp()..., (0,0,0)), # empty file
              (mktemp()..., (3,2,2))) # dummy file

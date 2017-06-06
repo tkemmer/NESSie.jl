@@ -1,5 +1,5 @@
-using ProteinES.Format
-using ProteinES.Format: readmsms_nodes, readmsms_elements
+using NESSie.Format
+using NESSie.Format: readmsms_nodes, readmsms_elements
 
 testfiles = ((mktemp()..., mktemp()..., (0,0)), # empty file
              (mktemp()..., mktemp()..., (3,2))) # dummy file

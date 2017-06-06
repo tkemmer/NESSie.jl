@@ -1,7 +1,7 @@
-include("../../src/ProteinES.jl")
+push!(LOAD_PATH, "../../src/")
 
-using ProteinES
-using ProteinES.Format
+using NESSie
+using NESSie.Format
 
 abstract type MeshType end
 struct Nodes   <: MeshType end
@@ -46,7 +46,7 @@ elseif length(ARGS) == 4
     oformat = ARGS[3]
     ofname  = ARGS[4]
 else
-    println("\n\e[1mProteinES.jl file format converter\e[0m")
+    println("\n\e[1mNESSie.jl file format converter\e[0m")
     println("==================================\n")
     println("\e[1mUsage:\e[0m\n")
     println("\tconverter.jl [<format in>] <file in> <format out> <file out>\n")

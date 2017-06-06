@@ -85,7 +85,7 @@ end
 Default system parameters
 
 # Return type
-[`Option{T}`](@ref ProteinES.Option)
+[`Option{T}`](@ref NESSie.Option)
 
 # Default values
  * ``ε\_Ω = 2``

@@ -2,7 +2,7 @@
 
 ## Radon cubature
 ```@meta
-    CurrentModule = ProteinES.Radon
+    CurrentModule = NESSie.Radon
 ```
 
 ```@docs
@@ -16,7 +16,7 @@
 
 ## Rjasanow
 ```@meta
-    CurrentModule = ProteinES.Rjasanow
+    CurrentModule = NESSie.Rjasanow
 ```
 
 ```@docs

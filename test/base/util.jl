@@ -1,4 +1,4 @@
-using ProteinES: eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
+using NESSie: eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
 
 context("eye! and pluseye!") do
     for T in (Int, testtypes...)

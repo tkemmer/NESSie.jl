@@ -1,7 +1,7 @@
 module Born
 
-using ..ProteinES
-using ..ProteinES: potprefactor
+using ..NESSie
+using ..NESSie: potprefactor
 using Distances: euclidean
 
 include("born/model.jl")

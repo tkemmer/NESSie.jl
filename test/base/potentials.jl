@@ -1,4 +1,4 @@
-using ProteinES: φmol, ∂ₙφmol
+using NESSie: φmol, ∂ₙφmol
 
 context("φmol and ∂ₙφmol") do
     # TODO check list variants of the functions

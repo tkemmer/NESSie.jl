@@ -2,7 +2,7 @@
 
 # BEM solver
 ```@meta
-    CurrentModule = ProteinES.BEM
+    CurrentModule = NESSie.BEM
 ```
 
 ```@docs

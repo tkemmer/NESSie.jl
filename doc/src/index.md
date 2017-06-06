@@ -1,6 +1,6 @@
-# ProteinES.jl
+# NESSie.jl
 
-Local and nonlocal electrostatics of biomolecules in structured solvents
+Nonlocal Electrostatics in Structured Solvents
 
 ## Manual
 * [Introduction](@ref)

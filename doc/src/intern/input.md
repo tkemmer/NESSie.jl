@@ -1,7 +1,7 @@
 # [Input formats](@id int-input)
 
 ```@meta
-    CurrentModule = ProteinES.Format
+    CurrentModule = NESSie.Format
 ```
 
 ```@docs

@@ -1,6 +1,6 @@
 push!(LOAD_PATH,"../src/")
 
-using Documenter, ProteinES
+using Documenter, NESSie
 
 const pages = [
     "Home" => "index.md",
@@ -29,13 +29,13 @@ const pages = [
 ]
 
 makedocs(
-    modules   = [ProteinES, ProteinES.BEM, ProteinES.Born, ProteinES.Format],
+    modules   = [NESSie, NESSie.BEM, NESSie.Born, NESSie.Format],
     clean     = true,
     doctest   = true,
     linkcheck = true,
     checkdocs = :all,
     pages     = pages,
     format    = :html,
-    sitename  = "ProteinES.jl",
+    sitename  = "NESSie.jl",
     repo      = "../..{path}"
 )

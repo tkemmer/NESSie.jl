@@ -20,23 +20,23 @@
 ```@docs
     φmol
     ∂ₙφmol
-    ProteinES.∇φmol
+    NESSie.∇φmol
 ```
 
 ### Interior potentials
 ```@docs
-    ProteinES.BEM.φΩ
-    ProteinES.Born.φΩ
+    NESSie.BEM.φΩ
+    NESSie.Born.φΩ
 ```
 
 
 ### Exterior potentials
 ```@docs
-    ProteinES.BEM.φΣ
-    ProteinES.Born.φΣ
+    NESSie.BEM.φΣ
+    NESSie.Born.φΣ
 ```
 
 ## Energies
 ```@docs
-    ProteinES.BEM.rfenergy
+    NESSie.BEM.rfenergy
 ```

@@ -6,10 +6,10 @@ push!(LOAD_PATH,"../../src/")
     Comparison of local and nonlocal exterior potentials of Born ions.
 =#
 
-using ProteinES
-using ProteinES.BEM
-using ProteinES.Born
-using ProteinES.Format
+using NESSie
+using NESSie.BEM
+using NESSie.Born
+using NESSie.Format
 using PyPlot: figure, plot, show, legend, xlabel, ylabel, title, axvline
 
 function plotexterior(name::String, maxdist::Float64=10., resolution::Int=100)

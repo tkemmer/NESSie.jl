@@ -1,9 +1,9 @@
 # [Utility functions](@id int-util)
 
 ```@meta
-    CurrentModule = ProteinES
+    CurrentModule = NESSie
     DocTestSetup = quote
-        using ProteinES: eye!, pluseye!, unpack
+        using NESSie: eye!, pluseye!, unpack
     end
 ```
 

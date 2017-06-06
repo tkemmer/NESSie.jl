@@ -1,4 +1,4 @@
-using ProteinES.Born
+using NESSie.Born
 
 context("bornion") do
     for T in testtypes

@@ -35,7 +35,7 @@ Triangle{T}(
 ```
 Most commonly used constructor variant for creating a triangle by only specifying its nodes.
 The remaining member variables will automatically be computed via
-[`props`](@ref ProteinES.props).
+[`props`](@ref NESSie.props).
 """
 struct Triangle{T} <: SurfaceElement{T}
     "position of the first node"

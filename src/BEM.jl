@@ -1,8 +1,8 @@
 module BEM
 
-using ..ProteinES
-using ..ProteinES: Radon, Rjasanow, σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!,
-                   yukawa
+using ..NESSie
+using ..NESSie: Radon, Rjasanow, σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!,
+                yukawa
 using Distances: euclidean
 
 export solve, φΩ, φΣ, rfenergy

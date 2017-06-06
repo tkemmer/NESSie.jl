@@ -1,4 +1,4 @@
-using ProteinES.Format
+using NESSie.Format
 
 testfiles = ((mktemp()..., 0), # empty file
              (mktemp()..., 2)) # dummy file

@@ -1,6 +1,6 @@
 __precompile__()
 
-module ProteinES
+module NESSie
 
 import Base: cos, sign, seek
 import Base.LinAlg.BLAS: gemv!, gemv, axpy!, gemm

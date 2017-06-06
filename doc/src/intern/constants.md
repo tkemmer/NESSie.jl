@@ -1,7 +1,7 @@
 # [Constants](@id int-constants)
 
 ```@meta
-    CurrentModule = ProteinES
+    CurrentModule = NESSie
 ```
 
 ```@docs

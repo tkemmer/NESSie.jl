@@ -4,7 +4,7 @@
 using namespace std;
 
 void printUsage() {
-    std::cout << "\n\033[1mProteinES.jl sphere generator (using GAMer)\033[0m\n"
+    std::cout << "\n\033[1mNESSie.jl sphere generator (using GAMer)\033[0m\n"
         << "===========================================\n\n"
         << "Generates a surface mesh for a sphere with the given radius.\n\n"
         << "\033[1mUsage:\033[0m\n\n"

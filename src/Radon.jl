@@ -1,7 +1,7 @@
 module Radon
 
-using ..ProteinES
-using ..ProteinES: ddot
+using ..NESSie
+using ..NESSie: ddot
 using Distances: euclidean
 
 export laplacecoll!, regularyukawacoll!

@@ -1,5 +1,5 @@
-using ProteinES.Rjasanow
-using ProteinES.Rjasanow: laplacepot
+using NESSie.Rjasanow
+using NESSie.Rjasanow: laplacepot
 
 @pending laplacecoll! --> :nothing
 

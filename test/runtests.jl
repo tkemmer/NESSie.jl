@@ -1,6 +1,6 @@
 push!(LOAD_PATH,"../src/")
 
-using ProteinES
+using NESSie
 using FactCheck
 
 # All tests. Will be used if no command line arguments are given.

@@ -1,7 +1,7 @@
 # Output formats
 
 ```@meta
-    CurrentModule = ProteinES.Format
+    CurrentModule = NESSie.Format
 ```
 
 Currently supported output file formats with different models:

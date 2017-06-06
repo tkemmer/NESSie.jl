@@ -4,7 +4,7 @@
 using namespace std;
 
 void printUsage() {
-    cout << "\n\e[1mProteinES.jl molecule mesher (using GAMer)\e[0m\n"
+    cout << "\n\e[1mNESSie.jl molecule mesher (using GAMer)\e[0m\n"
          << "==========================================\n\n"
          << "\e[1mUsage:\e[0m\n\n"
          << "\tmesher <file in> <dir out> [<option>...]\n"

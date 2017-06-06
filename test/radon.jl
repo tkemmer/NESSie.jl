@@ -1,5 +1,5 @@
-using ProteinES: yukawa
-using ProteinES.Radon
+using NESSie: yukawa
+using NESSie.Radon
 
 context("laplacepot") do
     for T in testtypes

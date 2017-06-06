@@ -1,4 +1,4 @@
-using ProteinES: potprefactor
+using NESSie: potprefactor
 
 context("potprefactor") do
     for T in testtypes

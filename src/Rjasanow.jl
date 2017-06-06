@@ -1,7 +1,7 @@
 module Rjasanow
 
-using ..ProteinES
-using ..ProteinES: cos, cathetus, sign, distance
+using ..NESSie
+using ..NESSie: cos, cathetus, sign, distance
 
 export laplacecoll!
 

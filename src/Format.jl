@@ -1,7 +1,7 @@
 module Format
 
-using ..ProteinES
-using ..ProteinES: reverseindex, unpack, vertexnormals
+using ..NESSie
+using ..NESSie: reverseindex, unpack, vertexnormals
 using JSON: json
 using LightXML: XMLDocument, create_root, new_child, add_text, set_attribute
 
