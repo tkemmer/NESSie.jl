@@ -282,7 +282,8 @@ function laplacecoll!(
     @assert length(dest) == length(Ξ)
     @assert length(fvals) == length(elements)
 
-    @inbounds for (eidx, elem) in enumerate(elements)
+    @inbounds for eidx in 1:length(elements)
+        elem = elements[eidx]
         for oidx in 1:length(Ξ)
             ξ, dist = projectξ(Ξ[oidx], elem)
             dest[oidx] += laplacepot(ptype, ξ, elem, dist) * fvals[eidx]
@@ -299,7 +300,8 @@ function laplacecoll!(
     ) where {T, P <: PotentialType}
     @assert size(dest) == (length(Ξ), length(elements))
 
-    @inbounds for (eidx, elem) in enumerate(elements)
+    @inbounds for eidx in 1:length(elements)
+        elem = elements[eidx]
         for oidx in 1:length(Ξ)
             #TODO check whether zerodiag is necessary
             if ptype == DoubleLayer && eidx == oidx
