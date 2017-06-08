@@ -296,11 +296,13 @@ function radoncoll!(
     const qpts = quadraturepoints(Triangle{T})
     cubpts = [zeros(T, 3) for _ in 1:qpts.num]
 
-    @inbounds for (eidx, elem) in enumerate(elements)
+    @inbounds for eidx in 1:length(elements)
+        elem = elements[eidx]
         area = 2 * elem.area
         setcubpts!(cubpts, qpts, elem)
 
-        for (oidx, ξ) in enumerate(Ξ)
+        for oidx in length(Ξ)
+            ξ = Ξ[oidx]
             value = zero(T)
             for i in 1:qpts.num
                 value += solution(cubpts[i], ξ, elem.normal, yukawa) * qpts.weight[i]
@@ -325,11 +327,13 @@ function radoncoll!(
     const qpts = quadraturepoints(Triangle{T})
     cubpts = [zeros(T, 3) for _ in 1:qpts.num]
 
-    @inbounds for (eidx, elem) in enumerate(elements)
+    @inbounds for eidx in 1:length(elements)
+        elem = elements[eidx]
         area = 2 * elem.area
         setcubpts!(cubpts, qpts, elem)
 
-        for (oidx, ξ) in enumerate(Ξ)
+        for oidx in 1:length(Ξ)
+            ξ = Ξ[oidx]
             value = zero(T)
             for i in 1:qpts.num
                 value += solution(cubpts[i], ξ, elem.normal, yukawa) * qpts.weight[i]
