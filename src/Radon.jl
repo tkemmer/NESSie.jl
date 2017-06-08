@@ -134,7 +134,7 @@ function regularyukawapot(x::DenseArray{T,1}, ξ::Vector{T}, yukawa::T) where T
         # e^(-c) - 1 = Σ((-c)^i / i!) for i=1 to ∞
         term = -scalednorm
         tolerance = 1e-10 * abs(term)
-        tsum = zero(T)     # DON'T EVER USE 0 HERE! Time: x2, Memory: x3
+        tsum = zero(T)
         for i in 1:15
             abs(term) <= tolerance && break
 
@@ -199,9 +199,9 @@ function ∂ₙregularyukawapot(
         # 1 - (c+1)e^(-c) = Σ((-c)^i * (i-1) / i!) for i=2 to ∞
         term = scalednorm * scalednorm / 2
         tolerance = 1e-10 * abs(term)
-        tsum = zero(T)  # DON'T EVER USE 0 HERE!
+        tsum = zero(T)
         for i in 2:16
-            abs(term #=* (i-1)=#) <= tolerance && continue
+            abs(term) <= tolerance && continue
 
             tsum += term * (i-1)
             term *= -scalednorm / (i+1)
