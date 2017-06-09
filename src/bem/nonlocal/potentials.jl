@@ -58,7 +58,7 @@ function φΣ(
 
     # φ += (Vʸ-V)[εΩ(1/εΣ - 1/ε∞) ⋅ (q + qmol)](ξ)
     scale!(buf, εΩ * (1/εΣ - 1/ε∞))
-    Radon.regularyukawacoll!(SingleLayer, φ, elements, Ξ, buf, yuk)
+    Radon.regularyukawacoll!(SingleLayer, φ, elements, Ξ, yuk, buf)
 
     # φ += K[u + umol](ξ)
     copy!(buf, bem.u)
@@ -69,7 +69,7 @@ function φΣ(
     copy!(buf, bem.u)
     axpy!(1-εΩ/εΣ, bem.umol, buf)
     axpy!(-ε∞/εΣ, bem.w, buf)
-    Radon.regularyukawacoll!(DoubleLayer, φ, elements, Ξ, buf, yuk)
+    Radon.regularyukawacoll!(DoubleLayer, φ, elements, Ξ, yuk, buf)
 
     # Apply remaining prefactors:
     # ▶ 4π        for V, K, (Vʸ-V), and (Kʸ-K)
