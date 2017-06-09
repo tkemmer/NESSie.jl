@@ -1,49 +1,6 @@
 using NESSie: yukawa
 using NESSie.Radon
 
-context("laplacepot") do
-    for T in testtypes
-        # x --> ξ
-        x = ones(T, 3)
-        ret = Radon.laplacepot(x, x)
-        @fact typeof(ret) --> T
-        @fact ret --> 0
-        # ξ not in origin (moderate vecnorm)
-        ξ = -ones(T, 3)
-        ret = Radon.Radon.laplacepot(x, ξ)
-        @fact typeof(ret) --> T
-        @fact ret --> roughly(T(0.288675134594812882254574390250978727823800875635063438009301))
-        # ξ in origin (moderate vecnorm)
-        ξ = zeros(T, 3)
-        ret = Radon.Radon.laplacepot(x, ξ)
-        @fact typeof(ret) --> T
-        @fact ret --> roughly(T(0.577350269189625764509148780501957455647601751270126876018602))
-        @pending alternating_series --> :nothing
-    end
-end
-
-context("∂ₙlaplacepot") do
-    for T in testtypes
-        # x --> ξ
-        x = ones(T, 3)
-        n = map(T, [1, 0, 0])
-        ret = Radon.Radon.∂ₙlaplacepot(x, x, n)
-        @fact typeof(ret) --> T
-        @fact ret --> 0
-        # ξ not in origin (moderate vecnorm)
-        ξ = -ones(T, 3)
-        ret = Radon.Radon.∂ₙlaplacepot(x, ξ, n)
-        @fact typeof(ret) --> T
-        @fact ret --> roughly(T(-0.04811252243246881370909573170849645463730014593917723966821))
-        # ξ in origin (moderate vecnorm)
-        ξ = zeros(T, 3)
-        ret = Radon.Radon.∂ₙlaplacepot(x, ξ, n)
-        @fact typeof(ret) --> T
-        @fact ret --> roughly(T(-0.19245008972987525483638292683398581854920058375670895867286))
-        @pending alternating_series --> :nothing
-    end
-end
-
 context("regularyukawapot") do
     for T in testtypes
         # x --> ξ

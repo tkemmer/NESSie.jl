@@ -14,7 +14,6 @@
 
 ## Laplace potential
 ```@docs
-    NESSie.Radon.laplacecoll!
     NESSie.Rjasanow.laplacecoll!
 ```
 
