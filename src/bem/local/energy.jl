@@ -1,9 +1,7 @@
 # =========================================================================================
 """
     rfenergy{T, B <: BEMResult{T}}(
-        bem       ::B;
-        # kwargs
-        LaplaceMod::Module=Rjasanow
+        bem       ::B
     )
 
 Computes the local or nonlocal reaction field energy W* as
@@ -12,16 +10,13 @@ W\^* = ∫φ\^* ρ \\quad dΩ
 ```
 where ``φ\^*`` is the reaction field and ``ρ`` is the corresponding charge distribution.
 
-# Arguments
- * `LaplaceMod` Module to be used for Laplace potential; Valid values: `Radon`, `Rjasanow`
-
 # Unit
 ``\\frac{kJ}{mol}``
 
 # Return type
 `T`
 """
-function rfenergy(bem::LocalBEMResult{T}; LaplaceMod::Module=Rjasanow) where T
+function rfenergy(bem::LocalBEMResult{T}) where T
     qposs = [charge.pos for charge in bem.model.charges]
     qvals = [charge.val for charge in bem.model.charges]
 
@@ -29,11 +24,11 @@ function rfenergy(bem::LocalBEMResult{T}; LaplaceMod::Module=Rjasanow) where T
     wstar = zeros(T, length(bem.model.charges))
 
     # W* = -[W ⋅ u](ξ)
-    LaplaceMod.laplacecoll!(DoubleLayer, wstar, bem.model.elements, qposs, bem.u)
+    Rjasanow.laplacecoll!(DoubleLayer, wstar, bem.model.elements, qposs, bem.u)
     scale!(wstar, -1)
 
     # W* += [V ⋅ q](ξ)
-    LaplaceMod.laplacecoll!(SingleLayer, wstar, bem.model.elements, qposs, bem.q)
+    Rjasanow.laplacecoll!(SingleLayer, wstar, bem.model.elements, qposs, bem.q)
 
     # Apply ρ, integrate over Ω and apply remaining prefactors (in order)
     # ▶ 4π        for Vtilde, W

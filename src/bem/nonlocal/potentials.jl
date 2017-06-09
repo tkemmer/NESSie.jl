@@ -2,18 +2,17 @@
 # Documented in bem/local/potentials.jl
 function φΩ(
         Ξ         ::Vector{Vector{T}},
-        bem       ::NonlocalBEMResult{T};
-        LaplaceMod::Module=Rjasanow
+        bem       ::NonlocalBEMResult{T}
     ) where T
     # result vector
     φ = zeros(T, length(Ξ))
 
     # φ  = -[K ⋅ u](ξ)
-    LaplaceMod.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, bem.u)
+    Rjasanow.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, bem.u)
     scale!(φ, -1)
 
     # φ += [V ⋅ q](ξ)
-    LaplaceMod.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, bem.q)
+    Rjasanow.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, bem.q)
 
     # φ *= 2/4π
     # (K and V were premultiplied by 4π! 4π⋅ε0 from u and q still to be applied)
@@ -37,8 +36,7 @@ end
 # Documented in bem/local/potentials.jl
 function φΣ(
         Ξ         ::Vector{Vector{T}},
-        bem       ::NonlocalBEMResult{T};
-        LaplaceMod::Module=Rjasanow
+        bem       ::NonlocalBEMResult{T}
     ) where T
     # result vector
     φ = zeros(T, length(Ξ))
@@ -55,7 +53,7 @@ function φΣ(
     # φ  = -V[εΩ/ε∞ ⋅ (q + qmol)](ξ)
     copy!(buf, bem.q)
     axpy!(1, bem.qmol, buf)
-    LaplaceMod.laplacecoll!(SingleLayer, φ, elements, Ξ, buf)
+    Rjasanow.laplacecoll!(SingleLayer, φ, elements, Ξ, buf)
     scale!(φ, -εΩ/ε∞)
 
     # φ += (Vʸ-V)[εΩ(1/εΣ - 1/ε∞) ⋅ (q + qmol)](ξ)
@@ -65,7 +63,7 @@ function φΣ(
     # φ += K[u + umol](ξ)
     copy!(buf, bem.u)
     axpy!(1, bem.umol, buf)
-    LaplaceMod.laplacecoll!(DoubleLayer, φ, elements, Ξ, buf)
+    Rjasanow.laplacecoll!(DoubleLayer, φ, elements, Ξ, buf)
 
     # φ += (Kʸ-K)[u + (1-εΩ/εΣ) ⋅ umol - ε∞\εΣ ⋅ w](ξ)
     copy!(buf, bem.u)

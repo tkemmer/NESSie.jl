@@ -27,8 +27,7 @@ end
 # Documented in bem/local/solver.jl
 function solve(
                   ::Type{NonlocalES},
-        model     ::Model{T, Triangle{T}};
-        LaplaceMod::Module=Rjasanow
+        model     ::Model{T, Triangle{T}}
     ) where T
     # convenient access
     const elements = model.elements
@@ -107,7 +106,7 @@ function solve(
     #=
         generate and apply K
     =#
-    LaplaceMod.laplacecoll!(DoubleLayer, buffer, elements, Ξ)
+    Rjasanow.laplacecoll!(DoubleLayer, buffer, elements, Ξ)
 
     # β += K⋅umol
     gemv!(one(T), buffer, umol, β)
@@ -124,7 +123,7 @@ function solve(
     #=
         generate and apply V
     =#
-    LaplaceMod.laplacecoll!(SingleLayer, buffer, elements, Ξ)
+    Rjasanow.laplacecoll!(SingleLayer, buffer, elements, Ξ)
 
     # β -= εΩ/ε∞ * V * qmol
     gemv!(-εΩ/ε∞, buffer, qmol, β)

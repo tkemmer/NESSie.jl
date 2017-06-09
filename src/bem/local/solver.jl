@@ -30,23 +30,17 @@ end
 """
     solve{T, L <: LocalityType}(
                   ::L,
-        model     ::Model{T, Triangle{T}};
-        # kwargs
-        LaplaceMod::Module = Rjasanow
+        model     ::Model{T, Triangle{T}}
     )
 
 Computes the full local or nonlocal cauchy data on the surface of the biomolecule.
-
-# Arguments
- * `LaplaceMod` Module to be used for Laplace potential; Valid values: `Radon`, `Rjasanow`
 
 # Return type
 `LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
 """
 function solve(
                   ::Type{LocalES},
-        model     ::Model{T, Triangle{T}};
-        LaplaceMod::Module=Rjasanow
+        model     ::Model{T, Triangle{T}}
     ) where T
     # observation points ξ
     const Ξ = [e.center for e in model.elements]
@@ -78,7 +72,7 @@ function solve(
         generate and apply V
     =#
     # M_q = V
-    LaplaceMod.laplacecoll!(SingleLayer, v, model.elements, Ξ)
+    Rjasanow.laplacecoll!(SingleLayer, v, model.elements, Ξ)
 
     # bᵤ -= εΩ/εΣ ⋅ V ⋅ qmol
     gemv!(-εΩ/εΣ, v, qmol, b)
@@ -86,7 +80,7 @@ function solve(
     #=
         generate and apply K
     =#
-    LaplaceMod.laplacecoll!(DoubleLayer, k, model.elements, Ξ)
+    Rjasanow.laplacecoll!(DoubleLayer, k, model.elements, Ξ)
 
     # Mᵤ += (εΩ/εΣ - 1) ⋅ K
     axpy!(εΩ/εΣ - 1, k, m)

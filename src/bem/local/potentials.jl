@@ -2,9 +2,7 @@
 """
     φΩ{T, B <: BEMResult{T}}(
         Ξ         ::Vector{Vector{T}},
-        bem       ::B;
-        # kwargs
-        LaplaceMod::Module=Rjasanow
+        bem       ::B
     )
 
 Computes the local or nonlocal interior electrostatic potential ``φ\_Ω`` for the given set
@@ -12,9 +10,6 @@ of observation points `Ξ`.
 
 !!! warning
     This function does not verify whether all points in `Ξ` are located in ``Ω``!
-
-# Arguments
- * `LaplaceMod` Module to be used for Laplace potential; Valid values: `Radon, Rjasanow`
 
 # Unit
 ``V = \\frac{C}{F}``
@@ -24,18 +19,17 @@ of observation points `Ξ`.
 """
 function φΩ(
         Ξ         ::Vector{Vector{T}},
-        bem       ::LocalBEMResult{T};
-        LaplaceMod::Module=Rjasanow
+        bem       ::LocalBEMResult{T}
     ) where T
     # result vector
     φ = zeros(T, length(Ξ))
 
     # φ  = -[W ⋅ u](ξ)
-    LaplaceMod.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, bem.u)
+    Rjasanow.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, bem.u)
     scale!(φ, -1)
 
     # φ += [Vtilde ⋅ q](ξ)
-    LaplaceMod.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, bem.q)
+    Rjasanow.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, bem.q)
 
     # φ *= 1/4π
     # (W and Vtilde were premultiplied by 4π! 4π⋅ε0 from u and q still to be applied)
@@ -59,8 +53,7 @@ end
 """
     φΣ{T, B <: BEMResult{T}}(
         Ξ         ::Vector{Vector{T}},
-        bem       ::B,
-        LaplaceMod::Module=Rjasanow
+        bem       ::B
     )
 
 Computes the local or nonlocal exterior electrostatic potential ``φ\_Σ`` for the given set
@@ -68,9 +61,6 @@ of observation points `Ξ`.
 
 !!! warning
     This function does not verify whether all points in `Ξ` are located in ``Σ``!
-
-# Arguments
- * `LaplaceMod` Module to be used for Laplace potential; Valid values: `Radon, Rjasanow`
 
 # Unit
 ``V = \\frac{C}{F}``
@@ -80,8 +70,7 @@ of observation points `Ξ`.
 """
 function φΣ(
         Ξ         ::Vector{Vector{T}},
-        bem       ::LocalBEMResult{T};
-        LaplaceMod::Module=Rjasanow
+        bem       ::LocalBEMResult{T}
     ) where T
     # result vector
     φ = zeros(T, length(Ξ))
@@ -90,13 +79,13 @@ function φΣ(
     # φ  = -εΩ/εΣ ⋅ [Vtilde ⋅ (q + qmol)](ξ)
     copy!(buf, bem.q)
     axpy!(1, bem.qmol, buf)
-    LaplaceMod.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, buf)
+    Rjasanow.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, buf)
     scale!(φ, -bem.model.params.εΩ/bem.model.params.εΣ)
 
     # φ += [W ⋅ (u + umol)](ξ)
     copy!(buf, bem.u)
     axpy!(1, bem.umol, buf)
-    LaplaceMod.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, buf)
+    Rjasanow.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, buf)
 
     # Apply remaining prefactors:
     # ▶ 4π        for Vtilde, W
