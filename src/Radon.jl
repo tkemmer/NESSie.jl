@@ -301,7 +301,7 @@ function radoncoll!(
         area = 2 * elem.area
         setcubpts!(cubpts, qpts, elem)
 
-        for oidx in length(Ξ)
+        for oidx in 1:length(Ξ)
             ξ = Ξ[oidx]
             value = zero(T)
             for i in 1:qpts.num
