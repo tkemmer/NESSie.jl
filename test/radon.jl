@@ -40,29 +40,29 @@ context("∂ₙregularyukawapot") do
         x = ones(T, 3)
         n = map(T, [1, 0, 0])
         yuk = T(7)
-        ret = Radon.∂ₙregularyukawapot(x, x, n, yuk)
+        ret = Radon.∂ₙregularyukawapot(x, x, yuk, n)
         @fact typeof(ret) --> T
         @fact ret --> 0
         # ξ not in origin (no cancellation)
         ξ = -ones(T, 3)
-        ret = Radon.∂ₙregularyukawapot(x, ξ, n, yuk)
+        ret = Radon.∂ₙregularyukawapot(x, ξ, yuk, n)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(0.048112522396707305228639137148607498838982054839859863103104))
         # ξ in origin (no cancellation)
         ξ = zeros(T, 3)
-        ret = Radon.∂ₙregularyukawapot(x, ξ, n, yuk)
+        ret = Radon.∂ₙregularyukawapot(x, ξ, yuk, n)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(0.192436385477375021033020985138032408973537816345889754008150))
         # ξ in origin (potential cancellation)
-        ret = Radon.∂ₙregularyukawapot(T(.001) * x, ξ, n, yuk)
+        ret = Radon.∂ₙregularyukawapot(T(.001) * x, ξ, yuk, n)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(14.03126641709760402264474861719654017225786809145550365963283))
         # ξ in origin (potential cancellation 2)
-        ret = Radon.∂ₙregularyukawapot(T(.0001) * x, ξ, n, yuk)
+        ret = Radon.∂ₙregularyukawapot(T(.0001) * x, ξ, yuk, n)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(14.13365345844970855427401235115544109979343227826364222026794))
         # ξ in origin (potential cancellation 3)
-        ret = Radon.∂ₙregularyukawapot(T(.00001) * x, ξ, n, yuk)
+        ret = Radon.∂ₙregularyukawapot(T(.00001) * x, ξ, yuk, n)
         @fact typeof(ret) --> T
         @fact ret --> roughly(T(14.14393831379399210175378534648974379367907886588210581085651))
     end
