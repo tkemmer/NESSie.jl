@@ -7,8 +7,6 @@
 
 ```@docs
     radoncoll!
-    laplacepot
-    ∂ₙlaplacepot
     regularyukawapot
     ∂ₙregularyukawapot
     setcubpts!
