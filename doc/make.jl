@@ -37,5 +37,5 @@ makedocs(
     pages     = pages,
     format    = :html,
     sitename  = "NESSie.jl",
-    repo      = "../..{path}"
+    repo      = "https://github.com/tkemmer/nessie.jl/tree/master{path}"
 )
