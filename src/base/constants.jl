@@ -65,7 +65,7 @@ potprefactor() = potprefactor(Float64)
 
 System parameters
 """
-struct Option{T <: AbstractFloat}
+mutable struct Option{T <: AbstractFloat}
     "dielectric constant of the solute"
     εΩ::T
     "dielectric constant of the solvent"
