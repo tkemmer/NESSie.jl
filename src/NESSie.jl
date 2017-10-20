@@ -32,10 +32,10 @@ export Radon
 include("Rjasanow.jl")
 export Rjasanow
 
-include("Born.jl")
-export Born
-
 include("BEM.jl")
 export BEM
+
+include("TestModel.jl")
+export TestModel
 
 end # module

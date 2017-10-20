@@ -10,7 +10,6 @@ const tests = [
     "base/potentials.jl",
     "base/quadrature.jl",
     "base/util.jl",
-    "born.jl",
     "bem/local.jl",
     "bem/nonlocal.jl",
     "format/hmo.jl",
@@ -21,6 +20,7 @@ const tests = [
     "format/skel.jl",
     "format/vtk.jl",
     "format/xml3d.jl",
+    "testmodel/born.jl",
     "radon.jl",
     "rjasanow.jl"
 ]

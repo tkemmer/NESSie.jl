@@ -45,10 +45,11 @@ julia -L /path/to/nessie.jl/src
 
 ### Modules
 All functionality is organized into separate modules:
- * **`NESSie         `** Models and utility functions
- * **`NESSie.BEM     `** Local and nonlocal BEM solvers
- * **`NESSie.FEM     `** Nonlocal FEM solver (experimental; only available in `fem` branch)
- * **`NESSie.Format  `** Input and output file formats
+ * **`NESSie          `** Models and utility functions
+ * **`NESSie.BEM      `** Local and nonlocal BEM solvers
+ * **`NESSie.FEM      `** Nonlocal FEM solver (experimental; only available in `fem` branch)
+ * **`NESSie.Format   `** Input and output file formats
+ * **`NESSie.TestModel`** Test models with analytical solutions
 
 
 ### Example

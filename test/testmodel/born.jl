@@ -1,4 +1,4 @@
-using NESSie.Born
+using NESSie.TestModel
 
 context("bornion") do
     for T in testtypes
