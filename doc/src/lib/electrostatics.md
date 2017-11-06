@@ -26,14 +26,14 @@
 ### Interior potentials
 ```@docs
     NESSie.BEM.φΩ
-    NESSie.Born.φΩ
+    NESSie.TestModel.φΩ
 ```
 
 
 ### Exterior potentials
 ```@docs
     NESSie.BEM.φΣ
-    NESSie.Born.φΣ
+    NESSie.TestModel.φΣ
 ```
 
 ## Energies

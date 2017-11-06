@@ -29,7 +29,7 @@ const pages = [
 ]
 
 makedocs(
-    modules   = [NESSie, NESSie.BEM, NESSie.Born, NESSie.Format],
+    modules   = [NESSie, NESSie.BEM, NESSie.Format, NESSie.TestModel],
     clean     = true,
     doctest   = true,
     linkcheck = true,

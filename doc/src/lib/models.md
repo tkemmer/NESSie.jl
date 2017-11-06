@@ -10,7 +10,7 @@
 ## Charge models
 ```@docs
     Charge
-    NESSie.Born.BornIon
+    NESSie.TestModel.BornIon
 ```
 
 ## System models
