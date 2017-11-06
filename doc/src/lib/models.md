@@ -16,4 +16,5 @@
 ```@docs
     Model
     NESSie.TestModel.BornIon
+    NESSie.TestModel.XieModel
 ```

@@ -17,6 +17,7 @@
     pluseye!
     props
     reverseindex
+    NESSie.TestModel.scalemodel
     seek
     sign
     unpack

@@ -13,4 +13,10 @@ export BornIon, bornion
 include("testmodel/born/potentials.jl")
 export φΩ, φΣ
 
+#=
+    Multi-charge spheres
+=#
+include("testmodel/xie/model.jl")
+export XieModel
+
 end # module
