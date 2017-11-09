@@ -1,9 +1,9 @@
 # =========================================================================================
 """
     mutable struct XieModel{T}
-        radius ::T                                  # radius of the origin-centered sphere
-        charges::Vector{Charge{T}}                  # point charges in the sphere
-        params ::Option{T}         = defaultopt(T)  # system constants
+        radius ::T                                 # radius of the origin-centered sphere
+        charges::Vector{Charge{T}}                 # point charges in the sphere
+        params ::Option{T}         = defaultopt(T) # system constants
     end
 
 System model of a dielectric sphere containing multiple point charges. On construction, the
