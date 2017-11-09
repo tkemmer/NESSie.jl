@@ -17,4 +17,5 @@
     Model
     NESSie.TestModel.BornIon
     NESSie.TestModel.XieModel
+    NESSie.TestModel.NonlocalXieModel1
 ```

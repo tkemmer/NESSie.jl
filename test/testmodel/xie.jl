@@ -132,3 +132,6 @@ context("spherical_besselk") do
         @fact_throws k(1)
     end
 end
+
+@pending NonlocalXieModel1 --> :nothing
+@pending coefficients --> :nothing

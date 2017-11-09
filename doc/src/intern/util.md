@@ -10,6 +10,7 @@
 
 ```@docs
     cathetus
+    NESSie.TestModel.coefficients
     cos
     ddot
     distance
