@@ -1,8 +1,9 @@
 module TestModel
 
 using ..NESSie
-using ..NESSie: potprefactor
+using ..NESSie: potprefactor, cos
 using Distances: euclidean
+using SpecialFunctions: besseli, besselk
 
 #=
     Born models
@@ -18,5 +19,7 @@ export φΩ, φΣ
 =#
 include("testmodel/xie/model.jl")
 export XieModel
+
+include("testmodel/xie/common.jl")
 
 end # module

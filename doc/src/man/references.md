@@ -19,3 +19,8 @@
    O. Steinbach, Numerische Näherungsverfahren für elliptische Randwertprobleme - Finite
    Elemente und Randelemente (in German). Advances in Numerical Matheamtics. Teubner
    Verlag/GWV Fachverlage GmbH, Wiesbaden, 2003.
+
+ * **[Xie16]**
+   D. Xie, H. W. Volkmer, and J. Ying, Analytical solutions of nonlocal Poisson dielectric
+   models with multiple point charges inside a dielectric sphere. Physical Review E 93(4):
+   043304, 2016.
