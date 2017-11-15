@@ -1,7 +1,7 @@
 module TestModel
 
 using ..NESSie
-using ..NESSie: potprefactor, cos
+using ..NESSie: ε0, ec, cos, potprefactor
 using Distances: euclidean
 using SpecialFunctions: besseli, besselk
 
@@ -24,5 +24,7 @@ include("testmodel/xie/common.jl")
 
 include("testmodel/xie/nonlocal1.jl")
 export NonlocalXieModel1
+
+include("testmodel/xie/potentials.jl")
 
 end # module
