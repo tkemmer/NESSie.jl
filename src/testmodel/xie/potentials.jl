@@ -20,12 +20,10 @@ point ``ξ``.
 function φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     const a  = model.radius
     const λ  = model.params.λ
-    const εΩ = model.params.εΩ
     const εΣ = model.params.εΣ
     const ε∞ = model.params.ε∞
     const A₁ = model.A₁
     const A₂ = model.A₂
-    const A₃ = model.A₃
     const κ  = λ \ √(εΣ/ε∞)
     const r  = vecnorm(ξ)
 
