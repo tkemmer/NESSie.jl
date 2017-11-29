@@ -33,6 +33,13 @@ context("φmol and ∂ₙφmol") do
         qmol = ∂ₙφmol(model)
         @fact typeof(qmol) --> Vector{T}
         @fact qmol --> roughly(T[√5, 1593/25/√769])
+        # singular case
+        umol = φmol(zeros(T, 3), [Charge(T[0, 0, 0, √2]...)])
+        @fact typeof(umol) --> T
+        @fact umol --> roughly(T(√2 / 1e-10))
+        umol = φmol(zeros(T, 3), [Charge(T[0, 0, 0, √2]...)], tolerance=T(1e-12))
+        @fact typeof(umol) --> T
+        @fact umol --> roughly(T(√2 / 1e-12))
     end
 end
 

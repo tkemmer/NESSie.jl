@@ -34,7 +34,12 @@ struct LocalES    <: LocalityType end
 
 # =========================================================================================
 """
-    φmol{T}(ξ::Vector{T}, charges::Vector{Charge{T}})
+    φmol{T}(
+        ξ        ::Vector{T},
+        charges  ::Vector{Charge{T}};
+        # kwargs
+        tolerance::T                 = T(1e-10)
+    )
 
 Computes and returns the molecular potential of the given system of point charges in a
 structureless medium for the given observation point ξ:
@@ -42,6 +47,9 @@ structureless medium for the given observation point ξ:
 ```math
 φ\_{mol}(ξ) = \\frac{1}{4π ε\_0 ε\_Ω} \\sum_i \\frac{qᵢ}{|rᵢ-ξ|}
 ```
+
+If ``|rᵢ-ξ|`` is smaller than the given `tolerance`, the value is replaced by `tolerance`
+for the affected charge.
 
 !!! note
     The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε\_Ω``
@@ -60,14 +68,15 @@ Computes the molecular potentials for the given surface model, using each triang
 as observation point.
 """
 function φmol(
-        ξ      ::Vector{T},
-        charges::Vector{Charge{T}}
+        ξ        ::Vector{T},
+        charges  ::Vector{Charge{T}};
+        tolerance::T=T(1e-10)
     ) where T
     # devectorized version of
     # sum([q.val / euclidean(ξ, q.pos) for q in charges])
     ret = zero(T)
     for q in charges
-        ret += q.val / euclidean(ξ, q.pos)
+        ret += q.val / max(euclidean(ξ, q.pos), tolerance)
     end
     ret
 end
