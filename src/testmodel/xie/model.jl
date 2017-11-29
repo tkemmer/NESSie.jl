@@ -9,6 +9,20 @@
 System model of a dielectric sphere containing multiple point charges. On construction, the
 given point charge model will be translated and rescaled to fit inside an origin-centered
 sphere with the specified radius.
+
+# Special contructors
+```julia
+XieModel{T}(
+    radius ::T,
+    charges::Vector{Charge{T}},
+    params ::Option{T}          = defaultopt(T);
+    # kwargs
+    compat ::Bool               = false
+)
+```
+`compat` enables the compatibility mode and scales the model exactly like the reference
+implementation ([[Xie16]](@ref Bibliography)). Use this flag if you intend to compare
+the results to the reference.
 """
 mutable struct XieModel{T}
     "radius of the origin-centered sphere"
@@ -21,22 +35,26 @@ mutable struct XieModel{T}
     XieModel{T}(
         radius ::T,
         charges::Vector{Charge{T}},
-        params ::Option{T} = defaultopt(T)
-    ) where T = new(radius, scalemodel(charges, radius), params)
+        params ::Option{T} = defaultopt(T);
+        compat ::Bool = false
+    ) where T = new(radius, scalemodel(charges, radius, compat=compat), params)
 end
 
 XieModel(
     radius ::T,
     charges::Vector{Charge{T}},
-    params ::Option{T} = defaultopt(T)
-) where T = XieModel{T}(radius, charges, params)
+    params ::Option{T} = defaultopt(T);
+    compat ::Bool = false
+) where T = XieModel{T}(radius, charges, params, compat=compat)
 
 
 # =========================================================================================
 """
     function scalemodel{T}(
         charges::Vector{Charge{T}},
-        radius ::T
+        radius ::T;
+        # kwargs
+        compat ::Bool              = false
     )
 
 Translates and rescales the given point charge model to fit inside an origin-centered
@@ -44,16 +62,26 @@ sphere with the specified radius. More specifically, the function will center th
 model at the origin and scaled in a way such that the outermost point charge will be
 located at 80% `radius` distance from the origin.
 
+# Arguments
+ * `compat` Enables compatibility mode and scales the model exactly like the reference
+   implementation ([[Xie16]](@ref Bibliography)). Use this flag if you intend to compare
+   the results to the reference.
+
 # Return type
 `Vector{Charge{T}}`
 """
-function scalemodel(charges::Vector{Charge{T}}, radius::T) where T
+function scalemodel(
+        charges::Vector{Charge{T}},
+        radius ::T;
+        compat ::Bool               = false
+    ) where T
     # center model
     cpos   = sum.([extrema(q.pos[i] for q in charges) for i in 1:3])/2
     newpos = [q.pos - cpos for q in charges]
 
     # compute and apply scaling factor
-    sf = .8radius / maximum(vecnorm(pos) for pos in newpos)
+    h = x -> compat ? ceil(x) : x  # in compat mode, scaling factor is rounded up
+    sf = .8radius / h(maximum(vecnorm(pos) for pos in newpos))
     scale!(newpos, sf)
 
     [Charge{T}(pos, q.val) for (pos, q) in zip(newpos, charges)]
