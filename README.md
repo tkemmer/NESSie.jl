@@ -9,6 +9,7 @@ In addition to the Julia language itself (version 0.6), `NESSie.jl` depends on t
  * [Distances.jl](http://github.com/JuliaStats/Distances.jl)
  * [JSON.jl](http://github.com/JuliaIO/JSON.jl)
  * [LightXML.jl](http://github.com/JuliaIO/LightXML.jl)
+ * [SpecialFunctions.jl](https://github.com/JuliaMath/SpecialFunctions.jl)
  * [Documenter.jl](http://github.com/JuliaDocs/Documenter.jl) (optional; required for documentation)
  * [FactCheck.jl](http://github.com/JuliaArchive/FactCheck.jl) (optional; required for tests)
 
@@ -17,6 +18,7 @@ All of these packages can be directly installed from Julia's interactive command
 Pkg.add("Distances")
 Pkg.add("JSON")
 Pkg.add("LightXML")
+Pkg.add("SpecialFunctions")
 Pkg.add("Documenter") # optional
 Pkg.add("FactCheck")  # optional
 ```
