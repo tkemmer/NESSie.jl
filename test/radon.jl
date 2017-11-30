@@ -1,5 +1,6 @@
 using NESSie: yukawa
 using NESSie.Radon
+using NESSie.Radon: radoncoll!
 
 context("regularyukawapot") do
     for T in testtypes
@@ -68,4 +69,31 @@ context("∂ₙregularyukawapot") do
     end
 end
 
-@pending radoncoll! --> :nothing
+context("radoncoll!") do
+    for T in testtypes
+        elem = [Triangle(zeros(T, 3), T[2, 0, 0], T[0, 2, 0])]
+        # compute triangle area ∫dx
+        res = zeros(T, 1, 1)
+        radoncoll!(res, elem, [zeros(T, 3)], (_, __, ___, ____) -> one(T), zero(T))
+        @fact res[1] --> roughly(2one(T))
+        # compute prism volume
+        res = zeros(T, 2, 1)
+        radoncoll!(res, elem, [T[0, 0, 4], T[0, 0, 6]], (x, ξ, _, __) -> ξ[3] - x[3], zero(T))
+        @fact res[1] --> roughly(8one(T))
+        @fact res[2] --> roughly(12one(T))
+        # compute tetrahedron volume
+        res = zeros(T, 1, 1)
+        radoncoll!(res, elem, [T[0, 0, 2]], (x, ξ, _, __) -> ξ[3] - x[1] - x[2], zero(T))
+        @fact res[1] --> roughly(4one(T)/3)
+        # a slightly more elaborate tetrahedron volume
+        elem = [Triangle(zeros(T, 3), T[3, 0, 0], T[0, 2, 0])]
+        res = zeros(T, 1, 1)
+        radoncoll!(res, elem, [T[0, 0, 6]], (x, ξ, _, __) -> ξ[3] - 2x[1] - 3x[2], zero(T))
+        @fact res[1] --> roughly(6one(T))
+        # ∫∫6x²-40y dA
+        elem = [Triangle(T[0, 3, 0], T[1, 1, 0], T[5, 3, 0])]
+        res = zeros(T, 1, 1)
+        radoncoll!(res, elem, [zeros(T, 3)], (x, _, __, ___) -> 6*x[1]^2-40x[2], zero(T))
+        @fact res[1] --> roughly(T(-935/3))
+    end
+end
