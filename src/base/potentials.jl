@@ -58,11 +58,20 @@ for the affected charge.
 `T`
 
 ## Aliases
-    φmol{T}(Ξ::Vector{Vector{T}}, charges::Vector{Charge{T}})
+    φmol{T}(
+        Ξ        ::Vector{Vector{T}},
+        charges  ::Vector{Charge{T}};
+        # kwargs
+        tolerance::T                 = T(1e-10)
+    )
 
 Computes the molecular potentials for a list of observation points.
 
-    φmol{T}(model::Model{T, Triangle{T}})
+    φmol{T}(
+        model    ::Model{T, Triangle{T}};
+        # kwargs
+        tolerance::T                     = T(1e-10)
+    )
 
 Computes the molecular potentials for the given surface model, using each triangle center
 as observation point.
@@ -82,14 +91,18 @@ function φmol(
 end
 
 function φmol(
-        Ξ      ::Vector{Vector{T}},
-        charges::Vector{Charge{T}}
+        Ξ        ::Vector{Vector{T}},
+        charges  ::Vector{Charge{T}};
+        tolerance::T=T(1e-10)
     ) where T
-    [φmol(ξ, charges) for ξ in Ξ]
+    [φmol(ξ, charges, tolerance=tolerance) for ξ in Ξ]
 end
 
-function φmol(model::Model{T, Triangle{T}}) where T
-    [φmol(ξ.center, model.charges) for ξ in model.elements]
+function φmol(
+        model    ::Model{T, Triangle{T}};
+        tolerance::T=T(1e-10)
+    ) where T
+    [φmol(ξ.center, model.charges, tolerance=tolerance) for ξ in model.elements]
 end
 
 
