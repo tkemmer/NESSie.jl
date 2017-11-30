@@ -228,7 +228,7 @@ function radoncoll!(
         elements::Vector{Triangle{T}},
         Ξ       ::Vector{Vector{T}},
         solution::Function,
-        yukawa  ::T=zero(T)
+        yukawa  ::T
     ) where T
     #=== MEMORY-CRITICAL CODE! ===#
     @assert size(dest) == (length(Ξ), length(elements))
