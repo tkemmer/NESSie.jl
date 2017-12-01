@@ -107,10 +107,10 @@ defaultopt() = defaultopt(Float64)
 """
     yukawa{T}(opt::Option{T})
 
-Exponent ``Λ`` for the fundamental solution of the yukawa operator
+Exponent ``1/Λ`` for the fundamental solution of the yukawa operator
 
 ```math
-Λ := -\\frac{1}{λ}\\sqrt{\\frac{ε\_Σ}{ε\_∞}}
+Λ := λ\\sqrt{\\frac{ε\_∞}{ε\_Σ}}
 ```
 
 # Return type
