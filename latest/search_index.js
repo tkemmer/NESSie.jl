@@ -37,7 +37,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Introduction",
     "title": "Introduction",
     "category": "section",
-    "text": "Electrostatic interactions are a major contributor to protein-protein and protein-ligand interactions. In contrast to other molecular interaction components, they can be significant over medium to long distances and are thus crucial for molecular visibility. Research areas such as rational drug design require accurate estimates of potentials and free energies influenced by electrostatics. One major challenge in this context, however, is the treatment of the solvent the molecules are immersed in, i.e., water in a biological context. Strong simplifications of the structure of such polarizable and highly structured solvents are commonplace to achieve the required computational efficiency, but invariably lead to inaccuracies."
+    "text": "Electrostatic interactions are a major contributor to protein-protein and protein-ligand interactions. In contrast to other molecular interaction components, they can be significant over medium to long distances and are thus crucial for molecular visibility. One major challenge in this context is the treatment of the solvent the molecules are immersed in, e.g., water in a biological context. Strong simplifications of the structure of such polarizable and highly structured solvents are commonplace to achieve the required computational efficiency, but invariably lead to inaccuracies."
 },
 
 {
@@ -53,7 +53,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Bibliography",
     "title": "Bibliography",
     "category": "section",
-    "text": "[Åqv90] J. Åqvist, Ion-water interaction potentials derived from free energy pertubation simulations. J. Phys. Chem. 94: 8021, 1990.\n[Kea86] P. Keast, Moderate degree tetrahedral quadrature formulas. CMAME 55: 339-348, 1986.\n[Rad48] J. Radon, Zur mechanischen Kubatur (in German). Monatsh. für Math. 52(4): 286-300, 1948.\n[Rja90] S. Rjasanow, Vorkonditionierte iterative Auflösung von Randelementgleichungen für die Dirichlet-Aufgabe (in German). Wissenschaftliche Schriftreihe der Technischen Universität Karl-Marx-Stadt, 7/1990.\n[Ste03] O. Steinbach, Numerische Näherungsverfahren für elliptische Randwertprobleme - Finite Elemente und Randelemente (in German). Advances in Numerical Matheamtics. Teubner Verlag/GWV Fachverlage GmbH, Wiesbaden, 2003."
+    "text": "[Åqv90] J. Åqvist, Ion-water interaction potentials derived from free energy pertubation simulations. J. Phys. Chem. 94: 8021, 1990.\n[Kea86] P. Keast, Moderate degree tetrahedral quadrature formulas. CMAME 55: 339-348, 1986.\n[Rad48] J. Radon, Zur mechanischen Kubatur (in German). Monatsh. für Math. 52(4): 286-300, 1948.\n[Rja90] S. Rjasanow, Vorkonditionierte iterative Auflösung von Randelementgleichungen für die Dirichlet-Aufgabe (in German). Wissenschaftliche Schriftreihe der Technischen Universität Karl-Marx-Stadt, 7/1990.\n[Ste03] O. Steinbach, Numerische Näherungsverfahren für elliptische Randwertprobleme - Finite Elemente und Randelemente (in German). Advances in Numerical Matheamtics. Teubner Verlag/GWV Fachverlage GmbH, Wiesbaden, 2003.\n[Xie16] D. Xie, H. W. Volkmer, and J. Ying, Analytical solutions of nonlocal Poisson dielectric models with multiple point charges inside a dielectric sphere. Physical Review E 93(4): 043304, 2016."
 },
 
 {
@@ -373,7 +373,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Electrostatics",
     "title": "NESSie.φmol",
     "category": "Function",
-    "text": "φmol{T}(ξ::Vector{T}, charges::Vector{Charge{T}})\n\nComputes and returns the molecular potential of the given system of point charges in a structureless medium for the given observation point ξ:\n\n_mol() = frac14 _0 _ sum_i fracqr-\n\nnote: Note\nThe return value is premultiplied by 4    _\n\nReturn type\n\nT\n\nAliases\n\nφmol{T}(Ξ::Vector{Vector{T}}, charges::Vector{Charge{T}})\n\nComputes the molecular potentials for a list of observation points.\n\nφmol{T}(model::Model{T, Triangle{T}})\n\nComputes the molecular potentials for the given surface model, using each triangle center as observation point.\n\n\n\n"
+    "text": "φmol{T}(\n    ξ        ::Vector{T},\n    charges  ::Vector{Charge{T}};\n    # kwargs\n    tolerance::T                 = T(1e-10)\n)\n\nComputes and returns the molecular potential of the given system of point charges in a structureless medium for the given observation point ξ:\n\n_mol() = frac14 _0 _ sum_i fracqr-\n\nIf r- is smaller than the given tolerance, the value is replaced by tolerance for the affected charge.\n\nnote: Note\nThe return value is premultiplied by 4    _\n\nReturn type\n\nT\n\nAliases\n\nφmol{T}(\n    Ξ        ::Vector{Vector{T}},\n    charges  ::Vector{Charge{T}};\n    # kwargs\n    tolerance::T                 = T(1e-10)\n)\n\nComputes the molecular potentials for a list of observation points.\n\nφmol{T}(\n    model    ::Model{T, Triangle{T}};\n    # kwargs\n    tolerance::T                     = T(1e-10)\n)\n\nComputes the molecular potentials for the given surface model, using each triangle center as observation point.\n\n\n\n"
 },
 
 {
@@ -409,11 +409,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/electrostatics.html#NESSie.Born.φΩ",
+    "location": "lib/electrostatics.html#NESSie.TestModel.φΩ",
     "page": "Electrostatics",
-    "title": "NESSie.Born.φΩ",
+    "title": "NESSie.TestModel.φΩ",
     "category": "Function",
-    "text": "φΩ{T, L <: LocalityType}(\n       ::Type{L},\n    ξ  ::Vector{T},\n    ion::BornIon{T},\n    opt::Option{T} = defaultopt(T)\n)\n\nComputes the interior local or nonlocal electrostatic potential _ for the given observation point .\n\nUnit\n\nV = fracCF\n\nReturn type\n\nT\n\nwarning: Warning\nThis function does not verify whether ξ is located inside of the sphere!\n\n\n\n"
+    "text": "φΩ{T, L <: LocalityType}(\n       ::Type{L},\n    ξ  ::Vector{T},\n    ion::BornIon{T},\n    opt::Option{T} = defaultopt(T)\n)\n\nComputes the interior local or nonlocal electrostatic potential _ for the given observation point .\n\nUnit\n\nV = fracCF\n\nReturn type\n\nT\n\nwarning: Warning\nThis function does not verify whether ξ is located inside of the sphere!\n\n\n\nfunction φΩ{T}(\n    ξ    ::Vector{T},\n    model::NonlocalXieModel1{T}\n)\n\nComputes the interior nonlocal electrostatic potential _ for the given observation point .\n\nUnit\n\nV = fracCF\n\nReturn type\n\nT\n\nwarning: Warning\nThis function does not verify whether ξ is located inside of the sphere!\n\n\n\n"
 },
 
 {
@@ -421,7 +421,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Electrostatics",
     "title": "Interior potentials",
     "category": "section",
-    "text": "    NESSie.BEM.φΩ\n    NESSie.Born.φΩ"
+    "text": "    NESSie.BEM.φΩ\n    NESSie.TestModel.φΩ"
 },
 
 {
@@ -433,11 +433,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/electrostatics.html#NESSie.Born.φΣ",
+    "location": "lib/electrostatics.html#NESSie.TestModel.φΣ",
     "page": "Electrostatics",
-    "title": "NESSie.Born.φΣ",
+    "title": "NESSie.TestModel.φΣ",
     "category": "Function",
-    "text": "φΣ{T, L <: LocalityType}(\n       ::Type{L},\n    ξ  ::Vector{T},\n    ion::BornIon{T},\n    opt::Option{T} = defaultopt(T)\n)\n\nComputes the exterior local or nonlocal electrostatic potential _ for the given observation point .\n\nUnit\n\nV = fracCF\n\nReturn type\n\nT\n\nwarning: Warning\nThis function does not verify whether ξ is located outside of the sphere!\n\n\n\n"
+    "text": "φΣ{T, L <: LocalityType}(\n       ::Type{L},\n    ξ  ::Vector{T},\n    ion::BornIon{T},\n    opt::Option{T} = defaultopt(T)\n)\n\nComputes the exterior local or nonlocal electrostatic potential _ for the given observation point .\n\nUnit\n\nV = fracCF\n\nReturn type\n\nT\n\nwarning: Warning\nThis function does not verify whether ξ is located outside of the sphere!\n\n\n\nfunction φΣ{T}(\n    ξ    ::Vector{T},\n    model::NonlocalXieModel1{T}\n)\n\nComputes the exterior nonlocal electrostatic potential _ for the given observation point .\n\nUnit\n\nV = fracCF\n\nReturn type\n\nT\n\nwarning: Warning\nThis function does not verify whether ξ is located outside of the sphere!\n\n\n\n"
 },
 
 {
@@ -445,7 +445,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Electrostatics",
     "title": "Exterior potentials",
     "category": "section",
-    "text": "    NESSie.BEM.φΣ\n    NESSie.Born.φΣ"
+    "text": "    NESSie.BEM.φΣ\n    NESSie.TestModel.φΣ"
 },
 
 {
@@ -521,19 +521,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/models.html#NESSie.Born.BornIon",
-    "page": "Models",
-    "title": "NESSie.Born.BornIon",
-    "category": "Type",
-    "text": "struct BornIon{T <: AbstractFloat}\n    charge::Charge{T}  # point charge at the sphere's center\n    radius::T          # sphere radius in Å\nend\n\nSingle Born ion, that is, a monoatomic ion represented as a spherically symmetric domain with a single point charge located at its center (_ = 1).\n\nSpecial constructors\n\nBornIon{T}(charge::T, radius::T)\n\nCenters the sphere at (0 0 0)^T.\n\n\n\n"
-},
-
-{
     "location": "lib/models.html#Charge-models-1",
     "page": "Models",
     "title": "Charge models",
     "category": "section",
-    "text": "    Charge\n    NESSie.Born.BornIon"
+    "text": "    Charge"
 },
 
 {
@@ -545,11 +537,35 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/models.html#NESSie.TestModel.BornIon",
+    "page": "Models",
+    "title": "NESSie.TestModel.BornIon",
+    "category": "Type",
+    "text": "struct BornIon{T <: AbstractFloat}\n    charge::Charge{T}  # point charge at the sphere's center\n    radius::T          # sphere radius in Å\nend\n\nSingle Born ion, that is, a monoatomic ion represented as a spherically symmetric domain with a single point charge located at its center (_ = 1).\n\nSpecial constructors\n\nBornIon{T}(charge::T, radius::T)\n\nCenters the sphere at (0 0 0)^T.\n\n\n\n"
+},
+
+{
+    "location": "lib/models.html#NESSie.TestModel.XieModel",
+    "page": "Models",
+    "title": "NESSie.TestModel.XieModel",
+    "category": "Type",
+    "text": "mutable struct XieModel{T}\n    radius ::T                                 # radius of the origin-centered sphere\n    charges::Vector{Charge{T}}                 # point charges in the sphere\n    params ::Option{T}         = defaultopt(T) # system constants\nend\n\nSystem model of a dielectric sphere containing multiple point charges. On construction, the given point charge model will be translated and rescaled to fit inside an origin-centered sphere with the specified radius.\n\nSpecial contructors\n\nXieModel{T}(\n    radius ::T,\n    charges::Vector{Charge{T}},\n    params ::Option{T}          = defaultopt(T);\n    # kwargs\n    compat ::Bool               = false\n)\n\ncompat enables the compatibility mode and scales the model exactly like the reference implementation ([Xie16]). Use this flag if you intend to compare the results to the reference.\n\n\n\n"
+},
+
+{
+    "location": "lib/models.html#NESSie.TestModel.NonlocalXieModel1",
+    "page": "Models",
+    "title": "NESSie.TestModel.NonlocalXieModel1",
+    "category": "Type",
+    "text": "struct NonlocalXieModel1{T}\n    radius ::T                 # radius of the origin-centered sphere\n    charges::Vector{Charge{T}} # point charges in the sphere\n    params ::Option{T}         # system constants\n    len    ::Int               # number of terms to be computed\n    A₁     ::Array{T, 2}       # coefficients A₁ for each charge\n    A₂     ::Array{T, 2}       # coefficients A₂ for each charge\n    A₃     ::Array{T, 2}       # coefficients A₃ for each charge\nend\n\nRepresentation of the first nonlocal Poisson dielectric model described in [Xie16]. This model comprises a full XieModel and the coefficients A_in with i = 1 2 3 (cf. Eqs. (20a-c)) for each point charge in the model, which are used in the computation of the electrostatic potentials.\n\nnote: Note\nThis type does not provide a trivial constructor.\n\nConstructor\n\nNonlocalXieModel1{T}(\n    model::XieModel{T},\n    len  ::Int\n)\n\nThe model is created solely from the given XieModel and the number of terms to be used to approximate the original infinite sum (Eq. 18). The coefficient vectors are computed automatically via coefficients.\n\n\n\n"
+},
+
+{
     "location": "lib/models.html#System-models-1",
     "page": "Models",
     "title": "System models",
     "category": "section",
-    "text": "    Model"
+    "text": "    Model\n    NESSie.TestModel.BornIon\n    NESSie.TestModel.XieModel\n    NESSie.TestModel.NonlocalXieModel1"
 },
 
 {
@@ -713,9 +729,9 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/util.html#NESSie.Born.bornion",
+    "location": "lib/util.html#NESSie.TestModel.bornion",
     "page": "Utility functions",
-    "title": "NESSie.Born.bornion",
+    "title": "NESSie.TestModel.bornion",
     "category": "Function",
     "text": "bornion(name::String, ::Type{Float64} = Float64)\nbornion(name::String, ::Type{Float32})\n\nGenerator function for built-in Born ions:\n\nName Charge Radius [Åqv90]\nLi +1 0.645\nNa +1 1.005\nK +1 1.365\nRb +1 1.505\nCs +1 1.715\nMg +2 0.615\nCa +2 1.015\nSr +2 1.195\nBa +2 1.385\n\nReturn type\n\nBornIon\n\n\n\n"
 },
@@ -749,7 +765,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utility functions",
     "title": "Utility functions",
     "category": "section",
-    "text": "    NESSie.Born.bornion\n    meshunion\n    obspoints_line\n    obspoints_plane"
+    "text": "    NESSie.TestModel.bornion\n    meshunion\n    obspoints_line\n    obspoints_plane"
 },
 
 {
@@ -789,7 +805,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Constants",
     "title": "NESSie.yukawa",
     "category": "Function",
-    "text": "yukawa{T}(opt::Option{T})\n\nExponent  for the fundamental solution of the yukawa operator\n\n = -frac1sqrtfrac__\n\nReturn type\n\nT\n\n\n\n"
+    "text": "yukawa{T}(opt::Option{T})\n\nExponent 1 for the fundamental solution of the yukawa operator\n\n = sqrtfrac__\n\nReturn type\n\nT\n\n\n\n"
 },
 
 {
@@ -917,7 +933,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Quadrature",
     "title": "NESSie.Radon.regularyukawapot",
     "category": "Function",
-    "text": "regularyukawapot{T}(\n    x     ::DenseArray{T,1},\n    ξ     ::Vector{T},\n    yukawa::T,\n          ::Vector{T}=T[]\n)\n\nComputes the regular part of the Yukawa potential, that is, Yukawa minus Laplace:\n\nfrace^ x -  - 1x-\n\nnote: Note\nThe result is premultiplied by 4π.\n\nArguments\n\nyukawa Exponent of the Yukawa operator's fundamental solution\n\nReturn type\n\nT\n\n\n\n"
+    "text": "regularyukawapot{T}(\n    x     ::DenseArray{T,1},\n    ξ     ::Vector{T},\n    yukawa::T,\n          ::Vector{T}=T[]\n)\n\nComputes the regular part of the Yukawa potential, that is, Yukawa minus Laplace:\n\nmathcalG^Y-mathcalG^L = frac14frace^-fracx -  - 1x-\n\nnote: Note\nThe result is premultiplied by 4π.\n\nArguments\n\nyukawa Exponent of the Yukawa operator's fundamental solution\n\nReturn type\n\nT\n\n\n\n"
 },
 
 {
@@ -925,7 +941,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Quadrature",
     "title": "NESSie.Radon.∂ₙregularyukawapot",
     "category": "Function",
-    "text": "∂ₙregularyukawapot{T}(\n    x     ::Vector{T},\n    ξ     ::Vector{T},\n    yukawa::T,\n    normal::Vector{T}\n)\n\nComputes the normal derivative of the regular part of the Yukawa potential, that is, Yukawa minus Laplace:\n\nfracn frace^  x -  - 1x-\n= frac1 - (1 -   x - )e^  x - x- frac(x - )  nx - \n\nnote: Note\nThe result is premultiplied by 4π.\n\nArguments\n\nyukawa Exponent of the Yukawa operator's fundamental solution\n\nReturn type\n\nT\n\n\n\n"
+    "text": "∂ₙregularyukawapot{T}(\n    x     ::Vector{T},\n    ξ     ::Vector{T},\n    yukawa::T,\n    normal::Vector{T}\n)\n\nComputes the normal derivative of the regular part of the Yukawa potential, that is, Yukawa minus Laplace:\n\nfracn frac14 frace^-fracx -  - 1x-\n= frac14 frac1 - (1 + ^-1 x - )e^-fracx - x-\nfrac(x - )  nx - \n\nnote: Note\nThe result is premultiplied by 4π.\n\nArguments\n\nyukawa Exponent of the Yukawa operator's fundamental solution\n\nReturn type\n\nT\n\n\n\n"
 },
 
 {
@@ -1017,6 +1033,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "intern/util.html#NESSie.TestModel.coefficients",
+    "page": "Utility functions",
+    "title": "NESSie.TestModel.coefficients",
+    "category": "Function",
+    "text": "function coefficients{T}(\n    model::XieModel{T},\n    len  ::Int\n)\n\nComputes the coefficients A_in with i=1 2 3 for the given XieModel and the desired number of terms.\n\nReturn type\n\nTuple{     Array{T, 2},     Array{T, 2},     Array{T, 2} }\n\n\n\n"
+},
+
+{
     "location": "intern/util.html#Base.cos",
     "page": "Utility functions",
     "title": "Base.cos",
@@ -1057,6 +1081,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "intern/util.html#NESSie.TestModel.legendre",
+    "page": "Utility functions",
+    "title": "NESSie.TestModel.legendre",
+    "category": "Function",
+    "text": "legendre{T <: AbstractFloat}(\n    maxn::Int,\n    x   ::T\n)\n\nPrecomputes the Legendre polynomials P(x) for n = 0 1  textttmaxn-1 and returns a generic function to access the values.\n\nReturn type\n\n(generic function)\n\n(n::Int) -> Pₙ(x)   # return type: T\n\nExample\n\njulia> p = legendre(3, 0.5);\n\njulia> [p(n) for n in 0:2]    # [P₀(0.5), P₁(0.5), P₂(0.5)]\n3-element Array{Float64,1}:\n  1.0\n  0.5\n -0.125\n\n\n\n"
+},
+
+{
     "location": "intern/util.html#NESSie.pluseye!",
     "page": "Utility functions",
     "title": "NESSie.pluseye!",
@@ -1081,6 +1113,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "intern/util.html#NESSie.TestModel.scalemodel",
+    "page": "Utility functions",
+    "title": "NESSie.TestModel.scalemodel",
+    "category": "Function",
+    "text": "function scalemodel{T}(\n    charges::Vector{Charge{T}},\n    radius ::T;\n    # kwargs\n    compat ::Bool              = false\n)\n\nTranslates and rescales the given point charge model to fit inside an origin-centered sphere with the specified radius. More specifically, the function will center the given model at the origin and scaled in a way such that the outermost point charge will be located at 80% radius distance from the origin.\n\nArguments\n\ncompat Enables compatibility mode and scales the model exactly like the reference implementation ([Xie16]). Use this flag if you intend to compare the results to the reference.\n\nReturn type\n\nVector{Charge{T}}\n\n\n\n"
+},
+
+{
     "location": "intern/util.html#Base.seek",
     "page": "Utility functions",
     "title": "Base.seek",
@@ -1094,6 +1134,22 @@ var documenterSearchIndex = {"docs": [
     "title": "Base.sign",
     "category": "Function",
     "text": "sign{T}(\n    u::Vector{T},\n    v::Vector{T},\n    n::Vector{T}\n)\n\nDetermines whether the normal vector of the plane specified by the vectors u and v has the same orientation as the given normal vector n. Returns 1 if both normals have the same orientation, 0 if at least one of the vectors is zero, and -1 otherwise.\n\nReturn type\n\nT\n\n\n\n"
+},
+
+{
+    "location": "intern/util.html#NESSie.TestModel.spherical_besseli",
+    "page": "Utility functions",
+    "title": "NESSie.TestModel.spherical_besseli",
+    "category": "Function",
+    "text": "spherical_besseli{T <: AbstractFloat}(\n    maxn::Int,\n    r   ::T\n)\n\nPrecomputes the modified spherical Bessel function of the first kind i(r) for n=-1 0  textttmaxn and returns a generic function to access the values. i(r) is defined as\n\ni(r) = sqrtfrac2r I_n+05(r)\n\nwhere I_ is the modified Bessel function of the first kind [Xie16].\n\nReturn type\n\n(generic function)\n\n(n::Int) -> iₙ(r)   # return type: T\n\n\n\n"
+},
+
+{
+    "location": "intern/util.html#NESSie.TestModel.spherical_besselk",
+    "page": "Utility functions",
+    "title": "NESSie.TestModel.spherical_besselk",
+    "category": "Function",
+    "text": "spherical_besselk{T <: AbstractFloat}(\n    maxn::Int,\n    r   ::T\n)\n\nPrecomputes the modified spherical Bessel function of the second kind k(r) for n=-1 0  textttmaxn and returns a generic function to access the values. k(r) is defined as\n\nk(r) = sqrtfrac2r K_n+05(r)\n\nwhere K_ is the modified Bessel function of the second kind [Xie16].\n\nReturn type\n\n(generic function)\n\n(n::Int) -> kₙ(r)   # return type: T\n\n\n\n"
 },
 
 {
@@ -1117,7 +1173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utility functions",
     "title": "Utility functions",
     "category": "section",
-    "text": "    CurrentModule = NESSie\n    DocTestSetup = quote\n        using NESSie: eye!, pluseye!, unpack\n    end    cathetus\n    cos\n    ddot\n    distance\n    eye!\n    isdegenerate\n    pluseye!\n    props\n    reverseindex\n    seek\n    sign\n    unpack\n    vertexnormals    DocTestSetup = nothing"
+    "text": "    CurrentModule = NESSie\n    DocTestSetup = quote\n        using NESSie: eye!, pluseye!, unpack\n        using NESSie.TestModel:legendre\n    end    cathetus\n    NESSie.TestModel.coefficients\n    cos\n    ddot\n    distance\n    eye!\n    isdegenerate\n    NESSie.TestModel.legendre\n    pluseye!\n    props\n    reverseindex\n    NESSie.TestModel.scalemodel\n    seek\n    sign\n    NESSie.TestModel.spherical_besseli\n    NESSie.TestModel.spherical_besselk\n    unpack\n    vertexnormals    DocTestSetup = nothing"
 },
 
 ]}
