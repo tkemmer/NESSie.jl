@@ -8,7 +8,7 @@ push!(LOAD_PATH,"../../src/")
 
 using NESSie
 using NESSie.BEM
-using NESSie.Born
+using NESSie.TestModel
 using NESSie.Format
 using PyPlot: figure, plot, show, legend, xlabel, ylabel, title, axvline
 
@@ -31,14 +31,14 @@ function plotexterior(name::String, maxdist::Float64=10., resolution::Int=100)
     print("Local Born... ")
     plot(
         xvals,
-        [Born.φΣ(LocalES, ξ, born, model.params) for ξ in Ξ],
+        [TestModel.φΣ(LocalES, ξ, born, model.params) for ξ in Ξ],
         label="Born (local)"
     )
 
     print("done!\nNonlocal Born... ")
     plot(
         xvals,
-        [Born.φΣ(NonlocalES, ξ, born, model.params) for ξ in Ξ],
+        [TestModel.φΣ(NonlocalES, ξ, born, model.params) for ξ in Ξ],
         label="Born (nonlocal)"
     )
 
