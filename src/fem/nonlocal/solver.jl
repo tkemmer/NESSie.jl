@@ -1,14 +1,35 @@
-#=
-    Returns the gradients of the linear basis functions for the
-    given tetrahedron.
+# =========================================================================================
+"""
+    struct NonlocalFEMResult{T, E} <: FEMResult{T, E}
+        model::Model{T, E}
+        u    ::Vector{T}
+        umol ::Vector{T}
+    end
 
-    Note that the results are premultiplied by the determinant!
+Result data of the nonlocal solving process to be used for potential computation and
+post-processing.
+"""
+struct NonlocalFEMResult{T, E} <: FEMResult{T, E}
+    model::Model{T, E}
+    u    ::Vector{T}
+    umol ::Vector{T}
+end
 
-    @param elem
-        A tetrahedron
-    @return (determinant, [part. derivatives])
-=#
-function basisfunctions{T}(elem::Tetrahedron{T})
+
+# =========================================================================================
+"""
+    basisfunctions{T}(elem::Tetrahedron{T})
+
+Returns the determinant and the gradients of the linear basis functions for the given
+tetrahedron.
+
+!!! note
+    The results are premultiplied by the determinant!
+
+# Return type
+`Tuple{T, Vector{T}}`
+"""
+function basisfunctions(elem::Tetrahedron{T}) where T
     # map onto reference tetrahedron
     # x = Aα + b ⇔ α = A^(-1)⋅(x-b)
     a  = [elem.v2 - elem.v1 elem.v3 - elem.v1 elem.v4 - elem.v1]
@@ -30,13 +51,24 @@ function basisfunctions{T}(elem::Tetrahedron{T})
     (d, ∇f)
 end
 
-#=
-    TODO
-=#
-function reverseprojection{T}(elem::Tetrahedron{T})
-    α -> [elem.v2 - elem.v1 elem.v3 - elem.v1 elem.v4 - elem.v1] * α + elem.v1 # TODO devectorize
+
+# =========================================================================================
+"""
+    reverseprojection{T}(elem::Tetrahedron{T})
+
+Returns a function that, given a location vector on the reference tetrahedron, returns the
+corresponding location vector on the given tetrahedron.
+
+# Return type
+`Function`
+"""
+function reverseprojection(elem::Tetrahedron{T}) where T
+    # TODO devectorize
+    α -> [elem.v2 - elem.v1 elem.v3 - elem.v1 elem.v4 - elem.v1] * α + elem.v1
 end
 
+
+# =========================================================================================
 #=
     TODO
 =#
@@ -59,6 +91,8 @@ end
 stiffnessmatrix_k{T}(elements::Vector{Tetrahedron{T}}, revidx::Dict{UInt,UInt}, domain::Symbol=:all) = stiffnessmatrix(elements, revidx, elem -> localstiffnessmatrix_k(elem), domain) # TODO
 stiffnessmatrix_v{T}(elements::Vector{Tetrahedron{T}}, revidx::Dict{UInt,UInt}, domain::Symbol=:all) = stiffnessmatrix(elements, revidx, elem -> [2 1 1 1; 1 2 1 1; 1 1 2 1; 1 1 1 2], domain) # TODO
 
+
+# =========================================================================================
 #=
     Returns the (local) stiffness matrix for the gradients of the
     linear basis functions of a single tetrahedron. The matrix does
@@ -91,11 +125,13 @@ function localstiffnessmatrix_k{T}(elem::Tetrahedron{T})
     Symmetric(res, :U)
 end
 
+
+# =========================================================================================
 #=
     TODO
 =#
 function quadrature_ρ{T}(elem::Tetrahedron{T}, rproj::Function, charges::Vector{Charge{T}})
-    qpts = quadraturepoints(Tetrahedron, T)
+    qpts = quadraturepoints(Tetrahedron{T})
     # basis functions evaluated at cubature point
     const bt = Vector{T}[[.25, 1/6, .5, 1/6, 1/6], qpts.x, qpts.y, qpts.z]
 
@@ -107,6 +143,8 @@ function quadrature_ρ{T}(elem::Tetrahedron{T}, rproj::Function, charges::Vector
     ρlocal
 end
 
+
+# =========================================================================================
 #=
     TODO
 =#
@@ -128,12 +166,14 @@ function rhs_ρ{T}(elements::Vector{Tetrahedron{T}}, charges::Vector{Charge{T}},
     ρ
 end
 
+
+# =========================================================================================
 #=
     TODO
     merge with quadrature_ρ
 =#
 function quadrature_γ{T}(elem::Tetrahedron{T}, rproj::Function, ∇f::Vector{Vector{T}}, charges::Vector{Charge{T}})
-    qpts   = quadraturepoints(Tetrahedron, T)
+    qpts   = quadraturepoints(Tetrahedron{T})
     γlocal = zeros(T, 4)
     q      = ∇φmol(Vector{T}[rproj([qpts.x[i], qpts.y[i], qpts.z[i]]) for i in 1:qpts.num], charges)
     for node in 1:4, cpt in 1:qpts.num
@@ -142,6 +182,8 @@ function quadrature_γ{T}(elem::Tetrahedron{T}, rproj::Function, ∇f::Vector{Ve
     γlocal
 end
 
+
+# =========================================================================================
 #=
     TODO merge with rhs_ρ
 =#
@@ -164,10 +206,32 @@ function rhs_γ{T}(elements::Vector{Tetrahedron{T}}, charges::Vector{Charge{T}},
     γ
 end
 
-#=
-    TODO
-=#
-function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T}}, charges::Vector{Charge{T}}, opt::Option{T}=defaultopt(T))
+
+# =========================================================================================
+"""
+    solve{T}(
+                  ::Type{NonlocalES},
+        model     ::Model{T, Tetrahedron{T}}
+    )
+
+Computes the nonlocal electrostatic potentials on the mesh points of the system.
+
+# Return type
+`NonlocalFEMResult{T, Tetrahedron{T}}`
+"""
+function solve(
+             ::Type{NonlocalES},
+        model::Model{T, Tetrahedron{T}}
+    ) where T
+    # convenient access
+    const nodes    = model.nodes
+    const elements = model.elements
+    const charges  = model.charges
+    const εΩ       = model.params.εΩ
+    const εΣ       = model.params.εΣ
+    const ε∞       = model.params.ε∞
+    const λ        = model.params.λ
+
     # TODO reuse memory
     revidx = reverseindex(nodes)
     numnodes = length(nodes)
@@ -186,7 +250,7 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
     # m0 = λ² * K + V
     copy!(m0, kΩ)
     axpy!(1, kΣ, m0)
-    scale!(m0, opt.λ^2)
+    scale!(m0, λ^2)
     axpy!(1, v, m0)
 
     u0 = m0 \ ρ
@@ -203,11 +267,11 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
     m22 = view(m, 1+numnodes:2numnodes, 1+numnodes:2numnodes)
 
     # m11 = ε∞ * KΣ + εΩ * KΩ
-    axpy!(opt.ε∞, kΣ, m11)
-    axpy!(opt.εΩ, kΩ, m11)
+    axpy!(ε∞, kΣ, m11)
+    axpy!(εΩ, kΩ, m11)
 
     # m12 = (εΣ - ε∞)KΣ
-    axpy!(opt.εΣ - opt.ε∞, kΣ, m12)
+    axpy!(εΣ - ε∞, kΣ, m12)
 
     # m21 = -V
     axpy!(-1, v, m21)
@@ -223,9 +287,9 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
     γΣ  = rhs_γ(elements, charges, revidx, :Σ) # TODO
 
     # β = (ε∞ - εΣ) * (KΣ * u₀) + (εΩ - ε∞) * γΣ
-    #gemv!(opt.ε∞ - opt.εΣ, vΣ, u0, β) # BLAS does not support sparse matrices :\
-    axpy!(opt.ε∞ - opt.εΣ, kΣ * u0, β) # TODO in-place solution
-    axpy!(opt.εΩ - opt.ε∞, γΣ, β)
+    #gemv!(ε∞ - εΣ, vΣ, u0, β) # BLAS does not support sparse matrices :\
+    axpy!(ε∞ - εΣ, kΣ * u0, β) # TODO in-place solution
+    axpy!(εΩ - ε∞, γΣ, β)
 
     Ψu1 = m \ rhs
 
@@ -235,5 +299,10 @@ function espotential{T}(nodes::Vector{Vector{T}}, elements::Vector{Tetrahedron{T
     =#
     Φu2 = m \ zeros(T, 2 * numnodes)
 
-    potprefactor(T) / opt.εΩ * (view(Ψu1, 1:numnodes) + view(Φu2, 1:numnodes) + φmol(nodes, charges))
+    umol = φmol(nodes, charges)
+    NonlocalFEMResult(
+        model,
+        potprefactor(T) / εΩ * (view(Ψu1, 1:numnodes) + view(Φu2, 1:numnodes) + umol),
+        umol
+    )
 end

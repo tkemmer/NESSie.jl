@@ -24,6 +24,7 @@ const pages = [
         "intern/constants.md",
         "intern/input.md",
         "intern/quadrature.md",
+        "intern/solvers.md",
         "intern/util.md"
     ]
 ]
