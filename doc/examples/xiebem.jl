@@ -39,8 +39,8 @@ function plotpotential(
     figure()
     plot_trisurf(x, y, z, cmap=cm_get_cmap("viridis"))
     length(name) > 0 && (title(name))
-    xlabel("x component")
-    ylabel("z component")
+    xlabel("x component [\$\\AA\$]")
+    ylabel("z component [\$\\AA\$]")
     zlabel(reac ? "Reaction field potential [V]" : "Electrostatic potential [V]")
     nothing
 end
