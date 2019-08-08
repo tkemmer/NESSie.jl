@@ -57,7 +57,7 @@ function solve(
 
     # system matrix M
     m = zeros(T, numelem, numelem)
-    k = Array{T}(numelem, numelem)
+    k = Array{T}(undef, numelem, numelem)
     v = zeros(T, numelem, numelem)
 
     # right-hand sides bᵤ and b_q

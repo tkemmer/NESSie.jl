@@ -30,7 +30,7 @@ function legendre(maxn::Int, x::T) where T <: AbstractFloat
     maxn == 0 && return n::Int -> T[][n+1]
     maxn == 1 && return n::Int -> [one(T)][n+1]
 
-    P = Array{T}(maxn)
+    P = Array{T}(undef, maxn)
     P[1] = one(T) # P₀(x) = 0
     P[2] = x      # P₁(x) = x
 

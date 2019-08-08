@@ -80,7 +80,7 @@ function solve(
     #=
         generate and apply Kʸ-K
     =#
-    buffer = Array{T}(numelem, numelem)
+    buffer = Array{T}(undef, numelem, numelem)
     Radon.regularyukawacoll!(DoubleLayer, buffer, elements, Ξ, yuk)
 
     # β += (1-εΩ/εΣ)(Kʸ-K)umol

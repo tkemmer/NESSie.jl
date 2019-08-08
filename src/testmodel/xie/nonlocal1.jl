@@ -87,9 +87,9 @@ function coefficients(model::XieModel{T}, len::Int) where T
     κ  = λ \ √(εΣ/ε∞)
     c  = λ * (εΣ - ε∞) / (a^2 * ε∞)  # use as -c for ..(ε∞ - εΣ)..   (cf. A₁)
 
-    A₁ = Array{T}(len, length(model.charges))  # Eq. (20a)
-    A₂ = Array{T}(len, length(model.charges))  # Eq. (20b)
-    A₃ = Array{T}(len, length(model.charges))  # Eq. (20c)
+    A₁ = Array{T}(undef, len, length(model.charges))  # Eq. (20a)
+    A₂ = Array{T}(undef, len, length(model.charges))  # Eq. (20b)
+    A₃ = Array{T}(undef, len, length(model.charges))  # Eq. (20c)
 
     iₐ = spherical_besseli(len, a/λ)  # Eq. (A1)
     kₐ = spherical_besselk(len, a*κ)  # Eq. (A2)

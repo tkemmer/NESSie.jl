@@ -74,7 +74,7 @@ function φΣ(
     ) where T
     # result vector
     φ = zeros(T, length(Ξ))
-    buf = Array{T}(length(bem.model.elements))
+    buf = Array{T}(undef, length(bem.model.elements))
 
     # φ  = -εΩ/εΣ ⋅ [Vtilde ⋅ (q + qmol)](ξ)
     copy!(buf, bem.q)

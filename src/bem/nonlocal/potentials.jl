@@ -48,7 +48,7 @@ function φΣ(
     yuk = yukawa(bem.model.params)
     elements = bem.model.elements
 
-    buf = Array{T}(length(elements))
+    buf = Array{T}(undef, length(elements))
 
     # φ  = -V[εΩ/ε∞ ⋅ (q + qmol)](ξ)
     copy!(buf, bem.q)
