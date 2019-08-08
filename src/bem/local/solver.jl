@@ -43,17 +43,17 @@ function solve(
         model     ::Model{T, Triangle{T}}
     ) where T
     # observation points ξ
-    const Ξ = [e.center for e in model.elements]
+    Ξ = [e.center for e in model.elements]
 
     # compute molecular potentials for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    const umol = model.params.εΩ \   φmol(model)
-    const qmol = model.params.εΩ \ ∂ₙφmol(model)
+    umol = model.params.εΩ \   φmol(model)
+    qmol = model.params.εΩ \ ∂ₙφmol(model)
 
     # convenience aliases
-    const εΩ = model.params.εΩ
-    const εΣ = model.params.εΣ
-    const numelem = length(model.elements)
+    εΩ = model.params.εΩ
+    εΣ = model.params.εΣ
+    numelem = length(model.elements)
 
     # system matrix M
     m = zeros(T, numelem, numelem)

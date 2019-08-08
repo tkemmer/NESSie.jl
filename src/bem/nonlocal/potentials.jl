@@ -42,11 +42,11 @@ function φΣ(
     φ = zeros(T, length(Ξ))
 
     # convenience aliases
-    const εΩ  = bem.model.params.εΩ
-    const εΣ  = bem.model.params.εΣ
-    const ε∞  = bem.model.params.ε∞
-    const yuk = yukawa(bem.model.params)
-    const elements = bem.model.elements
+    εΩ  = bem.model.params.εΩ
+    εΣ  = bem.model.params.εΣ
+    ε∞  = bem.model.params.ε∞
+    yuk = yukawa(bem.model.params)
+    elements = bem.model.elements
 
     buf = Array{T}(length(elements))
 

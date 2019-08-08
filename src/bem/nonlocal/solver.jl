@@ -30,14 +30,14 @@ function solve(
         model     ::Model{T, Triangle{T}}
     ) where T
     # convenient access
-    const elements = model.elements
-    const εΩ       = model.params.εΩ
-    const εΣ       = model.params.εΣ
-    const ε∞       = model.params.ε∞
-    const yuk      = yukawa(model.params)
+    elements = model.elements
+    εΩ       = model.params.εΩ
+    εΣ       = model.params.εΣ
+    ε∞       = model.params.ε∞
+    yuk      = yukawa(model.params)
 
     # create system matrix
-    const numelem = length(elements)
+    numelem = length(elements)
     m = zeros(T, 3 * numelem, 3 * numelem)
 
     # convenient access to 9 blocks of the system matrix
@@ -60,8 +60,8 @@ function solve(
 
     # compute molecular potential for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    const umol = εΩ \   φmol(model)
-    const qmol = εΩ \ ∂ₙφmol(model)
+    umol = εΩ \   φmol(model)
+    qmol = εΩ \ ∂ₙφmol(model)
 
     # create right hand side
     rhs = zeros(T, 3 * numelem)

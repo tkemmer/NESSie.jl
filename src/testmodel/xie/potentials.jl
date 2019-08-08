@@ -18,13 +18,13 @@ point ``ξ``.
     This function does not verify whether ξ is located inside of the sphere!
 """
 function φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
-    const a  = model.radius
-    const λ  = model.params.λ
-    const εΩ = model.params.εΩ
-    const εΣ = model.params.εΣ
-    const ε∞ = model.params.ε∞
-    const A₃ = model.A₃
-    const r  = vecnorm(ξ)
+    a  = model.radius
+    λ  = model.params.λ
+    εΩ = model.params.εΩ
+    εΣ = model.params.εΣ
+    ε∞ = model.params.ε∞
+    A₃ = model.A₃
+    r  = vecnorm(ξ)
 
     φ = zero(T)
     for (qi, q) in enumerate(model.charges)   # Eq. (17a)
@@ -76,14 +76,14 @@ point ``ξ``.
     This function does not verify whether ξ is located outside of the sphere!
 """
 function φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
-    const a  = model.radius
-    const λ  = model.params.λ
-    const εΣ = model.params.εΣ
-    const ε∞ = model.params.ε∞
-    const A₁ = model.A₁
-    const A₂ = model.A₂
-    const κ  = λ \ √(εΣ/ε∞)
-    const r  = vecnorm(ξ)
+    a  = model.radius
+    λ  = model.params.λ
+    εΣ = model.params.εΣ
+    ε∞ = model.params.ε∞
+    A₁ = model.A₁
+    A₂ = model.A₂
+    κ  = λ \ √(εΣ/ε∞)
+    r  = vecnorm(ξ)
 
     kᵣ = spherical_besselk(model.len, κ * r)
 

@@ -79,13 +79,13 @@ Computes the coefficients ``A_{in}`` with ``i=1, 2, 3`` for the given
 }`
 """
 function coefficients(model::XieModel{T}, len::Int) where T
-    const a  = model.radius
-    const λ  = model.params.λ
-    const εΩ = model.params.εΩ
-    const εΣ = model.params.εΣ
-    const ε∞ = model.params.ε∞
-    const κ  = λ \ √(εΣ/ε∞)
-    const c  = λ * (εΣ - ε∞) / (a^2 * ε∞)  # use as -c for ..(ε∞ - εΣ)..   (cf. A₁)
+    a  = model.radius
+    λ  = model.params.λ
+    εΩ = model.params.εΩ
+    εΣ = model.params.εΣ
+    ε∞ = model.params.ε∞
+    κ  = λ \ √(εΣ/ε∞)
+    c  = λ * (εΣ - ε∞) / (a^2 * ε∞)  # use as -c for ..(ε∞ - εΣ)..   (cf. A₁)
 
     A₁ = Array{T}(len, length(model.charges))  # Eq. (20a)
     A₂ = Array{T}(len, length(model.charges))  # Eq. (20b)

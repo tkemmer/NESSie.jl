@@ -141,8 +141,8 @@ Prepare cubature points for one surface element.
 `Void`
 """
 function setcubpts!(dest::Vector{Vector{T}}, qpts::QuadPts2D{T}, elem::Triangle{T}) where T
-    const u = elem.v2 - elem.v1
-    const v = elem.v3 - elem.v1
+    u = elem.v2 - elem.v1
+    v = elem.v3 - elem.v1
 
     # devectorized version of
     # cubpts = [u * qpts.x[i] + v * qpts.y[i] + elem.v1 for i in 1:7]
@@ -204,7 +204,7 @@ function radoncoll!(
     @assert length(dest) == length(Ξ)
 
     # pre-allocate memory for cubature points
-    const qpts = quadraturepoints(Triangle{T})
+    qpts = quadraturepoints(Triangle{T})
     cubpts = [zeros(T, 3) for _ in 1:qpts.num]
 
     @inbounds for eidx in 1:length(elements)
@@ -235,7 +235,7 @@ function radoncoll!(
     @assert size(dest) == (length(Ξ), length(elements))
 
     # pre-allocate memory for cubature points
-    const qpts = quadraturepoints(Triangle{T})
+    qpts = quadraturepoints(Triangle{T})
     cubpts = [zeros(T, 3) for _ in 1:qpts.num]
 
     @inbounds for eidx in 1:length(elements)

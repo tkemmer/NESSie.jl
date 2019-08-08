@@ -30,7 +30,7 @@ function legendre(maxn::Int, x::T) where T <: AbstractFloat
     maxn == 0 && return n::Int -> T[][n+1]
     maxn == 1 && return n::Int -> [one(T)][n+1]
 
-    const P = Array{T}(maxn)
+    P = Array{T}(maxn)
     P[1] = one(T) # P₀(x) = 0
     P[2] = x      # P₁(x) = x
 
@@ -68,7 +68,7 @@ where ``I_ν`` is the modified Bessel function of the first kind
 ```
 """
 function spherical_besseli(maxn::Int, r::T) where T <: AbstractFloat
-    const i = √(π / 2r) * [besseli(n + one(T)/2, r) for n in -1:maxn]
+    i = √(π / 2r) * [besseli(n + one(T)/2, r) for n in -1:maxn]
     n::Int -> i[n+2]
 end
 
@@ -98,6 +98,6 @@ where ``K_ν`` is the modified Bessel function of the second kind
 ```
 """
 function spherical_besselk(maxn::Int, r::T) where T <: AbstractFloat
-    const k = √(π / 2r) * [besselk(n + one(T)/2, r) for n in -1:maxn]
+    k = √(π / 2r) * [besselk(n + one(T)/2, r) for n in -1:maxn]
     n::Int -> k[n+2]
 end
