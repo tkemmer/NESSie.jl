@@ -398,7 +398,7 @@ end
 ```
 """
 function obspoints_line(u::Vector{T}, v::Vector{T}, n::Int) where T
-    (u + T(i) * (v - u) for i in linspace(0, 1, n))
+    (u + T(i) * (v - u) for i in LinRange(0, 1, n))
 end
 
 
