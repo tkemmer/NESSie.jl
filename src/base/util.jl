@@ -372,7 +372,7 @@ IDs of the vector elements to the corresponding position in the vector.
 # Return type
 `Dict{UInt, UInt}`
 """
-function reverseindex{T}(v::Vector{T})
+function reverseindex(v::Vector{T}) where T
     Dict{UInt, UInt}(object_id(e) => i for (i,e) in enumerate(v))
 end
 
