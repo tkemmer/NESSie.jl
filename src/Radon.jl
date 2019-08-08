@@ -18,7 +18,7 @@ export regularyukawacoll!
 
 Computes the regular part of the Yukawa potential, that is, Yukawa minus Laplace:
 ```math
-\\mathcal{G}^Y-\\mathcal{G}^L = \\frac{1}{4π}\\frac{e\^{-\\frac{|x - ξ|}{Λ}} - 1}{|x-ξ|}
+\\mathcal{G}^Y-\\mathcal{G}^L = \\frac{1}{4π}\\frac{e^{-\\frac{|x - ξ|}{Λ}} - 1}{|x-ξ|}
 ```
 
 !!! note
@@ -77,8 +77,8 @@ end
 Computes the normal derivative of the regular part of the Yukawa potential, that is, Yukawa
 minus Laplace:
 ```math
-\\frac{∂}{∂n} \\frac{1}{4π} \\frac{e\^{-\\frac{|x - ξ|}{Λ}} - 1}{|x-ξ|}
-= \\frac{1}{4π} \\frac{1 - (1 + Λ^{-1} |x - ξ|)e\^{-\\frac{|x - ξ|}{Λ}}}{|x-ξ|²}
+\\frac{∂}{∂n} \\frac{1}{4π} \\frac{e^{-\\frac{|x - ξ|}{Λ}} - 1}{|x-ξ|}
+= \\frac{1}{4π} \\frac{1 - (1 + Λ^{-1} |x - ξ|)e^{-\\frac{|x - ξ|}{Λ}}}{|x-ξ|²}
 \\frac{(x - ξ) ⋅ n}{|x - ξ|}
 ```
 

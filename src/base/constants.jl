@@ -31,14 +31,14 @@ const ec = 1.602176e-9
 
 
 # =========================================================================================
-@doc """
+@doc raw"""
     potprefactor(T::Type{Float64} = Float64)
     potprefactor(T::Type{Float32})
 
-Common prefactor for all potentials ``φ\_Ω`` and ``φ\_Σ``:
+Common prefactor for all potentials ``φ_Ω`` and ``φ_Σ``:
 
 ```math
-\\frac{1.602 ⋅ 10^{-19}}{10^{-10} ⋅ 4π  ⋅ ε₀} ≈ 1.145 ⋅ 4π
+\frac{1.602 ⋅ 10^{-19}}{10^{-10} ⋅ 4π  ⋅ ε₀} ≈ 1.145 ⋅ 4π
 ```
 
 # Return type
@@ -78,7 +78,7 @@ end
 
 
 # =========================================================================================
-@doc """
+@doc raw"""
     defaultopt(T::Type{Float64} = Float64)
     defaultopt(T::Type{Float32})
 
@@ -88,9 +88,9 @@ Default system parameters
 [`Option{T}`](@ref NESSie.Option)
 
 # Default values
- * ``ε\_Ω = 2``
- * ``ε\_Σ = 78``
- * ``ε\_∞ = 1.8``
+ * ``ε_Ω = 2``
+ * ``ε_Σ = 78``
+ * ``ε_∞ = 1.8``
  * ``λ = 20 Å``
 """ defaultopt
 for T in [:Float64, :Float32]
@@ -110,7 +110,7 @@ defaultopt() = defaultopt(Float64)
 Exponent ``1/Λ`` for the fundamental solution of the yukawa operator
 
 ```math
-Λ := λ\\sqrt{\\frac{ε\_∞}{ε\_Σ}}
+Λ := λ\\sqrt{\\frac{ε_∞}{ε_Σ}}
 ```
 
 # Return type

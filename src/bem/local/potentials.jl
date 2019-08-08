@@ -5,7 +5,7 @@
         bem       ::B
     )
 
-Computes the local or nonlocal interior electrostatic potential ``φ\_Ω`` for the given set
+Computes the local or nonlocal interior electrostatic potential ``φ_Ω`` for the given set
 of observation points `Ξ`.
 
 !!! warning
@@ -56,7 +56,7 @@ end
         bem       ::B
     )
 
-Computes the local or nonlocal exterior electrostatic potential ``φ\_Σ`` for the given set
+Computes the local or nonlocal exterior electrostatic potential ``φ_Σ`` for the given set
 of observation points `Ξ`.
 
 !!! warning

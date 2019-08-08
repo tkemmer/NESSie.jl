@@ -45,14 +45,14 @@ Computes and returns the molecular potential of the given system of point charge
 structureless medium for the given observation point ξ:
 
 ```math
-φ\_{mol}(ξ) = \\frac{1}{4π ε\_0 ε\_Ω} \\sum_i \\frac{qᵢ}{|rᵢ-ξ|}
+φ_{mol}(ξ) = \\frac{1}{4π ε_0 ε_Ω} \\sum_i \\frac{qᵢ}{|rᵢ-ξ|}
 ```
 
 If ``|rᵢ-ξ|`` is smaller than the given `tolerance`, the value is replaced by `tolerance`
 for the affected charge.
 
 !!! note
-    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε\_Ω``
+    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε_Ω``
 
 ## Return type
 `T`
@@ -115,11 +115,11 @@ structureless medium, using the given triangle's center as observation point and
 triangle's normal as reference normal.
 
 ```math
-∂ₙφ\_{mol}(ξ) = -\\frac{1}{4π ε\_0 ε\_Ω} \\sum_i \\frac{qᵢ}{|rᵢ-ξ|³} (rᵢ-ξ) ⋅ n
+∂ₙφ_{mol}(ξ) = -\\frac{1}{4π ε_0 ε_Ω} \\sum_i \\frac{qᵢ}{|rᵢ-ξ|³} (rᵢ-ξ) ⋅ n
 ```
 
 !!! note
-    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε\_Ω``
+    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε_Ω``
 
 ## Return type
 `T`
@@ -154,11 +154,11 @@ Computes and returns the gradient of the given system's molecular potential in a
 structureless medium for the given observation point ξ.
 
 ```math
-∇φ\_{mol}(ξ) = -\\frac{1}{4π ε\_0 ε\_Ω} \\sum_i \\frac{qᵢ}{|rᵢ-ξ|³} (rᵢ-ξ)
+∇φ_{mol}(ξ) = -\\frac{1}{4π ε_0 ε_Ω} \\sum_i \\frac{qᵢ}{|rᵢ-ξ|³} (rᵢ-ξ)
 ```
 
 !!! note
-    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε\_Ω``
+    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε_Ω``
 
 ## Return type
 `Vector{T}`

@@ -6,9 +6,9 @@
 
 Computes the local or nonlocal reaction field energy W* as
 ```math
-W\^* = ∫φ\^* ρ \\quad dΩ
+W^* = ∫φ^* ρ \\quad dΩ
 ```
-where ``φ\^*`` is the reaction field and ``ρ`` is the corresponding charge distribution.
+where ``φ^*`` is the reaction field and ``ρ`` is the corresponding charge distribution.
 
 # Unit
 ``\\frac{kJ}{mol}``

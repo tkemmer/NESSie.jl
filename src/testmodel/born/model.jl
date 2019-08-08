@@ -6,13 +6,13 @@
     end
 
 Single Born ion, that is, a monoatomic ion represented as a spherically symmetric domain
-with a single point charge located at its center (``ε\_Ω = 1``).
+with a single point charge located at its center (``ε_Ω = 1``).
 
 ## Special constructors
 
     BornIon{T}(charge::T, radius::T)
 
-Centers the sphere at ``(0, 0, 0)\^T``.
+Centers the sphere at ``(0, 0, 0)^T``.
 """
 struct BornIon{T <: AbstractFloat}
     """Point charge at the sphere's center"""

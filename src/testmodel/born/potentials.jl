@@ -7,7 +7,7 @@
         opt::Option{T} = defaultopt(T)
     )
 
-Computes the interior local or nonlocal electrostatic potential ``φ\_Ω`` for the given
+Computes the interior local or nonlocal electrostatic potential ``φ_Ω`` for the given
 observation point ``ξ``.
 
 ## Unit
@@ -51,7 +51,7 @@ end
         opt::Option{T} = defaultopt(T)
     )
 
-Computes the exterior local or nonlocal electrostatic potential ``φ\_Σ`` for the given
+Computes the exterior local or nonlocal electrostatic potential ``φ_Σ`` for the given
 observation point ``ξ``.
 
 ## Unit
