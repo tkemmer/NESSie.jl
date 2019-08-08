@@ -25,7 +25,7 @@ function rfenergy(bem::LocalBEMResult{T}) where T
 
     # W* = -[W ⋅ u](ξ)
     Rjasanow.laplacecoll!(DoubleLayer, wstar, bem.model.elements, qposs, bem.u)
-    scale!(wstar, -1)
+    rmul!(wstar, -1)
 
     # W* += [V ⋅ q](ξ)
     Rjasanow.laplacecoll!(SingleLayer, wstar, bem.model.elements, qposs, bem.q)

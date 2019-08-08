@@ -3,6 +3,7 @@ module TestModel
 using ..NESSie
 using ..NESSie: ε0, ec, cos, potprefactor
 using Distances: euclidean
+using LinearAlgebra: norm, rmul!
 using SpecialFunctions: besseli, besselk
 
 #=

@@ -3,6 +3,7 @@ module BEM
 using ..NESSie
 using ..NESSie: σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
 using Distances: euclidean
+using LinearAlgebra: ⋅, lu!, rmul!
 
 export solve, φΩ, φΣ, rfenergy
 

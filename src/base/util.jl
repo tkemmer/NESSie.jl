@@ -22,7 +22,7 @@ function props(elem::Triangle{T}) where T
 
     # compute normal
     normal = (elem.v2 - elem.v1) × (elem.v3 - elem.v1)
-    vnorm = vecnorm(normal)
+    vnorm = norm(normal)
     normal /= vnorm
 
     # compute distance to origin
@@ -221,9 +221,9 @@ function isdegenerate(elem::Triangle{T}) where T
     @assert length(elem.v1) == length(elem.v2) == length(elem.v3) == 3
     u1 = elem.v2 - elem.v1
     u2 = elem.v3 - elem.v1
-    cosine = u1 ⋅ u2 / vecnorm(u1) / vecnorm(u2)
-    vecnorm(elem.v1 - elem.v2) < 1e-10 || vecnorm(elem.v1 - elem.v3) < 1e-10 ||
-    vecnorm(elem.v2 - elem.v3) < 1e-10 || 1 - abs(cosine) <= 1e-10
+    cosine = u1 ⋅ u2 / norm(u1) / norm(u2)
+    norm(elem.v1 - elem.v2) < 1e-10 || norm(elem.v1 - elem.v3) < 1e-10 ||
+    norm(elem.v2 - elem.v3) < 1e-10 || 1 - abs(cosine) <= 1e-10
 end
 
 
@@ -261,8 +261,8 @@ end
     cos{T}(
         u    ::Vector{T},
         v    ::Vector{T},
-        unorm::T=vecnorm(u),
-        vnorm::T=vecnorm(v)
+        unorm::T=norm(u),
+        vnorm::T=norm(v)
     )
 
 Computes the cosine of the angle between the given vectors `u` and `v` with lengths `unorm`
@@ -274,8 +274,8 @@ and `vnorm`, respectively.
 function cos(
         u    ::Vector{T},
         v    ::Vector{T},
-        unorm::T=vecnorm(u),
-        vnorm::T=vecnorm(v)
+        unorm::T=norm(u),
+        vnorm::T=norm(v)
     ) where T
     u ⋅ v / (unorm * vnorm)
 end

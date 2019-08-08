@@ -72,7 +72,7 @@ function solve(
     # initialize rhs;
     # again, we apply a prefactor of 4π to σ to match the other components of the vector
     copy!(β, umol)
-    scale!(β, -4π * σ)
+    rmul!(β, -4π * σ)
 
     # create list of observation points
     Ξ = [e.center for e in elements]
@@ -138,7 +138,7 @@ function solve(
     axpy!(εΩ/ε∞, buffer, m32)
 
     # solve system
-    cauchy = lufact!(m) \ rhs
+    cauchy = lu!(m) \ rhs
     NonlocalBEMResult(
         model,
         view(cauchy, 1:          numelem),

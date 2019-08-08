@@ -4,6 +4,8 @@ using NESSie
 using NESSie.BEM
 using NESSie.Format: readoff, readpqr
 using NESSie.TestModel
+
+using LinearAlgebra: norm
 using PyPlot: cm_get_cmap, figure, plot_trisurf, show, title, xlabel, ylabel, zlabel, zlim
 
 #=
@@ -71,7 +73,7 @@ nlxie1 = NonlocalXieModel1(
 molpot  = φmol(Ξ, nlxie1.charges)/4π/εΩ/ε0*NESSie.ec # molecular potential
 
 z = [
-        vecnorm(ξ) < nlxie1.radius ?
+        norm(ξ) < nlxie1.radius ?
         TestModel.φΩ(ξ, nlxie1) :
         TestModel.φΣ(ξ, nlxie1) for ξ in Ξ
     ]
@@ -91,7 +93,7 @@ bem = solve(NonlocalES, surf)
 
 zΣ = BEM.φΣ(Ξ, bem)
 zΩ = BEM.φΩ(Ξ, bem)
-z  = [vecnorm(ξ) < nlxie1.radius ? zΩ[i] : zΣ[i] for (i, ξ) in enumerate(Ξ)]
+z  = [norm(ξ) < nlxie1.radius ? zΩ[i] : zΣ[i] for (i, ξ) in enumerate(Ξ)]
 reac && (z -= molpot)
 
 zmin = min(zmin, (any(x -> x < 0, z) ? 1.2 : .8) * minimum(z))

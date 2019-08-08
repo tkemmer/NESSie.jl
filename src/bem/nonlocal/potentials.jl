@@ -9,14 +9,14 @@ function φΩ(
 
     # φ  = -[K ⋅ u](ξ)
     Rjasanow.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, bem.u)
-    scale!(φ, -1)
+    rmul!(φ, -1)
 
     # φ += [V ⋅ q](ξ)
     Rjasanow.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, bem.q)
 
     # φ *= 1/4π
     # (K and V were premultiplied by 4π! 4π⋅ε0 from u and q still to be applied)
-    scale!(φ, 1/4π)
+    rmul!(φ, 1/4π)
 
     # φ += 1/εΩ ⋅ φ*mol(ξ)
     # (φ*mol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
@@ -26,7 +26,7 @@ function φΩ(
     # ▶ 4π⋅ε0     for u, q, and umol
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    scale!(φ, potprefactor(T))
+    rmul!(φ, potprefactor(T))
 
     φ
 end
@@ -54,10 +54,10 @@ function φΣ(
     copy!(buf, bem.q)
     axpy!(1, bem.qmol, buf)
     Rjasanow.laplacecoll!(SingleLayer, φ, elements, Ξ, buf)
-    scale!(φ, -εΩ/ε∞)
+    rmul!(φ, -εΩ/ε∞)
 
     # φ += (Vʸ-V)[εΩ(1/εΣ - 1/ε∞) ⋅ (q + qmol)](ξ)
-    scale!(buf, εΩ * (1/εΣ - 1/ε∞))
+    rmul!(buf, εΩ * (1/εΣ - 1/ε∞))
     Radon.regularyukawacoll!(SingleLayer, φ, elements, Ξ, yuk, buf)
 
     # φ += K[u + umol](ξ)
@@ -76,7 +76,7 @@ function φΣ(
     # ▶ 4π⋅ε0     for u, q, w, umol, and qmol
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    scale!(φ, potprefactor(T) / 4π)
+    rmul!(φ, potprefactor(T) / 4π)
 
     φ
 end

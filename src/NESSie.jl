@@ -4,7 +4,9 @@ module NESSie
 
 import Base: cos, sign, seek
 import LinearAlgebra.BLAS: gemv!, gemv, axpy!, gemm
+
 using Distances: euclidean
+using LinearAlgebra: ⋅, ×, norm, rmul!
 
 include("base/constants.jl")
 export ε0, Option, defaultopt

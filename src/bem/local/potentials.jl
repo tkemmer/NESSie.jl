@@ -26,14 +26,14 @@ function φΩ(
 
     # φ  = -[W ⋅ u](ξ)
     Rjasanow.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, bem.u)
-    scale!(φ, -1)
+    rmul!(φ, -1)
 
     # φ += [Vtilde ⋅ q](ξ)
     Rjasanow.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, bem.q)
 
     # φ *= 1/4π
     # (W and Vtilde were premultiplied by 4π! 4π⋅ε0 from u and q still to be applied)
-    scale!(φ, 1 / 4π)
+    rmul!(φ, 1 / 4π)
 
     # φ += 1/εΩ ⋅ φ*mol(ξ)
     # (φ*mol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
@@ -43,7 +43,7 @@ function φΩ(
     # ▶ 4π⋅ε0     for u, q, and umol
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    scale!(φ, potprefactor(T))
+    rmul!(φ, potprefactor(T))
 
     φ
 end
@@ -80,7 +80,7 @@ function φΣ(
     copy!(buf, bem.q)
     axpy!(1, bem.qmol, buf)
     Rjasanow.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, buf)
-    scale!(φ, -bem.model.params.εΩ/bem.model.params.εΣ)
+    rmul!(φ, -bem.model.params.εΩ/bem.model.params.εΣ)
 
     # φ += [W ⋅ (u + umol)](ξ)
     copy!(buf, bem.u)
@@ -92,7 +92,7 @@ function φΣ(
     # ▶ 4π⋅ε0     for u, q, umol, and qmol
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    scale!(φ, potprefactor(T) / 4π)
+    rmul!(φ, potprefactor(T) / 4π)
 
     φ
 end
