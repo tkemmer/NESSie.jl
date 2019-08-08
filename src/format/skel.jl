@@ -34,9 +34,9 @@ function writeskel(
     end
     revidx = reverseindex(model.nodes)
     for elem in model.elements
-        (v1, v2, v3) = (revidx[object_id(elem.v1)] - 1,
-                        revidx[object_id(elem.v2)] - 1,
-                        revidx[object_id(elem.v3)] - 1)
+        (v1, v2, v3) = (revidx[objectid(elem.v1)] - 1,
+                        revidx[objectid(elem.v2)] - 1,
+                        revidx[objectid(elem.v3)] - 1)
         println(stream, "4\t$v1\t$v2\t$v3\t$v1")
     end
     nothing
@@ -53,10 +53,10 @@ function writeskel(
     end
     revidx = reverseindex(model.nodes)
     for elem in model.elements
-        (v1, v2, v3, v4) = (revidx[object_id(elem.v1)] - 1,
-                            revidx[object_id(elem.v2)] - 1,
-                            revidx[object_id(elem.v3)] - 1,
-                            revidx[object_id(elem.v4)] - 1)
+        (v1, v2, v3, v4) = (revidx[objectid(elem.v1)] - 1,
+                            revidx[objectid(elem.v2)] - 1,
+                            revidx[objectid(elem.v3)] - 1,
+                            revidx[objectid(elem.v4)] - 1)
         println(stream, "7\t$v1\t$v2\t$v3\t$v4\t$v2\t$v4\t$v1")
     end
     nothing

@@ -116,7 +116,7 @@ function vertexnormals(model::Model{T, Triangle{T}}) where T
     normals = Vector{T}[zeros(T, 3) for _ in 1:length(model.nodes)]
     count = zeros(T, length(model.nodes))
     @inbounds for elem in model.elements, node in (elem.v1, elem.v2, elem.v3)
-        idx = revidx[object_id(node)]
+        idx = revidx[objectid(node)]
         count[idx] += 1
         for i in 1:3
             normals[idx][i] += (elem.normal[i]-normals[idx][i]) / count[idx]
@@ -373,7 +373,7 @@ IDs of the vector elements to the corresponding position in the vector.
 `Dict{UInt, UInt}`
 """
 function reverseindex(v::Vector{T}) where T
-    Dict{UInt, UInt}(object_id(e) => i for (i,e) in enumerate(v))
+    Dict{UInt, UInt}(objectid(e) => i for (i,e) in enumerate(v))
 end
 
 

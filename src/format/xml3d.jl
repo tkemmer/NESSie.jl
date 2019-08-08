@@ -52,7 +52,7 @@ function writexml3d_json(
             "index" => Dict(
                 "type" => "int",
                 "seq" => [Dict{String, Vector{Int}}(
-                            "value" => [revidx[object_id(n)]-1 for n
+                            "value" => [revidx[objectid(n)]-1 for n
                                 in unpack([Vector{T}[o.v1, o.v2, o.v3] for o
                                 in model.elements])]
                           )]

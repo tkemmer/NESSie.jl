@@ -62,7 +62,7 @@ function writevtk(
     set_attribute(xconn, "type", "Int32")
     set_attribute(xconn, "Name", "connectivity")
     set_attribute(xconn, "format", "ascii")
-    add_text(xconn, join([revidx[object_id(n)]-1 for n in
+    add_text(xconn, join([revidx[objectid(n)]-1 for n in
         unpack([Vector{T}[o.v1, o.v2, o.v3] for o in model.elements])], " "))
 
     # Polys/offsets
@@ -108,7 +108,7 @@ function writevtk(
     set_attribute(xconn, "type", "Int32")
     set_attribute(xconn, "Name", "connectivity")
     set_attribute(xconn, "format", "ascii")
-    add_text(xconn, join([revidx[object_id(n)]-1 for n in
+    add_text(xconn, join([revidx[objectid(n)]-1 for n in
         unpack([Vector{T}[o.v1, o.v2, o.v3, o.v4] for o in model.elements])], " "))
 
     # Cells/offsets
