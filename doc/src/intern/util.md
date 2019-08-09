@@ -2,10 +2,6 @@
 
 ```@meta
     CurrentModule = NESSie
-    DocTestSetup = quote
-        using NESSie: eye!, pluseye!, unpack
-        using NESSie.TestModel:legendre
-    end
 ```
 
 ```@docs
@@ -27,8 +23,4 @@
     NESSie.TestModel.spherical_besselk
     unpack
     vertexnormals
-```
-
-```@meta
-    DocTestSetup = nothing
 ```

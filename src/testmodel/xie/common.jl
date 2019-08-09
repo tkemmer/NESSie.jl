@@ -16,7 +16,7 @@ returns a generic function to access the values.
 
 # Example
 
-```jldoctest
+```jldoctest; setup = :(using NESSie.TestModel: legendre)
 julia> p = legendre(3, 0.5);
 
 julia> [p(n) for n in 0:2]    # [P₀(0.5), P₁(0.5), P₂(0.5)]
