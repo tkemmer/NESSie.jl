@@ -71,7 +71,7 @@ function solve(
 
     # initialize rhs;
     # again, we apply a prefactor of 4π to σ to match the other components of the vector
-    copy!(β, umol)
+    copyto!(β, umol)
     rmul!(β, -4π * σ)
 
     # create list of observation points

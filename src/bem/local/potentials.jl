@@ -77,13 +77,13 @@ function φΣ(
     buf = Array{T}(undef, length(bem.model.elements))
 
     # φ  = -εΩ/εΣ ⋅ [Vtilde ⋅ (q + qmol)](ξ)
-    copy!(buf, bem.q)
+    copyto!(buf, bem.q)
     axpy!(1, bem.qmol, buf)
     Rjasanow.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, buf)
     rmul!(φ, -bem.model.params.εΩ/bem.model.params.εΣ)
 
     # φ += [W ⋅ (u + umol)](ξ)
-    copy!(buf, bem.u)
+    copyto!(buf, bem.u)
     axpy!(1, bem.umol, buf)
     Rjasanow.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, buf)
 

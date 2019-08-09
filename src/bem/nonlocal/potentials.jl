@@ -51,7 +51,7 @@ function φΣ(
     buf = Array{T}(undef, length(elements))
 
     # φ  = -V[εΩ/ε∞ ⋅ (q + qmol)](ξ)
-    copy!(buf, bem.q)
+    copyto!(buf, bem.q)
     axpy!(1, bem.qmol, buf)
     Rjasanow.laplacecoll!(SingleLayer, φ, elements, Ξ, buf)
     rmul!(φ, -εΩ/ε∞)
@@ -61,12 +61,12 @@ function φΣ(
     Radon.regularyukawacoll!(SingleLayer, φ, elements, Ξ, yuk, buf)
 
     # φ += K[u + umol](ξ)
-    copy!(buf, bem.u)
+    copyto!(buf, bem.u)
     axpy!(1, bem.umol, buf)
     Rjasanow.laplacecoll!(DoubleLayer, φ, elements, Ξ, buf)
 
     # φ += (Kʸ-K)[u + (1-εΩ/εΣ) ⋅ umol - ε∞\εΣ ⋅ w](ξ)
-    copy!(buf, bem.u)
+    copyto!(buf, bem.u)
     axpy!(1-εΩ/εΣ, bem.umol, buf)
     axpy!(-ε∞/εΣ, bem.w, buf)
     Radon.regularyukawacoll!(DoubleLayer, φ, elements, Ξ, yuk, buf)
