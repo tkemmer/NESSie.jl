@@ -1,6 +1,6 @@
 using NESSie.Format
 
-context("writeskel (surface model)") do
+@testset "writeskel (surface model)" begin
     for T in testtypes
         nodes = Vector{T}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
         model = Model(
@@ -14,15 +14,15 @@ context("writeskel (surface model)") do
         try
             writeskel(fh, model)
             seek(fh, 0)
-            @fact readline(fh) --> "SKEL"
-            @fact split(readline(fh)) --> ["4", "2"]
+            @test readline(fh) == "SKEL"
+            @test split(readline(fh)) == ["4", "2"]
             for node in nodes
-                @fact [parse(T, e) for e in split(readline(fh))] --> node
+                @test [parse(T, e) for e in split(readline(fh))] == node
             end
-            @fact split(readline(fh)) --> ["4", "0", "1", "2", "0"]
-            @fact split(readline(fh)) --> ["4", "0", "1", "3", "0"]
-            @fact strip(readline(fh)) --> ""
-            @fact eof(fh) --> true
+            @test split(readline(fh)) == ["4", "0", "1", "2", "0"]
+            @test split(readline(fh)) == ["4", "0", "1", "3", "0"]
+            @test strip(readline(fh)) == ""
+            @test eof(fh)
         finally
             close(fh)
             rm(fname)
@@ -30,7 +30,7 @@ context("writeskel (surface model)") do
     end
 end
 
-context("writeskel (volume model)") do
+@testset "writeskel (volume model)" begin
     for T in testtypes
         nodes = Vector{T}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1], [-2, 0, 0]]
         model = Model(
@@ -44,15 +44,15 @@ context("writeskel (volume model)") do
         try
             writeskel(fh, model)
             seek(fh, 0)
-            @fact readline(fh) --> "SKEL"
-            @fact split(readline(fh)) --> ["5", "2"]
+            @test readline(fh) == "SKEL"
+            @test split(readline(fh)) == ["5", "2"]
             for node in nodes
-                @fact [parse(T, e) for e in split(readline(fh))] --> node
+                @test [parse(T, e) for e in split(readline(fh))] == node
             end
-            @fact split(readline(fh)) --> ["7", "0", "1", "2", "3", "1", "3", "0"]
-            @fact split(readline(fh)) --> ["7", "0", "1", "2", "4", "1", "4", "0"]
-            @fact strip(readline(fh)) --> ""
-            @fact eof(fh) --> true
+            @test split(readline(fh)) == ["7", "0", "1", "2", "3", "1", "3", "0"]
+            @test split(readline(fh)) == ["7", "0", "1", "2", "4", "1", "4", "0"]
+            @test strip(readline(fh)) == ""
+            @test eof(fh)
         finally
             close(fh)
             rm(fname)

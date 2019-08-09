@@ -1,13 +1,13 @@
 using NESSie: potprefactor
 
-context("potprefactor") do
+@testset "potprefactor" begin
     for T in testtypes
-        @fact typeof(potprefactor(T)) --> T
+        @test typeof(potprefactor(T)) == T
     end
 end
 
-context("defaultopt") do
+@testset "defaultopt" begin
     for T in testtypes
-        @fact typeof(defaultopt(T)) --> Option{T}
+        @test typeof(defaultopt(T)) == Option{T}
     end
 end

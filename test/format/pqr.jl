@@ -11,19 +11,19 @@ ATOM      3  CA  THR     3     -16.775  27.193  23.310  0.0034 1.9080
 TER
 END""")
 
-context("readpqr") do
+@testset "readpqr" begin
     try
         for (fname, fh, len) in testfiles, T in testtypes
             seekstart(fh)
             charges = readpqr(fh, T)
 
-            @fact typeof(charges) --> Vector{Charge{T}}
-            @fact length(charges) --> len
+            @test typeof(charges) == Vector{Charge{T}}
+            @test length(charges) == len
             if fname == testfiles[2][1]
-                @fact charges[1].pos --> T[-17.108, 25.866, 23.850]
-                @fact charges[1].val --> T(0.1812)
-                @fact charges[2].pos --> T[-16.775, 27.193, 23.310]
-                @fact charges[2].val --> T(0.0034)
+                @test charges[1].pos == T[-17.108, 25.866, 23.850]
+                @test charges[1].val == T(0.1812)
+                @test charges[2].pos == T[-16.775, 27.193, 23.310]
+                @test charges[2].val == T(0.0034)
             end
         end
     finally

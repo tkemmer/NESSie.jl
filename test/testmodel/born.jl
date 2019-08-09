@@ -1,12 +1,12 @@
 using NESSie.TestModel
 
-context("bornion") do
+@testset "bornion" begin
     for T in testtypes
-        @fact typeof(bornion("Na", T)) --> BornIon{T}
+        @test typeof(bornion("Na", T)) == BornIon{T}
     end
 end
 
-@pending φΩ(LocalES) --> :nothing
-@pending φΣ(LocalES) --> :nothing
-@pending φΩ(NonlocalES) --> :nothing
-@pending φΣ(NonlocalES) --> :nothing
+@test_skip φΩ(LocalES)
+@test_skip φΣ(LocalES)
+@test_skip φΩ(NonlocalES)
+@test_skip φΣ(NonlocalES)

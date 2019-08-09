@@ -1,49 +1,49 @@
 using NESSie.Format
 using LightXML: parse_string, root, name, child_elements, attribute, content
 
-context("writevtk (surface model)") do
+@testset "writevtk (surface model)" begin
     for T in testtypes
         # empty system
         model = Model{T, Triangle{T}}()
         (fname, fh) = mktemp()
         try
             xroot = root(parse_string(readback(fh -> writevtk(fh, model))))
-            @fact name(xroot) --> "VTKFile"
-            @fact attribute(xroot, "type") --> "PolyData"
+            @test name(xroot) == "VTKFile"
+            @test attribute(xroot, "type") == "PolyData"
             xgrid = collect(child_elements(xroot))
-            @fact length(xgrid) --> 1
-            @fact name(xgrid[1]) --> "PolyData"
+            @test length(xgrid) == 1
+            @test name(xgrid[1]) == "PolyData"
             xgrid = collect(child_elements(xgrid[1]))
-            @fact length(xgrid) --> 1
-            @fact name(xgrid[1]) --> "Piece"
-            @fact attribute(xgrid[1], "NumberOfPoints") --> "0"
-            @fact attribute(xgrid[1], "NumberOfVerts") --> "0"
-            @fact attribute(xgrid[1], "NumberOfLines") --> "0"
-            @fact attribute(xgrid[1], "NumberOfStrips") --> "0"
-            @fact attribute(xgrid[1], "NumberOfPolys") --> "0"
+            @test length(xgrid) == 1
+            @test name(xgrid[1]) == "Piece"
+            @test attribute(xgrid[1], "NumberOfPoints") == "0"
+            @test attribute(xgrid[1], "NumberOfVerts") == "0"
+            @test attribute(xgrid[1], "NumberOfLines") == "0"
+            @test attribute(xgrid[1], "NumberOfStrips") == "0"
+            @test attribute(xgrid[1], "NumberOfPolys") == "0"
             xpiece = collect(child_elements(xgrid[1]))
-            @fact length(xpiece) --> 2
-            @fact name(xpiece[1]) --> "Points"
+            @test length(xpiece) == 2
+            @test name(xpiece[1]) == "Points"
             xdata = collect(child_elements(xpiece[1]))
-            @fact length(xdata) --> 1
-            @fact name(xdata[1]) --> "DataArray"
-            @fact attribute(xdata[1], "type") --> "$T"
-            @fact attribute(xdata[1], "NumberOfComponents") --> "3"
-            @fact attribute(xdata[1], "format") --> "ascii"
-            @fact strip(content(xdata[1])) --> ""
-            @fact name(xpiece[2]) --> "Polys"
+            @test length(xdata) == 1
+            @test name(xdata[1]) == "DataArray"
+            @test attribute(xdata[1], "type") == "$T"
+            @test attribute(xdata[1], "NumberOfComponents") == "3"
+            @test attribute(xdata[1], "format") == "ascii"
+            @test strip(content(xdata[1])) == ""
+            @test name(xpiece[2]) == "Polys"
             xdata = collect(child_elements(xpiece[2]))
-            @fact length(xdata) --> 2
-            @fact name(xdata[1]) --> "DataArray"
-            @fact attribute(xdata[1], "type") --> "Int32"
-            @fact attribute(xdata[1], "Name") --> "connectivity"
-            @fact attribute(xdata[1], "format") --> "ascii"
-            @fact strip(content(xdata[1])) --> ""
-            @fact name(xdata[2]) --> "DataArray"
-            @fact attribute(xdata[2], "type") --> "Int32"
-            @fact attribute(xdata[2], "Name") --> "offsets"
-            @fact attribute(xdata[2], "format") --> "ascii"
-            @fact strip(content(xdata[2])) --> ""
+            @test length(xdata) == 2
+            @test name(xdata[1]) == "DataArray"
+            @test attribute(xdata[1], "type") == "Int32"
+            @test attribute(xdata[1], "Name") == "connectivity"
+            @test attribute(xdata[1], "format") == "ascii"
+            @test strip(content(xdata[1])) == ""
+            @test name(xdata[2]) == "DataArray"
+            @test attribute(xdata[2], "type") == "Int32"
+            @test attribute(xdata[2], "Name") == "offsets"
+            @test attribute(xdata[2], "format") == "ascii"
+            @test strip(content(xdata[2])) == ""
         finally
             close(fh)
             rm(fname)
@@ -61,42 +61,42 @@ context("writevtk (surface model)") do
         (fname, fh) = mktemp()
         try
             xroot = root(parse_string(readback(fh -> writevtk(fh, model))))
-            @fact name(xroot) --> "VTKFile"
-            @fact attribute(xroot, "type") --> "PolyData"
+            @test name(xroot) == "VTKFile"
+            @test attribute(xroot, "type") == "PolyData"
             xgrid = collect(child_elements(xroot))
-            @fact length(xgrid) --> 1
-            @fact name(xgrid[1]) --> "PolyData"
+            @test length(xgrid) == 1
+            @test name(xgrid[1]) == "PolyData"
             xgrid = collect(child_elements(xgrid[1]))
-            @fact length(xgrid) --> 1
-            @fact name(xgrid[1]) --> "Piece"
-            @fact attribute(xgrid[1], "NumberOfPoints") --> "4"
-            @fact attribute(xgrid[1], "NumberOfVerts") --> "0"
-            @fact attribute(xgrid[1], "NumberOfLines") --> "0"
-            @fact attribute(xgrid[1], "NumberOfStrips") --> "0"
-            @fact attribute(xgrid[1], "NumberOfPolys") --> "2"
+            @test length(xgrid) == 1
+            @test name(xgrid[1]) == "Piece"
+            @test attribute(xgrid[1], "NumberOfPoints") == "4"
+            @test attribute(xgrid[1], "NumberOfVerts") == "0"
+            @test attribute(xgrid[1], "NumberOfLines") == "0"
+            @test attribute(xgrid[1], "NumberOfStrips") == "0"
+            @test attribute(xgrid[1], "NumberOfPolys") == "2"
             xpiece = collect(child_elements(xgrid[1]))
-            @fact length(xpiece) --> 2
-            @fact name(xpiece[1]) --> "Points"
+            @test length(xpiece) == 2
+            @test name(xpiece[1]) == "Points"
             xdata = collect(child_elements(xpiece[1]))
-            @fact length(xdata) --> 1
-            @fact name(xdata[1]) --> "DataArray"
-            @fact attribute(xdata[1], "type") --> "$T"
-            @fact attribute(xdata[1], "NumberOfComponents") --> "3"
-            @fact attribute(xdata[1], "format") --> "ascii"
-            @fact [parse(T, e) for e in split(strip(content(xdata[1])))] --> T[0, 0, 0, 0, 0, 3, 0, 3, 0, 1, -3, 3]
-            @fact name(xpiece[2]) --> "Polys"
+            @test length(xdata) == 1
+            @test name(xdata[1]) == "DataArray"
+            @test attribute(xdata[1], "type") == "$T"
+            @test attribute(xdata[1], "NumberOfComponents") == "3"
+            @test attribute(xdata[1], "format") == "ascii"
+            @test [parse(T, e) for e in split(strip(content(xdata[1])))] == T[0, 0, 0, 0, 0, 3, 0, 3, 0, 1, -3, 3]
+            @test name(xpiece[2]) == "Polys"
             xdata = collect(child_elements(xpiece[2]))
-            @fact length(xdata) --> 2
-            @fact name(xdata[1]) --> "DataArray"
-            @fact attribute(xdata[1], "type") --> "Int32"
-            @fact attribute(xdata[1], "Name") --> "connectivity"
-            @fact attribute(xdata[1], "format") --> "ascii"
-            @fact [parse(Int, e) for e in split(strip(content(xdata[1])))] --> [0, 1, 2, 0, 3, 1]
-            @fact name(xdata[2]) --> "DataArray"
-            @fact attribute(xdata[2], "type") --> "Int32"
-            @fact attribute(xdata[2], "Name") --> "offsets"
-            @fact attribute(xdata[2], "format") --> "ascii"
-            @fact [parse(Int, e) for e in split(strip(content(xdata[2])))] --> [3, 6]
+            @test length(xdata) == 2
+            @test name(xdata[1]) == "DataArray"
+            @test attribute(xdata[1], "type") == "Int32"
+            @test attribute(xdata[1], "Name") == "connectivity"
+            @test attribute(xdata[1], "format") == "ascii"
+            @test [parse(Int, e) for e in split(strip(content(xdata[1])))] == [0, 1, 2, 0, 3, 1]
+            @test name(xdata[2]) == "DataArray"
+            @test attribute(xdata[2], "type") == "Int32"
+            @test attribute(xdata[2], "Name") == "offsets"
+            @test attribute(xdata[2], "format") == "ascii"
+            @test [parse(Int, e) for e in split(strip(content(xdata[2])))] == [3, 6]
         finally
             close(fh)
             rm(fname)
@@ -104,51 +104,51 @@ context("writevtk (surface model)") do
     end
 end
 
-context("writevtk (volume model)") do
+@testset "writevtk (volume model)" begin
     for T in testtypes
         # empty system
         model = Model{T, Tetrahedron{T}}()
         (fname, fh) = mktemp()
         try
             xroot = root(parse_string(readback(fh -> writevtk(fh, model))))
-            @fact name(xroot) --> "VTKFile"
-            @fact attribute(xroot, "type") --> "UnstructuredGrid"
+            @test name(xroot) == "VTKFile"
+            @test attribute(xroot, "type") == "UnstructuredGrid"
             xgrid = collect(child_elements(xroot))
-            @fact length(xgrid) --> 1
-            @fact name(xgrid[1]) --> "UnstructuredGrid"
+            @test length(xgrid) == 1
+            @test name(xgrid[1]) == "UnstructuredGrid"
             xgrid = collect(child_elements(xgrid[1]))
-            @fact length(xgrid) --> 1
-            @fact name(xgrid[1]) --> "Piece"
-            @fact attribute(xgrid[1], "NumberOfPoints") --> "0"
-            @fact attribute(xgrid[1], "NumberOfCells") --> "0"
+            @test length(xgrid) == 1
+            @test name(xgrid[1]) == "Piece"
+            @test attribute(xgrid[1], "NumberOfPoints") == "0"
+            @test attribute(xgrid[1], "NumberOfCells") == "0"
             xpiece = collect(child_elements(xgrid[1]))
-            @fact length(xpiece) --> 2
-            @fact name(xpiece[1]) --> "Points"
+            @test length(xpiece) == 2
+            @test name(xpiece[1]) == "Points"
             xdata = collect(child_elements(xpiece[1]))
-            @fact length(xdata) --> 1
-            @fact name(xdata[1]) --> "DataArray"
-            @fact attribute(xdata[1], "type") --> "$T"
-            @fact attribute(xdata[1], "NumberOfComponents") --> "3"
-            @fact attribute(xdata[1], "format") --> "ascii"
-            @fact strip(content(xdata[1])) --> ""
-            @fact name(xpiece[2]) --> "Cells"
+            @test length(xdata) == 1
+            @test name(xdata[1]) == "DataArray"
+            @test attribute(xdata[1], "type") == "$T"
+            @test attribute(xdata[1], "NumberOfComponents") == "3"
+            @test attribute(xdata[1], "format") == "ascii"
+            @test strip(content(xdata[1])) == ""
+            @test name(xpiece[2]) == "Cells"
             xdata = collect(child_elements(xpiece[2]))
-            @fact length(xdata) --> 3
-            @fact name(xdata[1]) --> "DataArray"
-            @fact attribute(xdata[1], "type") --> "Int32"
-            @fact attribute(xdata[1], "Name") --> "connectivity"
-            @fact attribute(xdata[1], "format") --> "ascii"
-            @fact strip(content(xdata[1])) --> ""
-            @fact name(xdata[2]) --> "DataArray"
-            @fact attribute(xdata[2], "type") --> "Int32"
-            @fact attribute(xdata[2], "Name") --> "offsets"
-            @fact attribute(xdata[2], "format") --> "ascii"
-            @fact strip(content(xdata[2])) --> ""
-            @fact name(xdata[3]) --> "DataArray"
-            @fact attribute(xdata[3], "type") --> "UInt8"
-            @fact attribute(xdata[3], "Name") --> "types"
-            @fact attribute(xdata[3], "format") --> "ascii"
-            @fact strip(content(xdata[3])) --> ""
+            @test length(xdata) == 3
+            @test name(xdata[1]) == "DataArray"
+            @test attribute(xdata[1], "type") == "Int32"
+            @test attribute(xdata[1], "Name") == "connectivity"
+            @test attribute(xdata[1], "format") == "ascii"
+            @test strip(content(xdata[1])) == ""
+            @test name(xdata[2]) == "DataArray"
+            @test attribute(xdata[2], "type") == "Int32"
+            @test attribute(xdata[2], "Name") == "offsets"
+            @test attribute(xdata[2], "format") == "ascii"
+            @test strip(content(xdata[2])) == ""
+            @test name(xdata[3]) == "DataArray"
+            @test attribute(xdata[3], "type") == "UInt8"
+            @test attribute(xdata[3], "Name") == "types"
+            @test attribute(xdata[3], "format") == "ascii"
+            @test strip(content(xdata[3])) == ""
         finally
             close(fh)
             rm(fname)
@@ -166,44 +166,44 @@ context("writevtk (volume model)") do
         (fname, fh) = mktemp()
         try
             xroot = root(parse_string(readback(fh -> writevtk(fh, model))))
-            @fact name(xroot) --> "VTKFile"
-            @fact attribute(xroot, "type") --> "UnstructuredGrid"
+            @test name(xroot) == "VTKFile"
+            @test attribute(xroot, "type") == "UnstructuredGrid"
             xgrid = collect(child_elements(xroot))
-            @fact length(xgrid) --> 1
-            @fact name(xgrid[1]) --> "UnstructuredGrid"
+            @test length(xgrid) == 1
+            @test name(xgrid[1]) == "UnstructuredGrid"
             xgrid = collect(child_elements(xgrid[1]))
-            @fact length(xgrid) --> 1
-            @fact name(xgrid[1]) --> "Piece"
-            @fact attribute(xgrid[1], "NumberOfPoints") --> "5"
-            @fact attribute(xgrid[1], "NumberOfCells") --> "2"
+            @test length(xgrid) == 1
+            @test name(xgrid[1]) == "Piece"
+            @test attribute(xgrid[1], "NumberOfPoints") == "5"
+            @test attribute(xgrid[1], "NumberOfCells") == "2"
             xpiece = collect(child_elements(xgrid[1]))
-            @fact length(xpiece) --> 2
-            @fact name(xpiece[1]) --> "Points"
+            @test length(xpiece) == 2
+            @test name(xpiece[1]) == "Points"
             xdata = collect(child_elements(xpiece[1]))
-            @fact length(xdata) --> 1
-            @fact name(xdata[1]) --> "DataArray"
-            @fact attribute(xdata[1], "type") --> "$T"
-            @fact attribute(xdata[1], "NumberOfComponents") --> "3"
-            @fact attribute(xdata[1], "format") --> "ascii"
-            @fact [parse(T, e) for e in split(strip(content(xdata[1])))] --> T[0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0]
-            @fact name(xpiece[2]) --> "Cells"
+            @test length(xdata) == 1
+            @test name(xdata[1]) == "DataArray"
+            @test attribute(xdata[1], "type") == "$T"
+            @test attribute(xdata[1], "NumberOfComponents") == "3"
+            @test attribute(xdata[1], "format") == "ascii"
+            @test [parse(T, e) for e in split(strip(content(xdata[1])))] == T[0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0]
+            @test name(xpiece[2]) == "Cells"
             xdata = collect(child_elements(xpiece[2]))
-            @fact length(xdata) --> 3
-            @fact name(xdata[1]) --> "DataArray"
-            @fact attribute(xdata[1], "type") --> "Int32"
-            @fact attribute(xdata[1], "Name") --> "connectivity"
-            @fact attribute(xdata[1], "format") --> "ascii"
-            @fact [parse(Int, e) for e in split(strip(content(xdata[1])))] --> [0, 1, 2, 3, 0, 1, 2, 4]
-            @fact name(xdata[2]) --> "DataArray"
-            @fact attribute(xdata[2], "type") --> "Int32"
-            @fact attribute(xdata[2], "Name") --> "offsets"
-            @fact attribute(xdata[2], "format") --> "ascii"
-            @fact [parse(Int, e) for e in split(strip(content(xdata[2])))] --> [4, 8]
-            @fact name(xdata[3]) --> "DataArray"
-            @fact attribute(xdata[3], "type") --> "UInt8"
-            @fact attribute(xdata[3], "Name") --> "types"
-            @fact attribute(xdata[3], "format") --> "ascii"
-            @fact [parse(Int, e) for e in split(strip(content(xdata[3])))] --> [10, 10]
+            @test length(xdata) == 3
+            @test name(xdata[1]) == "DataArray"
+            @test attribute(xdata[1], "type") == "Int32"
+            @test attribute(xdata[1], "Name") == "connectivity"
+            @test attribute(xdata[1], "format") == "ascii"
+            @test [parse(Int, e) for e in split(strip(content(xdata[1])))] == [0, 1, 2, 3, 0, 1, 2, 4]
+            @test name(xdata[2]) == "DataArray"
+            @test attribute(xdata[2], "type") == "Int32"
+            @test attribute(xdata[2], "Name") == "offsets"
+            @test attribute(xdata[2], "format") == "ascii"
+            @test [parse(Int, e) for e in split(strip(content(xdata[2])))] == [4, 8]
+            @test name(xdata[3]) == "DataArray"
+            @test attribute(xdata[3], "type") == "UInt8"
+            @test attribute(xdata[3], "Name") == "types"
+            @test attribute(xdata[3], "format") == "ascii"
+            @test [parse(Int, e) for e in split(strip(content(xdata[3])))] == [10, 10]
         finally
             close(fh)
             rm(fname)

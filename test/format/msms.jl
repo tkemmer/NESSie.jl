@@ -21,7 +21,7 @@ write(testfiles[2][4], """
   2 3 1 x x
 """)
 
-context("readmsms") do
+@testset "readmsms" begin
     try
         for (fnamev, fv, fnamef, ff, len) in testfiles, fn in ("single", "bulk"), T in testtypes
             seekstart(fv)
@@ -37,23 +37,23 @@ context("readmsms") do
                 nodes, elements = (model.nodes, model.elements)
             end
             # check return types
-            @fact typeof(nodes) --> Vector{Vector{T}}
-            @fact typeof(elements) --> Vector{Triangle{T}}
+            @test typeof(nodes) == Vector{Vector{T}}
+            @test typeof(elements) == Vector{Triangle{T}}
             # check lengths
-            @fact length(nodes) --> len[1]
-            @fact length(elements) --> len[2]
+            @test length(nodes) == len[1]
+            @test length(elements) == len[2]
 
             # check content
             if fnamev == testfiles[2][1]
-                @fact nodes[1] --> T[0, 0, 0]
-                @fact nodes[2] --> T[1, 2, 3]
-                @fact nodes[3] --> T[-2.00001, 1.337, 42]
-                @fact elements[1].v1 --> exactly(nodes[1])
-                @fact elements[1].v2 --> exactly(nodes[2])
-                @fact elements[1].v3 --> exactly(nodes[3])
-                @fact elements[2].v1 --> exactly(nodes[2])
-                @fact elements[2].v2 --> exactly(nodes[3])
-                @fact elements[2].v3 --> exactly(nodes[1])
+                @test nodes[1] == T[0, 0, 0]
+                @test nodes[2] == T[1, 2, 3]
+                @test nodes[3] == T[-2.00001, 1.337, 42]
+                @test elements[1].v1 === nodes[1]
+                @test elements[1].v2 === nodes[2]
+                @test elements[1].v3 === nodes[3]
+                @test elements[2].v1 === nodes[2]
+                @test elements[2].v2 === nodes[3]
+                @test elements[2].v3 === nodes[1]
             end
         end
     finally

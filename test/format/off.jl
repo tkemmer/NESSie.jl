@@ -13,7 +13,7 @@ OFF
 3 2 0 1
 """)
 
-context("readoff") do
+@testset "readoff" begin
     try
         for (fname, fh, len) in testfiles, fn in ("single", "bulk"), T in testtypes
             seekstart(fh)
@@ -30,24 +30,24 @@ context("readoff") do
                 nodes, elements = (model.nodes, model.elements)
             end
             # check return types
-            @fact typeof(nodes) --> Vector{Vector{T}}
-            @fact typeof(elements) --> Vector{Triangle{T}}
+            @test typeof(nodes) == Vector{Vector{T}}
+            @test typeof(elements) == Vector{Triangle{T}}
 
             # check lengths
-            @fact length(nodes) --> len[1]
-            @fact length(elements) --> len[2]
+            @test length(nodes) == len[1]
+            @test length(elements) == len[2]
 
             # check content
             if fname == testfiles[2][1]
-                @fact nodes[1] --> T[1, 0, 0]
-                @fact nodes[2] --> T[0, 1, 0]
-                @fact nodes[3] --> T[0, 0, 1]
-                @fact elements[1].v1 --> exactly(nodes[1])
-                @fact elements[1].v2 --> exactly(nodes[2])
-                @fact elements[1].v3 --> exactly(nodes[3])
-                @fact elements[2].v1 --> exactly(nodes[3])
-                @fact elements[2].v2 --> exactly(nodes[1])
-                @fact elements[2].v3 --> exactly(nodes[2])
+                @test nodes[1] == T[1, 0, 0]
+                @test nodes[2] == T[0, 1, 0]
+                @test nodes[3] == T[0, 0, 1]
+                @test elements[1].v1 === nodes[1]
+                @test elements[1].v2 === nodes[2]
+                @test elements[1].v3 === nodes[3]
+                @test elements[2].v1 === nodes[3]
+                @test elements[2].v2 === nodes[1]
+                @test elements[2].v3 === nodes[2]
             end
         end
     finally

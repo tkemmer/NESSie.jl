@@ -1,7 +1,7 @@
 push!(LOAD_PATH,"../src/")
 
 using NESSie
-using FactCheck
+using Test
 
 # All tests. Will be used if no command line arguments are given.
 const tests = [
@@ -77,10 +77,16 @@ end
 
 # Run tests
 include("testutils.jl")
-for t in (length(ARGS) > 0 ? checkargs(ARGS) : tests)
-    facts(t) do
+if length(ARGS) > 0
+    @testset "$t" for t in checkargs(ARGS)
         include(t)
+        println()
     end
-    println()
+else
+    @testset "NESSie.jl" begin
+        println()
+        @testset "$t" for t in tests
+            include(t)
+        end
+    end
 end
-FactCheck.exitstatus()

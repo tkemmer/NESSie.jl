@@ -30,7 +30,7 @@ END_CHARGE_DATA
 
 """)
 
-context("readhmo") do
+@testset "readhmo" begin
     try
         for (fname, fh, len) in testfiles, fn in ("single", "bulk"), T in testtypes
             seekstart(fh)
@@ -46,29 +46,29 @@ context("readhmo") do
                 nodes, elements, charges = (model.nodes, model.elements, model.charges)
             end
             # check return types
-            @fact typeof(nodes) --> Vector{Vector{T}}
-            @fact typeof(elements) --> Vector{Triangle{T}}
-            @fact typeof(charges) --> Vector{Charge{T}}
+            @test typeof(nodes) == Vector{Vector{T}}
+            @test typeof(elements) == Vector{Triangle{T}}
+            @test typeof(charges) == Vector{Charge{T}}
             # check lengths
-            @fact length(nodes) --> len[1]
-            @fact length(elements) --> len[2]
-            @fact length(charges) --> len[3]
+            @test length(nodes) == len[1]
+            @test length(elements) == len[2]
+            @test length(charges) == len[3]
 
             # check content
             if fname == testfiles[2][1]
-                @fact nodes[1] --> T[0, 0, 0]
-                @fact nodes[2] --> T[1, 2, 3]
-                @fact nodes[3] --> T[-2.00001, 1.337, 42]
-                @fact elements[1].v1 --> exactly(nodes[1])
-                @fact elements[1].v2 --> exactly(nodes[2])
-                @fact elements[1].v3 --> exactly(nodes[3])
-                @fact elements[2].v1 --> exactly(nodes[2])
-                @fact elements[2].v2 --> exactly(nodes[3])
-                @fact elements[2].v3 --> exactly(nodes[1])
-                @fact charges[1].pos --> T[1, 2, 3]
-                @fact charges[1].val --> T(999)
-                @fact charges[2].pos --> T[-2.00001, 1.337, 42]
-                @fact charges[2].val --> T(-999.9)
+                @test nodes[1] == T[0, 0, 0]
+                @test nodes[2] == T[1, 2, 3]
+                @test nodes[3] == T[-2.00001, 1.337, 42]
+                @test elements[1].v1 === nodes[1]
+                @test elements[1].v2 === nodes[2]
+                @test elements[1].v3 === nodes[3]
+                @test elements[2].v1 === nodes[2]
+                @test elements[2].v2 === nodes[3]
+                @test elements[2].v3 === nodes[1]
+                @test charges[1].pos == T[1, 2, 3]
+                @test charges[1].val == T(999)
+                @test charges[2].pos == T[-2.00001, 1.337, 42]
+                @test charges[2].val == T(-999.9)
             end
         end
     finally
