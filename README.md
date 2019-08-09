@@ -112,6 +112,7 @@ following command in the `test/` directory:
 julia runtests.jl
 ```
 
+
 ## Tools
 `NESSie.jl` ships with the following extra tools:
 
@@ -121,3 +122,10 @@ julia runtests.jl
  library to create surface and volume meshes from [PDB](https://www.rcsb.org/pdb) files
 
 Please refer to the respective tool's README file for more details.
+
+
+## Citing
+If you use `NESSie.jl` in your research, please cite the following publication:
+> Kemmer, T, Rjasanow, S., Hildebrandt, A (2018). NESSie. jl - Efficient and Intuitive
+> Finite Element and Boundary Element Methods for Nonlocal Protein Electrostatics in the
+> Julia Language. Journal of Computational Science 28, 193-203.
