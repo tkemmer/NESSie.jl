@@ -1,0 +1,22 @@
+name = "NESSie"
+uuid = "f00e83c4-bd01-11e9-272c-ff1b96fb444d"
+authors = ["Thomas Kemmer <thomas@binaryden.de>"]
+desc = "Nonlocal Electrostatics in Structured Solvents"
+license = "MIT"
+version = "1.0.0"
+
+[deps]
+Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+LightXML = "9c8b4983-aa76-5018-a973-4c85ecc9e179"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
