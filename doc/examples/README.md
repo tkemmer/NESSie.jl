@@ -6,6 +6,13 @@ compared to their analytical solutions (or approximations of it) as provided by 
 the `data/` directory of this repository.
 
 
+## Prerequisites
+All code examples presented here additionally require
+[PyPlot.jl](https://github.com/JuliaPy/PyPlot.jl). Make sure to have this package installed:
+```sh
+pkg> add PyPlot
+```
+
 ## `bornbem.jl`
 Comparison of local and nonlocal exterior potentials of Born ions.
 
