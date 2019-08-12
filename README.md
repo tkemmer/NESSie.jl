@@ -5,53 +5,18 @@ providing efficient numerical solvers for local and nonlocal protein electrostat
 computations in structured solvents.
 
 
-## Requirements
-In addition to the Julia language itself (version 1.1), `NESSie.jl` depends on the
-following Julia packages:
-
- * [Distances.jl](http://github.com/JuliaStats/Distances.jl)
- * [JSON.jl](http://github.com/JuliaIO/JSON.jl)
- * [LightXML.jl](http://github.com/JuliaIO/LightXML.jl)
- * [SpecialFunctions.jl](https://github.com/JuliaMath/SpecialFunctions.jl)
- * [Documenter.jl](http://github.com/JuliaDocs/Documenter.jl) (optional; required for
- documentation)
- * [PyPlot.jl](https://github.com/JuliaPy/PyPlot.jl) (optional; required for example code)
-
-All of these packages can be directly installed from Julia's interactive command line
-(invoked by typing `julia` into your terminal):
-```julia
-using Pkg
-Pkg.add("Distances")
-Pkg.add("JSON")
-Pkg.add("LightXML")
-Pkg.add("SpecialFunctions")
-Pkg.add("Documenter") # optional
-Pkg.add("PyPlot")  # optional
-```
-The same commands can be used to check whether the respective package is already installed.
-
-
 ## Installation
-`NESSie.jl` is currently under development and not yet included in the official
-[Julia package repositories](https://pkg.julialang.org/). However, you can download a copy
-of the package using [this link](https://github.com/tkemmer/NESSie.jl/archive/master.zip)
-or `git` on your terminal:
+This version of `NESSie.jl` requires Julia 1.0 or above. In the Julia shell, switch to the
+`Pkg` shell by pressing `]` and enter the following command:
 
 ```sh
-git clone https://github.com/tkemmer/nessie.jl
+pkg> add https://github.com/tkemmer/NESSie.jl
 ```
 
-In order to use `NESSie.jl`, just tell Julia where to find it. This can be done by adding
-the following line either to Julia's startup file (`~/.julia/config/startup.jl`) or to the
-top of your script:
-```julia
-push!(LOAD_PATH, "/path/to/nessie.jl/src")
-```
-
-Alternatively, Julia can be started with an additional argument pointing to the `src/`
-directory of your local `NESSie.jl` copy:
+Analogously, the `NESSie.jl` can be removed at any time using the following command in the
+`Pkg` shell:
 ```sh
-julia -L /path/to/nessie.jl/src
+pkg> rm NESSie
 ```
 
 
@@ -98,18 +63,22 @@ A detailed documentation of `NESSie.jl` is available
 You can also build the same documentation manually using the following command in the
 `doc/` directory:
 ```sh
-julia make.jl
+shell> julia make.jl
 ```
-Please note that this additionally requires the `Documenter.jl` package to be installed on
-your machine. After the build process has finished successfully, the documentation can be
+Please note that this additionally requires the
+[`Documenter.jl`](http://github.com/JuliaDocs/Documenter.jl) package to be installed. This can be achieved by using the following command in the `Pkg` shell:
+```sh
+pkg> add Documenter
+```
+After the build process has finished successfully, the documentation can be
 found in the `doc/build/` directory.
 
 
 ## Testing
 `NESSie.jl` provides tests for most of its functions. You can run the test suite with the
-following command in the `test/` directory:
+following command in the `Pkg` shell:
 ```sh
-julia runtests.jl
+pkg> test NESSie
 ```
 
 
