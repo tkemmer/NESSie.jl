@@ -447,14 +447,14 @@ end
 # Convenience aliases
 gemv!(
     α::T,
-    m::Union{DenseArray{T,2}, SubArray{T,2}},
+    m::AbstractArray{T,2},
     v::Vector{T},
     dest::Union{DenseArray{T,1}, SubArray{T,1}}
 ) where T = gemv!(α, m, v, one(T), dest)
 
 gemv!(
     α::T,
-    m::Union{DenseArray{T,2}, SubArray{T,2}},
+    m::AbstractArray{T,2},
     v::Vector{T},
     β::T,
     dest::Union{DenseArray{T,1}, SubArray{T,1}}
@@ -462,12 +462,12 @@ gemv!(
 
 gemv(
     α::T,
-    m::Union{DenseArray{T,2}, SubArray{T,2}},
+    m::AbstractArray{T,2},
     v::Vector{T}
 ) where T = gemv('N', α, m, v)
 
 gemm(
     α::T,
-    a::Union{DenseArray{T,2}, SubArray{T,2}},
-    b::Union{DenseArray{T,2}, SubArray{T,2}}
+    a::AbstractArray{T,2},
+    b::AbstractArray{T,2},
 ) where T = gemm('N', 'N', α, a, b)
