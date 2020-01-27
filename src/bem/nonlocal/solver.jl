@@ -138,7 +138,7 @@ function solve(
     axpy!(εΩ/ε∞, buffer, m32)
 
     # solve system
-    cauchy = lu!(m) \ rhs
+    cauchy = m \ rhs
     NonlocalBEMResult(
         model,
         view(cauchy, 1:          numelem),

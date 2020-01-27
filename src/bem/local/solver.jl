@@ -95,7 +95,7 @@ function solve(
         b = (K - σ) ⋅ umol - εΩ/εΣ ⋅ V ⋅ qmol, and
         M = (1 + εΩ/εΣ) ⋅ σ + (εΩ/εΣ - 1) ⋅ K.
     =#
-    u = lu!(m) \ b
+    u = m \ b
 
     # b_q = (σ + K) ⋅ u
     fill!(b, zero(T))
@@ -105,7 +105,7 @@ function solve(
     #=
         q = V^{-1}⋅(σ + K)u
     =#
-    q = lu!(v) \ b
+    q = v \ b
 
     LocalBEMResult(model, u, q, umol, qmol)
 end
