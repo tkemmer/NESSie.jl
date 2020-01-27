@@ -4,7 +4,7 @@ using ..NESSie
 using ..NESSie: ddot
 using Distances: euclidean
 
-export regularyukawacoll!
+export regularyukawacoll, regularyukawacoll!
 
 
 # =========================================================================================
@@ -255,6 +255,26 @@ function radoncoll!(
     nothing
 end
 
+# TODO
+function radoncoll(
+        ξ       ::Vector{T},
+        elem    ::Triangle{T},
+        yukawa  ::T,
+        solution::Function
+    ) where T
+
+    qpts = quadraturepoints(Triangle{T})
+    cubpts = [zeros(T, 3) for _ in 1:qpts.num]
+    area = 2 * elem.area
+    setcubpts!(cubpts, qpts, elem)
+
+    value = zero(T)
+    for i in 1:qpts.num
+        value += solution(cubpts[i], ξ, yukawa, elem.normal)::T * qpts.weight[i]
+    end
+    value * area
+end
+
 
 # ========================================================================================
 """
@@ -325,5 +345,19 @@ regularyukawacoll!(
     Ξ       ::Vector{Vector{T}},
     yukawa  ::T
 ) where T = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, yukawa)
+
+regularyukawacoll(
+          ::Type{SingleLayer},
+    ξ     ::Vector{T},
+    elem  ::Triangle{T},
+    yukawa::T
+) where T = radoncoll(ξ, elem, yukawa, regularyukawapot)
+
+regularyukawacoll(
+          ::Type{DoubleLayer},
+    ξ     ::Vector{T},
+    elem  ::Triangle{T},
+    yukawa::T
+) where T = radoncoll(ξ, elem, yukawa, ∂ₙregularyukawapot)
 
 end # module
