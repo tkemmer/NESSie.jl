@@ -305,12 +305,6 @@ function laplacecoll!(
     @inbounds for eidx in 1:length(elements)
         elem = elements[eidx]
         for oidx in 1:length(Ξ)
-            #TODO check whether zerodiag is necessary
-            if ptype == DoubleLayer && eidx == oidx
-                dest[oidx, eidx] = zero(T)
-                continue
-            end
-
             ξ, dist = projectξ(Ξ[oidx], elem)
             dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist)
         end
