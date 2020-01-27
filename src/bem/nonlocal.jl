@@ -139,6 +139,125 @@ function solve(
 
     # solve system
     cauchy = m \ rhs
+
+    NonlocalBEMResult(
+        model,
+        view(cauchy, 1:          numelem),
+        view(cauchy, 1+numelem: 2numelem),
+        view(cauchy, 1+2numelem:3numelem),
+        umol,
+        qmol
+    )
+end
+
+# TODO
+function solve_implicit(
+                  ::Type{NonlocalES},
+        model     ::Model{T, Triangle{T}}
+    ) where T
+    # convenient access
+    elements = model.elements
+    εΩ       = model.params.εΩ
+    εΣ       = model.params.εΣ
+    ε∞       = model.params.ε∞
+    yuk      = yukawa(model.params)
+    numelem  = length(elements)
+
+    # compute molecular potential for the point charges;
+    # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
+    umol = εΩ \   φmol(model)
+    qmol = εΩ \ ∂ₙφmol(model)
+
+    # observation points and elements
+    Ξ      = [e.center for e in elements]
+    iΞ     = collect(enumerate(Ξ))
+    ielems = collect(enumerate(elements))
+
+
+    #=
+        right-hand side
+    =#
+
+    # -[1 - σ - Kʸ + εΩ/εΣ (Kʸ - K)]
+    Ks = InteractionMatrix(T, iΞ, ielems,
+        ((i, ξ), (j, elem)) -> -T(i == j) * 4π * (1-σ) +
+            (1 - εΩ/εΣ) * Radon.regularyukawacoll(DoubleLayer, ξ, elem, yuk) +
+            Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
+    )
+
+    # -[εΩ/ε∞ Vʸ - εΩ/εΣ (Vʸ - V)]
+    Vs = InteractionMatrix(T, Ξ, elements,
+        (ξ, elem) -> εΩ * (1/εΣ - 1/ε∞) *
+            Radon.regularyukawacoll(SingleLayer, ξ, elem, yuk) -
+            εΩ/ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
+    )
+
+    # rhs = [β, 0 , 0]ᵀ
+    rhs = BlockMatrix(3, 1,
+        reshape(Ks * umol + Vs * qmol, (numelem, 1)),
+        FixedValueArray(zero(T), numelem, 1),
+        FixedValueArray(zero(T), numelem, 1)
+    )
+
+
+    #=
+        system matrix
+    =#
+
+    # M₁₁ = 1 - σ - Kʸ
+    M₁₁ = InteractionMatrix(T, iΞ, ielems,
+        ((i, ξ), (j, elem)) -> T(i == j) * 4π * (1-σ) -
+            Radon.regularyukawacoll(DoubleLayer, ξ, elem, yuk) -
+            Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
+    )
+
+    # M₁₂ = εΩ/ε∞ Vʸ - εΩ/εΣ (Vʸ - V)
+    M₁₂ = InteractionMatrix(T, Ξ, elements,
+        (ξ, elem) -> εΩ * (1/ε∞ - 1/εΣ) *
+            Radon.regularyukawacoll(SingleLayer, ξ, elem, yuk) +
+            εΩ / ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
+    )
+
+    # M₁₃ = ε∞/εΣ (Kʸ - K)
+    M₁₃ = InteractionMatrix(T, Ξ, elements,
+        (ξ, elem) -> ε∞/εΣ * Radon.regularyukawacoll(DoubleLayer, ξ, elem, yuk)
+    )
+
+    # M₂₁ = σ + K
+    M₂₁ = InteractionMatrix(T, iΞ, ielems,
+        ((i, ξ), (j, elem)) -> T(i == j) * 4π * σ  +
+            Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
+    )
+
+    # M₂₂ = -V
+    M₂₂ = InteractionMatrix(T, Ξ, elements,
+        (ξ, elem) -> -Rjasanow.laplacecoll(SingleLayer, ξ, elem)
+    )
+
+    # M₂₃ = M₃₁ = 0
+    M₂₃ = FixedValueArray(zero(T), numelem, numelem)
+    M₃₁ = FixedValueArray(zero(T), numelem, numelem)
+
+    # M₃₂ = εΩ/ε∞ V
+    M₃₂ = InteractionMatrix(T, Ξ, elements,
+        (ξ, elem) -> εΩ/ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
+    )
+
+    # M₃₃ = 1 - σ - K
+    M₃₃ = InteractionMatrix(T, iΞ, ielems,
+        ((i, ξ), (j, elem)) -> T(i == j) * 4π * (1-σ) -
+            Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
+    )
+
+    M = BlockMatrix(3, 3,
+        M₁₁, M₁₂, M₁₃,
+        M₂₁, M₂₂, M₂₃,
+        M₃₁, M₃₂, M₃₃
+    )
+
+    # solve system
+    cauchy = M \ rhs
+
     NonlocalBEMResult(
         model,
         view(cauchy, 1:          numelem),
