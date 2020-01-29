@@ -46,7 +46,7 @@ observation point `ξ`. The latter needs to be projected onto the surface elemen
 # Return type
 `T`
 """
-function laplacepot(
+@inline function laplacepot(
         ptype::Type{P},
         ξ    ::Vector{T},
         elem ::Triangle{T},
@@ -162,7 +162,7 @@ sines of the angles ``φ₁`` and ``φ₂`` between `h` and the triangle sides e
 # Return type
 `T`
 """
-function laplacepot(
+@inline function laplacepot(
              ::Type{SingleLayer},
              ::Type{InPlane},
         sinφ1::T,
@@ -180,7 +180,7 @@ function laplacepot(
     2 \ h * log((1+sinφ2) * (1-sinφ1) / ((1-sinφ2) * (1+sinφ1)))
 end
 
-function laplacepot(
+@inline function laplacepot(
              ::Type{SingleLayer},
              ::Type{InSpace},
         sinφ1::T,
@@ -215,7 +215,7 @@ function laplacepot(
     result + d * (asin(χ * sinφ2) - asin(sinφ2) - asin(χ * sinφ1) + asin(sinφ1))
 end
 
-function laplacepot(
+@inline function laplacepot(
              ::Type{DoubleLayer},
              ::Type{InPlane},
         sinφ1::T,
@@ -231,7 +231,7 @@ function laplacepot(
     zero(T)
 end
 
-function laplacepot(
+@inline function laplacepot(
              ::Type{DoubleLayer},
              ::Type{InSpace},
         sinφ1::T,
@@ -327,7 +327,7 @@ Utility function to compute
 # Return type
 `T`
 """
-function logterm(χ2::T, sinφ::T) where T
+@inline function logterm(χ2::T, sinφ::T) where T
     term1 = √(1 - χ2 * sinφ^2)
     term2 = √(1 - χ2) * sinφ
     (term1 + term2) / (term1 - term2)
