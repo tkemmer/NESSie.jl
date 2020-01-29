@@ -124,16 +124,16 @@ function laplacepot(
         return zero(T)
     end
 
-    # Check whether or not the original ξ lies in the surface element plane
-    ξloc = abs(dist) < 1e-10 ? InPlane : InSpace
-
     # Since the observation point (projection) lies in the same plane as the surface
     # element, we can decide whether the result of this function is to be added or
     # subtracted from the whole surface triangle's Laplace potential by checking on which
     # side of v the observation point lies. This is equivalent to checking whether the
     # normal of the triangle here and the one of the surface element (which are obviously
     # (anti)parallel) are oriented alike.
-    sign(u1, u2, normal) * laplacepot(ptype, ξloc, sinφ1, sinφ2, h, dist)
+    pot = abs(dist) < 1e-10 ?
+        laplacepot(ptype, InPlane, sinφ1, sinφ2, h, dist) :
+        laplacepot(ptype, InSpace, sinφ1, sinφ2, h, dist)
+    sign(u1, u2, normal) * pot
 end
 
 
