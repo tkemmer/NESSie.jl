@@ -155,99 +155,40 @@ function solve_implicit(
                   ::Type{NonlocalES},
         model     ::Model{T, Triangle{T}}
     ) where T
-    # convenient access
-    elements = model.elements
-    εΩ       = model.params.εΩ
-    εΣ       = model.params.εΣ
-    ε∞       = model.params.ε∞
-    yuk      = yukawa(model.params)
-    numelem  = length(elements)
+
+    # shortcuts
+    params  = model.params
+    elems   = model.elements
+    ielems  = collect(enumerate(elems))
+    Ξ       = [e.center for e in elems]
+    iΞ      = collect(enumerate(Ξ))
+    numelem = length(elems)
 
     # compute molecular potential for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = εΩ \   φmol(model)
-    qmol = εΩ \ ∂ₙφmol(model)
-
-    # observation points and elements
-    Ξ      = [e.center for e in elements]
-    iΞ     = collect(enumerate(Ξ))
-    ielems = collect(enumerate(elements))
-
-
-    #=
-        right-hand side
-    =#
-
-    # -[1 - σ - Kʸ + εΩ/εΣ (Kʸ - K)]
-    Ks = InteractionMatrix(T, iΞ, ielems,
-        ((i, ξ), (j, elem)) -> -T(i == j) * 4π * (1-σ) +
-            (1 - εΩ/εΣ) * Radon.regularyukawacoll(DoubleLayer, ξ, elem, yuk) +
-            Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
-    )
-
-    # -[εΩ/ε∞ Vʸ - εΩ/εΣ (Vʸ - V)]
-    Vs = InteractionMatrix(T, Ξ, elements,
-        (ξ, elem) -> εΩ * (1/εΣ - 1/ε∞) *
-            Radon.regularyukawacoll(SingleLayer, ξ, elem, yuk) -
-            εΩ/ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
-    )
+    umol = params.εΩ \   φmol(model)
+    qmol = params.εΩ \ ∂ₙφmol(model)
 
     # rhs = [β, 0 , 0]ᵀ
+    Ks = InteractionMatrix(iΞ, ielems, KSfun{T}(params))
+    Vs = InteractionMatrix(Ξ,  elems,  VSfun{T}(params))
+
     rhs = BlockMatrix(3, 1,
         reshape(Ks * umol + Vs * qmol, (numelem, 1)),
         FixedValueArray(zero(T), numelem, 1),
         FixedValueArray(zero(T), numelem, 1)
     )
 
-
-    #=
-        system matrix
-    =#
-
-    # M₁₁ = 1 - σ - Kʸ
-    M₁₁ = InteractionMatrix(T, iΞ, ielems,
-        ((i, ξ), (j, elem)) -> T(i == j) * 4π * (1-σ) -
-            Radon.regularyukawacoll(DoubleLayer, ξ, elem, yuk) -
-            Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
-    )
-
-    # M₁₂ = εΩ/ε∞ Vʸ - εΩ/εΣ (Vʸ - V)
-    M₁₂ = InteractionMatrix(T, Ξ, elements,
-        (ξ, elem) -> εΩ * (1/ε∞ - 1/εΣ) *
-            Radon.regularyukawacoll(SingleLayer, ξ, elem, yuk) +
-            εΩ / ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
-    )
-
-    # M₁₃ = ε∞/εΣ (Kʸ - K)
-    M₁₃ = InteractionMatrix(T, Ξ, elements,
-        (ξ, elem) -> ε∞/εΣ * Radon.regularyukawacoll(DoubleLayer, ξ, elem, yuk)
-    )
-
-    # M₂₁ = σ + K
-    M₂₁ = InteractionMatrix(T, iΞ, ielems,
-        ((i, ξ), (j, elem)) -> T(i == j) * 4π * σ  +
-            Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
-    )
-
-    # M₂₂ = -V
-    M₂₂ = InteractionMatrix(T, Ξ, elements,
-        (ξ, elem) -> -Rjasanow.laplacecoll(SingleLayer, ξ, elem)
-    )
-
-    # M₂₃ = M₃₁ = 0
+    # system matrix
+    M₁₁ = InteractionMatrix(iΞ, ielems, M11fun{T}(params))
+    M₁₂ = InteractionMatrix(Ξ,  elems,  M12fun{T}(params))
+    M₁₃ = InteractionMatrix(Ξ,  elems,  M13fun{T}(params))
+    M₂₁ = InteractionMatrix(iΞ, ielems, M21fun{T}())
+    M₂₂ = InteractionMatrix(Ξ,  elems,  M22fun{T}())
     M₂₃ = FixedValueArray(zero(T), numelem, numelem)
     M₃₁ = FixedValueArray(zero(T), numelem, numelem)
-
-    # M₃₂ = εΩ/ε∞ V
-    M₃₂ = InteractionMatrix(T, Ξ, elements,
-        (ξ, elem) -> εΩ/ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
-    )
-
-    # M₃₃ = 1 - σ - K
-    M₃₃ = InteractionMatrix(T, iΞ, ielems,
-        ((i, ξ), (j, elem)) -> T(i == j) * 4π * (1-σ) -
-            Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
-    )
+    M₃₂ = InteractionMatrix(Ξ,  elems,  M32fun{T}(params))
+    M₃₃ = InteractionMatrix(iΞ, ielems, M33fun{T}())
 
     M = BlockMatrix(3, 3,
         M₁₁, M₁₂, M₁₃,
@@ -266,4 +207,80 @@ function solve_implicit(
         umol,
         qmol
     )
+end
+
+# Vs = -[εΩ/ε∞ Vʸ - εΩ/εΣ (Vʸ - V)]
+struct VSfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+    opt::Option{T}
+end
+function (f::VSfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+    f.opt.εΩ * (1/f.opt.εΣ - 1/f.opt.ε∞) *
+        Radon.regularyukawacoll(SingleLayer, ξ, elem, yukawa(f.opt)) -
+        f.opt.εΩ/f.opt.ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
+end
+
+# Ks = -[1 - σ - Kʸ + εΩ/εΣ (Kʸ - K)]
+struct KSfun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangle{T}}, T}
+    opt::Option{T}
+end
+function (f::KSfun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
+    -T(iξ[1] == ielem[1]) * 4π * (1-σ) + (1 - f.opt.εΩ/f.opt.εΣ) *
+        Radon.regularyukawacoll(DoubleLayer, iξ[2], ielem[2], yukawa(f.opt)) +
+        Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
+end
+
+# M₁₁ = 1 - σ - Kʸ
+struct M11fun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangle{T}}, T}
+    opt::Option{T}
+end
+function (f::M11fun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
+    T(iξ[1] == ielem[1]) * 4π * (1-σ) -
+        Radon.regularyukawacoll(DoubleLayer, iξ[2], ielem[2], yukawa(f.opt)) -
+        Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
+end
+
+# M₁₂ = εΩ/ε∞ Vʸ -εΩ/εΣ (Vʸ - V)
+struct M12fun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+    opt::Option{T}
+end
+function (f::M12fun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+    f.opt.εΩ * (1/f.opt.ε∞ - 1/f.opt.εΣ) *
+        Radon.regularyukawacoll(SingleLayer, ξ, elem, yukawa(f.opt)) +
+        f.opt.εΩ / f.opt.ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
+end
+
+# M₁₃ = ε∞/εΣ (Kʸ - K)
+struct M13fun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+    opt::Option{T}
+end
+function (f::M13fun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+    f.opt.ε∞/f.opt.εΣ * Radon.regularyukawacoll(DoubleLayer, ξ, elem, yukawa(f.opt))
+end
+
+# M₂₁ = σ + K
+struct M21fun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangle{T}}, T}
+end
+function (::M21fun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
+    T(iξ[1] == ielem[1]) * 4π * σ  + Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
+end
+
+# M₂₂ = -V
+struct M22fun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
+function (::M22fun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+    -Rjasanow.laplacecoll(SingleLayer, ξ, elem)
+end
+
+# M₃₂ = εΩ/ε∞ V
+struct M32fun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+    opt::Option{T}
+end
+function (f::M32fun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+    f.opt.εΩ/f.opt.ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
+end
+
+# M₃₃ = 1 - σ - K
+struct M33fun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangle{T}}, T}
+end
+function (::M33fun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
+    T(iξ[1] == ielem[1]) * 4π * (1-σ) - Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
 end

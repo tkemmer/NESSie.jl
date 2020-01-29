@@ -3,7 +3,7 @@ module BEM
 using ..NESSie
 using ..NESSie: _etol, σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
 using Distances: euclidean
-using ImplicitArrays: BlockMatrix, FixedValueArray, InteractionMatrix
+using ImplicitArrays: BlockMatrix, FixedValueArray, InteractionFunction, InteractionMatrix
 using LinearAlgebra: ⋅, rmul!
 
 export BEMResult, LocalBEMResult, NonlocalBEMResult, rfenergy, solve, φΩ, φΣ
