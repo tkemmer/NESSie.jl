@@ -173,11 +173,8 @@ function solve_implicit(
     Ks = InteractionMatrix(iΞ, ielems, KSfun{T}(params))
     Vs = InteractionMatrix(Ξ,  elems,  VSfun{T}(params))
 
-    rhs = BlockMatrix(3, 1,
-        reshape(Ks * umol + Vs * qmol, (numelem, 1)),
-        FixedValueArray(zero(T), numelem, 1),
-        FixedValueArray(zero(T), numelem, 1)
-    )
+    rhs = zeros(T, 3numelem)
+    rhs[1:numelem] .= Ks * umol + Vs * qmol
 
     # system matrix
     M₁₁ = InteractionMatrix(iΞ, ielems, M11fun{T}(params))
