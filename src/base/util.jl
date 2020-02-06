@@ -97,7 +97,7 @@ julia> unpack([[1, 2], [3]])
  3
 ```
 """
-function unpack(data::Vector{Vector{T}}) where T
+function unpack(data::AbstractArray{Vector{T}, 1}) where T
     isempty(data) ?  T[] : T[x for y in data for x in y]
 end
 
