@@ -114,7 +114,7 @@ function ∂ₙregularyukawapot(
         tolerance = 1e-10 * abs(term)
         tsum = zero(T)
         for i in 2:16
-            abs(term) <= tolerance && continue
+            abs(term) <= tolerance && break
 
             tsum += term * (i-1)
             term *= -scalednorm / (i+1)
