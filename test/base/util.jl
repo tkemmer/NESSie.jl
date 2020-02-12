@@ -182,7 +182,6 @@ end
         @test typeof(cos(u, T[1, 0, 0])) == T
         @test cos(u, T[1, 0, 0]) ≈ one(T)
         @test cos(u, T[0, 1, 0]) ≈ zero(T)
-        @test cos(u, T[0, 1, 0]) ≈ zero(T)
         @test cos(u, T[-1, 0, 0]) ≈ -one(T)
         @test cos(u, T[0, -1, 0]) ≈ zero(T)
         @test cos(u, T[1, 1, 0]) ≈ T(cos(π/4))
