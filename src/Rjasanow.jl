@@ -5,7 +5,7 @@ using ..NESSie: cos, cathetus, sign, distance
 
 using LinearAlgebra: norm
 
-export laplacecoll!
+export laplacecoll, laplacecoll!
 
 
 # =========================================================================================
@@ -310,6 +310,17 @@ function laplacecoll!(
         end
     end
     nothing
+end
+
+# TODO
+@inline function laplacecoll(
+        ptype::Type{P},
+        ξ    ::Vector{T},
+        elem ::Triangle{T}
+    ) where {T, P <: PotentialType}
+
+    ξ_p, dist = projectξ(ξ, elem)
+    laplacepot(ptype, ξ_p, elem, dist)
 end
 
 
