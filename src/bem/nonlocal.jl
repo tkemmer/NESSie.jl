@@ -221,7 +221,7 @@ struct KSfun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangl
     opt::Option{T}
 end
 function (f::KSfun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
-    -T(iξ[1] == ielem[1]) * 4π * (1-σ) + (1 - f.opt.εΩ/f.opt.εΣ) *
+    -T(iξ[1] == ielem[1]) * T(4π) * T(1-σ) + (1 - f.opt.εΩ/f.opt.εΣ) *
         Radon.regularyukawacoll(DoubleLayer, iξ[2], ielem[2], yukawa(f.opt)) +
         Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
 end
@@ -231,7 +231,7 @@ struct M11fun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triang
     opt::Option{T}
 end
 function (f::M11fun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
-    T(iξ[1] == ielem[1]) * 4π * (1-σ) -
+    T(iξ[1] == ielem[1]) * T(4π) * T(1-σ) -
         Radon.regularyukawacoll(DoubleLayer, iξ[2], ielem[2], yukawa(f.opt)) -
         Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
 end
@@ -258,7 +258,7 @@ end
 struct M21fun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangle{T}}, T}
 end
 function (::M21fun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
-    T(iξ[1] == ielem[1]) * 4π * σ  + Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
+    T(iξ[1] == ielem[1]) * T(4π * σ)  + Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
 end
 
 # M₂₂ = -V
@@ -279,5 +279,6 @@ end
 struct M33fun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangle{T}}, T}
 end
 function (::M33fun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
-    T(iξ[1] == ielem[1]) * 4π * (1-σ) - Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
+    T(iξ[1] == ielem[1]) * T(4π) * T(1-σ) -
+        Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
 end
