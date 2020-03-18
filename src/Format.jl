@@ -23,6 +23,9 @@ export readpqr
 include("format/skel.jl")
 export writeskel
 
+include("format/stl.jl")
+export writestl
+
 include("format/vtk.jl")
 export writevtk
 

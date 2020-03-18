@@ -18,6 +18,7 @@ const tests = [
     "format/off.jl",
     "format/pqr.jl",
     "format/skel.jl",
+    "format/stl.jl",
     "format/vtk.jl",
     "format/xml3d.jl",
     "testmodel/born.jl",

@@ -9,6 +9,7 @@ Currently supported output file formats with different models:
 | File type          | Point cloud | Surface model | Volume model |
 |--------------------|:-----------:|:-------------:|:------------:|
 | [SKEL](@ref)       |             | ✓             | ✓            |
+| [STL](@ref)        |             | ✓             |              |
 | [VTK](@ref)        |             | ✓             | ✓            |
 | [XML3D](@ref)/JSON | ✓           | ✓             |              |
 | [XML3D](@ref)/XML  | ✓           |               |              |
@@ -16,6 +17,11 @@ Currently supported output file formats with different models:
 ## SKEL
 ```@docs
     writeskel
+```
+
+## STL
+```@docs
+    writestl
 ```
 
 ## VTK
