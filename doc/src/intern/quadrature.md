@@ -6,6 +6,7 @@
 ```
 
 ```@docs
+    radoncoll
     radoncoll!
     regularyukawapot
     ∂ₙregularyukawapot

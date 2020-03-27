@@ -19,5 +19,6 @@
 
 ## Yukawa potential
 ```@docs
+    NESSie.Radon.regularyukawacoll
     NESSie.Radon.regularyukawacoll!
 ```

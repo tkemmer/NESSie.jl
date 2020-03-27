@@ -255,7 +255,33 @@ function radoncoll!(
     nothing
 end
 
-# TODO
+
+# =========================================================================================
+"""
+    radoncoll{T}(
+            ξ       ::Vector{T},
+            elem    ::Triangle{T},
+            yukawa  ::T,
+            solution::Function
+    )
+
+Seven-point Radon cubature [[Rad48]](@ref Bibliography) for a given function and a pair of
+surface element and observations point.
+
+If you intend computing single/double layer potentials with this function, you might want
+to use the shorthand signature `regularyukawacoll` instead.
+
+!!! note
+    The result is premultiplied by 4π.
+
+# Arguments
+ * `solution` Fundamental solution; supported functions: `regularyukawapot`,
+   `∂ₙregularyukawapot`
+ * `yukawa` [Exponent](@ref int-constants) of the Yukawa operator's fundamental solution
+
+# Return type
+`Void`
+"""
 function radoncoll(
         ξ       ::Vector{T},
         elem    ::Triangle{T},
@@ -346,6 +372,29 @@ regularyukawacoll!(
     yukawa  ::T
 ) where T = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, yukawa)
 
+
+# ========================================================================================
+"""
+    regularyukawacoll{T, P <: PotentialType}(
+              ::Type{P},
+        ξ     ::Vector{T},
+        elem  ::Triangle{T},
+        yukawa::T
+    )
+
+Computes the regular part of the single or double layer Yukawa potential (that is, Yukawa
+minus Laplace) using a seven-point Radon cubature [[Rad48]](@ref Bibliography) for a given
+triangle and observation point `ξ`.
+
+!!! note
+    The result is premultiplied by 4π.
+
+# Arguments
+ * `yukawa` [Exponent](@ref int-constants) of the Yukawa operator's fundamental solution
+
+# Return type
+`Void`
+"""
 regularyukawacoll(
           ::Type{SingleLayer},
     ξ     ::Vector{T},
