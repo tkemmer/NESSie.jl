@@ -312,7 +312,24 @@ function laplacecoll!(
     nothing
 end
 
-# TODO
+
+# =========================================================================================
+"""
+    laplacecoll{T, P <: PotentialType}(
+        ptype::Type{P},
+        ξ    ::Vector{T},
+        elem ::Vector{Triangle{T}}
+    )
+
+Analytical solution for the single or double layer Laplace potential for a given triangle
+and observation point `ξ` [[Rja90]](@ref Bibliography).
+
+!!! note
+    The result is premultiplied by 4π.
+
+# Return type
+`Void`
+"""
 @inline function laplacecoll(
         ptype::Type{P},
         ξ    ::Vector{T},
