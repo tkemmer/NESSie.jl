@@ -54,9 +54,9 @@ function solve(
     # initialize the system matrix;
     # since all other components of the system matrix will be premultiplied by 4π,
     # do the same for σ here
-    pluseye!(m11, 4π * σ)
-    pluseye!(m21, 4π * σ)
-    pluseye!(m33, 4π * σ)
+    pluseye!(m11, T(4π * σ))
+    pluseye!(m21, T(4π * σ))
+    pluseye!(m33, T(4π * σ))
 
     # compute molecular potential for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
@@ -72,7 +72,7 @@ function solve(
     # initialize rhs;
     # again, we apply a prefactor of 4π to σ to match the other components of the vector
     copyto!(β, umol)
-    rmul!(β, -4π * σ)
+    rmul!(β, -T(4π * σ))
 
     # create list of observation points
     Ξ = [e.center for e in elements]

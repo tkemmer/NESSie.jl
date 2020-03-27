@@ -41,7 +41,7 @@ function rfenergy(bem::R) where {T, R <: BEMResult{T}}
     # ▶ 6.022e23  for Avogadro constant Nₐ; [Nₐ] = 1/mol
     # ▶ 1e-3      for the conversion 1/J → 1/kJ
     # ▶ 0.5       since we have counted all interactions twice
-    wstar ⋅ qvals / 4π * potprefactor(T) * ec * 6.022140857e10 / 2
+    wstar ⋅ qvals / T(4π) * potprefactor(T) * T(ec * 6.022140857e10 / 2)
 end
 
 
@@ -80,7 +80,7 @@ function φΩ(
 
     # φ *= 1/4π
     # (W and Vtilde were premultiplied by 4π! 4π⋅ε0 from u and q still to be applied)
-    rmul!(φ, 1 / 4π)
+    rmul!(φ, T(1 / 4π))
 
     # φ += 1/εΩ ⋅ φ*mol(ξ)
     # (φ*mol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
@@ -139,7 +139,7 @@ function φΣ(
     # ▶ 4π⋅ε0     for u, q, umol, and qmol
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    rmul!(φ, potprefactor(T) / 4π)
+    rmul!(φ, potprefactor(T) / T(4π))
 
     φ
 end
@@ -186,7 +186,7 @@ function φΣ(
     # ▶ 4π⋅ε0     for u, q, w, umol, and qmol
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    rmul!(φ, potprefactor(T) / 4π)
+    rmul!(φ, potprefactor(T) / T(4π))
 
     φ
 end
