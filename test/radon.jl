@@ -43,7 +43,7 @@ end
         yuk = T(7)
         ret = Radon.∂ₙregularyukawapot(x, x, yuk, n)
         @test typeof(ret) == T
-        @test ret == 0
+        @test ret ≈ T(14.145081595145832)
         # ξ not in origin (no cancellation)
         ξ = -ones(T, 3)
         ret = Radon.∂ₙregularyukawapot(x, ξ, yuk, n)
