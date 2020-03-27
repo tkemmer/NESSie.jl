@@ -43,7 +43,7 @@ context("∂ₙregularyukawapot") do
         yuk = T(7)
         ret = Radon.∂ₙregularyukawapot(x, x, yuk, n)
         @fact typeof(ret) --> T
-        @fact ret --> 0
+        @fact ret --> roughly(T(14.145081595145832))
         # ξ not in origin (no cancellation)
         ξ = -ones(T, 3)
         ret = Radon.∂ₙregularyukawapot(x, ξ, yuk, n)
