@@ -101,7 +101,7 @@ function ∂ₙregularyukawapot(
     rnorm = euclidean(x, ξ)
 
     # limit for |x-ξ| → 0
-    rnorm <= 1e-10 && return zero(T)
+    rnorm <= 1e-10 && return yukawa^2 / 2 / T(√3)
 
     cosovernorm2 = ddot(x, ξ, normal) / rnorm^3
     scalednorm = yukawa * rnorm
