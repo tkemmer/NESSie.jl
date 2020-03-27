@@ -5,7 +5,7 @@ using ..NESSie: σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
 using Distances: euclidean
 using LinearAlgebra: ⋅, rmul!
 
-export solve, φΩ, φΣ, rfenergy
+export BEMResult, LocalBEMResult, NonlocalBEMResult, rfenergy, solve, φΩ, φΣ
 
 """
     abstract type BEMResult{T, E <: SurfaceElement{T}} end
