@@ -3,7 +3,7 @@ uuid = "f00e83c4-bd01-11e9-272c-ff1b96fb444d"
 authors = ["Thomas Kemmer <thomas@binaryden.de>"]
 desc = "Nonlocal Electrostatics in Structured Solvents"
 license = "MIT"
-version = "1.0.2"
+version = "1.0.3"
 
 [deps]
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
