@@ -25,6 +25,5 @@ function rfenergy(bem::NonlocalBEMResult{T}) where T
     # ▶ 6.022e23  for Avogadro constant Nₐ; [Nₐ] = 1/mol
     # ▶ 1e-3      for the conversion 1/J → 1/kJ
     # ▶ 0.5       since we have counted all interactions twice
-    # ▶ 1/σ = 2   from the representation formula for nonlocal φ*
-    wstar ⋅ qvals / 4π * potprefactor(T) * ec * 6.022140857e10
+    wstar ⋅ qvals / 4π * potprefactor(T) * ec * 6.022140857e10 / 2
 end
