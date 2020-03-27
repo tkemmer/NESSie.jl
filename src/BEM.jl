@@ -14,14 +14,8 @@ Abstract base type for all BEM solver results
 """
 abstract type BEMResult{T, E <: SurfaceElement{T}} end
 
-# local electrostatics
-include("bem/local/solver.jl")
-include("bem/local/potentials.jl")
-include("bem/local/energy.jl")
-
-# nonlocal electrostatics
-include("bem/nonlocal/solver.jl")
-include("bem/nonlocal/potentials.jl")
-include("bem/nonlocal/energy.jl")
+include("bem/local.jl")
+include("bem/nonlocal.jl")
+include("bem/post.jl")
 
 end # module
