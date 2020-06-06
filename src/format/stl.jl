@@ -1,4 +1,38 @@
 # =========================================================================================
+# TODO
+function readstl(
+    stream::IOStream,
+          ::Type{T}=Float64
+    ) where T
+    # skip header
+    skip(stream, 80)
+    # read number of triangles
+    numelem = read(stream, UInt32)
+    elements = Vector{Triangle{T}}(undef, numelem)
+
+    for i in 1:numelem
+        skip(stream, 12) # skip normal (will be computed by props)
+        elements[i] = Triangle(
+            map(T, [read(stream, Float32) for _ in 1:3]),
+            map(T, [read(stream, Float32) for _ in 1:3]),
+            map(T, [read(stream, Float32) for _ in 1:3])
+        )
+        skip(stream, 2)
+    end
+
+    nodes = collect(Set(unpack([[e.v1, e.v2, e.v3] for e in elements])))
+    Model(nodes, elements)
+end
+
+function readstl(
+    fname::String,
+         ::Type{T}=Float64
+) where T
+    open(fh -> readstl(fh, T), fname)
+end
+
+
+# =========================================================================================
 """
     function writestl{T}(
         stream::IOStream,

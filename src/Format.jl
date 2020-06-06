@@ -24,7 +24,7 @@ include("format/skel.jl")
 export writeskel
 
 include("format/stl.jl")
-export writestl
+export readstl, writestl
 
 include("format/vtk.jl")
 export writevtk
