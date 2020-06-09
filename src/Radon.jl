@@ -1,7 +1,7 @@
 module Radon
 
 using ..NESSie
-using ..NESSie: ddot
+using ..NESSie: _etol, ddot
 using Distances: euclidean
 
 export regularyukawacoll, regularyukawacoll!
@@ -40,7 +40,7 @@ function regularyukawapot(
     rnorm = euclidean(x, ξ)
 
     # limit for |x-ξ| → 0
-    rnorm <= 1e-10 && return -yukawa
+    rnorm <= _etol(T) && return -yukawa
 
     scalednorm = yukawa * rnorm
 
@@ -49,7 +49,7 @@ function regularyukawapot(
         # use alternating series to approximate
         # e^(-c) - 1 = Σ((-c)^i / i!) for i=1 to ∞
         term = -scalednorm
-        tolerance = 1e-10 * abs(term)
+        tolerance = _etol(T) * abs(term)
         tsum = zero(T)
         for i in 1:15
             abs(term) <= tolerance && break
@@ -101,7 +101,7 @@ function ∂ₙregularyukawapot(
     rnorm = euclidean(x, ξ)
 
     # limit for |x-ξ| → 0
-    rnorm <= 1e-10 && return yukawa^2 / 2 / T(√3)
+    rnorm <= _etol(T) && return yukawa^2 / 2 / T(√3)
 
     cosovernorm2 = ddot(x, ξ, normal) / rnorm^3
     scalednorm = yukawa * rnorm
@@ -111,7 +111,7 @@ function ∂ₙregularyukawapot(
         # use alternating series to approximate
         # 1 - (c+1)e^(-c) = Σ((-c)^i * (i-1) / i!) for i=2 to ∞
         term = scalednorm * scalednorm / 2
-        tolerance = 1e-10 * abs(term)
+        tolerance = _etol(T) * abs(term)
         tsum = zero(T)
         for i in 2:16
             abs(term) <= tolerance && break
