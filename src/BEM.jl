@@ -1,7 +1,7 @@
 module BEM
 
 using ..NESSie
-using ..NESSie: σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
+using ..NESSie: _etol, σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
 using Distances: euclidean
 using LinearAlgebra: ⋅, rmul!
 
