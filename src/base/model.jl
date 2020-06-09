@@ -14,8 +14,8 @@ abstract type VolumeElement{T}  <: Element{T} end
 # =========================================================================================
 """
     struct Triangle{T} <: SurfaceElement{T}
-        v2      ::Vector{T}   # position of the second node
         v1      ::Vector{T}   # position of the first node
+        v2      ::Vector{T}   # position of the second node
         v3      ::Vector{T}   # position of the third node
         center  ::Vector{T}   # centroid of the triangle
         normal  ::Vector{T}   # normal vector of the triangle
