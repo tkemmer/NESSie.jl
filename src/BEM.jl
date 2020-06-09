@@ -2,9 +2,12 @@ module BEM
 
 using ..NESSie
 using ..NESSie: _etol, σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
+using Base: Threads
 using Distances: euclidean
 using ImplicitArrays: BlockMatrix, FixedValueArray, InteractionFunction, InteractionMatrix
-using LinearAlgebra: ⋅, rmul!
+using IterativeSolvers: gmres
+using LinearAlgebra
+using Preconditioners: DiagonalPreconditioner
 
 export BEMResult, LocalBEMResult, NonlocalBEMResult, rfenergy, solve, φΩ, φΣ
 
@@ -15,6 +18,7 @@ Abstract base type for all BEM solver results
 """
 abstract type BEMResult{T, E <: SurfaceElement{T}} end
 
+include("bem/matrix.jl")
 include("bem/local.jl")
 include("bem/nonlocal.jl")
 include("bem/post.jl")
