@@ -1,7 +1,7 @@
 module Rjasanow
 
 using ..NESSie
-using ..NESSie: cos, cathetus, sign, distance
+using ..NESSie: _etol, cos, cathetus, sign, distance
 
 using LinearAlgebra: norm
 
@@ -117,10 +117,10 @@ function laplacepot(
     h = cathetus(u1norm, sinφ1)
 
     # Degenerate triangles
-    if max(zero(T), h) < 1e-10 ||      # ξ on the line through v1 and v2 (|φ1| = |φ2| = π/2)
-        one(T) - abs(sinφ1) < 1e-10 || # ξ on the line through v1 and v2 (φ1 = π/2)
-        one(T) - abs(sinφ2) < 1e-10 || # ξ on the line through v1 and v2 (φ2 = π/2)
-        abs(sinφ1 - sinφ2) < 1e-10     # v1 and v2 on the line through ξ (φ1 = φ2 = 0)
+    if max(zero(T), h) < _etol(T) ||      # ξ on the line through v1 and v2 (|φ1| = |φ2| = π/2)
+        one(T) - abs(sinφ1) < _etol(T) || # ξ on the line through v1 and v2 (φ1 = π/2)
+        one(T) - abs(sinφ2) < _etol(T) || # ξ on the line through v1 and v2 (φ2 = π/2)
+        abs(sinφ1 - sinφ2) < _etol(T)     # v1 and v2 on the line through ξ (φ1 = φ2 = 0)
         return zero(T)
     end
 
@@ -130,7 +130,7 @@ function laplacepot(
     # side of v the observation point lies. This is equivalent to checking whether the
     # normal of the triangle here and the one of the surface element (which are obviously
     # (anti)parallel) are oriented alike.
-    pot = abs(dist) < 1e-10 ?
+    pot = abs(dist) < _etol(T) ?
         laplacepot(ptype, InPlane, sinφ1, sinφ2, h, dist) :
         laplacepot(ptype, InSpace, sinφ1, sinφ2, h, dist)
     sign(u1, u2, normal) * pot
@@ -374,7 +374,7 @@ to the plane.
 """
 function projectξ(ξ::Vector{T}, elem::Triangle{T}) where T
     dist = distance(ξ, elem)
-    abs(dist) < 1e-10 && return (ξ, dist)
+    abs(dist) < _etol(T) && return (ξ, dist)
     # Devectorized version of ξ -= dist * elem.normal
     ([ξ[i] - dist * elem.normal[i] for i in 1:3], dist)
 end
