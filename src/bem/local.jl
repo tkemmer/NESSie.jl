@@ -109,3 +109,63 @@ function solve(
 
     LocalBEMResult(model, u, q, umol, qmol)
 end
+
+struct LocalSystemMatrix{T} <: AbstractArray{T, 2}
+    K     ::KMat{T}
+    params::Option{T}
+end
+
+Base.size(A::LocalSystemMatrix{T}) where T = size(A.K)
+
+function LinearAlgebra.diag(
+    A::LocalSystemMatrix{T},
+    k::Int=0
+) where T
+    k != 0 && error("diag not defined for k != 0 on ", typeof(A))
+    (T(2π) * (1 + A.params.εΩ / A.params.εΣ)) .* ones(T, size(A, 1))
+end
+
+function LinearAlgebra.mul!(
+    dst::AbstractArray{T, 1},
+    A::LocalSystemMatrix{T},
+    x::AbstractArray{T, 1}
+) where T
+    dst .= A * x
+end
+
+function Base.:*(
+    A::LocalSystemMatrix{T},
+    x::AbstractArray{T, 1}
+) where T
+    frac = A.params.εΩ / A.params.εΣ
+    (T(2π) * (1 + frac)) .* x .+ ((frac - 1) .* (A.K * x))
+end
+
+# TODO
+function solve_implicit(
+                  ::Type{LocalES},
+        model     ::Model{T, Triangle{T}}
+    ) where T
+    # observation points ξ
+    Ξ = [e.center for e in model.elements]
+
+    # compute molecular potentials for the point charges;
+    # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
+    umol = model.params.εΩ \   φmol(model, tolerance=_etol(T))
+    qmol = model.params.εΩ \ ∂ₙφmol(model)
+
+    # potential matrices
+    K = InteractionMatrix(Ξ, model.elements, Kfun{T}())
+    V = InteractionMatrix(Ξ, model.elements, Vfun{T}())
+
+    # first system
+    b = K * umol .- (T(2π) .* umol) .- (model.params.εΩ/model.params.εΣ .* (V * qmol))
+    A = LocalSystemMatrix(K, model.params)
+    u = _solve_linear_system(A, b)
+
+    # second system
+    b .= T(2π) .* u .+ (K * u)
+    q = _solve_linear_system(V, b)
+
+    LocalBEMResult(model, u, q, umol, qmol)
+end
