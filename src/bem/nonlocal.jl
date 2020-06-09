@@ -150,51 +150,93 @@ function solve(
     )
 end
 
+struct NonlocalSystemMatrix{T} <: AbstractArray{T, 2}
+    Ξ     ::Vector{Vector{T}}
+    elems ::Vector{Triangle{T}}
+    params::Option{T}
+end
+
+Base.size(A::NonlocalSystemMatrix{T}) where T = 3 .* (length(A.Ξ), length(A.elems))
+
+function LinearAlgebra.diag(A::NonlocalSystemMatrix{T}, k::Int = 0) where T
+    k != 0 && error("diag not defined for k != 0 on ", typeof(A))
+    Ky = InteractionMatrix(A.Ξ, A.elems, Kyfun{T}(yukawa(A.params)))
+    V  = InteractionMatrix(A.Ξ, A.elems, Vfun{T}())
+    σ  = T(2π) .* ones(T, size(A.Ξ, 1))
+    [σ .- diag(Ky); diag(V); σ]
+end
+
+function Base.:*(
+    A::NonlocalSystemMatrix{T},
+    x::AbstractArray{T, 1}
+) where T
+    εΩ  = A.params.εΩ
+    εΣ  = A.params.εΣ
+    ε∞  = A.params.ε∞
+    yuk = yukawa(A.params)
+    numelem = length(A.elems)
+
+    K  = InteractionMatrix(A.Ξ, A.elems, Kfun{T}())
+    Ky = InteractionMatrix(A.Ξ, A.elems, Kyfun{T}(yuk))
+    V  = InteractionMatrix(A.Ξ, A.elems, Vfun{T}())
+    Vy = InteractionMatrix(A.Ξ, A.elems, Vyfun{T}(yuk))
+
+    x1 = view(x, 1:numelem)
+    x2 = view(x, numelem+1:2numelem)
+    x3 = view(x, 2numelem+1:3numelem)
+
+    Kx  = K * [x1 x3]
+    Vx2 = V * x2
+    σx1 = T(2π) .* x1
+
+    [
+        Ky * ((ε∞/εΣ) .* x3 .- x1) .- Kx[:,1] .+ (εΩ/ε∞-εΩ/εΣ) .* (Vy * x2) .+ ((εΩ/ε∞) .* Vx2) .+ σx1;
+        Kx[:,1] .- Vx2 .+ σx1;
+        (εΩ/ε∞) .* Vx2 .- Kx[:,2] .+ (T(2π) * x3)
+    ]
+end
+
+@inline function LinearAlgebra.mul!(
+    Y::AbstractArray{T, 1},
+    A::NonlocalSystemMatrix{T},
+    v::AbstractArray{T, 1}
+) where T
+    Y .= A * v
+end
+
+
 # TODO
 function solve_implicit(
                   ::Type{NonlocalES},
         model     ::Model{T, Triangle{T}}
     ) where T
 
+    # observation points
+    Ξ       = [e.center for e in model.elements]
+
     # shortcuts
-    params  = model.params
-    elems   = model.elements
-    ielems  = collect(enumerate(elems))
-    Ξ       = [e.center for e in elems]
-    iΞ      = collect(enumerate(Ξ))
-    numelem = length(elems)
+    εΩ  = model.params.εΩ
+    εΣ  = model.params.εΣ
+    ε∞  = model.params.ε∞
+    yuk = yukawa(model.params)
+    numelem = length(model.elements)
 
     # compute molecular potential for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = params.εΩ \   φmol(model)
-    qmol = params.εΩ \ ∂ₙφmol(model)
+    umol = εΩ \   φmol(model, tolerance=_etol(T))
+    qmol = εΩ \ ∂ₙφmol(model)
 
-    # rhs = [β, 0 , 0]ᵀ
-    Ks = InteractionMatrix(iΞ, ielems, KSfun{T}(params))
-    Vs = InteractionMatrix(Ξ,  elems,  VSfun{T}(params))
+    # potential matrices
+    K  = InteractionMatrix(Ξ, model.elements, Kfun{T}())
+    Ky = InteractionMatrix(Ξ, model.elements, Kyfun{T}(yuk))
+    V  = InteractionMatrix(Ξ, model.elements, Vfun{T}())
+    Vy = InteractionMatrix(Ξ, model.elements, Vyfun{T}(yuk))
 
-    rhs = zeros(T, 3numelem)
-    rhs[1:numelem] .= Ks * umol + Vs * qmol
+    # create nonlocal system
+    b = K * umol .+ (1 - εΩ/εΣ) .* (Ky * umol) .- T(2π) .* umol .- (εΩ/ε∞) .* (V * qmol) .+ (εΩ/εΣ - εΩ/ε∞) .* (Vy * qmol)
+    A = NonlocalSystemMatrix(Ξ, model.elements, model.params)
 
-    # system matrix
-    M₁₁ = InteractionMatrix(iΞ, ielems, M11fun{T}(params))
-    M₁₂ = InteractionMatrix(Ξ,  elems,  M12fun{T}(params))
-    M₁₃ = InteractionMatrix(Ξ,  elems,  M13fun{T}(params))
-    M₂₁ = InteractionMatrix(iΞ, ielems, M21fun{T}())
-    M₂₂ = InteractionMatrix(Ξ,  elems,  M22fun{T}())
-    M₂₃ = FixedValueArray(zero(T), numelem, numelem)
-    M₃₁ = FixedValueArray(zero(T), numelem, numelem)
-    M₃₂ = InteractionMatrix(Ξ,  elems,  M32fun{T}(params))
-    M₃₃ = InteractionMatrix(iΞ, ielems, M33fun{T}())
-
-    M = BlockMatrix(3, 3,
-        M₁₁, M₁₂, M₁₃,
-        M₂₁, M₂₂, M₂₃,
-        M₃₁, M₃₂, M₃₃
-    )
-
-    # solve system
-    cauchy = M \ rhs
+    cauchy = _solve_linear_system(A, b)
 
     NonlocalBEMResult(
         model,
@@ -204,81 +246,4 @@ function solve_implicit(
         umol,
         qmol
     )
-end
-
-# Vs = -[εΩ/ε∞ Vʸ - εΩ/εΣ (Vʸ - V)]
-struct VSfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
-    opt::Option{T}
-end
-function (f::VSfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    f.opt.εΩ * (1/f.opt.εΣ - 1/f.opt.ε∞) *
-        Radon.regularyukawacoll(SingleLayer, ξ, elem, yukawa(f.opt)) -
-        f.opt.εΩ/f.opt.ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
-end
-
-# Ks = -[1 - σ - Kʸ + εΩ/εΣ (Kʸ - K)]
-struct KSfun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangle{T}}, T}
-    opt::Option{T}
-end
-function (f::KSfun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
-    -T(iξ[1] == ielem[1]) * T(4π) * T(1-σ) + (1 - f.opt.εΩ/f.opt.εΣ) *
-        Radon.regularyukawacoll(DoubleLayer, iξ[2], ielem[2], yukawa(f.opt)) +
-        Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
-end
-
-# M₁₁ = 1 - σ - Kʸ
-struct M11fun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangle{T}}, T}
-    opt::Option{T}
-end
-function (f::M11fun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
-    T(iξ[1] == ielem[1]) * T(4π) * T(1-σ) -
-        Radon.regularyukawacoll(DoubleLayer, iξ[2], ielem[2], yukawa(f.opt)) -
-        Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
-end
-
-# M₁₂ = εΩ/ε∞ Vʸ -εΩ/εΣ (Vʸ - V)
-struct M12fun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
-    opt::Option{T}
-end
-function (f::M12fun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    f.opt.εΩ * (1/f.opt.ε∞ - 1/f.opt.εΣ) *
-        Radon.regularyukawacoll(SingleLayer, ξ, elem, yukawa(f.opt)) +
-        f.opt.εΩ / f.opt.ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
-end
-
-# M₁₃ = ε∞/εΣ (Kʸ - K)
-struct M13fun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
-    opt::Option{T}
-end
-function (f::M13fun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    f.opt.ε∞/f.opt.εΣ * Radon.regularyukawacoll(DoubleLayer, ξ, elem, yukawa(f.opt))
-end
-
-# M₂₁ = σ + K
-struct M21fun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangle{T}}, T}
-end
-function (::M21fun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
-    T(iξ[1] == ielem[1]) * T(4π * σ)  + Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
-end
-
-# M₂₂ = -V
-struct M22fun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
-function (::M22fun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    -Rjasanow.laplacecoll(SingleLayer, ξ, elem)
-end
-
-# M₃₂ = εΩ/ε∞ V
-struct M32fun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
-    opt::Option{T}
-end
-function (f::M32fun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    f.opt.εΩ/f.opt.ε∞ * Rjasanow.laplacecoll(SingleLayer, ξ, elem)
-end
-
-# M₃₃ = 1 - σ - K
-struct M33fun{T} <: InteractionFunction{Tuple{Int, Vector{T}}, Tuple{Int, Triangle{T}}, T}
-end
-function (::M33fun{T})(iξ::Tuple{Int, Vector{T}}, ielem::Tuple{Int, Triangle{T}}) where T
-    T(iξ[1] == ielem[1]) * T(4π) * T(1-σ) -
-        Rjasanow.laplacecoll(DoubleLayer, iξ[2], ielem[2])
 end
