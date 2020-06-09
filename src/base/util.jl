@@ -222,8 +222,8 @@ function isdegenerate(elem::Triangle{T}) where T
     u1 = elem.v2 - elem.v1
     u2 = elem.v3 - elem.v1
     cosine = u1 ⋅ u2 / norm(u1) / norm(u2)
-    norm(elem.v1 - elem.v2) < 1e-10 || norm(elem.v1 - elem.v3) < 1e-10 ||
-    norm(elem.v2 - elem.v3) < 1e-10 || 1 - abs(cosine) <= 1e-10
+    norm(elem.v1 - elem.v2) < _etol(T) || norm(elem.v1 - elem.v3) < _etol(T) ||
+    norm(elem.v2 - elem.v3) < _etol(T) || 1 - abs(cosine) <= _etol(T)
 end
 
 

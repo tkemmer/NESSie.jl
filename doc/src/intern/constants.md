@@ -5,6 +5,7 @@
 ```
 
 ```@docs
+    _etol
     σ
     ec
     potprefactor
