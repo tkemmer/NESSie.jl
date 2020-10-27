@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    function writevtk{T, M <: Model{T}}(
+    writevtk{T, M <: Model{T}}(
         stream::IOStream,
         model ::M
     )

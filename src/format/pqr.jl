@@ -7,6 +7,9 @@
 
 Reads a charge model from the given PQR file.
 
+# Specification
+<https://pdb2pqr.readthedocs.io/en/latest/formats/pqr.html>
+
 # Return type
 `Vector{Charge{T}}`
 
