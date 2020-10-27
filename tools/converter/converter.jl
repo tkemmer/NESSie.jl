@@ -12,14 +12,16 @@ const formats = Dict{String, String}(
     "hmo"  =>  "hmo",
     "m"    =>  "mcsf",
     ""     =>  "msms",
-    "off"  =>  "off"
+    "off"  =>  "off",
+    "stl"  =>  "stl"
 )
 
 const fin = Dict{String, Tuple{DataType, Function, String}}(
     "hmo"   =>  (Surface, readhmo,  "HyperMesh/.hmo"),
     "mcsf"  =>  (Volume,  readmcsf, "GAMer/.m"),
     "msms"  =>  (Surface, readmsms, "MSMS/.{face,vert}"),
-    "off"   =>  (Surface, readoff,  "GAMer/.off")
+    "off"   =>  (Surface, readoff,  "GAMer/.off"),
+    "stl"   =>  (Surface, readstl,  "STL/.stl")
 )
 
 const fout = Dict{String, Tuple{DataType, Function, String}}(
