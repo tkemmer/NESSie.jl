@@ -1,5 +1,9 @@
 using NESSie.Format
 
+@testset "readstl" begin
+    @test_skip readstl
+end
+
 @testset "writestl" begin
     for T in testtypes
         # empty system

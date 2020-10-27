@@ -75,3 +75,7 @@ END_CHARGE_DATA
         [begin close(fh); rm(fn); end for (fn, fh, _) in testfiles]
     end
 end
+
+@testset "writehmo" begin
+    @test_skip writehmo
+end
