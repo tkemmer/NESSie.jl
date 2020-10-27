@@ -111,3 +111,61 @@ function readhmo_charges(
     end
     charges
 end
+
+
+# =========================================================================================
+"""
+    writehmo{T}(
+        stream::IOStream,
+        model ::Model{T, Triangle{T}}
+    )
+
+Creates a HMO file from the given surface model.
+
+# Return type
+`Void`
+
+# Alias
+
+    writehmo{T}(
+        fname::String,
+        model::Model{T, Triangle{T}}
+    )
+
+Creates the HMO file by name rather than `IOStream` object.
+"""
+function writehmo(
+        stream::IOStream,
+        model ::Model{T, Triangle{T}}
+    ) where T
+    write(stream, "BEG_NODL_DATA\n")
+    write(stream, "$(length(model.nodes))\n")
+    for (i, node) in enumerate(model.nodes)
+        join(stream, Any[i, node...], "\t")
+        write(stream, "\n")
+    end
+    write(stream, "END_NODL_DATA\n\n")
+
+    getidx = v -> findfirst(isequal(v), model.nodes)
+
+    write(stream, "BEG_ELEM_DATA\n")
+    join(stream, [length(model.elements), zeros(Int, 12)...], "\t")
+    write(stream, "\n")
+    for (i, elem) in enumerate(model.elements)
+        join(stream, Any[i, 1, 103, getidx(elem.v1), getidx(elem.v2), getidx(elem.v3)], "\t")
+        write(stream, "\n")
+    end
+    write(stream, "END_ELEM_DATA\n\n")
+
+    write(stream, "BEG_CHARGE_DATA\n")
+    write(stream, "$(length(model.charges))\n")
+    for (i, charge) in enumerate(model.charges)
+        join(stream, Any[i, charge.pos..., charge.val], "\t")
+        write(stream, "\n")
+    end
+    write(stream, "END_CHARGE_DATA\n")
+end
+
+function writehmo(fname::String, model::Model{T, Triangle{T}}) where T
+    open(fh -> writehmo(fh, model), fname, "w")
+end

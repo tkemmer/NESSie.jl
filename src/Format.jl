@@ -6,7 +6,7 @@ using JSON: json
 using LightXML: XMLDocument, create_root, new_child, add_text, set_attribute
 
 include("format/hmo.jl")
-export readhmo
+export readhmo, writehmo
 
 include("format/mcsf.jl")
 export readmcsf

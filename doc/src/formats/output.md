@@ -6,20 +6,26 @@
 
 Currently supported output file formats with different models:
 
-| File type          | Point cloud | Surface model | Volume model |
-|--------------------|:-----------:|:-------------:|:------------:|
-| [SKEL](@ref)       |             | ✓             | ✓            |
-| [STL](@ref)        |             | ✓             |              |
-| [VTK](@ref)        |             | ✓             | ✓            |
-| [XML3D](@ref)/JSON | ✓           | ✓             |              |
-| [XML3D](@ref)/XML  | ✓           |               |              |
+| File type          | Point cloud | Surface model | Volume model | Charges included |
+|--------------------|:-----------:|:-------------:|:------------:|:----------------:|
+| [HMO](@ref hmoout) |             | ✓             |              | ✓                |
+| [SKEL](@ref)       |             | ✓             | ✓            |                  |
+| [STL](@ref stlout) |             | ✓             |              |                  |
+| [VTK](@ref)        |             | ✓             | ✓            |                  |
+| [XML3D](@ref)/JSON | ✓           | ✓             |              |                  |
+| [XML3D](@ref)/XML  | ✓           |               |              |                  |
+
+## [HMO](@id hmoout)
+```@docs
+    writehmo
+```
 
 ## SKEL
 ```@docs
     writeskel
 ```
 
-## STL
+## [STL](@id stlout)
 ```@docs
     writestl
 ```
