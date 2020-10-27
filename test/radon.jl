@@ -27,11 +27,15 @@ using NESSie.Radon: radoncoll!
         # ξ in origin (potential cancellation 2)
         ret = Radon.regularyukawapot(T(.0001) * x, ξ, yuk)
         @test typeof(ret) == T
-        @test ret ≈ T(-6.99575819000175052904190394524100762244862345273988759731283)
+        @test ret ≈ (T == Float64 ?
+            -6.99575819000175052904190394524100762244862345273988759731283 :
+            -yuk)
         # ξ in origin (potential cancellation 3)
         ret = Radon.regularyukawapot(T(.00001) * x, ξ, yuk)
         @test typeof(ret) == T
-        @test ret ≈ T(-6.99957566470162580591945945320355718542304458045960164651420)
+        @test ret ≈ (T == Float64 ?
+            -6.99957566470162580591945945320355718542304458045960164651420 :
+            -yuk)
     end
 end
 
@@ -61,11 +65,15 @@ end
         # ξ in origin (potential cancellation 2)
         ret = Radon.∂ₙregularyukawapot(T(.0001) * x, ξ, yuk, n)
         @test typeof(ret) == T
-        @test ret ≈ T(14.13365345844970855427401235115544109979343227826364222026794)
+        @test ret ≈ (T == Float64 ?
+            14.13365345844970855427401235115544109979343227826364222026794 :
+            yuk^2 / 2 / Float32(√3))
         # ξ in origin (potential cancellation 3)
         ret = Radon.∂ₙregularyukawapot(T(.00001) * x, ξ, yuk, n)
         @test typeof(ret) == T
-        @test ret ≈ T(14.14393831379399210175378534648974379367907886588210581085651)
+        @test ret ≈ (T == Float64 ?
+            14.14393831379399210175378534648974379367907886588210581085651 :
+            yuk^2 / 2 / Float32(√3))
     end
 end
 
