@@ -1,5 +1,30 @@
 # =========================================================================================
-# TODO
+"""
+    readstl{T}(
+        stream::IOStream,
+              ::Type{T}=Float64
+    )
+
+Reads a surface model from the given STL file.
+
+!!! note
+    This file type does not support charge models! Hence, the charge list of the returning `Model` object is empty and has to be set separately.
+
+# Specification
+<https://fabbers.com/tech/STL_Format>
+
+# Return type
+`Model{T, Triangle{T}}`
+
+# Alias
+
+    readstl{T}(
+        fname::String,
+             ::Type{T}=Float64
+    )
+
+Reads the model using a file name rather than an `IOStream` object.
+"""
 function readstl(
     stream::IOStream,
           ::Type{T}=Float64
@@ -34,7 +59,7 @@ end
 
 # =========================================================================================
 """
-    function writestl{T}(
+    writestl{T}(
         stream::IOStream,
         model ::Model{T, Triangle{T}}
     )

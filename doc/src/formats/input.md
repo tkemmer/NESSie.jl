@@ -13,6 +13,7 @@ Currently supported input file formats with different models:
 | [MSMS](@ref)       | ✓             |              |                  |
 | [OFF](@ref)        | ✓             |              |                  |
 | [PQR](@ref)        |               |              | ✓ (charges only) |
+| [STL](@ref)        | ✓             |              |                  |
 
 ## HMO
 ```@docs
@@ -37,4 +38,9 @@ Currently supported input file formats with different models:
 ## PQR
 ```@docs
     readpqr
+```
+
+## STL
+```@docs
+    readstl
 ```
