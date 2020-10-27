@@ -25,6 +25,7 @@ const fin = Dict{String, Tuple{DataType, Function, String}}(
 const fout = Dict{String, Tuple{DataType, Function, String}}(
     "nodes.json"    =>  (Nodes,   writexml3d_json, "XML3D/.json"),
     "nodes.xml"     =>  (Nodes,   writexml3d_xml,  "XML3D/.xml"),
+    "surface.hmo"   =>  (Surface, writehmo,        "HyperMesh/.hmo"),
     "surface.json"  =>  (Surface, writexml3d_json, "XML3D/.json"),
     "surface.skel"  =>  (Surface, writeskel,       "SKEL/.skel"),
     "surface.stl"   =>  (Surface, writestl,        "STL/.stl"),
