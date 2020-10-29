@@ -37,5 +37,9 @@ makedocs(
     pages     = pages,
     format    = Documenter.HTML(),
     sitename  = "NESSie.jl",
-    repo      = "https://github.com/tkemmer/nessie.jl/tree/master{path}"
+    repo      = "https://github.com/tkemmer/NESSie.jl/tree/master{path}"
+)
+
+deploydocs(
+    repo = "github.com/tkemmer/NESSie.jl.git"
 )
