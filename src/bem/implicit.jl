@@ -1,5 +1,8 @@
+# =========================================================================================
 """
-    TODO
+    struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
+
+Interaction function for an implicit representation of potential matrix `K`.
 """
 struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 
@@ -8,10 +11,16 @@ function (::Kfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
 end
 
 
+# =========================================================================================
 """
-    TODO
+    struct Kyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+        yuk::T   # exponent of the Yukawa operator's fundamental solution
+    end
+
+Interaction function for an implicit representation of potential matrix `Kʸ`.
 """
 struct Kyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+    """Exponent of the Yukawa operator's fundamental solution"""
     yuk::T
 end
 
@@ -20,8 +29,11 @@ function (A::Kyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
 end
 
 
+# =========================================================================================
 """
-    TODO
+    struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
+
+Interaction function for an implicit representation of potential matrix `V`.
 """
 struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 
@@ -30,10 +42,16 @@ function (::Vfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
 end
 
 
+# =========================================================================================
 """
-    TODO
+    struct Vyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+        yuk::T   # exponent of the Yukawa operator's fundamental solution
+    end
+
+Interaction function for an implicit representation of potential matrix `Vʸ`.
 """
 struct Vyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+    """Exponent of the Yukawa operator's fundamental solution"""
     yuk::T
 end
 
@@ -42,6 +60,7 @@ function (A::Vyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
 end
 
 
+# =========================================================================================
 """
     TODO
 """

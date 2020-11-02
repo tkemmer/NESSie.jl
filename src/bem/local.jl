@@ -110,11 +110,20 @@ function solve(
     LocalBEMResult(model, u, q, umol, qmol)
 end
 
+
+# =========================================================================================
 """
-    TODO
+    struct LocalSystemMatrix{T} <: AbstractArray{T, 2}
+        K     ::InteractionMatrix{T, Vector{T}, Triangle{T}, Kfun{T}}   # Potential matrix `K`
+        params::Option{T}                                               # System constants
+    end
+
+Implicit representation of the first local BEM system matrix.
 """
 struct LocalSystemMatrix{T} <: AbstractArray{T, 2}
+    """Potential matrix `K`"""
     K     ::InteractionMatrix{T, Vector{T}, Triangle{T}, Kfun{T}}
+    """System constants"""
     params::Option{T}
 end
 
@@ -144,6 +153,8 @@ function Base.:*(
     (T(2π) * (1 + frac)) .* x .+ ((frac - 1) .* (A.K * x))
 end
 
+
+# =========================================================================================
 """
     TODO
 """

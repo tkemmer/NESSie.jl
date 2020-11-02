@@ -150,12 +150,23 @@ function solve(
     )
 end
 
+
+# =========================================================================================
 """
-    TODO
+    struct NonlocalSystemMatrix{T} <: AbstractArray{T, 2}
+        Ξ     ::Vector{Vector{T}}     # Observation points (row elements)
+        elems ::Vector{Triangle{T}}   # Surface elements (column elements)
+        params::Option{T}             # System constants
+    end
+
+Implicit representation of the nonlocal BEM system matrix.
 """
 struct NonlocalSystemMatrix{T} <: AbstractArray{T, 2}
+    """Observation points (row elements)"""
     Ξ     ::Vector{Vector{T}}
+    """Surface elements (column elements)"""
     elems ::Vector{Triangle{T}}
+    """System constants"""
     params::Option{T}
 end
 
