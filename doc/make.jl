@@ -21,11 +21,12 @@ const pages = [
         "lib/util.md"
     ],
     "Internals" => [
-        "intern/constants.md",
-        "intern/input.md",
-        "intern/quadrature.md",
-        "intern/solvers.md",
-        "intern/util.md"
+        "intern/base.md",
+        "intern/bem.md",
+        "intern/format.md",
+        "intern/radon.md",
+        "intern/rjasanow.md",
+        "intern/testmodel.md"
     ]
 ]
 

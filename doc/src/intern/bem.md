@@ -1,5 +1,4 @@
-# [Solvers](@id int-solvers)
-
+# `NESSie.BEM`
 ```@meta
     CurrentModule = NESSie.BEM
 ```

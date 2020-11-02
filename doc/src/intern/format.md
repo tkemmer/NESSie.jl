@@ -1,9 +1,9 @@
-# [Input formats](@id int-input)
-
+# `NESSie.Format`
 ```@meta
     CurrentModule = NESSie.Format
 ```
 
+## [Input formats](@id int-input)
 ```@docs
     readhmo_nodes
     readhmo_elements
