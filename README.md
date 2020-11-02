@@ -35,7 +35,7 @@ All functionality is organized into separate modules:
 
 ### Example
 The following Julia code shows how to compute and print the nonlocal reaction field energy
-of a single Na+ ion (modelled as a sperical vacuum-filled system) in water:
+of a single Na+ ion (modeled as a spherically-symmetric, vacuum-filled system) in water:
 
 ```julia
 using NESSie
