@@ -62,7 +62,15 @@ end
 
 # =========================================================================================
 """
-    TODO
+    _solve_linear_system{T}(
+        A::AbstractArray{T, 2},
+        b::AbstractArray{T, 1}
+    )
+
+Solves the linear system `Ax = b` from `A` and `b` using a Jacobi-preconditioned GMRES solver.
+
+# Return type
+`Array{T, 1}`
 """
 function _solve_linear_system(A::AbstractArray{T, 2}, b::AbstractArray{T, 1}) where T
     gmres(A, b,

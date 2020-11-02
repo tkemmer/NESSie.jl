@@ -17,3 +17,8 @@
     LocalSystemMatrix
     NonlocalSystemMatrix
 ```
+
+## Iterative solvers
+``` @docs
+    _solve_linear_system
+```
