@@ -4,10 +4,6 @@ using Documenter, NESSie
 
 const pages = [
     "Home" => "index.md",
-    "Manual" => [
-        "man/introduction.md",
-        "man/references.md"
-    ],
     "Data formats" => [
         "formats/input.md",
         "formats/output.md"
