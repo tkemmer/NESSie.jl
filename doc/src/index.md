@@ -31,6 +31,26 @@ println("Reaction field energy: $val kJ/mol")
 More examples are available in the `doc/examples/` directory.
 
 
+## Citing
+If you use `NESSie.jl` in your research, please cite the following publication:
+> Kemmer, T, Rjasanow, S., Hildebrandt, A (2018). NESSie. jl - Efficient and Intuitive
+> Finite Element and Boundary Element Methods for Nonlocal Protein Electrostatics in the
+> Julia Language. Journal of Computational Science 28, 193-203.
+
+With BibTeX, you can use the following entry:
+```
+@article{nessie-2018,
+    author = {Kemmer, Thomas and Rjasanow, Sergej and Hildebrandt, Andreas},
+    title = {{NESSie.jl -- Efficient and Intuitive Finite Element and Boundary Element Methods for Nonlocal Protein Electrostatics in the Julia Language}},
+    year = {2018},
+    journal = {Journal of Computational Science},
+    volume = {28},
+    pages = {193-203},
+    doi = {10.1016/j.jocs.2018.08.008}
+}
+```
+
+
 ## [References](@id Bibliography)
 
  * **[Åqv90]**
