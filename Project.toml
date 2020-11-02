@@ -18,8 +18,11 @@ SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 [compat]
 julia = "1"
 Distances = "0.7, 0.8, 0.9, 0.10"
+ImplicitArrays = "0.2"
+IterativeSolvers = "0.8"
 JSON = "0.21"
 LightXML = "0.8.1, 0.9"
+Preconditioners = "0.3"
 SpecialFunctions = "0.7, 0.8, 0.9, 0.10"
 
 [extras]
