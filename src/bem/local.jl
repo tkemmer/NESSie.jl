@@ -114,7 +114,7 @@ end
     TODO
 """
 struct LocalSystemMatrix{T} <: AbstractArray{T, 2}
-    K     ::KMat{T}
+    K     ::InteractionMatrix{T, Vector{T}, Triangle{T}, Kfun{T}}
     params::Option{T}
 end
 

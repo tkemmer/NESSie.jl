@@ -2,7 +2,6 @@
     TODO
 """
 struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
-const  KMat{T} = InteractionMatrix{T, Vector{T}, Triangle{T}, Kfun{T}}
 
 function (::Kfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
     Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
@@ -15,7 +14,6 @@ end
 struct Kyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
     yuk::T
 end
-const  KyMat{T} = InteractionMatrix{T, Vector{T}, Triangle{T}, Kyfun{T}}
 
 function (A::Kyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
     Radon.regularyukawacoll(DoubleLayer, ξ, elem, A.yuk)
@@ -26,7 +24,6 @@ end
     TODO
 """
 struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
-const  VMat{T} = InteractionMatrix{T, Vector{T}, Triangle{T}, Vfun{T}}
 
 function (::Vfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
     Rjasanow.laplacecoll(SingleLayer, ξ, elem)
@@ -39,7 +36,6 @@ end
 struct Vyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
     yuk::T
 end
-const  VyMat{T} = InteractionMatrix{T, Vector{T}, Triangle{T}, Vyfun{T}}
 
 function (A::Vyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
     Radon.regularyukawacoll(SingleLayer, ξ, elem, A.yuk)
