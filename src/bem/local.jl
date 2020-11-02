@@ -29,18 +29,26 @@ end
 # =========================================================================================
 """
     solve{T, L <: LocalityType}(
-                  ::L,
-        model     ::Model{T, Triangle{T}}
+             ::L,
+        model::Model{T, Triangle{T}}
     )
 
-Computes the full local or nonlocal cauchy data on the surface of the biomolecule.
+Computes the full local or nonlocal cauchy data on the surface of the biomolecule using an *explicit* representation of the BEM system.
+
+!!! note
+    The explicit system representations require a substantial amount of memory and might easily
+    exceed the available resources on your machine (the memory demands scale quadratically with
+    the number of surface elements). In you encounter this problem, please consider switching to
+    [`solve_implicit`](@ref) or our CUDA-accelerated solvers from the
+    [`CuNESSie.jl`](https://github.com/tkemmer/CuNESSie.jl) package instead, which provide the
+    same function interface and are freely interchangeable.
 
 # Return type
 `LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
 """
 function solve(
-                  ::Type{LocalES},
-        model     ::Model{T, Triangle{T}}
+             ::Type{LocalES},
+        model::Model{T, Triangle{T}}
     ) where T
     # observation points ξ
     Ξ = [e.center for e in model.elements]
@@ -156,11 +164,28 @@ end
 
 # =========================================================================================
 """
-    TODO
+    solve_implicit{T, L <: LocalityType}(
+             ::L,
+        model::Model{T, Triangle{T}}
+    )
+
+Computes the full local or nonlocal cauchy data on the surface of the biomolecule using an *implicit* representation of the BEM system.
+
+!!! note
+    The implicit system representations provide a small memory footprint even for large
+    biomolecular systems (the memory demands scale only linearly with the number of surface
+    elements). However, this comes at the cost of additional computation time, which might exceed
+    several hours, depending on the system size. In you encounter this problem, please consider
+    switching to [`solve`](@ref) or our CUDA-accelerated solvers from the
+    [`CuNESSie.jl`](https://github.com/tkemmer/CuNESSie.jl) package instead, which provide the
+    same function interface and are freely interchangeable.
+
+# Return type
+`LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
 """
 function solve_implicit(
-                  ::Type{LocalES},
-        model     ::Model{T, Triangle{T}}
+             ::Type{LocalES},
+        model::Model{T, Triangle{T}}
     ) where T
     # observation points ξ
     Ξ = [e.center for e in model.elements]

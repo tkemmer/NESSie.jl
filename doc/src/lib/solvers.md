@@ -1,6 +1,6 @@
 # Solvers
 
-# BEM solver
+## BEM solvers
 ```@meta
     CurrentModule = NESSie.BEM
 ```
@@ -10,4 +10,5 @@
     LocalBEMResult
     NonlocalBEMResult
     solve
+    solve_implicit
 ```
