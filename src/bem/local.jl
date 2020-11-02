@@ -110,6 +110,9 @@ function solve(
     LocalBEMResult(model, u, q, umol, qmol)
 end
 
+"""
+    TODO
+"""
 struct LocalSystemMatrix{T} <: AbstractArray{T, 2}
     K     ::KMat{T}
     params::Option{T}
@@ -141,7 +144,9 @@ function Base.:*(
     (T(2π) * (1 + frac)) .* x .+ ((frac - 1) .* (A.K * x))
 end
 
-# TODO
+"""
+    TODO
+"""
 function solve_implicit(
                   ::Type{LocalES},
         model     ::Model{T, Triangle{T}}

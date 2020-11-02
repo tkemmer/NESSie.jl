@@ -24,7 +24,7 @@ end
 
 
 # =========================================================================================
-# Documented in bem/local/solver.jl
+# Documented in bem/local.jl
 function solve(
                   ::Type{NonlocalES},
         model     ::Model{T, Triangle{T}}
@@ -150,6 +150,9 @@ function solve(
     )
 end
 
+"""
+    TODO
+"""
 struct NonlocalSystemMatrix{T} <: AbstractArray{T, 2}
     Ξ     ::Vector{Vector{T}}
     elems ::Vector{Triangle{T}}
@@ -205,7 +208,8 @@ end
 end
 
 
-# TODO
+# =========================================================================================
+# Documented in bem/local.jl
 function solve_implicit(
                   ::Type{NonlocalES},
         model     ::Model{T, Triangle{T}}

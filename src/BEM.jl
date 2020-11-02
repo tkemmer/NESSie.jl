@@ -18,7 +18,7 @@ Abstract base type for all BEM solver results
 """
 abstract type BEMResult{T, E <: SurfaceElement{T}} end
 
-include("bem/matrix.jl")
+include("bem/implicit.jl")
 include("bem/local.jl")
 include("bem/nonlocal.jl")
 include("bem/post.jl")

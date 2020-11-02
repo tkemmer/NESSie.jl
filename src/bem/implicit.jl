@@ -1,3 +1,6 @@
+"""
+    TODO
+"""
 struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 const  KMat{T} = InteractionMatrix{T, Vector{T}, Triangle{T}, Kfun{T}}
 
@@ -6,6 +9,9 @@ function (::Kfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
 end
 
 
+"""
+    TODO
+"""
 struct Kyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
     yuk::T
 end
@@ -16,6 +22,9 @@ function (A::Kyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
 end
 
 
+"""
+    TODO
+"""
 struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 const  VMat{T} = InteractionMatrix{T, Vector{T}, Triangle{T}, Vfun{T}}
 
@@ -24,6 +33,9 @@ function (::Vfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
 end
 
 
+"""
+    TODO
+"""
 struct Vyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
     yuk::T
 end
@@ -34,6 +46,9 @@ function (A::Vyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
 end
 
 
+"""
+    TODO
+"""
 function _solve_linear_system(A::AbstractArray{T, 2}, b::AbstractArray{T, 1}) where T
     gmres(A, b,
         verbose=true,
