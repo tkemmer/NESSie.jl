@@ -15,7 +15,16 @@
 ## System models
 ```@docs
     Model
-    NESSie.TestModel.BornIon
-    NESSie.TestModel.XieModel
-    NESSie.TestModel.NonlocalXieModel1
+```
+
+## Test models
+```@meta
+    CurrentModule = NESSie.TestModel
+```
+
+```@docs
+    BornIon
+    bornion
+    XieModel
+    NonlocalXieModel1
 ```
