@@ -1,4 +1,7 @@
 # Nonlocal Electrostatics in Structured Solvents
+[![](https://img.shields.io/github/license/tkemmer/NESSie.jl?style=for-the-badge)](https://github.com/tkemmer/NESSie.jl/blob/master/LICENSE)
+[![](https://img.shields.io/badge/docs-stable-blue.svg?style=for-the-badge)](https://tkemmer.github.io/NESSie.jl/stable)
+[![](https://img.shields.io/badge/docs-dev-blue.svg?style=for-the-badge)](https://tkemmer.github.io/NESSie.jl/dev)
 
 `NESSie.jl` is a software package for the popular [Julia language](https://julialang.org),
 providing efficient numerical solvers for local and nonlocal protein electrostatics
@@ -57,7 +60,7 @@ More examples are available in the `doc/examples/` directory.
 
 ## Documentation
 A detailed documentation of `NESSie.jl` is available
-[online](https://tkemmer.github.io/NESSie.jl/latest/).
+[online](https://tkemmer.github.io/NESSie.jl/dev/).
 
 You can also build the same documentation manually using the following command in the
 `doc/` directory:
@@ -97,3 +100,5 @@ If you use `NESSie.jl` in your research, please cite the following publication:
 > Kemmer, T, Rjasanow, S., Hildebrandt, A (2018). NESSie. jl - Efficient and Intuitive
 > Finite Element and Boundary Element Methods for Nonlocal Protein Electrostatics in the
 > Julia Language. Journal of Computational Science 28, 193-203.
+
+A pre-formatted citation for BibTeX can be found in [CITATION.bib](https://github.com/tkemmer/NESSie.jl/blob/master/CITATION.bib).
