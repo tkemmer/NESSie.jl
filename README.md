@@ -102,4 +102,8 @@ If you use `NESSie.jl` in your research, please cite the following publication:
 > Finite Element and Boundary Element Methods for Nonlocal Protein Electrostatics in the
 > Julia Language. Journal of Computational Science 28, 193-203.
 
-A pre-formatted citation for BibTeX can be found in [CITATION.bib](https://github.com/tkemmer/NESSie.jl/blob/master/CITATION.bib).
+If you use our implicit representations and solvers (`solve_implicit`), please also cite:
+> Kemmer, T (2021). Space-efficient and exact system representations for the nonlocal protein
+> electrostatics problem. Ph. D. thesis, Johannes Gutenberg University Mainz. Mainz, Germany.
+
+Citations items for BibTeX can be found in [CITATION.bib](https://github.com/tkemmer/NESSie.jl/blob/master/CITATION.bib).
