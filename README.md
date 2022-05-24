@@ -1,4 +1,5 @@
 # Nonlocal Electrostatics in Structured Solvents
+[![](https://img.shields.io/github/workflow/status/tkemmer/NESSie.jl/CI?style=for-the-badge)](https://github.com/tkemmer/NESSie.jl/actions/workflows/CI.yml)
 [![](https://img.shields.io/github/license/tkemmer/NESSie.jl?style=for-the-badge)](https://github.com/tkemmer/NESSie.jl/blob/master/LICENSE)
 [![](https://img.shields.io/badge/docs-stable-blue.svg?style=for-the-badge)](https://tkemmer.github.io/NESSie.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg?style=for-the-badge)](https://tkemmer.github.io/NESSie.jl/dev)
