@@ -177,7 +177,7 @@ sines of the angles ``φ₁`` and ``φ₂`` between `h` and the triangle sides e
 
         The equation in the original source misses a factor of 0.5!
     =#
-    2 \ h * log((1+sinφ2) * (1-sinφ1) / ((1-sinφ2) * (1+sinφ1)))
+    h * log((1+sinφ2) * (1-sinφ1) / ((1-sinφ2) * (1+sinφ1))) / 2
 end
 
 @inline function laplacepot(
@@ -210,7 +210,7 @@ end
     χ  = √χ2
 
     # h/8π * <1>
-    result = 2 \ h * log(logterm(χ2, sinφ2) / logterm(χ2, sinφ1))
+    result = h * log(logterm(χ2, sinφ2) / logterm(χ2, sinφ1)) / 2
     # + d/4π * <2>
     result + d * (asin(χ * sinφ2) - asin(sinφ2) - asin(χ * sinφ1) + asin(sinφ1))
 end
