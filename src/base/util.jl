@@ -18,7 +18,7 @@ function props(elem::Triangle{T}) where T
     @assert !isdegenerate(elem) "Degenerate triangle $(elem)"
 
     # compute centroid
-    center = 3 \ (elem.v1 + elem.v2 + elem.v3)
+    center = (elem.v1 + elem.v2 + elem.v3) / 3
 
     # compute normal
     normal = (elem.v2 - elem.v1) × (elem.v3 - elem.v1)
@@ -29,7 +29,7 @@ function props(elem::Triangle{T}) where T
     distorig = normal ⋅ elem.v1
 
     # compute area
-    area = 2 \ vnorm
+    area = vnorm / 2
 
     Triangle(elem.v1, elem.v2, elem.v3, center, normal, area, distorig)
 end
