@@ -91,7 +91,7 @@ Unpacks the given vector of vectors into a single vector.
 
 ```jldoctest; setup = :(using NESSie: unpack)
 julia> unpack([[1, 2], [3]])
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  1
  2
  3
@@ -142,17 +142,17 @@ dimensions as `m`.
 # Example
 ```jldoctest; setup = :(using NESSie: eye!)
 julia> m = 2 * ones(2, 2)
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  2.0  2.0
  2.0  2.0
 
 julia> eye!(m); m
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  1.0  0.0
  0.0  1.0
 
 julia> eye!(m, 2); m
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  2.0  0.0
  0.0  2.0
 ```
@@ -181,17 +181,17 @@ Adds `α` to all diagonal elements of matrix `m`.
 # Example
 ```jldoctest; setup = :(using NESSie: pluseye!)
 julia> m = 2 * ones(2, 2)
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  2.0  2.0
  2.0  2.0
 
 julia> pluseye!(m); m
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  3.0  2.0
  2.0  3.0
 
 julia> pluseye!(m, 2); m
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  5.0  2.0
  2.0  5.0
 ```
