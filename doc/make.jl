@@ -38,6 +38,7 @@ makedocs(
     repo      = "https://github.com/tkemmer/NESSie.jl/blob/master{path}"
 )
 
-deploydocs(
-    repo = "github.com/tkemmer/NESSie.jl.git"
+deploydocs(;
+    repo = "github.com/tkemmer/NESSie.jl.git",
+    devbranch = "master"
 )
