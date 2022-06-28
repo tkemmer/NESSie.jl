@@ -20,7 +20,7 @@ returns a generic function to access the values.
 julia> p = legendre(3, 0.5);
 
 julia> [p(n) for n in 0:2]    # [P₀(0.5), P₁(0.5), P₂(0.5)]
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
   1.0
   0.5
  -0.125
