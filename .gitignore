@@ -1,11 +1,13 @@
 .DS_Store
+Manifest.toml
 *.swp
+*.jl.*.cov
+*.jl.cov
+*.jl.mem
 *.log
 *.o
-Manifest.toml
 /data/
-/doc/build
+/doc/build/
 /tools/mesher/mesher
 /tools/mesher/sphere
 /work/
-
