@@ -7,7 +7,7 @@ Manifest.toml
 *.log
 *.o
 /data/
-/doc/build/
+/docs/build/
 /tools/mesher/mesher
 /tools/mesher/sphere
 /work/

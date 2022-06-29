@@ -56,7 +56,7 @@ bem = solve(NonlocalES, model)
 val = rfenergy(bem)
 println("Reaction field energy: $val kJ/mol")
 ```
-More examples are available in the `doc/examples/` directory.
+More examples are available in the `docs/examples/` directory.
 
 
 ## Documentation
@@ -64,7 +64,7 @@ A detailed documentation of `NESSie.jl` is available
 [online](https://tkemmer.github.io/NESSie.jl/dev/).
 
 You can also build the same documentation manually using the following command in the
-`doc/` directory:
+`docs/` directory:
 ```sh
 shell> julia make.jl
 ```
@@ -74,7 +74,7 @@ Please note that this additionally requires the
 pkg> add Documenter
 ```
 After the build process has finished successfully, the documentation can be
-found in the `doc/build/` directory.
+found in the `docs/build/` directory.
 
 
 ## Testing

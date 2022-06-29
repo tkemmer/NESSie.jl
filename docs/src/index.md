@@ -28,7 +28,7 @@ bem = solve(NonlocalES, model)
 val = rfenergy(bem)
 println("Reaction field energy: $val kJ/mol")
 ```
-More examples are available in the `doc/examples/` directory.
+More examples are available in the `docs/examples/` directory.
 
 
 ## Citing

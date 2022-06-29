@@ -1,5 +1,3 @@
-push!(LOAD_PATH,"../src/")
-
 using Documenter, NESSie
 
 const pages = [
