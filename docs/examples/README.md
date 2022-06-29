@@ -22,7 +22,7 @@ julia bornbem.jl BORN_ION
 ```
 where `ION_NAME` is a valid Born ion name (see
 [Documentation](
-    https://tkemmer.github.io/NESSie.jl/latest/lib/util.html#NESSie.Born.bornion
+    https://tkemmer.github.io/NESSie.jl/dev/lib/models/#NESSie.TestModel.bornion
 )).
 
 
