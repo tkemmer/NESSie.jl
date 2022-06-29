@@ -2,7 +2,7 @@
 *.swp
 *.log
 *.o
-/Manifest.toml
+Manifest.toml
 /data/
 /doc/build
 /tools/mesher/mesher
