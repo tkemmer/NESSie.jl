@@ -10,7 +10,7 @@ computations in structured solvents.
 
 
 ## Installation
-This version of `NESSie.jl` requires Julia 1.0 or above. In the Julia shell, switch to the
+This version of `NESSie.jl` requires Julia 1.6 or above. In the Julia shell, switch to the
 `Pkg` shell by pressing `]` and enter the following command:
 
 ```sh
