@@ -34,19 +34,27 @@ function readstl(
     # read number of triangles
     numelem = read(stream, UInt32)
     elements = Vector{Triangle{T}}(undef, numelem)
+    nodes = Set{Vector{T}}()
 
     for i in 1:numelem
         skip(stream, 12) # skip normal (will be computed by props)
-        elements[i] = Triangle(
-            map(T, [read(stream, Float32) for _ in 1:3]),
-            map(T, [read(stream, Float32) for _ in 1:3]),
-            map(T, [read(stream, Float32) for _ in 1:3])
-        )
+        v1 = map(T, [read(stream, Float32) for _ in 1:3])
+        v2 = map(T, [read(stream, Float32) for _ in 1:3])
+        v3 = map(T, [read(stream, Float32) for _ in 1:3])
         skip(stream, 2)
+ 
+        # make sure nodes with the same coordinates refer to the same object
+        v1 ∈ nodes || push!(nodes, v1)
+        v2 ∈ nodes || push!(nodes, v2)
+        v3 ∈ nodes || push!(nodes, v3)
+        elements[i] = Triangle(
+            getkey(nodes.dict, v1, v1), 
+            getkey(nodes.dict, v2, v2), 
+            getkey(nodes.dict, v3, v3)
+        )
     end
 
-    nodes = collect(Set(unpack([[e.v1, e.v2, e.v3] for e in elements])))
-    Model(nodes, elements)
+    Model(collect(nodes), elements)
 end
 
 function readstl(
