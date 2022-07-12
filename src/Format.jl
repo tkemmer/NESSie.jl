@@ -14,6 +14,9 @@ export readmcsf
 include("format/msms.jl")
 export readmsms
 
+include("format/obj.jl")
+export writeobj
+
 include("format/off.jl")
 export readoff
 

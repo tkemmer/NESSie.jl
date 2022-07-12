@@ -15,6 +15,7 @@ const tests = [
     "format/hmo.jl",
     "format/mcsf.jl",
     "format/msms.jl",
+    "format/obj.jl",
     "format/off.jl",
     "format/pqr.jl",
     "format/skel.jl",
