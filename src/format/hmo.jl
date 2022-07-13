@@ -164,6 +164,7 @@ function writehmo(
         write(stream, "\n")
     end
     write(stream, "END_CHARGE_DATA\n")
+    return
 end
 
 function writehmo(fname::String, model::Model{T, Triangle{T}}) where T
