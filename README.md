@@ -28,10 +28,13 @@ pkg> rm NESSie
 
 ### Modules
 All functionality is organized into separate modules:
- * **`NESSie          `** Models and utility functions
- * **`NESSie.BEM      `** Local and nonlocal BEM solvers
- * **`NESSie.Format   `** Input and output file formats
- * **`NESSie.TestModel`** Test models with analytical solutions
+
+| Module | Description |
+|--------|-------------|
+| **`NESSie`** | Models and utility functions
+| **`NESSie.BEM`** | Local and nonlocal BEM solvers
+| **`NESSie.Format`** | Input and output file formats
+| **`NESSie.TestModel`** | Test models with analytical solutions
 
 
 ### Example
