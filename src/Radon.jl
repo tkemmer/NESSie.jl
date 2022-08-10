@@ -141,13 +141,11 @@ Prepare cubature points for one surface element.
 `Void`
 """
 function setcubpts!(dest::Vector{Vector{T}}, qpts::QuadPts2D{T}, elem::Triangle{T}) where T
-    u = elem.v2 - elem.v1
-    v = elem.v3 - elem.v1
+    u = elem.v2 .- elem.v1
+    v = elem.v3 .- elem.v1
 
-    # devectorized version of
-    # cubpts = [u * qpts.x[i] + v * qpts.y[i] + elem.v1 for i in 1:7]
-    for i in 1:qpts.num, j in 1:3
-        dest[i][j] = qpts.x[i] * u[j] + qpts.y[i] * v[j] + elem.v1[j]
+    for i in 1:qpts.num
+        dest[i] .= qpts.x[i] .* u .+ qpts.y[i] .* v .+ elem.v1
     end
     nothing
 end
@@ -338,7 +336,7 @@ vector.
 # Return type
 `Void`
 """
-regularyukawacoll!(
+@inline regularyukawacoll!(
             ::Type{SingleLayer},
     dest    ::DenseArray{T,1},
     elements::Vector{Triangle{T}},
@@ -347,7 +345,7 @@ regularyukawacoll!(
     fvals   ::Union{DenseArray{T,1},SubArray{T,1}}
 ) where T = radoncoll!(dest, elements, Ξ, regularyukawapot, yukawa, fvals)
 
-regularyukawacoll!(
+@inline regularyukawacoll!(
             ::Type{DoubleLayer},
     dest    ::DenseArray{T,1},
     elements::Vector{Triangle{T}},
@@ -356,7 +354,7 @@ regularyukawacoll!(
     fvals   ::Union{DenseArray{T,1},SubArray{T,1}}
 ) where T = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, yukawa, fvals)
 
-regularyukawacoll!(
+@inline regularyukawacoll!(
             ::Type{SingleLayer},
     dest    ::DenseArray{T,2},
     elements::Vector{Triangle{T}},
@@ -364,7 +362,7 @@ regularyukawacoll!(
     yukawa  ::T
 ) where T = radoncoll!(dest, elements, Ξ, regularyukawapot, yukawa)
 
-regularyukawacoll!(
+@inline regularyukawacoll!(
             ::Type{DoubleLayer},
     dest    ::DenseArray{T,2},
     elements::Vector{Triangle{T}},
@@ -395,14 +393,14 @@ triangle and observation point `ξ`.
 # Return type
 `Void`
 """
-regularyukawacoll(
+@inline regularyukawacoll(
           ::Type{SingleLayer},
     ξ     ::Vector{T},
     elem  ::Triangle{T},
     yukawa::T
 ) where T = radoncoll(ξ, elem, yukawa, regularyukawapot)
 
-regularyukawacoll(
+@inline regularyukawacoll(
           ::Type{DoubleLayer},
     ξ     ::Vector{T},
     elem  ::Triangle{T},
