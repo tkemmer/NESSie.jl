@@ -94,9 +94,9 @@ function laplacepot(
     ) where {T, P <: PotentialType}
     # Construct triangle sides. Later on, we will use the height h of the triangle at point
     # ξ as well as the angles φ1 abd φ2 between h and the triangle sides extending from ξ.
-    u1 = x1 - ξ
-    u2 = x2 - ξ
-    v  = x2 - x1
+    u1 = x1 .- ξ
+    u2 = x2 .- ξ
+    v  = x2 .- x1
 
     # Compute side lengths
     u1norm = norm(u1)
@@ -375,8 +375,7 @@ to the plane.
 function projectξ(ξ::Vector{T}, elem::Triangle{T}) where T
     dist = distance(ξ, elem)
     abs(dist) < _etol(T) && return (ξ, dist)
-    # Devectorized version of ξ -= dist * elem.normal
-    ([ξ[i] - dist * elem.normal[i] for i in 1:3], dist)
+    (ξ .- (dist .* elem.normal), dist)
 end
 
 end # module
