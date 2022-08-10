@@ -130,7 +130,7 @@ function writevtk(
     nothing
 end
 
-function writevtk(
+@inline function writevtk(
         fname::String,
         model::M
     ) where {T, M <: Model{T}}

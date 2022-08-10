@@ -24,7 +24,7 @@ function readhmo(
     Model(nodes, readhmo_elements(stream, nodes), readhmo_charges(stream, T))
 end
 
-function readhmo(
+@inline function readhmo(
         fname::String,
              ::Type{T}=Float64
     ) where T
@@ -167,6 +167,6 @@ function writehmo(
     return
 end
 
-function writehmo(fname::String, model::Model{T, Triangle{T}}) where T
+@inline function writehmo(fname::String, model::Model{T, Triangle{T}}) where T
     open(fh -> writehmo(fh, model), fname, "w")
 end

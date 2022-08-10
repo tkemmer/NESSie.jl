@@ -32,7 +32,7 @@ function readmsms(
     Model(nodes, readmsms_elements(facestream, nodes))
 end
 
-function readmsms(
+@inline function readmsms(
         fname::String,
              ::Type{T}=Float64
     ) where T <: AbstractFloat

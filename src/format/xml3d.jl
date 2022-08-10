@@ -72,7 +72,7 @@ function writexml3d_json(
     nothing
 end
 
-function writexml3d_json(
+@inline function writexml3d_json(
         fname::String,
         model::Union{Vector{Vector{T}},Model{T, Triangle{T}}}
     ) where T
@@ -121,7 +121,7 @@ function writexml3d_xml(
     nothing
 end
 
-function writexml3d_xml(
+@inline function writexml3d_xml(
         fname::String,
         nodes::Vector{Vector{T}}
     ) where T

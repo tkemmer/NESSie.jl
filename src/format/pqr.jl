@@ -33,7 +33,7 @@ function readpqr(
     charges
 end
 
-function readpqr(
+@inline function readpqr(
         fname::String,
              ::Type{T}=Float64
     ) where T

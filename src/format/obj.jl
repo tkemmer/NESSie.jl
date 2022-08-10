@@ -46,6 +46,6 @@ function writeobj(
     end
 end
 
-function writeobj(fname::String, model::Model{T, Triangle{T}}) where T
+@inline function writeobj(fname::String, model::Model{T, Triangle{T}}) where T
     open(fh -> writeobj(fh, model), fname, "w")
 end

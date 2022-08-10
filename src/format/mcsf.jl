@@ -48,7 +48,7 @@ function readmcsf(
     Model(nodes, readmcsf_elements(stream, nodes, domain=domain))
 end
 
-function readmcsf(
+@inline function readmcsf(
         fname ::String,
               ::Type{T}=Float64;
         domain::Symbol=:none
@@ -56,7 +56,7 @@ function readmcsf(
     open(fh -> readmcsf(fh, T, domain=domain), fname)
 end
 
-function readmcsf(
+@inline function readmcsf(
         fnameΩ::String,
         fnameΣ::String,
               ::Type{T}=Float64

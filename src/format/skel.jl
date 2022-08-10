@@ -62,7 +62,7 @@ function writeskel(
     nothing
 end
 
-function writeskel(
+@inline function writeskel(
         fname::String,
         model::M
     ) where {T, M <: Model{T}}

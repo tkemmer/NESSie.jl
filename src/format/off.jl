@@ -37,7 +37,7 @@ function readoff(
     Model(nodes, readoff_elements(stream, numelem, nodes))
 end
 
-function readoff(
+@inline function readoff(
         fname::String,
              ::Type{T}=Float64
     ) where T

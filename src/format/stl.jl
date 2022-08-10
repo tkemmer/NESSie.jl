@@ -57,7 +57,7 @@ function readstl(
     Model(collect(nodes), elements)
 end
 
-function readstl(
+@inline function readstl(
     fname::String,
          ::Type{T}=Float64
 ) where T
@@ -108,6 +108,6 @@ function writestl(
     nothing
 end
 
-function writestl(fname::String, model::Model{T, Triangle{T}}) where T
+@inline function writestl(fname::String, model::Model{T, Triangle{T}}) where T
     open(fh -> writestl(fh, model), fname, "w")
 end
