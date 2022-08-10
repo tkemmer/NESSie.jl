@@ -55,8 +55,8 @@ function solve(
 
     # compute molecular potentials for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = model.params.εΩ \   φmol(model)
-    qmol = model.params.εΩ \ ∂ₙφmol(model)
+    umol = model.params.εΩ .\   φmol(model)
+    qmol = model.params.εΩ .\ ∂ₙφmol(model)
 
     # convenience aliases
     εΩ = model.params.εΩ
@@ -145,7 +145,7 @@ function LinearAlgebra.diag(
     (T(2π) * (1 + A.params.εΩ / A.params.εΣ)) .* ones(T, size(A, 1))
 end
 
-function LinearAlgebra.mul!(
+@inline function LinearAlgebra.mul!(
     dst::AbstractArray{T, 1},
     A::LocalSystemMatrix{T},
     x::AbstractArray{T, 1}
@@ -192,8 +192,8 @@ function solve_implicit(
 
     # compute molecular potentials for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = model.params.εΩ \   φmol(model, tolerance=_etol(T))
-    qmol = model.params.εΩ \ ∂ₙφmol(model)
+    umol = model.params.εΩ .\   φmol(model, tolerance=_etol(T))
+    qmol = model.params.εΩ .\ ∂ₙφmol(model)
 
     # potential matrices
     K = InteractionMatrix(Ξ, model.elements, Kfun{T}())

@@ -6,7 +6,7 @@ Interaction function for an implicit representation of potential matrix `K`.
 """
 struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 
-function (::Kfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+@inline function (::Kfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
     Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
 end
 
@@ -24,7 +24,7 @@ struct Kyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
     yuk::T
 end
 
-function (A::Kyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+@inline function (A::Kyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
     Radon.regularyukawacoll(DoubleLayer, ξ, elem, A.yuk)
 end
 
@@ -37,7 +37,7 @@ Interaction function for an implicit representation of potential matrix `V`.
 """
 struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 
-function (::Vfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+@inline function (::Vfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
     Rjasanow.laplacecoll(SingleLayer, ξ, elem)
 end
 
@@ -55,7 +55,7 @@ struct Vyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
     yuk::T
 end
 
-function (A::Vyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+@inline function (A::Vyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
     Radon.regularyukawacoll(SingleLayer, ξ, elem, A.yuk)
 end
 
@@ -72,7 +72,7 @@ Solves the linear system `Ax = b` from `A` and `b` using a Jacobi-preconditioned
 # Return type
 `Array{T, 1}`
 """
-function _solve_linear_system(A::AbstractArray{T, 2}, b::AbstractArray{T, 1}) where T
+@inline function _solve_linear_system(A::AbstractArray{T, 2}, b::AbstractArray{T, 1}) where T
     gmres(A, b,
         verbose=true,
         restart=min(200, size(A, 2)),
@@ -111,7 +111,7 @@ function Base.:*(
     dst
 end
 
-function LinearAlgebra.mul!(
+@inline function LinearAlgebra.mul!(
     dst::AbstractArray{T, 1},
     A  ::InteractionMatrix{T, Vector{T}, Triangle{T}},
     B  ::AbstractArray{T}
