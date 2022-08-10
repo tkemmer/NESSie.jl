@@ -18,12 +18,12 @@ function props(elem::Triangle{T}) where T
     @assert !isdegenerate(elem) "Degenerate triangle $(elem)"
 
     # compute centroid
-    center = (elem.v1 + elem.v2 + elem.v3) / 3
+    center = (elem.v1 .+ elem.v2 .+ elem.v3) ./ 3
 
     # compute normal
-    normal = (elem.v2 - elem.v1) × (elem.v3 - elem.v1)
+    normal = (elem.v2 .- elem.v1) × (elem.v3 .- elem.v1)
     vnorm = norm(normal)
-    normal /= vnorm
+    normal ./= vnorm
 
     # compute distance to origin
     distorig = normal ⋅ elem.v1
@@ -97,7 +97,7 @@ julia> unpack([[1, 2], [3]])
  3
 ```
 """
-function unpack(data::AbstractArray{Vector{T}, 1}) where T
+@inline function unpack(data::AbstractArray{Vector{T}, 1}) where T
     isempty(data) ?  T[] : T[x for y in data for x in y]
 end
 
@@ -118,9 +118,7 @@ function vertexnormals(model::Model{T, Triangle{T}}) where T
     @inbounds for elem in model.elements, node in (elem.v1, elem.v2, elem.v3)
         idx = revidx[objectid(node)]
         count[idx] += 1
-        for i in 1:3
-            normals[idx][i] += (elem.normal[i]-normals[idx][i]) / count[idx]
-        end
+        normals[idx] .+= (elem.normal .- normals[idx]) ./ count[idx]
     end
     normals
 end
@@ -157,7 +155,7 @@ julia> eye!(m, 2); m
  0.0  2.0
 ```
 """
-function eye!(
+@inline function eye!(
         m::Union{DenseArray{T,2}, SubArray{T,2}},
         α::Number=one(T)
     ) where T
@@ -219,11 +217,11 @@ Tests whether the given triangle is degenerate.
 """
 function isdegenerate(elem::Triangle{T}) where T
     @assert length(elem.v1) == length(elem.v2) == length(elem.v3) == 3
-    u1 = elem.v2 - elem.v1
-    u2 = elem.v3 - elem.v1
+    u1 = elem.v2 .- elem.v1
+    u2 = elem.v3 .- elem.v1
     cosine = u1 ⋅ u2 / norm(u1) / norm(u2)
-    norm(elem.v1 - elem.v2) < _etol(T) || norm(elem.v1 - elem.v3) < _etol(T) ||
-    norm(elem.v2 - elem.v3) < _etol(T) || 1 - abs(cosine) <= _etol(T)
+    norm(elem.v1 .- elem.v2) < _etol(T) || norm(elem.v1 .- elem.v3) < _etol(T) ||
+    norm(elem.v2 .- elem.v3) < _etol(T) || 1 - abs(cosine) <= _etol(T)
 end
 
 
@@ -271,7 +269,7 @@ and `vnorm`, respectively.
 # Return type
 `T`
 """
-function cos(
+@inline function cos(
         u    ::Vector{T},
         v    ::Vector{T},
         unorm::T=norm(u),
@@ -297,7 +295,7 @@ h² = c₁² + c₂² \\\\
 # Return type
 `T`
 """
-function cathetus(hyp::T, cosθ::T) where T
+@inline function cathetus(hyp::T, cosθ::T) where T
     √(hyp^2 * (1 - cosθ^2))
 end
 
@@ -317,7 +315,7 @@ same orientation, ``0`` if at least one of the vectors is zero, and ``-1`` other
 # Return type
 `T`
 """
-function sign(u::Vector{T}, v::Vector{T}, n::Vector{T}) where T
+@inline function sign(u::Vector{T}, v::Vector{T}, n::Vector{T}) where T
     # Devectorized version of sign((u1 × u2) ⋅ normal)
     sign(
         (u[2]*v[3] - u[3]*v[2]) * n[1] +
@@ -340,7 +338,7 @@ given triangle `elem` is located in.
 # Return type
 `T`
 """
-function distance(q::Vector{T}, elem::Triangle{T}) where T
+@inline function distance(q::Vector{T}, elem::Triangle{T}) where T
     q ⋅ elem.normal - elem.distorig
 end
 
@@ -358,7 +356,7 @@ Devectorized computation of `(u-v)⋅n`.
 # Return type
 `T`
 """
-function ddot(u::Vector{T}, v::Vector{T}, n::Vector{T}) where T
+@inline function ddot(u::Vector{T}, v::Vector{T}, n::Vector{T}) where T
     (u[1] - v[1]) * n[1] + (u[2] - v[2]) * n[2] + (u[3] - v[3]) * n[3]
 end
 
@@ -372,7 +370,7 @@ IDs of the vector elements to the corresponding position in the vector.
 # Return type
 `Dict{UInt, UInt}`
 """
-function reverseindex(v::Vector{T}) where T
+@inline function reverseindex(v::Vector{T}) where T
     Dict{UInt, UInt}(objectid(e) => i for (i,e) in enumerate(v))
 end
 
@@ -397,8 +395,8 @@ for ξ in obspoints_line([0, 0, 0], [1, 1, 1], 10)
 end
 ```
 """
-function obspoints_line(u::Vector{T}, v::Vector{T}, n::Int) where T
-    (u + T(i) * (v - u) for i in LinRange(0, 1, n))
+@inline function obspoints_line(u::Vector{T}, v::Vector{T}, n::Int) where T
+    (u .+ T(i) .* (v .- u) for i in LinRange(0, 1, n))
 end
 
 
@@ -432,27 +430,27 @@ for Ξ in obspoints_plane(...)
 end
 ```
 """
-function obspoints_plane(
+@inline function obspoints_plane(
         a  ::Vector{T},
         b  ::Vector{T},
         c  ::Vector{T},
         nba::Int,
         nbc::Int
     ) where T
-    (obspoints_line(ξ, c + (ξ - b), nbc) for ξ in obspoints_line(b, a, nba))
+    (obspoints_line(ξ, c .+ (ξ .- b), nbc) for ξ in obspoints_line(b, a, nba))
 end
 
 
 # =========================================================================================
 # Convenience aliases
-gemv!(
+@inline gemv!(
     α::T,
     m::AbstractArray{T,2},
     v::Vector{T},
     dest::Union{DenseArray{T,1}, SubArray{T,1}}
 ) where T = gemv!(α, m, v, one(T), dest)
 
-gemv!(
+@inline gemv!(
     α::T,
     m::AbstractArray{T,2},
     v::Vector{T},
@@ -460,13 +458,13 @@ gemv!(
     dest::Union{DenseArray{T,1}, SubArray{T,1}}
 ) where T = gemv!('N', α, m, v, β, dest)
 
-gemv(
+@inline gemv(
     α::T,
     m::AbstractArray{T,2},
     v::Vector{T}
 ) where T = gemv('N', α, m, v)
 
-gemm(
+@inline gemm(
     α::T,
     a::AbstractArray{T,2},
     b::AbstractArray{T,2},

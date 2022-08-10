@@ -69,10 +69,10 @@ for T in [:Float64, :Float32]
     varname = Symbol("potprefactor_", T)
     @eval begin
         const $(varname) = $(T)(ec / 4π / ε0)
-        potprefactor(::Type{$(T)}) = $(varname)
+        @inline potprefactor(::Type{$(T)}) = $(varname)
     end
 end
-potprefactor() = potprefactor(Float64)
+@inline potprefactor() = potprefactor(Float64)
 
 
 # =========================================================================================
@@ -118,10 +118,10 @@ for T in [:Float64, :Float32]
     varname = Symbol("defaultopt_", T)
     @eval begin
         const $(varname) = Option($(T)[2, 78, 1.8, 20]...)
-        defaultopt(::Type{$(T)}) = $(varname)
+        @inline defaultopt(::Type{$(T)}) = $(varname)
     end
 end
-defaultopt() = defaultopt(Float64)
+@inline defaultopt() = defaultopt(Float64)
 
 
 # =========================================================================================
@@ -137,4 +137,4 @@ Exponent ``1/Λ`` for the fundamental solution of the yukawa operator
 # Return type
 `T`
 """
-yukawa(opt::Option{T}) where T = √(opt.εΣ/opt.ε∞)/opt.λ
+@inline yukawa(opt::Option{T}) where T = √(opt.εΣ/opt.ε∞)/opt.λ

@@ -54,11 +54,11 @@ struct Triangle{T} <: SurfaceElement{T}
     distorig::T
 end
 
-Triangle(
+@inline Triangle(
     v1::Vector{T},
     v2::Vector{T},
     v3::Vector{T}
-) where T = props(Triangle(v1, v2, v3, T[], T[], zero(T), zero(T)))
+) where T = props(Triangle{T}(v1, v2, v3, T[], T[], zero(T), zero(T)))
 
 
 # =========================================================================================
@@ -97,7 +97,7 @@ struct Tetrahedron{T} <: VolumeElement{T}
     domain::Symbol
 end
 
-Tetrahedron(
+@inline Tetrahedron(
     v1::Vector{T},
     v2::Vector{T},
     v3::Vector{T},
@@ -132,7 +132,7 @@ struct Charge{T <: AbstractFloat}
     val::T
 end
 
-Charge(
+@inline Charge(
     posx::T,
     posy::T,
     posz::T,
@@ -172,7 +172,7 @@ mutable struct Model{T, E <: Element{T}}
     ) where {T, E <: Element{T}}    = new(nodes, elements, charges, params)
 end
 
-Model(
+@inline Model(
     nodes   ::Vector{Vector{T}},
     elements::Vector{E}         = E[],
     charges ::Vector{Charge{T}} = Charge{T}[],

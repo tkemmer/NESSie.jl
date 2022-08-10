@@ -94,6 +94,6 @@ for T in [:Float64, :Float32]
             $(T)[.25, 1/6, 1/6, .5, 1/6],
             $(T)[-.8, .45, .45, .45, .45]/6
         )
-        quadraturepoints(::Type{Tetrahedron{$(T)}}) = $(varname)
+        @inline quadraturepoints(::Type{Tetrahedron{$(T)}}) = $(varname)
     end
 end
