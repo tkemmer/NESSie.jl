@@ -55,7 +55,7 @@ struct NonlocalXieModel1{T}
     end
 end
 
-NonlocalXieModel1(
+@inline NonlocalXieModel1(
     model::XieModel{T},
     len  ::Int
 ) where T = NonlocalXieModel1{T}(model, len)

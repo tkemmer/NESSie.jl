@@ -20,7 +20,7 @@ struct BornIon{T <: AbstractFloat}
     """Sphere radius in Å"""
     radius::T
 end
-BornIon(charge::T, radius::T) where T = BornIon(Charge(T[0, 0, 0], charge), radius)
+@inline BornIon(charge::T, radius::T) where T = BornIon(Charge(T[0, 0, 0], charge), radius)
 
 
 # =========================================================================================
@@ -59,7 +59,7 @@ for T in [:Float64, :Float32]
             "sr" => BornIon($(T)[2, 1.195]...),
             "ba" => BornIon($(T)[2, 1.385]...)
         )
-        bornion(name::String, ::Type{$(T)}) = $(varname)[lowercase(name)]
+        @inline bornion(name::String, ::Type{$(T)}) = $(varname)[lowercase(name)]
     end
 end
-bornion(name::String) = bornion(name, Float64)
+@inline bornion(name::String) = bornion(name, Float64)

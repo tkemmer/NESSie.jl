@@ -40,7 +40,7 @@ mutable struct XieModel{T}
     ) where T = new(radius, scalemodel(charges, radius, compat=compat), params)
 end
 
-XieModel(
+@inline XieModel(
     radius ::T,
     charges::Vector{Charge{T}},
     params ::Option{T} = defaultopt(T);
@@ -76,8 +76,8 @@ function scalemodel(
         compat ::Bool               = false
     ) where T
     # center model
-    cpos   = sum.([extrema(q.pos[i] for q in charges) for i in 1:3])/2
-    newpos = [q.pos - cpos for q in charges]
+    cpos   = sum.(extrema(q.pos[i] for q in charges) for i in 1:3)/2
+    newpos = [q.pos .- cpos for q in charges]
 
     # compute and apply scaling factor
     h = x -> compat ? ceil(x) : x  # in compat mode, scaling factor is rounded up
