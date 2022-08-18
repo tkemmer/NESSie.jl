@@ -1,9 +1,8 @@
 name: CI
 on:
   push:
-    branches:
-      - master
-    tags: '*'
+    paths:
+      - '**.jl'
   pull_request:
   schedule:
     - cron: 0 1 * * *
