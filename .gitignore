@@ -6,6 +6,7 @@ Manifest.toml
 *.jl.mem
 *.log
 *.o
+/.vscode/
 /data/
 /docs/build/
 /tools/mesher/mesher
