@@ -97,7 +97,7 @@ julia> unpack([[1, 2], [3]])
  3
 ```
 """
-@inline function unpack(data::AbstractArray{Vector{T}, 1}) where T
+@inline function unpack(data::AbstractVector{Vector{T}}) where T
     isempty(data) ?  T[] : T[x for y in data for x in y]
 end
 
@@ -127,7 +127,7 @@ end
 # =========================================================================================
 """
     eye!{T}(
-        m::Union{DenseArray{T,2}, SubArray{T,2}},
+        m::AbstractMatrix{T},
         α::Number=one(T)
     )
 
@@ -156,7 +156,7 @@ julia> eye!(m, 2); m
 ```
 """
 @inline function eye!(
-        m::Union{DenseArray{T,2}, SubArray{T,2}},
+        m::AbstractMatrix{T},
         α::Number=one(T)
     ) where T
     fill!(m, zero(T))
@@ -167,7 +167,7 @@ end
 # =========================================================================================
 """
     pluseye!{T}(
-        m::Union{DenseArray{T,2}, SubArray{T,2}},
+        m::AbstractMatrix{T},
         α::Number=one(T)
     )
 
@@ -195,7 +195,7 @@ julia> pluseye!(m, 2); m
 ```
 """
 function pluseye!(
-        m::Union{DenseArray{T,2}, SubArray{T,2}},
+        m::AbstractMatrix{T},
         α::Number=one(T)
     ) where T
     α = convert(T, α)
@@ -257,8 +257,8 @@ end
 # =========================================================================================
 """
     cos{T}(
-        u    ::Vector{T},
-        v    ::Vector{T},
+        u    ::AbstractVector{T},
+        v    ::AbstractVector{T},
         unorm::T=norm(u),
         vnorm::T=norm(v)
     )
@@ -270,8 +270,8 @@ and `vnorm`, respectively.
 `T`
 """
 @inline function cos(
-        u    ::Vector{T},
-        v    ::Vector{T},
+        u    ::AbstractVector{T},
+        v    ::AbstractVector{T},
         unorm::T=norm(u),
         vnorm::T=norm(v)
     ) where T
@@ -303,9 +303,9 @@ end
 # =========================================================================================
 """
     sign{T}(
-        u::Vector{T},
-        v::Vector{T},
-        n::Vector{T}
+        u::AbstractVector{T},
+        v::AbstractVector{T},
+        n::AbstractVector{T}
     )
 
 Determines whether the normal vector of the plane specified by the vectors `u` and `v` has
@@ -315,7 +315,11 @@ same orientation, ``0`` if at least one of the vectors is zero, and ``-1`` other
 # Return type
 `T`
 """
-@inline function sign(u::Vector{T}, v::Vector{T}, n::Vector{T}) where T
+@inline function sign(
+        u::AbstractVector{T},
+        v::AbstractVector{T},
+        n::AbstractVector{T}
+    ) where T
     # Devectorized version of sign((u1 × u2) ⋅ normal)
     sign(
         (u[2]*v[3] - u[3]*v[2]) * n[1] +
@@ -328,7 +332,7 @@ end
 # =========================================================================================
 """
     distance{T}(
-        q   ::Vector{T},
+        q   ::AbstractVector{T},
         elem::Triangle{T}
     )
 
@@ -338,7 +342,7 @@ given triangle `elem` is located in.
 # Return type
 `T`
 """
-@inline function distance(q::Vector{T}, elem::Triangle{T}) where T
+@inline function distance(q::AbstractVector{T}, elem::Triangle{T}) where T
     q ⋅ elem.normal - elem.distorig
 end
 
@@ -346,9 +350,9 @@ end
 # =========================================================================================
 """
     ddot{T}(
-        u::Vector{T},
-        v::Vector{T},
-        n::Vector{T}
+        u::AbstractVector{T},
+        v::AbstractVector{T},
+        n::AbstractVector{T}
     )
 
 Devectorized computation of `(u-v)⋅n`.
@@ -356,13 +360,17 @@ Devectorized computation of `(u-v)⋅n`.
 # Return type
 `T`
 """
-@inline function ddot(u::Vector{T}, v::Vector{T}, n::Vector{T}) where T
+@inline function ddot(
+        u::AbstractVector{T},
+        v::AbstractVector{T},
+        n::AbstractVector{T}
+    ) where T
     (u[1] - v[1]) * n[1] + (u[2] - v[2]) * n[2] + (u[3] - v[3]) * n[3]
 end
 
 
 """
-    reverseindex{T}(v::Vector{T})
+    reverseindex{T}(v::AbstractVector{T})
 
 Creates a reverse index for the given vector `v`, that is, a dictionary linking the object
 IDs of the vector elements to the corresponding position in the vector.
@@ -370,7 +378,7 @@ IDs of the vector elements to the corresponding position in the vector.
 # Return type
 `Dict{UInt, UInt}`
 """
-@inline function reverseindex(v::Vector{T}) where T
+@inline function reverseindex(v::AbstractVector{T}) where T
     Dict{UInt, UInt}(objectid(e) => i for (i,e) in enumerate(v))
 end
 
@@ -378,8 +386,8 @@ end
 # =========================================================================================
 """
     obspoints_line{T}(
-        u::Vector{T},
-        v::Vector{T},
+        u::AbstractVector{T},
+        v::AbstractVector{T},
         n::Int
     )
 
@@ -395,7 +403,7 @@ for ξ in obspoints_line([0, 0, 0], [1, 1, 1], 10)
 end
 ```
 """
-@inline function obspoints_line(u::Vector{T}, v::Vector{T}, n::Int) where T
+@inline function obspoints_line(u::AbstractVector{T}, v::AbstractVector{T}, n::Int) where T
     (u .+ T(i) .* (v .- u) for i in LinRange(0, 1, n))
 end
 
@@ -403,9 +411,9 @@ end
 # =========================================================================================
 """
     obspoints_plane{T}(
-        a  ::Vector{T},
-        b  ::Vector{T},
-        c  ::Vector{T},
+        a  ::AbstractVector{T},
+        b  ::AbstractVector{T},
+        c  ::AbstractVector{T},
         nba::Int,
         nbc::Int
     )
@@ -431,9 +439,9 @@ end
 ```
 """
 @inline function obspoints_plane(
-        a  ::Vector{T},
-        b  ::Vector{T},
-        c  ::Vector{T},
+        a  ::AbstractVector{T},
+        b  ::AbstractVector{T},
+        c  ::AbstractVector{T},
         nba::Int,
         nbc::Int
     ) where T
@@ -444,28 +452,28 @@ end
 # =========================================================================================
 # Convenience aliases
 @inline gemv!(
-    α::T,
-    m::AbstractArray{T,2},
-    v::Vector{T},
-    dest::Union{DenseArray{T,1}, SubArray{T,1}}
+    α   ::T,
+    m   ::AbstractMatrix{T},
+    v   ::AbstractVector{T},
+    dest::AbstractVector{T}
 ) where T = gemv!(α, m, v, one(T), dest)
 
 @inline gemv!(
-    α::T,
-    m::AbstractArray{T,2},
-    v::Vector{T},
-    β::T,
-    dest::Union{DenseArray{T,1}, SubArray{T,1}}
+    α   ::T,
+    m   ::AbstractMatrix{T},
+    v   ::AbstractVector{T},
+    β   ::T,
+    dest::AbstractVector{T}
 ) where T = gemv!('N', α, m, v, β, dest)
 
 @inline gemv(
     α::T,
-    m::AbstractArray{T,2},
-    v::Vector{T}
+    m::AbstractMatrix{T},
+    v::AbstractVector{T}
 ) where T = gemv('N', α, m, v)
 
 @inline gemm(
     α::T,
-    a::AbstractArray{T,2},
-    b::AbstractArray{T,2},
+    a::AbstractMatrix{T},
+    b::AbstractMatrix{T},
 ) where T = gemm('N', 'N', α, a, b)
