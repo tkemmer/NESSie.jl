@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**.jl'
+      - 'docs/src/**.md'
     tags: '*'
-  pull_request:
 
 jobs:
   build:
