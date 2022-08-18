@@ -8,6 +8,6 @@
     InPlane
     InSpace
     laplacepot
-    logterm
-    projectξ
+    _logterm
+    _projectξ!
 ```

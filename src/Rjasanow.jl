@@ -30,7 +30,9 @@ struct InSpace <: ObservationPosition end
         ptype::Type{P},
         ξ    ::Vector{T},
         elem ::Triangle{T},
-        dist ::T
+        dist ::T;
+        # kwargs
+        dat  ::Vector{T} = Vector{T}(undef, 9)
     )
 
 Computes the single or double layer Laplace potential of the given triangle for the given
@@ -42,6 +44,7 @@ observation point `ξ`. The latter needs to be projected onto the surface elemen
 
 # Arguments
  * `dist` Distance from the original `ξ` to the surface element plane
+ * `dat`  Writable vector for internal use (pre-allocate and reuse if possible)
 
 # Return type
 `T`
@@ -50,23 +53,26 @@ observation point `ξ`. The latter needs to be projected onto the surface elemen
         ptype::Type{P},
         ξ    ::Vector{T},
         elem ::Triangle{T},
-        dist ::T
+        dist ::T;
+        dat  ::Vector{T} = Vector{T}(undef, 9)
     ) where {T, P <: PotentialType}
-    laplacepot(ptype, ξ, elem.v1, elem.v2, elem.normal, dist) +
-    laplacepot(ptype, ξ, elem.v2, elem.v3, elem.normal, dist) +
-    laplacepot(ptype, ξ, elem.v3, elem.v1, elem.normal, dist)
+    laplacepot(ptype, ξ, elem.v1, elem.v2, elem.normal, dist; dat=dat) +
+    laplacepot(ptype, ξ, elem.v2, elem.v3, elem.normal, dist; dat=dat) +
+    laplacepot(ptype, ξ, elem.v3, elem.v1, elem.normal, dist; dat=dat)
 end
 
 
 # =========================================================================================
 """
     laplacepot{T, P <: PotentialType}(
-        ptype::Type{P},
-        ξ::Vector{T},
-        x1::Vector{T},
-        x2::Vector{T},
+        ptype ::Type{P},
+        ξ     ::Vector{T},
+        x1    ::Vector{T},
+        x2    ::Vector{T},
         normal::Vector{T},
-        dist::T
+        dist  ::T;
+        # kwargs
+        dat   ::Vector{T} = Vector{T}(undef, 9)
     )
 
 Computes the single or double layer Laplace potential of the triangle defined by the
@@ -80,6 +86,7 @@ onto the surface element plane  [[Rja90]](@ref Bibliography).
 # Arguments
  * `normal` Unit normal vector of the surface element
  * `dist` Distance from the original `ξ` to the surface element plane
+ * `dat`  Writable vector for internal use (pre-allocate and reuse if possible)
 
 # Return type
 `T`
@@ -90,13 +97,18 @@ function laplacepot(
         x1    ::Vector{T},
         x2    ::Vector{T},
         normal::Vector{T},
-        dist ::T
+        dist  ::T;
+        dat   ::Vector{T} = Vector{T}(undef, 9)
     ) where {T, P <: PotentialType}
+    u1 = view(dat, 1:3)
+    u2 = view(dat, 4:6)
+    v  = view(dat, 7:9)
+
     # Construct triangle sides. Later on, we will use the height h of the triangle at point
     # ξ as well as the angles φ1 abd φ2 between h and the triangle sides extending from ξ.
-    u1 = x1 .- ξ
-    u2 = x2 .- ξ
-    v  = x2 .- x1
+    u1 .= x1 .- ξ
+    u2 .= x2 .- ξ
+    v  .= x2 .- x1
 
     # Compute side lengths
     u1norm = norm(u1)
@@ -210,7 +222,7 @@ end
     χ  = √χ2
 
     # h/8π * <1>
-    result = h * log(logterm(χ2, sinφ2) / logterm(χ2, sinφ1)) / 2
+    result = h * log(_logterm(χ2, sinφ2) / _logterm(χ2, sinφ1)) / 2
     # + d/4π * <2>
     result + d * (asin(χ * sinφ2) - asin(sinφ2) - asin(χ * sinφ1) + asin(sinφ1))
 end
@@ -284,11 +296,18 @@ function laplacecoll!(
     @assert length(dest) == length(Ξ)
     @assert length(fvals) == length(elements)
 
+    ξ = Vector{T}(undef, 3)
+    dat = Vector{T}(undef, 9)
     @inbounds for eidx in 1:length(elements)
         elem = elements[eidx]
         for oidx in 1:length(Ξ)
-            ξ, dist = projectξ(Ξ[oidx], elem)
-            dest[oidx] += laplacepot(ptype, ξ, elem, dist) * fvals[eidx]
+            dist = distance(Ξ[oidx], elem)
+            ξ .= Ξ[oidx]
+
+            # project ξ onto elem
+            abs(dist) >= _etol(T) && _projectξ!(ξ, elem, dist)
+
+            dest[oidx] += laplacepot(ptype, ξ, elem, dist; dat=dat) * fvals[eidx]
         end
     end
     nothing
@@ -302,11 +321,18 @@ function laplacecoll!(
     ) where {T, P <: PotentialType}
     @assert size(dest) == (length(Ξ), length(elements))
 
+    ξ = Vector{T}(undef, 3)
+    dat = Vector{T}(undef, 9)
     @inbounds for eidx in 1:length(elements)
         elem = elements[eidx]
         for oidx in 1:length(Ξ)
-            ξ, dist = projectξ(Ξ[oidx], elem)
-            dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist)
+            dist = distance(Ξ[oidx], elem)
+            ξ .= Ξ[oidx]
+            
+            # project ξ onto elem
+            abs(dist) >= _etol(T) && _projectξ!(ξ, elem, dist)
+
+            dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist; dat=dat)
         end
     end
     nothing
@@ -330,20 +356,25 @@ and observation point `ξ` [[Rja90]](@ref Bibliography).
 # Return type
 `Void`
 """
-@inline function laplacecoll(
+function laplacecoll(
         ptype::Type{P},
         ξ    ::Vector{T},
         elem ::Triangle{T}
     ) where {T, P <: PotentialType}
 
-    ξ_p, dist = projectξ(ξ, elem)
+    dist = distance(ξ, elem)
+    ξ_p = copy(ξ)
+
+    # project ξ onto elem
+    abs(dist) >= _etol(T) && _projectξ!(ξ_p, elem, dist)
+
     laplacepot(ptype, ξ_p, elem, dist)
 end
 
 
 # =========================================================================================
 """
-    logterm{T}(χ2::T, sinφ::T)
+    _logterm{T}(χ2::T, sinφ::T)
 
 Utility function to compute
 ```math
@@ -355,7 +386,7 @@ Utility function to compute
 # Return type
 `T`
 """
-@inline function logterm(χ2::T, sinφ::T) where T
+@inline function _logterm(χ2::T, sinφ::T) where T
     term1 = √(1 - χ2 * sinφ^2)
     term2 = √(1 - χ2) * sinφ
     (term1 + term2) / (term1 - term2)
@@ -364,18 +395,15 @@ end
 
 # =========================================================================================
 """
-    projectξ{T}(ξ::Vector{T}, elem::Triangle{T})
+    _projectξ!{T}(ξ::Vector{T}, elem::Triangle{T}, dist::T)
 
-Projects ξ onto the surface element plane. Returns the projection and the original distance
-to the plane.
+Projects ξ onto the surface element plane, overriding its previous coordinates.
 
 # Return type
-`Tuple{Vector{T}, T}`
+`Vector{T}`
 """
-function projectξ(ξ::Vector{T}, elem::Triangle{T}) where T
-    dist = distance(ξ, elem)
-    abs(dist) < _etol(T) && return (ξ, dist)
-    (ξ .- (dist .* elem.normal), dist)
+@inline function _projectξ!(ξ::Vector{T}, elem::Triangle{T}, dist::T) where T
+    ξ .-= dist .* elem.normal
 end
 
 end # module
