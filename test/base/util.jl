@@ -1,4 +1,21 @@
-using NESSie: eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
+using NESSie: _dot, eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
+using LinearAlgebra: ⋅
+
+@testset "_dot" begin
+    for T in testtypes
+        x1 = T[1, 2, 3]
+        x2 = T[4, 6, 8]
+        x3 = T[-1, -1, -1]
+
+        @test typeof(_dot(x1, x2)) == T
+        @test _dot(x1, x2) ≈ x1 ⋅ x2
+        @test _dot(x2, x1) ≈ x2 ⋅ x1
+        @test _dot(x1, x3) ≈ x1 ⋅ x3
+        @test _dot(x3, x1) ≈ x3 ⋅ x1
+        @test _dot(x1, zeros(T, 3)) ≈ zero(T)
+        @test _dot(zeros(T, 3), x1) ≈ zero(T)
+    end
+end
 
 @testset "distance" begin
     for T in testtypes

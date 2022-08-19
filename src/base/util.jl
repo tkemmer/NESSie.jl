@@ -26,7 +26,7 @@ function props(elem::Triangle{T}) where T
     normal ./= vnorm
 
     # compute distance to origin
-    distorig = normal ⋅ elem.v1
+    distorig = _dot(normal, elem.v1)
 
     # compute area
     area = vnorm / 2
@@ -219,7 +219,7 @@ function isdegenerate(elem::Triangle{T}) where T
     @assert length(elem.v1) == length(elem.v2) == length(elem.v3) == 3
     u1 = elem.v2 .- elem.v1
     u2 = elem.v3 .- elem.v1
-    cosine = u1 ⋅ u2 / norm(u1) / norm(u2)
+    cosine = _dot(u1, u2) / norm(u1) / norm(u2)
     norm(elem.v1 .- elem.v2) < _etol(T) || norm(elem.v1 .- elem.v3) < _etol(T) ||
     norm(elem.v2 .- elem.v3) < _etol(T) || 1 - abs(cosine) <= _etol(T)
 end
@@ -275,7 +275,7 @@ and `vnorm`, respectively.
         unorm::T=norm(u),
         vnorm::T=norm(v)
     ) where T
-    u ⋅ v / (unorm * vnorm)
+    _dot(u, v) / (unorm * vnorm)
 end
 
 
@@ -344,7 +344,7 @@ the 'inside' wrt. to the element's (outward-facing) normal vector.
 `T`
 """
 @inline function distance(q::AbstractVector{T}, elem::Triangle{T}) where T
-    q ⋅ elem.normal - elem.distorig
+    _dot(q, elem.normal) - elem.distorig
 end
 
 
@@ -370,6 +370,24 @@ Devectorized computation of `(u-v)⋅n`.
 end
 
 
+# =========================================================================================
+"""
+    _dot{T}(
+        u::AbstractVector{T},
+        v::AbstractVector{T}
+    )
+
+Fast dot product for 3-element vectors.
+
+# Return type
+`T`
+"""
+@inline function _dot(u::AbstractVector{T}, v::AbstractVector{T}) where T
+    u[1] * v[1] + u[2] * v[2] + u[3] * v[3]
+end
+
+
+# =========================================================================================
 """
     reverseindex{T}(v::AbstractVector{T})
 

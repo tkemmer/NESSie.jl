@@ -14,6 +14,7 @@
 
 # [Utility functions](@id int-util-base)
 ```@docs
+    _dot
     cathetus
     cos
     ddot
