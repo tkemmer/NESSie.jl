@@ -1,5 +1,26 @@
 using NESSie.Rjasanow
-using NESSie.Rjasanow: laplacepot
+using NESSie.Rjasanow: laplacepot, _projectξ!
+
+@testset "_projectξ!" begin
+    for T in testtypes
+        elem = Triangle(T[0, 0, 0], T[0, 1, 0], T[0, 0, 1])
+
+        ξ = T[1, 0, 0]
+        @test _projectξ!(ξ, elem, one(T)) === ξ
+        @test typeof(ξ) == Vector{T}
+        @test ξ ≈ elem.v1
+
+        ξ = T[2, 1, 0]
+        @test _projectξ!(ξ, elem, 2 * one(T)) === ξ
+        @test typeof(ξ) == Vector{T}
+        @test ξ ≈ elem.v2
+
+        ξ = T[-3, 0, 1]
+        @test _projectξ!(ξ, elem, -3 * one(T)) === ξ
+        @test typeof(ξ) == Vector{T}
+        @test ξ ≈ elem.v3
+    end
+end
 
 @test_skip laplacecoll!
 
@@ -34,7 +55,7 @@ using NESSie.Rjasanow: laplacepot
 
         # 1.3 ξ lies on a line through a vertex, perpendicular
         #     to the triangle plane. In the following code, ξ
-        #     is already proceted onto the plane!
+        #     is already projected onto the plane!
         ξ = elem.v1
         res = laplacepot(SingleLayer, ξ, elem, one(T))
         @test typeof(res) == T
