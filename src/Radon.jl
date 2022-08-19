@@ -141,11 +141,8 @@ Prepare cubature points for one surface element.
 `Void`
 """
 function setcubpts!(dest::Vector{Vector{T}}, qpts::QuadPts2D{T}, elem::Triangle{T}) where T
-    u = elem.v2 .- elem.v1
-    v = elem.v3 .- elem.v1
-
     for i in 1:qpts.num
-        dest[i] .= qpts.x[i] .* u .+ qpts.y[i] .* v .+ elem.v1
+        dest[i] .= qpts.x[i] .* (elem.v2 .- elem.v1) .+ qpts.y[i] .* (elem.v3 .- elem.v1) .+ elem.v1
     end
     nothing
 end
