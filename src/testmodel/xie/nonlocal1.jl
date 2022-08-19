@@ -114,7 +114,7 @@ function coefficients(model::XieModel{T}, len::Int) where T
          ]
 
     @inbounds for (qi, q) in enumerate(model.charges)
-        r  = norm(q.pos)
+        r  = _norm(q.pos)
         iᵣ = spherical_besseli(len, r/λ)
         for n in 0:len-1
             dₙ = d[n+1]

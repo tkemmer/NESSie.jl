@@ -81,7 +81,7 @@ function scalemodel(
 
     # compute and apply scaling factor
     h = x -> compat ? ceil(x) : x  # in compat mode, scaling factor is rounded up
-    sf = .8radius / h(maximum(norm(pos) for pos in newpos))
+    sf = .8radius / h(maximum(_norm(pos) for pos in newpos))
     rmul!(newpos, sf)
 
     [Charge{T}(pos, q.val) for (pos, q) in zip(newpos, charges)]

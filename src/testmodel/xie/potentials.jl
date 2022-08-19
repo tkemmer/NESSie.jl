@@ -24,7 +24,7 @@ function φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     εΣ = model.params.εΣ
     ε∞ = model.params.ε∞
     A₃ = model.A₃
-    r  = norm(ξ)
+    r  = _norm(ξ)
 
     φ = zero(T)
     for (qi, q) in enumerate(model.charges)   # Eq. (17a)
@@ -37,7 +37,7 @@ function φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
 
         # if q is close to the origin, compute nonlocal Born potential
         # (see born/potentials.jl)
-        if norm(q.pos) < 1e-10
+        if _norm(q.pos) < 1e-10
             ν = √(εΣ/ε∞) * a/λ
             φ += q.val * (1/r + 1/a/εΣ * (1 - εΣ + (εΣ - ε∞)/ε∞ * sinh(ν)/ν * exp(-ν)))
             continue
@@ -83,7 +83,7 @@ function φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     A₁ = model.A₁
     A₂ = model.A₂
     κ  = λ \ √(εΣ/ε∞)
-    r  = norm(ξ)
+    r  = _norm(ξ)
 
     kᵣ = spherical_besselk(model.len, κ * r)
 
@@ -92,7 +92,7 @@ function φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
 
         # if q is close to origin, compute nonlocal Born potential
         # (see born/potentials.jl)
-        if norm(q.pos) < 1e-10
+        if _norm(q.pos) < 1e-10
             ν = √(εΣ/ε∞) * a/λ
             φ += q.val / εΣ / r * (1 + (εΣ - ε∞)/ε∞ * sinh(ν)/ν * exp(-ν * r/a))
             continue
