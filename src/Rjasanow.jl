@@ -1,9 +1,7 @@
 module Rjasanow
 
 using ..NESSie
-using ..NESSie: _etol, cos, cathetus, sign, distance
-
-using LinearAlgebra: norm
+using ..NESSie: _etol, _norm, cos, cathetus, sign, distance
 
 export laplacecoll, laplacecoll!
 
@@ -111,9 +109,9 @@ function laplacepot(
     v  .= x2 .- x1
 
     # Compute side lengths
-    u1norm = norm(u1)
-    u2norm = norm(u2)
-    vnorm  = norm(v)
+    u1norm = _norm(u1)
+    u2norm = _norm(u2)
+    vnorm  = _norm(v)
 
     # Compute the sine of the angle φ1 (φ2) between u1 (u2) and the height, that is, the
     # cosine of the angle θ1 (θ2) between u1 (u2) and v if θ1 (θ2) is an acute or right
