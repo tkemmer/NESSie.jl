@@ -1,5 +1,22 @@
 using NESSie: eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
 
+@testset "distance" begin
+    for T in testtypes
+        elem = Triangle(T[0, 0, 0], T[0, 1, 0], T[0, 0, 1])
+
+        @test typeof(distance(elem.v1, elem)) == T
+        @test distance(elem.v1, elem) ≈ zero(T)
+        @test distance(elem.v2, elem) ≈ zero(T)
+        @test distance(elem.v3, elem) ≈ zero(T)
+        @test distance(T[1, 0, 0], elem) ≈ one(T)
+        @test distance(T[1, 1, 0], elem) ≈ one(T)
+        @test distance(T[1, 0, 1], elem) ≈ one(T)
+        @test distance(T[-1, 0, 0], elem) ≈ -1 * one(T)
+        @test distance(T[-2, 1, 0], elem) ≈ -2 * one(T)
+        @test distance(T[-3, 0, 1], elem) ≈ -3 * one(T)
+    end
+end
+
 @testset "eye! and pluseye!" begin
     for T in (Int, testtypes...)
         m = -ones(T, 3, 3)
@@ -281,5 +298,4 @@ end
 
 @test_skip cathetus
 @test_skip sign
-@test_skip distance
 @test_skip ddot
