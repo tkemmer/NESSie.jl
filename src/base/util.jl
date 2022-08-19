@@ -22,7 +22,7 @@ function props(elem::Triangle{T}) where T
 
     # compute normal
     normal = (elem.v2 .- elem.v1) × (elem.v3 .- elem.v1)
-    vnorm = norm(normal)
+    vnorm = _norm(normal)
     normal ./= vnorm
 
     # compute distance to origin
@@ -219,9 +219,9 @@ function isdegenerate(elem::Triangle{T}) where T
     @assert length(elem.v1) == length(elem.v2) == length(elem.v3) == 3
     u1 = elem.v2 .- elem.v1
     u2 = elem.v3 .- elem.v1
-    cosine = _dot(u1, u2) / norm(u1) / norm(u2)
-    norm(elem.v1 .- elem.v2) < _etol(T) || norm(elem.v1 .- elem.v3) < _etol(T) ||
-    norm(elem.v2 .- elem.v3) < _etol(T) || 1 - abs(cosine) <= _etol(T)
+    cosine = _dot(u1, u2) / _norm(u1) / _norm(u2)
+    _norm(elem.v1 .- elem.v2) < _etol(T) || _norm(elem.v1 .- elem.v3) < _etol(T) ||
+    _norm(elem.v2 .- elem.v3) < _etol(T) || 1 - abs(cosine) <= _etol(T)
 end
 
 
@@ -259,8 +259,8 @@ end
     cos{T}(
         u    ::AbstractVector{T},
         v    ::AbstractVector{T},
-        unorm::T=norm(u),
-        vnorm::T=norm(v)
+        unorm::T=_norm(u),
+        vnorm::T=_norm(v)
     )
 
 Computes the cosine of the angle between the given vectors `u` and `v` with lengths `unorm`
@@ -272,8 +272,8 @@ and `vnorm`, respectively.
 @inline function cos(
         u    ::AbstractVector{T},
         v    ::AbstractVector{T},
-        unorm::T=norm(u),
-        vnorm::T=norm(v)
+        unorm::T=_norm(u),
+        vnorm::T=_norm(v)
     ) where T
     _dot(u, v) / (unorm * vnorm)
 end
@@ -384,6 +384,22 @@ Fast dot product for 3-element vectors.
 """
 @inline function _dot(u::AbstractVector{T}, v::AbstractVector{T}) where T
     u[1] * v[1] + u[2] * v[2] + u[3] * v[3]
+end
+
+
+# =========================================================================================
+"""
+    _norm{T}(
+        u::AbstractVector{T}
+    )
+
+Fast Euclidean norm for 3-element vectors.
+
+# Return type
+`T`
+"""
+@inline function _norm(u::AbstractVector{T}) where T
+    √_dot(u, u)
 end
 
 

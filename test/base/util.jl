@@ -1,5 +1,5 @@
-using NESSie: _dot, eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
-using LinearAlgebra: ⋅
+using NESSie: _dot, _norm, eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
+using LinearAlgebra: ⋅, norm
 
 @testset "_dot" begin
     for T in testtypes
@@ -14,6 +14,20 @@ using LinearAlgebra: ⋅
         @test _dot(x3, x1) ≈ x3 ⋅ x1
         @test _dot(x1, zeros(T, 3)) ≈ zero(T)
         @test _dot(zeros(T, 3), x1) ≈ zero(T)
+    end
+end
+
+@testset "_norm" begin
+    for T in testtypes
+        x1 = T[1, 2, 3]
+        x2 = T[4, 6, 8]
+        x3 = T[-1, -1, -1]
+
+        @test typeof(_norm(x1)) == T
+        @test _norm(x1) ≈ norm(x1)
+        @test _norm(x2) ≈ norm(x2)
+        @test _norm(x3) ≈ norm(x3)
+        @test _norm(zeros(T, 3)) ≈ zero(T)
     end
 end
 
