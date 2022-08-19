@@ -337,7 +337,8 @@ end
     )
 
 Calculates the (positive or negative) distance from the given point `q` to the plane the
-given triangle `elem` is located in.
+given triangle `elem` is located in. Negative distances correspond to point locations on
+the 'inside' wrt. to the element's (outward-facing) normal vector.
 
 # Return type
 `T`
