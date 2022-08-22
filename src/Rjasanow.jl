@@ -342,11 +342,16 @@ end
     laplacecoll{T, P <: PotentialType}(
         ptype::Type{P},
         ξ    ::AbstractVector{T},
-        elem ::AbstractVector{Triangle{T}}
+        elem ::AbstractVector{Triangle{T}};
+        # kwargs
+        dat  ::AbstractVector{T} = Vector{T}(undef, 12)
     )
 
 Analytical solution for the single or double layer Laplace potential for a given triangle
 and observation point `ξ` [[Rja90]](@ref Bibliography).
+
+# Arguments
+ * `dat`  Writable vector for internal use (pre-allocate and reuse if possible)
 
 !!! note
     The result is premultiplied by 4π.
@@ -357,16 +362,18 @@ and observation point `ξ` [[Rja90]](@ref Bibliography).
 function laplacecoll(
         ptype::Type{P},
         ξ    ::AbstractVector{T},
-        elem ::Triangle{T}
+        elem ::Triangle{T};
+        dat  ::AbstractVector{T} = Vector{T}(undef, 12)
     ) where {T, P <: PotentialType}
 
     dist = distance(ξ, elem)
-    ξ_p = copy(ξ)
+    ξ_p = view(dat, 1:3)
+    ξ_p .= ξ
 
     # project ξ onto elem
     abs(dist) >= _etol(T) && _projectξ!(ξ_p, elem, dist)
 
-    laplacepot(ptype, ξ_p, elem, dist)
+    laplacepot(ptype, ξ_p, elem, dist; dat=view(dat, 4:12))
 end
 
 
