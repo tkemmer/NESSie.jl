@@ -1,13 +1,27 @@
 # =========================================================================================
 """
-    struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
+    struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} 
+        dat::Vector{T}   # pre-allocated vector for internal use
+    end
 
 Interaction function for an implicit representation of potential matrix `K`.
-"""
-struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 
-@inline function (::Kfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    Rjasanow.laplacecoll(DoubleLayer, ξ, elem)
+# Special constructors
+```julia
+Kfun{T}()
+```
+Automatically initializes the internal data vector. Replaces the default constructor.
+"""
+struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} 
+    """Pre-allocated vector for internal use"""
+    dat::Vector{T}
+
+    Kfun{T}() where T = new(Vector{T}(undef, 12 * Threads.nthreads()))
+end
+
+@inline function (f::Kfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+    t = Threads.threadid()
+    Rjasanow.laplacecoll(DoubleLayer, ξ, elem; dat=view(f.dat, (t-1)*12+1:t*12))
 end
 
 
@@ -31,14 +45,28 @@ end
 
 # =========================================================================================
 """
-    struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
+    struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+        dat::Vector{T}   # pre-allocated vector for internal use
+    end
 
 Interaction function for an implicit representation of potential matrix `V`.
-"""
-struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 
-@inline function (::Vfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    Rjasanow.laplacecoll(SingleLayer, ξ, elem)
+# Special constructors
+```julia
+Vfun{T}()
+```
+Automatically initializes the internal data vector. Replaces the default constructor.
+"""
+struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} 
+    """Pre-allocated vector for internal use"""
+    dat::Vector{T}
+
+    Vfun{T}() where T = new(Vector{T}(undef, 12 * Threads.nthreads()))
+end
+
+@inline function (f::Vfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
+    t = Threads.threadid()
+    Rjasanow.laplacecoll(SingleLayer, ξ, elem; dat=view(f.dat, (t-1)*12+1:t*12))
 end
 
 
