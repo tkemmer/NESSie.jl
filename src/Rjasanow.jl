@@ -26,11 +26,11 @@ struct InSpace <: ObservationPosition end
 """
     function laplacepot{T, P <: PotentialType}(
         ptype::Type{P},
-        ξ    ::Vector{T},
+        ξ    ::AbstractVector{T},
         elem ::Triangle{T},
         dist ::T;
         # kwargs
-        dat  ::Vector{T} = Vector{T}(undef, 9)
+        dat  ::AbstractVector{T} = Vector{T}(undef, 9)
     )
 
 Computes the single or double layer Laplace potential of the given triangle for the given
@@ -49,10 +49,10 @@ observation point `ξ`. The latter needs to be projected onto the surface elemen
 """
 @inline function laplacepot(
         ptype::Type{P},
-        ξ    ::Vector{T},
+        ξ    ::AbstractVector{T},
         elem ::Triangle{T},
         dist ::T;
-        dat  ::Vector{T} = Vector{T}(undef, 9)
+        dat  ::AbstractVector{T} = Vector{T}(undef, 9)
     ) where {T, P <: PotentialType}
     laplacepot(ptype, ξ, elem.v1, elem.v2, elem.normal, dist; dat=dat) +
     laplacepot(ptype, ξ, elem.v2, elem.v3, elem.normal, dist; dat=dat) +
@@ -64,13 +64,13 @@ end
 """
     laplacepot{T, P <: PotentialType}(
         ptype ::Type{P},
-        ξ     ::Vector{T},
-        x1    ::Vector{T},
-        x2    ::Vector{T},
-        normal::Vector{T},
+        ξ     ::AbstractVector{T},
+        x1    ::AbstractVector{T},
+        x2    ::AbstractVector{T},
+        normal::AbstractVector{T},
         dist  ::T;
         # kwargs
-        dat   ::Vector{T} = Vector{T}(undef, 9)
+        dat   ::AbstractVector{T} = Vector{T}(undef, 9)
     )
 
 Computes the single or double layer Laplace potential of the triangle defined by the
@@ -91,12 +91,12 @@ onto the surface element plane  [[Rja90]](@ref Bibliography).
 """
 function laplacepot(
         ptype ::Type{P},
-        ξ     ::Vector{T},
-        x1    ::Vector{T},
-        x2    ::Vector{T},
-        normal::Vector{T},
+        ξ     ::AbstractVector{T},
+        x1    ::AbstractVector{T},
+        x2    ::AbstractVector{T},
+        normal::AbstractVector{T},
         dist  ::T;
-        dat   ::Vector{T} = Vector{T}(undef, 9)
+        dat   ::AbstractVector{T} = Vector{T}(undef, 9)
     ) where {T, P <: PotentialType}
     u1 = view(dat, 1:3)
     u2 = view(dat, 4:6)
@@ -258,17 +258,17 @@ end
 """
     laplacecoll!{T, P <: PotentialType}(
         ptype   ::Type{P},
-        dest    ::DenseArray{T,1},
-        elements::Vector{Triangle{T}},
-        Ξ       ::Vector{Vector{T}},
-        fvals   ::Union{DenseArray{T,1},SubArray{T,1}}
+        dest    ::AbstractVector{T},
+        elements::AbstractVector{Triangle{T}},
+        Ξ       ::AbstractVector{Vector{T}},
+        fvals   ::AbstractVector{T}
     )
 
     laplacecoll!{T, P <: PotentialType}(
         ptype   ::Type{P},
-        dest    ::DenseArray{T, 2},
-        elements::Vector{Triangle{T}},
-        Ξ       ::Vector{Vector{T}}
+        dest    ::AbstractMatrix{T},
+        elements::AbstractVector{Triangle{T}},
+        Ξ       ::AbstractVector{Vector{T}}
     )
 
 Analytical solution for the single or double layer Laplace potential for a given list of
@@ -286,10 +286,10 @@ vector.
 """
 function laplacecoll!(
         ptype   ::Type{P},
-        dest    ::DenseArray{T,1},
-        elements::Vector{Triangle{T}},
-        Ξ       ::Vector{Vector{T}},
-        fvals   ::Union{DenseArray{T,1},SubArray{T,1}}
+        dest    ::AbstractVector{T},
+        elements::AbstractVector{Triangle{T}},
+        Ξ       ::AbstractVector{Vector{T}},
+        fvals   ::AbstractVector{T}
     ) where {T, P <: PotentialType}
     @assert length(dest) == length(Ξ)
     @assert length(fvals) == length(elements)
@@ -313,9 +313,9 @@ end
 
 function laplacecoll!(
         ptype   ::Type{P},
-        dest    ::DenseArray{T, 2},
-        elements::Vector{Triangle{T}},
-        Ξ       ::Vector{Vector{T}},
+        dest    ::AbstractMatrix{T},
+        elements::AbstractVector{Triangle{T}},
+        Ξ       ::AbstractVector{Vector{T}},
     ) where {T, P <: PotentialType}
     @assert size(dest) == (length(Ξ), length(elements))
 
@@ -341,8 +341,8 @@ end
 """
     laplacecoll{T, P <: PotentialType}(
         ptype::Type{P},
-        ξ    ::Vector{T},
-        elem ::Vector{Triangle{T}}
+        ξ    ::AbstractVector{T},
+        elem ::AbstractVector{Triangle{T}}
     )
 
 Analytical solution for the single or double layer Laplace potential for a given triangle
@@ -356,7 +356,7 @@ and observation point `ξ` [[Rja90]](@ref Bibliography).
 """
 function laplacecoll(
         ptype::Type{P},
-        ξ    ::Vector{T},
+        ξ    ::AbstractVector{T},
         elem ::Triangle{T}
     ) where {T, P <: PotentialType}
 
@@ -393,14 +393,14 @@ end
 
 # =========================================================================================
 """
-    _projectξ!{T}(ξ::Vector{T}, elem::Triangle{T}, dist::T)
+    _projectξ!{T}(ξ::AbstractVector{T}, elem::Triangle{T}, dist::T)
 
 Projects ξ onto the surface element plane, overriding its previous coordinates.
 
 # Return type
 `Vector{T}`
 """
-@inline function _projectξ!(ξ::Vector{T}, elem::Triangle{T}, dist::T) where T
+@inline function _projectξ!(ξ::AbstractVector{T}, elem::Triangle{T}, dist::T) where T
     ξ .-= dist .* elem.normal
 end
 
