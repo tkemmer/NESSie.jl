@@ -10,10 +10,10 @@ export regularyukawacoll, regularyukawacoll!
 # =========================================================================================
 """
     regularyukawapot{T}(
-        x     ::DenseArray{T,1},
-        ξ     ::Vector{T},
+        x     ::AbstractVector{T},
+        ξ     ::AbstractVector{T},
         yukawa::T,
-              ::Vector{T}=T[]
+              ::AbstractVector{T}=T[]
     )
 
 Computes the regular part of the Yukawa potential, that is, Yukawa minus Laplace:
@@ -31,10 +31,10 @@ Computes the regular part of the Yukawa potential, that is, Yukawa minus Laplace
 `T`
 """
 function regularyukawapot(
-        x     ::DenseArray{T,1},
-        ξ     ::Vector{T},
+        x     ::AbstractVector{T},
+        ξ     ::AbstractVector{T},
         yukawa::T,
-              ::Vector{T}=T[]
+              ::AbstractVector{T}=T[]
     ) where T
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
     rnorm = euclidean(x, ξ)
@@ -68,10 +68,10 @@ end
 # =========================================================================================
 """
     ∂ₙregularyukawapot{T}(
-        x     ::Vector{T},
-        ξ     ::Vector{T},
+        x     ::AbstractVector{T},
+        ξ     ::AbstractVector{T},
         yukawa::T,
-        normal::Vector{T}
+        normal::AbstractVector{T}
     )
 
 Computes the normal derivative of the regular part of the Yukawa potential, that is, Yukawa
@@ -92,10 +92,10 @@ minus Laplace:
 `T`
 """
 function ∂ₙregularyukawapot(
-        x     ::Vector{T},
-        ξ     ::Vector{T},
+        x     ::AbstractVector{T},
+        ξ     ::AbstractVector{T},
         yukawa::T,
-        normal::Vector{T}
+        normal::AbstractVector{T}
     ) where T
     #=== TIME- AND MEMORY-CRITICAL CODE! ===#
     rnorm = euclidean(x, ξ)
@@ -130,7 +130,7 @@ end
 # =========================================================================================
 """
     setcubpts!{T}(
-        dest::Vector{Vector{T}},
+        dest::AbstractVector{Vector{T}},
         qpts::QuadPts2D{T},
         elem::Triangle{T}
     )
@@ -140,7 +140,7 @@ Prepare cubature points for one surface element.
 # Return type
 `Void`
 """
-function setcubpts!(dest::Vector{Vector{T}}, qpts::QuadPts2D{T}, elem::Triangle{T}) where T
+function setcubpts!(dest::AbstractVector{Vector{T}}, qpts::QuadPts2D{T}, elem::Triangle{T}) where T
     for i in 1:qpts.num
         dest[i] .= qpts.x[i] .* (elem.v2 .- elem.v1) .+ qpts.y[i] .* (elem.v3 .- elem.v1) .+ elem.v1
     end
@@ -151,18 +151,18 @@ end
 # =========================================================================================
 """
     radoncoll!{T}(
-            dest    ::DenseArray{T,1},
-            elements::Vector{Triangle{T}},
-            Ξ       ::Vector{Vector{T}},
+            dest    ::AbstractVector{T},
+            elements::AbstractVector{Triangle{T}},
+            Ξ       ::AbstractVector{Vector{T}},
             solution::Function,
             yukawa  ::T,
-            fvals   ::DenseArray{T,1}
+            fvals   ::AbstractVector{T}
     )
 
     radoncoll!{T}(
-            dest    ::DenseArray{T,2},
-            elements::Vector{Triangle{T}},
-            Ξ       ::Vector{Vector{T}},
+            dest    ::AbstractMatrix{T},
+            elements::AbstractVector{Triangle{T}},
+            Ξ       ::AbstractVector{Vector{T}},
             solution::Function,
             yukawa  ::T
     )
@@ -187,12 +187,12 @@ to use the shorthand signature `regularyukawacoll!` instead.
 `Void`
 """
 function radoncoll!(
-        dest    ::DenseArray{T,1},
-        elements::Vector{Triangle{T}},
-        Ξ       ::Vector{Vector{T}},
+        dest    ::AbstractVector{T},
+        elements::AbstractVector{Triangle{T}},
+        Ξ       ::AbstractVector{Vector{T}},
         solution::Function,
         yukawa  ::T,
-        fvals   ::DenseArray{T,1}
+        fvals   ::AbstractVector{T}
     ) where T
     #=== MEMORY-CRITICAL CODE! ===#
     @assert length(fvals) == length(elements)
@@ -220,9 +220,9 @@ function radoncoll!(
 end
 
 function radoncoll!(
-        dest    ::DenseArray{T,2},
-        elements::Vector{Triangle{T}},
-        Ξ       ::Vector{Vector{T}},
+        dest    ::AbstractMatrix{T},
+        elements::AbstractVector{Triangle{T}},
+        Ξ       ::AbstractVector{Vector{T}},
         solution::Function,
         yukawa  ::T
     ) where T
@@ -254,7 +254,7 @@ end
 # =========================================================================================
 """
     radoncoll{T}(
-            ξ       ::Vector{T},
+            ξ       ::AbstractVector{T},
             elem    ::Triangle{T},
             yukawa  ::T,
             solution::Function
@@ -278,7 +278,7 @@ to use the shorthand signature `regularyukawacoll` instead.
 `Void`
 """
 function radoncoll(
-        ξ       ::Vector{T},
+        ξ       ::AbstractVector{T},
         elem    ::Triangle{T},
         yukawa  ::T,
         solution::Function
@@ -301,18 +301,18 @@ end
 """
     regularyukawacoll!{T, P <: PotentialType}(
                 ::Type{P},
-        dest    ::DenseArray{T,1},
-        elements::Vector{Triangle{T}},
-        Ξ       ::Vector{Vector{T}},
+        dest    ::AbstractVector{T},
+        elements::AbstractVector{Triangle{T}},
+        Ξ       ::AbstractVector{Vector{T}},
         yukawa  ::T,
-        fvals   ::Union{DenseArray{T,1},SubArray{T,1}}
+        fvals   ::AbstractVector{T}
     )
 
     regularyukawacoll!{T, P <: PotentialType}(
                 ::Type{P},
-        dest    ::DenseArray{T,2},
-        elements::Vector{Triangle{T}},
-        Ξ       ::Vector{Vector{T}},
+        dest    ::AbstractMatrix{T},
+        elements::AbstractVector{Triangle{T}},
+        Ξ       ::AbstractVector{Vector{T}},
         yukawa  ::T
     )
 
@@ -335,35 +335,35 @@ vector.
 """
 @inline regularyukawacoll!(
             ::Type{SingleLayer},
-    dest    ::DenseArray{T,1},
-    elements::Vector{Triangle{T}},
-    Ξ       ::Vector{Vector{T}},
+    dest    ::AbstractVector{T},
+    elements::AbstractVector{Triangle{T}},
+    Ξ       ::AbstractVector{Vector{T}},
     yukawa  ::T,
-    fvals   ::Union{DenseArray{T,1},SubArray{T,1}}
+    fvals   ::AbstractVector{T}
 ) where T = radoncoll!(dest, elements, Ξ, regularyukawapot, yukawa, fvals)
 
 @inline regularyukawacoll!(
             ::Type{DoubleLayer},
-    dest    ::DenseArray{T,1},
-    elements::Vector{Triangle{T}},
-    Ξ       ::Vector{Vector{T}},
+    dest    ::AbstractVector{T},
+    elements::AbstractVector{Triangle{T}},
+    Ξ       ::AbstractVector{Vector{T}},
     yukawa  ::T,
-    fvals   ::Union{DenseArray{T,1},SubArray{T,1}}
+    fvals   ::AbstractVector{T}
 ) where T = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, yukawa, fvals)
 
 @inline regularyukawacoll!(
             ::Type{SingleLayer},
-    dest    ::DenseArray{T,2},
-    elements::Vector{Triangle{T}},
-    Ξ       ::Vector{Vector{T}},
+    dest    ::AbstractMatrix{T},
+    elements::AbstractVector{Triangle{T}},
+    Ξ       ::AbstractVector{Vector{T}},
     yukawa  ::T
 ) where T = radoncoll!(dest, elements, Ξ, regularyukawapot, yukawa)
 
 @inline regularyukawacoll!(
             ::Type{DoubleLayer},
-    dest    ::DenseArray{T,2},
-    elements::Vector{Triangle{T}},
-    Ξ       ::Vector{Vector{T}},
+    dest    ::AbstractMatrix{T},
+    elements::AbstractVector{Triangle{T}},
+    Ξ       ::AbstractVector{Vector{T}},
     yukawa  ::T
 ) where T = radoncoll!(dest, elements, Ξ, ∂ₙregularyukawapot, yukawa)
 
@@ -372,7 +372,7 @@ vector.
 """
     regularyukawacoll{T, P <: PotentialType}(
               ::Type{P},
-        ξ     ::Vector{T},
+        ξ     ::AbstractVector{T},
         elem  ::Triangle{T},
         yukawa::T
     )
@@ -392,14 +392,14 @@ triangle and observation point `ξ`.
 """
 @inline regularyukawacoll(
           ::Type{SingleLayer},
-    ξ     ::Vector{T},
+    ξ     ::AbstractVector{T},
     elem  ::Triangle{T},
     yukawa::T
 ) where T = radoncoll(ξ, elem, yukawa, regularyukawapot)
 
 @inline regularyukawacoll(
           ::Type{DoubleLayer},
-    ξ     ::Vector{T},
+    ξ     ::AbstractVector{T},
     elem  ::Triangle{T},
     yukawa::T
 ) where T = radoncoll(ξ, elem, yukawa, ∂ₙregularyukawapot)
