@@ -296,9 +296,9 @@ function laplacecoll!(
 
     ξ = Vector{T}(undef, 3)
     dat = Vector{T}(undef, 9)
-    @inbounds for eidx in 1:length(elements)
+    @inbounds for eidx in eachindex(elements)
         elem = elements[eidx]
-        for oidx in 1:length(Ξ)
+        for oidx in eachindex(Ξ)
             dist = distance(Ξ[oidx], elem)
             ξ .= Ξ[oidx]
 
@@ -321,9 +321,9 @@ function laplacecoll!(
 
     ξ = Vector{T}(undef, 3)
     dat = Vector{T}(undef, 9)
-    @inbounds for eidx in 1:length(elements)
+    @inbounds for eidx in eachindex(elements)
         elem = elements[eidx]
-        for oidx in 1:length(Ξ)
+        for oidx in eachindex(Ξ)
             dist = distance(Ξ[oidx], elem)
             ξ .= Ξ[oidx]
             
