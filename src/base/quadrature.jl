@@ -67,7 +67,7 @@ Generator function for quadrature points:
  * *Triangles*: 7 points per element [[Rad48]](@ref Bibliography)
  * *Tetrahedra*: 5 points per element [[Kea86]](@ref Bibliography)
 
-## Return type
+# Return type
 `QuadPts2D` or `QuadPts3D`
 """ quadraturepoints
 for T in [:Float64, :Float32]
@@ -96,4 +96,58 @@ for T in [:Float64, :Float32]
         )
         @inline quadraturepoints(::Type{Tetrahedron{$(T)}}) = $(varname)
     end
+end
+
+
+# =========================================================================================
+"""
+    abstract type ElementQuad{T <: AbstractFloat} end
+
+Abstract base type for quadrature points on specific elements
+"""
+abstract type ElementQuad{T <: AbstractFloat} end
+
+
+# =========================================================================================
+"""
+    struct TriangleQuad{T} <: ElementQuad{T}
+        elem   ::Triangle{T}   # given element
+        qpts   ::Matrix{T}     # quadrature points on the element
+        weights::Vector{T}     # weights for the quadrature points
+    end
+
+Quadrature points on a specific surface triangle, including weights.
+"""
+struct TriangleQuad{T} <: ElementQuad{T}
+    """Given element"""
+    elem   ::Triangle{T}
+    """Quadrature points on the given element as 3xN matrix"""
+    qpts   ::Matrix{T}
+    """Weights for the quadrature points"""
+    weights::Vector{T}
+end
+
+
+# =========================================================================================
+"""
+    quadraturepoints{T}(elements::Vector{Triangle{T}})
+
+Computes and returns quadrature points on all given elements, including weights.
+
+# Return type
+`Vector{TriangleQuad{T}}`
+"""
+function quadraturepoints(elements::Vector{Triangle{T}}) where T
+    qpts = quadraturepoints(Triangle{T})
+    ret  = Vector{TriangleQuad{T}}(undef, length(elements))
+
+    for i in eachindex(elements)
+        elem = elements[i]
+        mat  = Matrix{T}(undef, 3, qpts.num)
+        for j in 1:qpts.num
+            mat[:, j] .= qpts.x[j] .* (elem.v2 .- elem.v1) .+ qpts.y[j] .* (elem.v3 .- elem.v1) .+ elem.v1
+        end
+        ret[i] = TriangleQuad{T}(elem, mat, qpts.weight)
+    end
+    ret
 end

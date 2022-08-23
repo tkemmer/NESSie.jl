@@ -7,9 +7,16 @@
     QuadPts3D
 ```
 
+## Quadrature points on elements
+```@docs
+    ElementQuad
+    TriangleQuad
+```
+
 ## Generators
 ```@docs
     quadraturepoints
+    quadraturepoints(::Vector{Triangle})
 ```
 
 ## Laplace potential

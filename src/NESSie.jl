@@ -15,7 +15,7 @@ include("base/model.jl")
 export Element, SurfaceElement, VolumeElement, Triangle, Tetrahedron, Charge, Model
 
 include("base/quadrature.jl")
-export QuadraturePoints, QuadPts2D, QuadPts3D, quadraturepoints
+export QuadraturePoints, QuadPts2D, QuadPts3D, ElementQuad, TriangleQuad, quadraturepoints
 
 include("base/util.jl")
 export meshunion, obspoints_line, obspoints_plane
