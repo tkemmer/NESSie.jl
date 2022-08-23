@@ -19,5 +19,7 @@
 
 ## Iterative solvers
 ``` @docs
+    _get_laplace_matrices
+    _get_yukawa_matrices
     _solve_linear_system
 ```

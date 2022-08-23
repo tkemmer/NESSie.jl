@@ -26,9 +26,9 @@ end
 # =========================================================================================
 # Documented in bem/local.jl
 function solve(
-                  ::Type{NonlocalES},
-        model     ::Model{T, Triangle{T}}
-    ) where T
+         ::Type{NonlocalES},
+    model::Model{T, Triangle{T}}
+) where T
     # convenient access
     elements = model.elements
     εΩ       = model.params.εΩ
@@ -46,8 +46,8 @@ function solve(
     m13 = view(m,          1:numelem,  1+2numelem:3numelem)
     m21 = view(m,  1+numelem:2numelem,          1:numelem )
     m22 = view(m,  1+numelem:2numelem,  1+numelem:2numelem)
-    m23 = view(m,  1+numelem:2numelem, 1+2numelem:3numelem)
-    m31 = view(m, 1+2numelem:3numelem,          1:numelem )
+#   m23 = view(m,  1+numelem:2numelem, 1+2numelem:3numelem)
+#   m31 = view(m, 1+2numelem:3numelem,          1:numelem )
     m32 = view(m, 1+2numelem:3numelem,  1+numelem:2numelem)
     m33 = view(m, 1+2numelem:3numelem, 1+2numelem:3numelem)
 
@@ -154,30 +154,49 @@ end
 # =========================================================================================
 """
     struct NonlocalSystemMatrix{T} <: AbstractArray{T, 2}
-        Ξ     ::Vector{Vector{T}}     # Observation points (row elements)
-        elems ::Vector{Triangle{T}}   # Surface elements (column elements)
-        params::Option{T}             # System constants
+        V     ::InteractionMatrix{T}   # single-layer Laplace
+        K     ::InteractionMatrix{T}   # double-layer Laplace
+        Vy    ::InteractionMatrix{T}   # single-layer Yukawa
+        Ky    ::InteractionMatrix{T}   # double-layer Yukawa
+        params::Option{T}              # system constants
     end
 
 Implicit representation of the nonlocal BEM system matrix.
+
+# Special constructors
+```julia
+
+```
 """
 struct NonlocalSystemMatrix{T} <: AbstractArray{T, 2}
-    """Observation points (row elements)"""
-    Ξ     ::Vector{Vector{T}}
-    """Surface elements (column elements)"""
-    elems ::Vector{Triangle{T}}
+    """Single-layer Laplace potentials"""
+    V::InteractionMatrix{T, Vector{T}, Triangle{T}, Vfun{T}}
+    """Double-layer Laplace potentials"""
+    K::InteractionMatrix{T, Vector{T}, Triangle{T}, Kfun{T}}
+    """Single-layer Yukawa potentials"""
+    Vy::InteractionMatrix{T, Vector{T}, TriangleQuad{T}, Vyfun{T}}
+    """Double-layer Yukawa potentials"""
+    Ky::InteractionMatrix{T, Vector{T}, TriangleQuad{T}, Kyfun{T}}
     """System constants"""
     params::Option{T}
+
+    function NonlocalSystemMatrix{T}(
+        Ξ       ::Vector{Vector{T}},
+        elements::Vector{Triangle{T}},
+        params  ::Option{T}
+    ) where T
+        V, K = _get_laplace_matrices(Ξ, elements)
+        Vy, Ky = _get_yukawa_matrices(Ξ, elements, yukawa(params))
+        new(V, K, Vy, Ky, params)
+    end
 end
 
-Base.size(A::NonlocalSystemMatrix{T}) where T = 3 .* (length(A.Ξ), length(A.elems))
+Base.size(A::NonlocalSystemMatrix{T}) where T = 3 .* size(A.K)
 
 function LinearAlgebra.diag(A::NonlocalSystemMatrix{T}, k::Int = 0) where T
     k != 0 && error("diag not defined for k != 0 on ", typeof(A))
-    Ky = InteractionMatrix(A.Ξ, A.elems, Kyfun{T}(yukawa(A.params)))
-    V  = InteractionMatrix(A.Ξ, A.elems, Vfun{T}())
-    σ  = T(2π) .* ones(T, size(A.Ξ, 1))
-    [σ .- diag(Ky); diag(V); σ]
+    σ  = T(2π) .* ones(T, size(A.K, 1))
+    [σ .- diag(A.Ky); diag(A.V); σ]
 end
 
 function Base.:*(
@@ -187,24 +206,19 @@ function Base.:*(
     εΩ  = A.params.εΩ
     εΣ  = A.params.εΣ
     ε∞  = A.params.ε∞
-    yuk = yukawa(A.params)
-    numelem = length(A.elems)
-
-    K  = InteractionMatrix(A.Ξ, A.elems, Kfun{T}())
-    Ky = InteractionMatrix(A.Ξ, A.elems, Kyfun{T}(yuk))
-    V  = InteractionMatrix(A.Ξ, A.elems, Vfun{T}())
-    Vy = InteractionMatrix(A.Ξ, A.elems, Vyfun{T}(yuk))
+    numelem = size(A.K, 2)
 
     x1 = view(x, 1:numelem)
     x2 = view(x, numelem+1:2numelem)
     x3 = view(x, 2numelem+1:3numelem)
 
-    Kx  = K * [x1 x3]
-    Vx2 = V * x2
+    Kx  = A.K * [x1 x3]
+    Vx2 = A.V * x2
     σx1 = T(2π) .* x1
 
     [
-        Ky * ((ε∞/εΣ) .* x3 .- x1) .- Kx[:,1] .+ (εΩ/ε∞-εΩ/εΣ) .* (Vy * x2) .+ ((εΩ/ε∞) .* Vx2) .+ σx1;
+        A.Ky * ((ε∞/εΣ) .* x3 .- x1) .- Kx[:,1] .+ (εΩ/ε∞-εΩ/εΣ) .* 
+            (A.Vy * x2) .+ ((εΩ/ε∞) .* Vx2) .+ σx1;
         Kx[:,1] .- Vx2 .+ σx1;
         (εΩ/ε∞) .* Vx2 .- Kx[:,2] .+ (T(2π) * x3)
     ]
@@ -222,18 +236,16 @@ end
 # =========================================================================================
 # Documented in bem/local.jl
 function solve_implicit(
-                  ::Type{NonlocalES},
-        model     ::Model{T, Triangle{T}}
-    ) where T
-
+         ::Type{NonlocalES},
+    model::Model{T, Triangle{T}}
+) where T
     # observation points
-    Ξ       = [e.center for e in model.elements]
+    Ξ = [e.center for e in model.elements]
 
     # shortcuts
     εΩ  = model.params.εΩ
     εΣ  = model.params.εΣ
     ε∞  = model.params.ε∞
-    yuk = yukawa(model.params)
     numelem = length(model.elements)
 
     # compute molecular potential for the point charges;
@@ -241,15 +253,10 @@ function solve_implicit(
     umol = εΩ .\   φmol(model, tolerance=_etol(T))
     qmol = εΩ .\ ∂ₙφmol(model)
 
-    # potential matrices
-    K  = InteractionMatrix(Ξ, model.elements, Kfun{T}())
-    Ky = InteractionMatrix(Ξ, model.elements, Kyfun{T}(yuk))
-    V  = InteractionMatrix(Ξ, model.elements, Vfun{T}())
-    Vy = InteractionMatrix(Ξ, model.elements, Vyfun{T}(yuk))
-
     # create nonlocal system
-    b = K * umol .+ (1 - εΩ/εΣ) .* (Ky * umol) .- T(2π) .* umol .- (εΩ/ε∞) .* (V * qmol) .+ (εΩ/εΣ - εΩ/ε∞) .* (Vy * qmol)
-    A = NonlocalSystemMatrix(Ξ, model.elements, model.params)
+    A = NonlocalSystemMatrix{T}(Ξ, model.elements, model.params)
+    b = A.K * umol .+ (1 - εΩ/εΣ) .* (A.Ky * umol) .- T(2π) .* umol .- (εΩ/ε∞) .* 
+        (A.V * qmol) .+ (εΩ/εΣ - εΩ/ε∞) .* (A.Vy * qmol)
 
     cauchy = _solve_linear_system(A, b)
 

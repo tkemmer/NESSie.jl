@@ -33,13 +33,13 @@ end
 
 Interaction function for an implicit representation of potential matrix `Kʸ`.
 """
-struct Kyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+struct Kyfun{T} <: InteractionFunction{Vector{T}, TriangleQuad{T}, T}
     """Exponent of the Yukawa operator's fundamental solution"""
     yuk::T
 end
 
-@inline function (A::Kyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    Radon.regularyukawacoll(DoubleLayer, ξ, elem, A.yuk)
+@inline function (f::Kyfun{T})(ξ::Vector{T}, elem::TriangleQuad{T}) where T
+    Radon.regularyukawacoll(DoubleLayer, ξ, elem, f.yuk)
 end
 
 
@@ -78,13 +78,62 @@ end
 
 Interaction function for an implicit representation of potential matrix `Vʸ`.
 """
-struct Vyfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
+struct Vyfun{T} <: InteractionFunction{Vector{T}, TriangleQuad{T}, T}
     """Exponent of the Yukawa operator's fundamental solution"""
     yuk::T
 end
 
-@inline function (A::Vyfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    Radon.regularyukawacoll(SingleLayer, ξ, elem, A.yuk)
+@inline function (f::Vyfun{T})(ξ::Vector{T}, elem::TriangleQuad{T}) where T
+    Radon.regularyukawacoll(SingleLayer, ξ, elem, f.yuk)
+end
+
+
+# =========================================================================================
+"""
+    _get_laplace_matrices{T}(
+        Ξ       ::Vector{Vector{T}},
+        elements::Vector{Triangle{T}}
+    )
+
+Constructs and returns implicit representations for the single- and double-layer Laplace
+potential matrices `V` and `K` for the given observation points and surface elements.
+
+# Return type
+`Tuple{InteractionMatrix{T}, InteractionMatrix{T}}`
+"""
+@inline function _get_laplace_matrices(
+    Ξ       ::Vector{Vector{T}},
+    elements::Vector{Triangle{T}}
+) where T
+    V = InteractionMatrix(Ξ, elements, Vfun{T}())
+    K = InteractionMatrix(Ξ, elements, Kfun{T}())
+    (V, K)
+end
+
+
+# =========================================================================================
+"""
+    _get_yukawa_matrices{T}(
+        Ξ       ::Vector{Vector{T}},
+        elements::Vector{Triangle{T}},
+        yuk     ::T
+    )
+
+Constructs and returns implicit representations for the single- and double-layer Yukawa
+potential matrices `V^Y` and `K^Y` for the given observation points and surface elements.
+
+# Return type
+`Tuple{InteractionMatrix{T}, InteractionMatrix{T}}`
+"""
+@inline function _get_yukawa_matrices(
+    Ξ::Vector{Vector{T}},
+    elements::Vector{Triangle{T}},
+    yuk::T
+) where T
+    pelm = quadraturepoints(elements)
+    Vy   = InteractionMatrix(Ξ, pelm, Vyfun{T}(yuk))
+    Ky   = InteractionMatrix(Ξ, pelm, Kyfun{T}(yuk))
+    (Vy, Ky)
 end
 
 
@@ -109,8 +158,8 @@ Solves the linear system `Ax = b` from `A` and `b` using a Jacobi-preconditioned
 end
 
 function Base.:*(
-    A  ::InteractionMatrix{T, Vector{T}, Triangle{T}},
-    x  ::AbstractArray{T, 1}
+    A  ::InteractionMatrix{T},
+    x  ::AbstractVector{T}
 ) where T
     dst = zeros(T, size(A, 1))
     Threads.@threads for i in 1:size(A, 1)
@@ -124,17 +173,19 @@ function Base.:*(
 end
 
 function Base.:*(
-    A  ::InteractionMatrix{T, Vector{T}, Triangle{T}},
-    B  ::AbstractArray{T, 2}
+    A  ::InteractionMatrix{T},
+    B  ::AbstractMatrix{T}
 ) where T
     m, n, p = (size(A)..., size(B, 2))
     dst = zeros(T, m, p)
     Threads.@threads for i in 1:m
-        s = zeros(T, p)
-        for j in 1:n
-            s += A[i, j] .* B[j, :]
+        for k in 1:p
+            s = zero(T)
+            for j in 1:n
+                s += A[i, j] * B[j, k]
+            end
+            dst[i, k] = s
         end
-        dst[i, :] .= s
     end
     dst
 end

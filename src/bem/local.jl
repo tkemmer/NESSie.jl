@@ -47,9 +47,9 @@ Computes the full local or nonlocal cauchy data on the surface of the biomolecul
 `LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
 """
 function solve(
-             ::Type{LocalES},
-        model::Model{T, Triangle{T}}
-    ) where T
+         ::Type{LocalES},
+    model::Model{T, Triangle{T}}
+) where T
     # observation points ξ
     Ξ = [e.center for e in model.elements]
 
@@ -122,8 +122,8 @@ end
 # =========================================================================================
 """
     struct LocalSystemMatrix{T} <: AbstractArray{T, 2}
-        K     ::InteractionMatrix{T, Vector{T}, Triangle{T}, Kfun{T}}   # Potential matrix `K`
-        params::Option{T}                                               # System constants
+        K     ::InteractionMatrix{T}   # double-layer Laplace
+        params::Option{T}              # System constants
     end
 
 Implicit representation of the first local BEM system matrix.
@@ -184,9 +184,9 @@ Computes the full local or nonlocal cauchy data on the surface of the biomolecul
 `LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
 """
 function solve_implicit(
-             ::Type{LocalES},
-        model::Model{T, Triangle{T}}
-    ) where T
+         ::Type{LocalES},
+    model::Model{T, Triangle{T}}
+) where T
     # observation points ξ
     Ξ = [e.center for e in model.elements]
 
@@ -196,8 +196,7 @@ function solve_implicit(
     qmol = model.params.εΩ .\ ∂ₙφmol(model)
 
     # potential matrices
-    K = InteractionMatrix(Ξ, model.elements, Kfun{T}())
-    V = InteractionMatrix(Ξ, model.elements, Vfun{T}())
+    V, K = _get_laplace_matrices(Ξ, model.elements)
 
     # first system
     b = K * umol .- (T(2π) .* umol) .- (model.params.εΩ/model.params.εΣ .* (V * qmol))
