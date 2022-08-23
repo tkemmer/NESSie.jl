@@ -8,5 +8,4 @@
     radoncoll!
     regularyukawapot
     ∂ₙregularyukawapot
-    setcubpts!
 ```

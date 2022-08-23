@@ -129,27 +129,6 @@ end
 
 # =========================================================================================
 """
-    setcubpts!{T}(
-        dest::AbstractVector{Vector{T}},
-        qpts::QuadPts2D{T},
-        elem::Triangle{T}
-    )
-
-Prepare cubature points for one surface element.
-
-# Return type
-`Void`
-"""
-function setcubpts!(dest::AbstractVector{Vector{T}}, qpts::QuadPts2D{T}, elem::Triangle{T}) where T
-    for i in 1:qpts.num
-        dest[i] .= qpts.x[i] .* (elem.v2 .- elem.v1) .+ qpts.y[i] .* (elem.v3 .- elem.v1) .+ elem.v1
-    end
-    nothing
-end
-
-
-# =========================================================================================
-"""
     radoncoll!{T}(
             dest    ::AbstractVector{T},
             elements::AbstractVector{Triangle{T}},
@@ -199,19 +178,19 @@ function radoncoll!(
     @assert length(dest) == length(Ξ)
 
     # pre-allocate memory for cubature points
-    qpts = quadraturepoints(Triangle{T})
-    cubpts = [zeros(T, 3) for _ in 1:qpts.num]
+    cubpts = quadraturepoints(elements)
 
-    @inbounds for eidx in 1:length(elements)
-        elem = elements[eidx]
+    @inbounds for eidx in eachindex(cubpts)
+        elem = cubpts[eidx].elem
+        qpts = cubpts[eidx].qpts
+        weig = cubpts[eidx].weights
         area = 2 * elem.area
-        setcubpts!(cubpts, qpts, elem)
 
-        for oidx in 1:length(Ξ)
+        for oidx in eachindex(Ξ)
             ξ = Ξ[oidx]
             value = zero(T)
-            for i in 1:qpts.num
-                value += solution(cubpts[i], ξ, yukawa, elem.normal) * qpts.weight[i]
+            for i in eachindex(weig)
+                value += solution(view(qpts, :, i), ξ, yukawa, elem.normal) * weig[i]
             end
             dest[oidx] += value * area * fvals[eidx]
         end
@@ -230,19 +209,19 @@ function radoncoll!(
     @assert size(dest) == (length(Ξ), length(elements))
 
     # pre-allocate memory for cubature points
-    qpts = quadraturepoints(Triangle{T})
-    cubpts = [zeros(T, 3) for _ in 1:qpts.num]
+    cubpts = quadraturepoints(elements)
 
-    @inbounds for eidx in 1:length(elements)
-        elem = elements[eidx]
+    @inbounds for eidx in eachindex(cubpts)
+        elem = cubpts[eidx].elem
+        qpts = cubpts[eidx].qpts
+        weig = cubpts[eidx].weights
         area = 2 * elem.area
-        setcubpts!(cubpts, qpts, elem)
 
-        for oidx in 1:length(Ξ)
+        for oidx in eachindex(Ξ)
             ξ = Ξ[oidx]
             value = zero(T)
-            for i in 1:qpts.num
-                value += solution(cubpts[i], ξ, yukawa, elem.normal) * qpts.weight[i]
+            for i in eachindex(weig)
+                value += solution(view(qpts, :, i), ξ, yukawa, elem.normal) * weig[i]
             end
             dest[oidx, eidx] = value * area
         end
@@ -254,10 +233,10 @@ end
 # =========================================================================================
 """
     radoncoll{T}(
-            ξ       ::AbstractVector{T},
-            elem    ::Triangle{T},
-            yukawa  ::T,
-            solution::Function
+        ξ       ::AbstractVector{T},
+        tquad   ::TriangleQuad{T},
+        yukawa  ::T,
+        solution::Function
     )
 
 Seven-point Radon cubature [[Rad48]](@ref Bibliography) for a given function and a pair of
@@ -279,19 +258,15 @@ to use the shorthand signature `regularyukawacoll` instead.
 """
 function radoncoll(
         ξ       ::AbstractVector{T},
-        elem    ::Triangle{T},
+        tquad   ::TriangleQuad{T},
         yukawa  ::T,
         solution::Function
     ) where T
 
-    qpts = quadraturepoints(Triangle{T})
-    cubpts = [zeros(T, 3) for _ in 1:qpts.num]
-    area = 2 * elem.area
-    setcubpts!(cubpts, qpts, elem)
-
+    area = 2 * tquad.elem.area
     value = zero(T)
-    for i in 1:qpts.num
-        value += solution(cubpts[i], ξ, yukawa, elem.normal)::T * qpts.weight[i]
+    for i in 1:length(tquad.weights)
+        value += solution(view(tquad.qpts, :, i), ξ, yukawa, tquad.elem.normal)::T * tquad.weights[i]
     end
     value * area
 end
@@ -373,7 +348,7 @@ vector.
     regularyukawacoll{T, P <: PotentialType}(
               ::Type{P},
         ξ     ::AbstractVector{T},
-        elem  ::Triangle{T},
+        elem  ::TriangleQuad{T},
         yukawa::T
     )
 
@@ -393,14 +368,14 @@ triangle and observation point `ξ`.
 @inline regularyukawacoll(
           ::Type{SingleLayer},
     ξ     ::AbstractVector{T},
-    elem  ::Triangle{T},
+    elem  ::TriangleQuad{T},
     yukawa::T
 ) where T = radoncoll(ξ, elem, yukawa, regularyukawapot)
 
 @inline regularyukawacoll(
           ::Type{DoubleLayer},
     ξ     ::AbstractVector{T},
-    elem  ::Triangle{T},
+    elem  ::TriangleQuad{T},
     yukawa::T
 ) where T = radoncoll(ξ, elem, yukawa, ∂ₙregularyukawapot)
 
