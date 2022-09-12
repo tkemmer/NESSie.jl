@@ -1,11 +1,11 @@
 using NESSie.Format
-using JSON
+using JSON3
 using LightXML: parse_string, root, name, child_elements, attribute, content
 
 @testset "writexml3d_json (nodes)" begin
     for T in testtypes
         # empty system
-        js = JSON.parse(readback(fh -> writexml3d_json(fh, Vector{T}[])))
+        js = JSON3.read(readback(fh -> writexml3d_json(fh, Vector{T}[])))
         @test js["format"] == "xml3d-json"
         @test haskey(js, "version") == true
         @test js["data"]["position"]["type"] == "float3"
@@ -13,7 +13,7 @@ using LightXML: parse_string, root, name, child_elements, attribute, content
         @test js["data"]["position"]["seq"][1]["value"] == []
         # small system
         nodes = Vector{T}[T[0, 0, 0], T[0, 0, 3], T[0, 3, 0], T[1, -3, 3]]
-        js = JSON.parse(readback(fh -> writexml3d_json(fh, nodes)))
+        js = JSON3.read(readback(fh -> writexml3d_json(fh, nodes)))
         @test js["format"] == "xml3d-json"
         @test haskey(js, "version") == true
         @test js["data"]["position"]["type"] == "float3"
@@ -25,7 +25,7 @@ end
 @testset "writexml3d_json (surface model)" begin
     for T in testtypes
         # empty system
-        js = JSON.parse(readback(fh -> writexml3d_json(fh, Model{T, Triangle{T}}())))
+        js = JSON3.read(readback(fh -> writexml3d_json(fh, Model{T, Triangle{T}}())))
         @test js["format"] == "xml3d-json"
         @test haskey(js, "version") == true
         @test js["data"]["index"]["type"] == "int"
@@ -41,7 +41,7 @@ end
         nodes    = Vector{T}[T[0, 0, 0], T[0, 0, 3], T[0, 3, 0], T[1, -3, 3]]
         elements = [Triangle(nodes[1], nodes[2], nodes[3]),
                     Triangle(nodes[1], nodes[4], nodes[2])]
-        js = JSON.parse(readback(fh -> writexml3d_json(fh, Model(nodes, elements))))
+        js = JSON3.read(readback(fh -> writexml3d_json(fh, Model(nodes, elements))))
         @test js["format"] == "xml3d-json"
         @test haskey(js, "version") == true
         @test js["data"]["index"]["type"] == "int"

@@ -2,7 +2,7 @@ module Format
 
 using ..NESSie
 using ..NESSie: reverseindex, unpack, vertexnormals
-using JSON: json
+using JSON3
 using LightXML: XMLDocument, create_root, new_child, add_text, set_attribute
 
 include("format/hmo.jl")
