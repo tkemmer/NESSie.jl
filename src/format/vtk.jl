@@ -14,7 +14,7 @@ type is determined by the given model:
 | Volume model  | VTK UnstructuredGrid |
 
 # Specification
-<https://vtk.org/VTK/img/file-formats.pdf>
+<https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf>
 
 # Return type
 `Void`
