@@ -31,7 +31,7 @@ makedocs(
     linkcheck = true,
     checkdocs = :all,
     pages     = pages,
-    format    = Documenter.HTML(),
+    format    = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
     sitename  = "NESSie.jl",
     repo      = "https://github.com/tkemmer/NESSie.jl/blob/master{path}"
 )
