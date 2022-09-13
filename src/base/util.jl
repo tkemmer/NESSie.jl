@@ -389,7 +389,7 @@ end
 Generates `n` evenly distributed observation points along the line segment from `u` to `v`.
 
 # Return type
-`Function`
+`Generator -> Vector{T}`
 
 # Example
 ```julia
@@ -422,7 +422,7 @@ to the points ``A``, ``B``, and ``C``, respectively.
  * `nbc`   Number of observation points along ``\\overline{BC}``
 
 # Return type
-`Function`
+`Generator -> Vector{T}`
 
 # Example
 ```julia
