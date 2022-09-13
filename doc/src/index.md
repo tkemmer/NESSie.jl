@@ -37,7 +37,11 @@ If you use `NESSie.jl` in your research, please cite the following publication:
 > Finite Element and Boundary Element Methods for Nonlocal Protein Electrostatics in the
 > Julia Language. Journal of Computational Science 28, 193-203.
 
-With BibTeX, you can use the following entry:
+If you use our implicit representations and solvers (`solve_implicit`), please also cite:
+> Kemmer, T (2021). Space-efficient and exact system representations for the nonlocal protein
+> electrostatics problem. Ph. D. thesis, Johannes Gutenberg University Mainz. Mainz, Germany.
+
+With BibTeX, you can use the following entries:
 ```
 @article{nessie-2018,
     author = {Kemmer, Thomas and Rjasanow, Sergej and Hildebrandt, Andreas},
@@ -47,6 +51,14 @@ With BibTeX, you can use the following entry:
     volume = {28},
     pages = {193-203},
     doi = {10.1016/j.jocs.2018.08.008}
+}
+@phdthesis{cunessie-2021,
+	author = {Kemmer, Thomas},
+	title = {{Space-efficient and exact system representations for the nonlocal protein electrostatics problem}},
+	year = {2021},
+	school = {Johannes Gutenberg University Mainz},
+	address = {Mainz, Germany},
+	doi = {10.25358/openscience-5689}
 }
 ```
 
