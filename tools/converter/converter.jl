@@ -62,11 +62,11 @@ else
     println("will read the MSMS-generated surface mesh from both files mymesh.face")
     println("and mymesh.vert and convert it into a XML3D-compatible JSON format.")
     println("\n\e[1mAvailable input formats:\e[0m\n")
-    for (format, (mesh, _, desc)) in fin
+    for (format, (mesh, _, desc)) in sort(collect(fin), by=e->e[1])
         println("\t\e[1m$format\e[0m\t\t$mesh\t\t$desc")
     end
     println("\n\e[1mAvailable output formats:\e[0m\n")
-    for (format, (mesh, _, desc)) in fout
+    for (format, (mesh, _, desc)) in sort(collect(fout), by=e->e[1])
         println("\t\e[1m$format\e[0m\t$mesh\t\t$desc")
     end
     println()
