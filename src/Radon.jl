@@ -178,7 +178,7 @@ function radoncoll!(
     @assert length(dest) == length(Ξ)
 
     # pre-allocate memory for cubature points
-    cubpts = quadraturepoints(elements)
+    cubpts = TriangleQuad.(elements)
 
     @inbounds for eidx in eachindex(cubpts)
         elem = cubpts[eidx].elem
@@ -209,7 +209,7 @@ function radoncoll!(
     @assert size(dest) == (length(Ξ), length(elements))
 
     # pre-allocate memory for cubature points
-    cubpts = quadraturepoints(elements)
+    cubpts = TriangleQuad.(elements)
 
     @inbounds for eidx in eachindex(cubpts)
         elem = cubpts[eidx].elem

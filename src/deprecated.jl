@@ -13,7 +13,7 @@
         "with `elem::TriangleQuad{T}` parameter instead!",
         :regularyukawacoll_single_triangle
     )
-    Radon.radoncoll(ξ, quadraturepoints([elem])[1], yukawa, Radon.regularyukawapot)
+    Radon.radoncoll(ξ, TriangleQuad(elem), yukawa, Radon.regularyukawapot)
 end
 
 @noinline function Radon.regularyukawacoll(
@@ -28,5 +28,5 @@ end
         "with `elem::TriangleQuad{T}` parameter instead!",
         :regularyukawacoll_double_triangle
     )
-    Radon.radoncoll(ξ, quadraturepoints([elem])[1], yukawa, Radon.∂ₙregularyukawapot)
+    Radon.radoncoll(ξ, TriangleQuad(elem), yukawa, Radon.∂ₙregularyukawapot)
 end
