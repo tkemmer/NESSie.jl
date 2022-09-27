@@ -141,28 +141,3 @@ end
     end
     TriangleQuad{T}(elem, mat, qpts.weight)
 end
-
-
-# =========================================================================================
-"""
-    quadraturepoints{T}(elements::Vector{Triangle{T}})
-
-Computes and returns quadrature points on all given elements, including weights.
-
-# Return type
-`Vector{TriangleQuad{T}}`
-"""
-function quadraturepoints(elements::Vector{Triangle{T}}) where T
-    qpts = quadraturepoints(Triangle{T})
-    ret  = Vector{TriangleQuad{T}}(undef, length(elements))
-
-    for i in eachindex(elements)
-        elem = elements[i]
-        mat  = Matrix{T}(undef, 3, qpts.num)
-        for j in 1:qpts.num
-            mat[:, j] .= qpts.x[j] .* (elem.v2 .- elem.v1) .+ qpts.y[j] .* (elem.v3 .- elem.v1) .+ elem.v1
-        end
-        ret[i] = TriangleQuad{T}(elem, mat, qpts.weight)
-    end
-    ret
-end

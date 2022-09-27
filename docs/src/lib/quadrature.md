@@ -16,7 +16,6 @@
 ## Generators
 ```@docs
     quadraturepoints
-    quadraturepoints(::Vector{Triangle})
 ```
 
 ## Laplace potential
