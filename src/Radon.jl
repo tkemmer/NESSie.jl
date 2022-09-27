@@ -348,7 +348,7 @@ vector.
     regularyukawacoll{T, P <: PotentialType}(
               ::Type{P},
         ξ     ::AbstractVector{T},
-        elem  ::TriangleQuad{T},
+        elem  ::Union{Triangle{T}, TriangleQuad{T}},
         yukawa::T
     )
 
@@ -358,6 +358,11 @@ triangle and observation point `ξ`.
 
 !!! note
     The result is premultiplied by 4π.
+
+!!! note
+    If you need to call this method repeatedly for the same surface triangle, you should
+    consider passing the `elem` parameter as `TriangleQuad` object to avoid expensive
+    recomputations.
 
 # Arguments
  * `yukawa` [Exponent](@ref int-constants) of the Yukawa operator's fundamental solution
@@ -378,5 +383,19 @@ triangle and observation point `ξ`.
     elem  ::TriangleQuad{T},
     yukawa::T
 ) where T = radoncoll(ξ, elem, yukawa, ∂ₙregularyukawapot)
+
+@inline Radon.regularyukawacoll(
+          ::Type{SingleLayer},
+    ξ     ::AbstractVector{T},
+    elem  ::Triangle{T},
+    yukawa::T
+) where T = Radon.radoncoll(ξ, TriangleQuad(elem), yukawa, Radon.regularyukawapot)
+
+@inline Radon.regularyukawacoll(
+          ::Type{DoubleLayer},
+    ξ     ::AbstractVector{T},
+    elem  ::Triangle{T},
+    yukawa::T
+) where T = Radon.radoncoll(ξ, TriangleQuad(elem), yukawa, Radon.∂ₙregularyukawapot)
 
 end # module

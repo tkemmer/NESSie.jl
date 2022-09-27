@@ -40,6 +40,4 @@ export BEM
 include("TestModel.jl")
 export TestModel
 
-include("deprecated.jl")
-
 end # module
