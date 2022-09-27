@@ -8,9 +8,9 @@
         yukawa::T
     ) where T
     Base.depwarn(
-        "This variant of the function is deprecated, painfully slow, and will be removed " *
-        "soon! Please use the overloaded version with `elem::TriangleQuad{T}` parameter " *
-        "instead!",
+        "This variant of the `Radon.regularyukawacoll` function is deprecated, " *
+        "painfully slow, and will be removed soon! Please use the overloaded version " *
+        "with `elem::TriangleQuad{T}` parameter instead!",
         :regularyukawacoll_single_triangle
     )
     Radon.radoncoll(ξ, quadraturepoints([elem])[1], yukawa, Radon.regularyukawapot)
@@ -23,9 +23,9 @@ end
         yukawa::T
     ) where T
     Base.depwarn(
-        "This variant of the function is deprecated, painfully slow, and will be removed " *
-        "soon! Please use the overloaded version with `elem::TriangleQuad{T}` parameter " *
-        "instead!",
+        "This variant of the `Radon.regularyukawacoll` function is deprecated, " *
+        "painfully slow, and will be removed soon! Please use the overloaded version " *
+        "with `elem::TriangleQuad{T}` parameter instead!",
         :regularyukawacoll_double_triangle
     )
     Radon.radoncoll(ξ, quadraturepoints([elem])[1], yukawa, Radon.∂ₙregularyukawapot)
