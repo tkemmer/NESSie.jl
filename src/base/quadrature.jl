@@ -117,6 +117,12 @@ abstract type ElementQuad{T <: AbstractFloat} end
     end
 
 Quadrature points on a specific surface triangle, including weights.
+
+# Special constructors
+```julia
+TriangleQuad{T}(elem::Triangle{T})
+````
+Computes quadrature points and weights for the given triangle.
 """
 struct TriangleQuad{T} <: ElementQuad{T}
     """Given element"""
@@ -125,6 +131,15 @@ struct TriangleQuad{T} <: ElementQuad{T}
     qpts   ::Matrix{T}
     """Weights for the quadrature points"""
     weights::Vector{T}
+end
+
+@inline function TriangleQuad(elem::Triangle{T}) where T
+    qpts = quadraturepoints(Triangle{T})
+    mat  = Matrix{T}(undef, 3, qpts.num)
+    for j in 1:qpts.num
+        mat[:, j] .= qpts.x[j] .* (elem.v2 .- elem.v1) .+ qpts.y[j] .* (elem.v3 .- elem.v1) .+ elem.v1
+    end
+    TriangleQuad{T}(elem, mat, qpts.weight)
 end
 
 
