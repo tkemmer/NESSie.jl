@@ -130,7 +130,7 @@ potential matrices `V^Y` and `K^Y` for the given observation points and surface 
     elements::Vector{Triangle{T}},
     yuk::T
 ) where T
-    pelm = quadraturepoints(elements)
+    pelm = TriangleQuad.(elements)
     Vy   = InteractionMatrix(Ξ, pelm, Vyfun{T}(yuk))
     Ky   = InteractionMatrix(Ξ, pelm, Kyfun{T}(yuk))
     (Vy, Ky)
