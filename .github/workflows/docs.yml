@@ -8,7 +8,7 @@ on:
       - '**.jl'
       - 'docs/src/**.md'
     tags: '*'
-
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
