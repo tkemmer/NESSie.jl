@@ -1,5 +1,5 @@
-using NESSie: _cos, _dot, _norm, eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, 
-    cathetus, sign, distance
+using NESSie: _cos, _dot, _norm, eye!, pluseye!, isdegenerate, seek, reverseindex, unpack,
+    vertexnormals, distance
 using LinearAlgebra: ⋅, norm
 
 @testset "_cos" begin
@@ -328,6 +328,6 @@ end
     end
 end
 
+@test_skip _sign
 @test_skip cathetus
-@test_skip sign
 @test_skip ddot

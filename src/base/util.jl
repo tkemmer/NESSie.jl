@@ -302,7 +302,7 @@ end
 
 # =========================================================================================
 """
-    sign{T}(
+    _sign{T}(
         u::AbstractVector{T},
         v::AbstractVector{T},
         n::AbstractVector{T}
@@ -315,7 +315,7 @@ same orientation, ``0`` if at least one of the vectors is zero, and ``-1`` other
 # Return type
 `T`
 """
-@inline function sign(
+@inline function _sign(
         u::AbstractVector{T},
         v::AbstractVector{T},
         n::AbstractVector{T}

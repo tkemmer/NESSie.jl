@@ -17,6 +17,7 @@
     _cos
     _dot
     _norm
+    _sign
     cathetus
     ddot
     distance
@@ -26,7 +27,6 @@
     props
     reverseindex
     seek
-    sign
     unpack
     vertexnormals
 ```
