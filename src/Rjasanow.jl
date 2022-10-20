@@ -1,7 +1,7 @@
 module Rjasanow
 
 using ..NESSie
-using ..NESSie: _cos, _etol, _norm, cathetus, sign, distance
+using ..NESSie: _cos, _etol, _norm, _sign, cathetus, distance
 
 export laplacecoll, laplacecoll!
 
@@ -143,7 +143,7 @@ function laplacepot(
     pot = abs(dist) < _etol(T) ?
         laplacepot(ptype, InPlane, sinφ1, sinφ2, h, dist) :
         laplacepot(ptype, InSpace, sinφ1, sinφ2, h, dist)
-    sign(u1, u2, normal) * pot
+    _sign(u1, u2, normal) * pot
 end
 
 
