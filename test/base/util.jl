@@ -1,4 +1,4 @@
-using NESSie: _cos, _dot, _norm, eye!, pluseye!, isdegenerate, seek, reverseindex, unpack,
+using NESSie: _cos, _dot, _norm, _seek, eye!, pluseye!, isdegenerate, reverseindex, unpack,
     vertexnormals, distance
 using LinearAlgebra: ⋅, norm
 
@@ -44,6 +44,25 @@ end
         @test _norm(x3) ≈ norm(x3)
         @test _norm(zeros(T, 3)) ≈ zero(T)
     end
+end
+
+@testset "_seek" begin
+    fname, fh = mktemp()
+    write(fh, "Lorem\nipsum\ndolor\nsit\namet.\n")
+    seekstart(fh)
+    _seek(fh, "Foo")
+    @test eof(fh)
+    seekstart(fh)
+    _seek(fh, "Foo", false)
+    @test eof(fh)
+    seekstart(fh)
+    _seek(fh, "dolor")
+    @test readline(fh) == "sit"
+    seekstart(fh)
+    _seek(fh, "dolor", false)
+    @test readline(fh) == "dolor"
+    close(fh)
+    rm(fname)
 end
 
 @testset "distance" begin
@@ -139,25 +158,6 @@ end
         @test elem.distorig ≈ map(T, 60/√769)
         @test elem.area ≈ T(√769/2)
     end
-end
-
-@testset "seek" begin
-    fname, fh = mktemp()
-    write(fh, "Lorem\nipsum\ndolor\nsit\namet.\n")
-    seekstart(fh)
-    seek(fh, "Foo")
-    @test eof(fh)
-    seekstart(fh)
-    seek(fh, "Foo", false)
-    @test eof(fh)
-    seekstart(fh)
-    seek(fh, "dolor")
-    @test readline(fh) == "sit"
-    seekstart(fh)
-    seek(fh, "dolor", false)
-    @test readline(fh) == "dolor"
-    close(fh)
-    rm(fname)
 end
 
 @testset "reverseindex" begin

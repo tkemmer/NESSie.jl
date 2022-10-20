@@ -17,6 +17,7 @@
     _cos
     _dot
     _norm
+    _seek
     _sign
     cathetus
     ddot
@@ -26,7 +27,6 @@
     pluseye!
     props
     reverseindex
-    seek
     unpack
     vertexnormals
 ```

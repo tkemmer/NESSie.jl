@@ -227,7 +227,7 @@ end
 
 # =========================================================================================
 """
-    seek(
+    _seek(
         fh         ::IOStream,
         prefix     ::String,
         skiptheline::Bool = true
@@ -242,7 +242,7 @@ is no such line, the stream handle will be set to EOF.
 # Return type
 `Void`
 """
-function seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
+function _seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
     m = -1
     found = false
     while !eof(fh)
