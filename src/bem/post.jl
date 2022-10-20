@@ -84,7 +84,7 @@ function φΩ(
 
     # φ += 1/εΩ ⋅ φ*mol(ξ)
     # (φ*mol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
-    axpy!(1/bem.model.params.εΩ, φmol(Ξ, bem.model.charges), φ)
+    _axpy!(1/bem.model.params.εΩ, φmol(Ξ, bem.model.charges), φ)
 
     # Apply remaining prefactors:
     # ▶ 4π⋅ε0     for u, q, and umol
@@ -125,13 +125,13 @@ function φΣ(
 
     # φ  = -εΩ/εΣ ⋅ [Vtilde ⋅ (q + qmol)](ξ)
     copyto!(buf, bem.q)
-    axpy!(1, bem.qmol, buf)
+    _axpy!(1, bem.qmol, buf)
     Rjasanow.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, buf)
     rmul!(φ, -bem.model.params.εΩ/bem.model.params.εΣ)
 
     # φ += [W ⋅ (u + umol)](ξ)
     copyto!(buf, bem.u)
-    axpy!(1, bem.umol, buf)
+    _axpy!(1, bem.umol, buf)
     Rjasanow.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, buf)
 
     # Apply remaining prefactors:
@@ -162,7 +162,7 @@ function φΣ(
 
     # φ  = -V[εΩ/ε∞ ⋅ (q + qmol)](ξ)
     copyto!(buf, bem.q)
-    axpy!(1, bem.qmol, buf)
+    _axpy!(1, bem.qmol, buf)
     Rjasanow.laplacecoll!(SingleLayer, φ, elements, Ξ, buf)
     rmul!(φ, -εΩ/ε∞)
 
@@ -172,13 +172,13 @@ function φΣ(
 
     # φ += K[u + umol](ξ)
     copyto!(buf, bem.u)
-    axpy!(1, bem.umol, buf)
+    _axpy!(1, bem.umol, buf)
     Rjasanow.laplacecoll!(DoubleLayer, φ, elements, Ξ, buf)
 
     # φ += (Kʸ-K)[u + (1-εΩ/εΣ) ⋅ umol - ε∞/εΣ ⋅ w](ξ)
     copyto!(buf, bem.u)
-    axpy!(1-εΩ/εΣ, bem.umol, buf)
-    axpy!(-ε∞/εΣ, bem.w, buf)
+    _axpy!(1-εΩ/εΣ, bem.umol, buf)
+    _axpy!(-ε∞/εΣ, bem.w, buf)
     Radon.regularyukawacoll!(DoubleLayer, φ, elements, Ξ, yuk, buf)
 
     # Apply remaining prefactors:

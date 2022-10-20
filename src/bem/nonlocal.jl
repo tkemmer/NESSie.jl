@@ -84,13 +84,13 @@ function solve(
     Radon.regularyukawacoll!(DoubleLayer, buffer, elements, Ξ, yuk)
 
     # β += (1-εΩ/εΣ)(Kʸ-K)umol
-    gemv!(1-εΩ/εΣ, buffer, umol, β)
+    _gemv!(1-εΩ/εΣ, buffer, umol, β)
 
     # m11 -= Kʸ-K
-    axpy!(-1, buffer, m11)
+    _axpy!(-1, buffer, m11)
 
     # m13 += ε∞/εΣ * (Kʸ-K)
-    axpy!(ε∞/εΣ, buffer, m13)
+    _axpy!(ε∞/εΣ, buffer, m13)
 
     #=
         generate and apply Vʸ-V
@@ -98,10 +98,10 @@ function solve(
     Radon.regularyukawacoll!(SingleLayer, buffer, elements, Ξ, yuk)
 
     # β += (εΩ/εΣ - εΩ/ε∞)(Vʸ-V)qmol
-    gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
+    _gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
 
     # m12 += (εΩ/ε∞ - εΩ/εΣ)(Vʸ-V)
-    axpy!(εΩ * (1/ε∞ - 1/εΣ), buffer, m12)
+    _axpy!(εΩ * (1/ε∞ - 1/εΣ), buffer, m12)
 
     #=
         generate and apply K
@@ -109,16 +109,16 @@ function solve(
     Rjasanow.laplacecoll!(DoubleLayer, buffer, elements, Ξ)
 
     # β += K⋅umol
-    gemv!(one(T), buffer, umol, β)
+    _gemv!(one(T), buffer, umol, β)
 
     # m11 -= K
-    axpy!(-1, buffer, m11)
+    _axpy!(-1, buffer, m11)
 
     # m21 += K
-    axpy!(1, buffer, m21)
+    _axpy!(1, buffer, m21)
 
     # m33 -= K
-    axpy!(-1, buffer, m33)
+    _axpy!(-1, buffer, m33)
 
     #=
         generate and apply V
@@ -126,16 +126,16 @@ function solve(
     Rjasanow.laplacecoll!(SingleLayer, buffer, elements, Ξ)
 
     # β -= εΩ/ε∞ * V * qmol
-    gemv!(-εΩ/ε∞, buffer, qmol, β)
+    _gemv!(-εΩ/ε∞, buffer, qmol, β)
 
     # m12 += εΩ/ε∞ * V
-    axpy!(εΩ/ε∞, buffer, m12)
+    _axpy!(εΩ/ε∞, buffer, m12)
 
     # m22 -= V
-    axpy!(-1, buffer, m22)
+    _axpy!(-1, buffer, m22)
 
     # m32 += εΩ/ε∞ * V
-    axpy!(εΩ/ε∞, buffer, m32)
+    _axpy!(εΩ/ε∞, buffer, m32)
 
     # solve system
     cauchy = m \ rhs

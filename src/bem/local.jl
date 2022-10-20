@@ -83,7 +83,7 @@ function solve(
     Rjasanow.laplacecoll!(SingleLayer, v, model.elements, Ξ)
 
     # bᵤ -= εΩ/εΣ ⋅ V ⋅ qmol
-    gemv!(-εΩ/εΣ, v, qmol, b)
+    _gemv!(-εΩ/εΣ, v, qmol, b)
 
     #=
         generate and apply K
@@ -91,12 +91,12 @@ function solve(
     Rjasanow.laplacecoll!(DoubleLayer, k, model.elements, Ξ)
 
     # Mᵤ += (εΩ/εΣ - 1) ⋅ K
-    axpy!(εΩ/εΣ - 1, k, m)
+    _axpy!(εΩ/εΣ - 1, k, m)
 
     # bᵤ = (K - σ) ⋅ umol
     # again, we apply a prefactor of 4π to σ to match the other components of the vector
     pluseye!(k, -T(4π * σ))
-    gemv!(one(T), k, umol, b)
+    _gemv!(one(T), k, umol, b)
 
     #=
         u = b / M, with
@@ -108,7 +108,7 @@ function solve(
     # b_q = (σ + K) ⋅ u
     fill!(b, zero(T))
     pluseye!(k, T(8π * σ)) # meh...
-    gemv!(one(T), k, u, b)
+    _gemv!(one(T), k, u, b)
 
     #=
         q = V^{-1}⋅(σ + K)u

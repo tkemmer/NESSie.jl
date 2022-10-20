@@ -1,7 +1,7 @@
 module BEM
 
 using ..NESSie
-using ..NESSie: _etol, σ, ec, potprefactor, pluseye!, gemv!, gemv, gemm, axpy!, yukawa
+using ..NESSie: _axpy!, _gemm, _gemv, _gemv!, _etol, σ, ec, potprefactor, pluseye!, yukawa
 using Base: Threads
 using Distances: euclidean
 using ImplicitArrays: BlockMatrix, FixedValueArray, InteractionFunction, InteractionMatrix
