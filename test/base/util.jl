@@ -1,5 +1,20 @@
-using NESSie: _dot, _norm, eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, cos, cathetus, sign, distance
+using NESSie: _cos, _dot, _norm, eye!, pluseye!, isdegenerate, seek, reverseindex, unpack, vertexnormals, 
+    cathetus, sign, distance
 using LinearAlgebra: ⋅, norm
+
+@testset "_cos" begin
+    for T in testtypes
+        u = T[1, 0, 0]
+        @test typeof(_cos(u, T[1, 0, 0])) == T
+        @test _cos(u, T[1, 0, 0]) ≈ one(T)
+        @test _cos(u, T[0, 1, 0]) ≈ zero(T)
+        @test _cos(u, T[-1, 0, 0]) ≈ -one(T)
+        @test _cos(u, T[0, -1, 0]) ≈ zero(T)
+        @test _cos(u, T[1, 1, 0]) ≈ T(cos(π/4))
+        @test _cos(u, T[-1, 1, 0]) ≈ T(cos(3π/4))
+        @test _cos(u, T[1, 0, 1]) ≈ T(cos(π/4))
+    end
+end
 
 @testset "_dot" begin
     for T in testtypes
@@ -221,20 +236,6 @@ end
         @test d[2] ≈ map(T, √360 \ [-9 - √90, -3, 0])
         @test d[3] ≈ [-1, 0, 0]
         @test d[4] ≈ map(T, √90 \ [-9, -3, 0])
-    end
-end
-
-@testset "cos" begin
-    for T in testtypes
-        u = T[1, 0, 0]
-        @test typeof(cos(u, T[1, 0, 0])) == T
-        @test cos(u, T[1, 0, 0]) ≈ one(T)
-        @test cos(u, T[0, 1, 0]) ≈ zero(T)
-        @test cos(u, T[-1, 0, 0]) ≈ -one(T)
-        @test cos(u, T[0, -1, 0]) ≈ zero(T)
-        @test cos(u, T[1, 1, 0]) ≈ T(cos(π/4))
-        @test cos(u, T[-1, 1, 0]) ≈ T(cos(3π/4))
-        @test cos(u, T[1, 0, 1]) ≈ T(cos(π/4))
     end
 end
 

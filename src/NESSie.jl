@@ -2,7 +2,7 @@ __precompile__()
 
 module NESSie
 
-import Base: cos, sign, seek
+import Base: sign, seek
 import LinearAlgebra.BLAS: gemv!, gemv, axpy!, gemm
 
 using Distances: euclidean

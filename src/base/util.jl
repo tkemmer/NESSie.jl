@@ -256,7 +256,7 @@ end
 
 # =========================================================================================
 """
-    cos{T}(
+    _cos{T}(
         u    ::AbstractVector{T},
         v    ::AbstractVector{T},
         unorm::T=_norm(u),
@@ -269,7 +269,7 @@ and `vnorm`, respectively.
 # Return type
 `T`
 """
-@inline function cos(
+@inline function _cos(
         u    ::AbstractVector{T},
         v    ::AbstractVector{T},
         unorm::T=_norm(u),

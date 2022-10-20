@@ -14,10 +14,10 @@
 
 # [Utility functions](@id int-util-base)
 ```@docs
+    _cos
     _dot
     _norm
     cathetus
-    cos
     ddot
     distance
     eye!
