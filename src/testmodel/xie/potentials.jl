@@ -44,7 +44,7 @@ function φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
         end
 
         # otherwise, use Eq. (18)
-        P = legendre(model.len, cos(ξ, q.pos, r))
+        P = legendre(model.len, _cos(ξ, q.pos, r))
         φj = zero(T)
         for n in 0:model.len-1
             φj += A₃[n+1, qi] * r^n * P(n)
@@ -99,7 +99,7 @@ function φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
         end
 
         # otherwise, use Eq. (18)
-        P = legendre(model.len, cos(ξ, q.pos, r))
+        P = legendre(model.len, _cos(ξ, q.pos, r))
         φj = zero(T)
         for n in 0:model.len-1
             φj += (ε∞ - εΣ)/ε∞ * A₂[n+1, qi] * kᵣ(n) * P(n) +
