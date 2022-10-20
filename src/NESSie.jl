@@ -2,10 +2,8 @@ __precompile__()
 
 module NESSie
 
-import LinearAlgebra.BLAS: gemv!, gemv, axpy!, gemm
-
 using Distances: euclidean
-using LinearAlgebra: ⋅, ×, norm, rmul!
+using LinearAlgebra: ⋅, ×, BLAS, norm, rmul!
 
 include("base/constants.jl")
 export ε0, Option, defaultopt

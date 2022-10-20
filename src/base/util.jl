@@ -486,29 +486,32 @@ end
 
 # =========================================================================================
 # Convenience aliases
-@inline gemv!(
-    α   ::T,
-    m   ::AbstractMatrix{T},
-    v   ::AbstractVector{T},
-    dest::AbstractVector{T}
-) where T = gemv!(α, m, v, one(T), dest)
 
-@inline gemv!(
+const _axpy! = BLAS.axpy!
+
+@inline _gemm(
+    α::T,
+    a::AbstractMatrix{T},
+    b::AbstractMatrix{T},
+) where T = BLAS.gemm('N', 'N', α, a, b)
+
+@inline _gemv(
+    α::T,
+    m::AbstractMatrix{T},
+    v::AbstractVector{T}
+) where T = BLAS.gemv('N', α, m, v)
+
+@inline _gemv!(
     α   ::T,
     m   ::AbstractMatrix{T},
     v   ::AbstractVector{T},
     β   ::T,
     dest::AbstractVector{T}
-) where T = gemv!('N', α, m, v, β, dest)
+) where T = BLAS.gemv!('N', α, m, v, β, dest)
 
-@inline gemv(
-    α::T,
-    m::AbstractMatrix{T},
-    v::AbstractVector{T}
-) where T = gemv('N', α, m, v)
-
-@inline gemm(
-    α::T,
-    a::AbstractMatrix{T},
-    b::AbstractMatrix{T},
-) where T = gemm('N', 'N', α, a, b)
+@inline _gemv!(
+    α   ::T,
+    m   ::AbstractMatrix{T},
+    v   ::AbstractVector{T},
+    dest::AbstractVector{T}
+) where T = _gemv!(α, m, v, one(T), dest)
