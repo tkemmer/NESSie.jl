@@ -1,7 +1,7 @@
 module Format
 
 using ..NESSie
-using ..NESSie: reverseindex, unpack, vertexnormals
+using ..NESSie: _seek, reverseindex, unpack, vertexnormals
 using JSON3
 using LightXML: XMLDocument, create_root, new_child, add_text, set_attribute
 

@@ -49,7 +49,7 @@ function readhmo_nodes(
               ::Type{T}=Float64
     ) where T <: AbstractFloat
     nodes = Vector{T}[]
-    seek(stream, "BEG_NODL_DATA")
+    _seek(stream, "BEG_NODL_DATA")
     readline(stream) # skip first line
     for line in eachline(stream)
         line == "END_NODL_DATA" && break
@@ -76,7 +76,7 @@ function readhmo_elements(
         nodes ::Vector{Vector{T}}
     ) where T <: AbstractFloat
     elements = Triangle{T}[]
-    seek(stream, "BEG_ELEM_DATA")
+    _seek(stream, "BEG_ELEM_DATA")
     readline(stream) # skip first line
     for line in eachline(stream)
         line == "END_ELEM_DATA" && break
@@ -103,7 +103,7 @@ function readhmo_charges(
               ::Type{T}=Float64
     ) where T <: AbstractFloat
     charges = Charge{T}[]
-    seek(stream, "BEG_CHARGE_DATA")
+    _seek(stream, "BEG_CHARGE_DATA")
     readline(stream) # skip first line
     for line in eachline(stream)
         line == "END_CHARGE_DATA" && break

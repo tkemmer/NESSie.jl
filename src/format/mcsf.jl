@@ -82,7 +82,7 @@ function readmcsf_nodes(
               ::Type{T}=Float64
     ) where T <: AbstractFloat
     nodes = Vector{T}[]
-    seek(stream, "vert=[")
+    _seek(stream, "vert=[")
     for line in eachline(stream)
         startswith(line, "%") && continue        # skip comments
         startswith(line, "];") && break          # all nodes read
@@ -112,7 +112,7 @@ function readmcsf_elements(
         domain::Symbol=:none
     ) where T <: AbstractFloat
     elements = Tetrahedron{T}[]
-    seek(stream, "simp=[")
+    _seek(stream, "simp=[")
     for line in eachline(stream)
         startswith(line, "%") && continue        # skip comments
         startswith(line, "];") && break          # all simplices read
