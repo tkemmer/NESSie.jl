@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - '**.jl'
+      - 'Project.toml'
   pull_request:
   schedule:
     - cron: 0 1 * * *
