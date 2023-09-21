@@ -36,7 +36,7 @@ makedocs(
         prettyurls = get(ENV, "CI", nothing) == "true"
     ),
     sitename  = "NESSie.jl",
-    repo      = "https://github.com/tkemmer/NESSie.jl/blob/master{path}"
+    repo      = Remotes.GitHub("tkemmer", "NESSie.jl")
 )
 
 deploydocs(;
