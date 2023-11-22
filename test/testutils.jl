@@ -14,7 +14,7 @@ function readback(f::Function)
     try
         f(fh)
         seek(fh, 0)
-        return join(readlines(fh), "\n")
+        return strip(join(readlines(fh), "\n"))
     finally
         close(fh)
         rm(fname)
