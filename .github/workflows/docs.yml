@@ -1,23 +1,30 @@
 name: Documentation
-
 on:
   push:
     branches:
       - master
     tags: '*'
   pull_request:
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write # needed to allow julia-actions/cache to proactively delete old caches that it has created
+      contents: write
+      statuses: write
     steps:
-      - uses: actions/checkout@v2
-      - uses: julia-actions/setup-julia@latest
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v1
         with:
-          version: '1.4'
-      - name: Install dependencies
-        run: julia --project=doc/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+          version: '1'
+      - uses: julia-actions/cache@v1
+      - name: Configure doc environment
+        shell: julia --project=doc --color=yes {0}
+        run: |
+          using Pkg
+          Pkg.develop(PackageSpec(path=pwd()))
+          Pkg.instantiate()
       - name: Build and deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: julia --project=doc/ doc/make.jl
+        run: julia --project=doc --color=yes doc/make.jl
