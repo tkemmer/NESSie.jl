@@ -50,7 +50,7 @@ end
 function checkargs(args)
     ret = String[]
     err = String[]
-    for arg in ARGS
+    for arg in args
         if arg == "--help"
             printusage()
             exit(0)
