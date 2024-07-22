@@ -22,6 +22,7 @@ const tests = [
     "format/xml3d.jl",
     "testmodel/born.jl",
     "testmodel/xie.jl",
+    "aqua.jl",
     "radon.jl",
     "rjasanow.jl"
 ]
