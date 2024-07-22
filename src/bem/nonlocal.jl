@@ -212,15 +212,19 @@ function Base.:*(
     x2 = view(x, numelem+1:2numelem)
     x3 = view(x, 2numelem+1:3numelem)
 
-    Kx  = A.K * [x1 x3]
+    #Kx  = A.K * [x1 x3]
+    Kx = A.K * view(reshape(x, (numelem, 3)), :, 1:2:3)
     Vx2 = A.V * x2
     σx1 = T(2π) .* x1
 
+    Kx1 = view(Kx, :, 1)
+    Kx2 = view(Kx, :, 2)
+
     [
-        A.Ky * ((ε∞/εΣ) .* x3 .- x1) .- Kx[:,1] .+ (εΩ/ε∞-εΩ/εΣ) .* 
+        A.Ky * ((ε∞/εΣ) .* x3 .- x1) .- Kx1 .+ (εΩ/ε∞-εΩ/εΣ) .* 
             (A.Vy * x2) .+ ((εΩ/ε∞) .* Vx2) .+ σx1;
-        Kx[:,1] .- Vx2 .+ σx1;
-        (εΩ/ε∞) .* Vx2 .- Kx[:,2] .+ (T(2π) * x3)
+        Kx1 .- Vx2 .+ σx1;
+        (εΩ/ε∞) .* Vx2 .- Kx2 .+ (T(2π) * x3)
     ]
 end
 
