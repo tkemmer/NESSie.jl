@@ -1,7 +1,5 @@
-push!(LOAD_PATH,"../src/")
-
 using NESSie
-using Test
+using TestItemRunner
 
 # All tests. Will be used if no command line arguments are given.
 const tests = [
@@ -27,7 +25,6 @@ const tests = [
     "radon.jl",
     "rjasanow.jl"
 ]
-const testtypes = (Float64, Float32)
 
 function printusage()
     println("\n\e[1mNESSie.jl test suite\e[0m")
@@ -78,17 +75,9 @@ function checkargs(args)
 end
 
 # Run tests
-include("testutils.jl")
 if length(ARGS) > 0
-    @testset "$t" for t in checkargs(ARGS)
-        include(t)
-        println()
-    end
+    testfiles = checkargs(ARGS)
+    @run_package_tests filter=ti -> any(endswith.(ti.filename,testfiles)) verbose=true
 else
-    @testset "NESSie.jl" begin
-        println()
-        @testset "$t" for t in tests
-            include(t)
-        end
-    end
+    @run_package_tests verbose=true
 end

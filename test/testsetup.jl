@@ -1,3 +1,5 @@
+const testtypes = (Float64, Float32)
+
 #=
     Utility function to
     - Create a temporary file,

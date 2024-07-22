@@ -1,4 +1,8 @@
-@test_skip solve
-@test_skip φΩ
-@test_skip φΣ
-@test_skip rfenergy
+@testitem "Local BEM" begin
+    include("../testsetup.jl")
+
+    @test_skip solve
+    @test_skip φΩ
+    @test_skip φΣ
+    @test_skip rfenergy
+end

@@ -1,1 +1,5 @@
-@test_skip Charge
+@testitem "Model" begin
+    include("../testsetup.jl")
+
+    @test_skip Charge
+end
