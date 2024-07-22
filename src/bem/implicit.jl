@@ -174,7 +174,7 @@ end
 
 function Base.:*(
     A  ::InteractionMatrix{T},
-    B  ::AbstractMatrix{T}
+    B  ::SubArray{T, 2}
 ) where T
     m, n, p = (size(A)..., size(B, 2))
     dst = zeros(T, m, p)
