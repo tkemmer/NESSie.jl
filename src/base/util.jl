@@ -58,7 +58,8 @@ function meshunion(
     ) where T
     # find nodes that are to be replaced (tbr)
     obsolete = model1.nodes ∩ model2.nodes
-    tbr = Dict{Vector{T}, Int}(zip(obsolete, indexin(obsolete, model1.nodes)))
+    indices = something.(indexin(obsolete, model1.nodes)) # Vector{Union{Nothing, Int}} -> Vector{Int}
+    tbr = Dict{Vector{T}, Int}(zip(obsolete, indices))
 
     elements = copy(model1.elements)
     for elem in model2.elements
@@ -70,7 +71,7 @@ function meshunion(
     end
 
     Model(
-        collect(Set(model2.nodes) ∪ Set(model1.nodes)),
+        collect(Vector{T}, Set(model2.nodes) ∪ Set(model1.nodes)),
         elements,
         model1.charges ∪ model2.charges,
         model1.params
