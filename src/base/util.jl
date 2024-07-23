@@ -99,7 +99,7 @@ julia> unpack([[1, 2], [3]])
 ```
 """
 @inline function unpack(data::AbstractVector{Vector{T}}) where T
-    isempty(data) ?  T[] : T[x for y in data for x in y]
+    collect(T, x for y in data for x in y)
 end
 
 
