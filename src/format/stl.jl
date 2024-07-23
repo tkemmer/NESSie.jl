@@ -54,7 +54,7 @@ function readstl(
         )
     end
 
-    Model(collect(nodes), elements)
+    Model(collect(Vector{T}, nodes), elements)
 end
 
 @inline function readstl(
