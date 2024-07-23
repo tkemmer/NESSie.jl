@@ -174,7 +174,7 @@ end
 
 @inline Model(
     nodes   ::Vector{Vector{T}},
-    elements::Vector{E}         = E[],
+    elements::Vector{E},
     charges ::Vector{Charge{T}} = Charge{T}[],
     params  ::Option{T}         = defaultopt(T)
 ) where {T, E <: Element{T}}    = Model{T, E}(nodes, elements, charges, params)
