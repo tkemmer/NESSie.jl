@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    readmcsf{T <: AbstractFloat}(
+    readmcsf(
         stream::IOStream,
               ::Type{T}=Float64;
         # kwargs
@@ -21,7 +21,7 @@ Reads a volume model from the given GAMer-generated mcsf file.
 
 # Aliases
 
-    readmcsf{T}(
+    readmcsf(
         fname ::String,
               ::Type{T}=Float64;
         # kwargs
@@ -30,7 +30,7 @@ Reads a volume model from the given GAMer-generated mcsf file.
 
 Reads the model using a file name rather than a `IOStream` object.
 
-    readmcsf{T}(
+    readmcsf(
         fnameΩ::String,
         fnameΣ::String,
               ::Type{T}=Float64
@@ -67,7 +67,7 @@ end
 
 # =========================================================================================
 """
-    readmcsf_nodes{T <: AbstractFloat}(
+    readmcsf_nodes(
         stream::IOStream,
               ::Type{T}=Float64
     )
@@ -94,7 +94,7 @@ end
 
 # =========================================================================================
 """
-    readmcsf_elements{T <: AbstractFloat}(
+    readmcsf_elements(
         stream::IOStream,
         nodes ::Vector{Vector{T}};
         # kwargs

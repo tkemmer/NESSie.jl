@@ -20,7 +20,7 @@ the computation of the electrostatic potentials.
     This type does not provide a trivial constructor.
 
 # Constructor
-    NonlocalXieModel1{T}(
+    NonlocalXieModel1(
         model::XieModel{T},
         len  ::Int
     )
@@ -63,7 +63,7 @@ end
 
 # =========================================================================================
 """
-    function coefficients{T}(
+    function coefficients(
         model::XieModel{T},
         len  ::Int
     )

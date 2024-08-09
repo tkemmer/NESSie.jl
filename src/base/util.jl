@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    props{T}(
+    props(
         elem::Triangle{T}
     )
 
@@ -37,7 +37,7 @@ end
 
 # =========================================================================================
 """
-    meshunion{T}(
+    meshunion(
         model1::Model{T, Tetrahedron{T}},
         model2::Model{T, Tetrahedron{T}}
     )
@@ -81,7 +81,7 @@ end
 
 # =========================================================================================
 """
-    unpack{T}(data::Vector{Vector{T}})
+    unpack(data::Vector{Vector{T}})
 
 Unpacks the given vector of vectors into a single vector.
 
@@ -105,7 +105,7 @@ end
 
 # =========================================================================================
 """
-    vertexnormals{T}(model::Model{T, Triangle{T}})
+    vertexnormals(model::Model{T, Triangle{T}})
 
 Returns a vector containing the normal vectors of the given model's triangles.
 
@@ -127,7 +127,7 @@ end
 
 # =========================================================================================
 """
-    eye!{T}(
+    eye!(
         m::AbstractMatrix{T},
         α::Number=one(T)
     )
@@ -167,7 +167,7 @@ end
 
 # =========================================================================================
 """
-    pluseye!{T}(
+    pluseye!(
         m::AbstractMatrix{T},
         α::Number=one(T)
     )
@@ -209,7 +209,7 @@ end
 
 # =========================================================================================
 """
-    isdegenerate{T}(elem::Triangle{T})
+    isdegenerate(elem::Triangle{T})
 
 Tests whether the given triangle is degenerate.
 
@@ -257,7 +257,7 @@ end
 
 # =========================================================================================
 """
-    _cos{T}(
+    _cos(
         u    ::AbstractVector{T},
         v    ::AbstractVector{T},
         unorm::T=_norm(u),
@@ -282,7 +282,7 @@ end
 
 # =========================================================================================
 """
-    cathetus{T}(hyp::T, cosθ::T)
+    cathetus(hyp::T, cosθ::T)
 
 Computes the cathetus ``c₁`` of a triangle given the hypotenuse ``h`` and the cosine of the
 exterior angle ``θ`` between the hypotenuse and the other cathetus ``c₂``.
@@ -303,7 +303,7 @@ end
 
 # =========================================================================================
 """
-    _sign{T}(
+    _sign(
         u::AbstractVector{T},
         v::AbstractVector{T},
         n::AbstractVector{T}
@@ -332,7 +332,7 @@ end
 
 # =========================================================================================
 """
-    distance{T}(
+    distance(
         q   ::AbstractVector{T},
         elem::Triangle{T}
     )
@@ -351,7 +351,7 @@ end
 
 # =========================================================================================
 """
-    ddot{T}(
+    ddot(
         u::AbstractVector{T},
         v::AbstractVector{T},
         n::AbstractVector{T}
@@ -373,7 +373,7 @@ end
 
 # =========================================================================================
 """
-    _dot{T}(
+    _dot(
         u::AbstractVector{T},
         v::AbstractVector{T}
     )
@@ -390,9 +390,7 @@ end
 
 # =========================================================================================
 """
-    _norm{T}(
-        u::AbstractVector{T}
-    )
+    _norm(u::AbstractVector{T})
 
 Fast Euclidean norm for 3-element vectors.
 
@@ -406,7 +404,7 @@ end
 
 # =========================================================================================
 """
-    reverseindex{T}(v::AbstractVector{T})
+    reverseindex(v::AbstractVector{T})
 
 Creates a reverse index for the given vector `v`, that is, a dictionary linking the object
 IDs of the vector elements to the corresponding position in the vector.
@@ -421,7 +419,7 @@ end
 
 # =========================================================================================
 """
-    obspoints_line{T}(
+    obspoints_line(
         u::AbstractVector{T},
         v::AbstractVector{T},
         n::Int
@@ -446,7 +444,7 @@ end
 
 # =========================================================================================
 """
-    obspoints_plane{T}(
+    obspoints_plane(
         a  ::AbstractVector{T},
         b  ::AbstractVector{T},
         c  ::AbstractVector{T},

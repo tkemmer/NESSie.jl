@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    writexml3d_json{T}(
+    writexml3d_json(
         stream::IOStream,
         model ::Union{Vector{Vector{T}}, Model{T, Triangle{T}}}
     )
@@ -16,7 +16,7 @@ latter as point cloud) or from a given surface model.
 
 # Alias
 
-    writexml3d_json{T}(
+    writexml3d_json(
         fname::String,
         nodes::Union{Vector{Vector{T}}), Model{T, Triangle{T}}}
     )
@@ -82,7 +82,7 @@ end
 
 # =========================================================================================
 """
-    writexml3d_xml{T}(
+    writexml3d_xml(
         stream::IOStream,
         nodes ::Vector{Vector{T}}
     )
@@ -98,7 +98,7 @@ as point cloud.
 
 # Alias
 
-    writexml3d_xml{T}(
+    writexml3d_xml(
         fname::String,
         nodes::Vector{Vector{T}}
     )

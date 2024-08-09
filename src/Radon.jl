@@ -9,7 +9,7 @@ export regularyukawacoll, regularyukawacoll!
 
 # =========================================================================================
 """
-    regularyukawapot{T}(
+    regularyukawapot(
         x     ::AbstractVector{T},
         ξ     ::AbstractVector{T},
         yukawa::T,
@@ -67,7 +67,7 @@ end
 
 # =========================================================================================
 """
-    ∂ₙregularyukawapot{T}(
+    ∂ₙregularyukawapot(
         x     ::AbstractVector{T},
         ξ     ::AbstractVector{T},
         yukawa::T,
@@ -129,7 +129,7 @@ end
 
 # =========================================================================================
 """
-    radoncoll!{T}(
+    radoncoll!(
             dest    ::AbstractVector{T},
             elements::AbstractVector{Triangle{T}},
             Ξ       ::AbstractVector{Vector{T}},
@@ -138,7 +138,7 @@ end
             fvals   ::AbstractVector{T}
     )
 
-    radoncoll!{T}(
+    radoncoll!(
             dest    ::AbstractMatrix{T},
             elements::AbstractVector{Triangle{T}},
             Ξ       ::AbstractVector{Vector{T}},
@@ -232,7 +232,7 @@ end
 
 # =========================================================================================
 """
-    radoncoll{T}(
+    radoncoll(
         ξ       ::AbstractVector{T},
         tquad   ::TriangleQuad{T},
         yukawa  ::T,
@@ -274,8 +274,8 @@ end
 
 # ========================================================================================
 """
-    regularyukawacoll!{T, P <: PotentialType}(
-                ::Type{P},
+    regularyukawacoll!(
+                ::Type{<: PotentialType},
         dest    ::AbstractVector{T},
         elements::AbstractVector{Triangle{T}},
         Ξ       ::AbstractVector{Vector{T}},
@@ -283,8 +283,8 @@ end
         fvals   ::AbstractVector{T}
     )
 
-    regularyukawacoll!{T, P <: PotentialType}(
-                ::Type{P},
+    regularyukawacoll!(
+                ::Type{<: PotentialType},
         dest    ::AbstractMatrix{T},
         elements::AbstractVector{Triangle{T}},
         Ξ       ::AbstractVector{Vector{T}},
@@ -345,8 +345,8 @@ vector.
 
 # ========================================================================================
 """
-    regularyukawacoll{T, P <: PotentialType}(
-              ::Type{P},
+    regularyukawacoll(
+              ::Type{<: PotentialType},
         ξ     ::AbstractVector{T},
         elem  ::Union{Triangle{T}, TriangleQuad{T}},
         yukawa::T

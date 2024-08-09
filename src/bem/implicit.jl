@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} 
+    struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
         dat::Vector{T}   # pre-allocated vector for internal use
     end
 
@@ -12,7 +12,7 @@ Kfun{T}()
 ```
 Automatically initializes the internal data vector. Replaces the default constructor.
 """
-struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} 
+struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
     """Pre-allocated vector for internal use"""
     dat::Vector{T}
 
@@ -57,7 +57,7 @@ Vfun{T}()
 ```
 Automatically initializes the internal data vector. Replaces the default constructor.
 """
-struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} 
+struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
     """Pre-allocated vector for internal use"""
     dat::Vector{T}
 
@@ -90,7 +90,7 @@ end
 
 # =========================================================================================
 """
-    _get_laplace_matrices{T}(
+    _get_laplace_matrices(
         Ξ       ::Vector{Vector{T}},
         elements::Vector{Triangle{T}}
     )
@@ -113,7 +113,7 @@ end
 
 # =========================================================================================
 """
-    _get_yukawa_matrices{T}(
+    _get_yukawa_matrices(
         Ξ       ::Vector{Vector{T}},
         elements::Vector{Triangle{T}},
         yuk     ::T
@@ -139,7 +139,7 @@ end
 
 # =========================================================================================
 """
-    _solve_linear_system{T}(
+    _solve_linear_system(
         A::AbstractArray{T, 2},
         b::AbstractArray{T, 1}
     )

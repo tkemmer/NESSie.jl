@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    function writeobj{T}(
+    function writeobj(
         stream::IOStream,
         model ::Model{T, Triangle{T}}
     )
@@ -16,7 +16,7 @@ Creates a Wavefront OBJ file from a given surface model.
 
 # Alias
 
-    writeobj{T}(
+    writeobj(
         fname::String,
         model::Model{T, Triangle{T}}
     )

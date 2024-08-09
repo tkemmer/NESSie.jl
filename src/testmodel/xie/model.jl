@@ -12,7 +12,7 @@ sphere with the specified radius.
 
 # Special contructors
 ```julia
-XieModel{T}(
+XieModel(
     radius ::T,
     charges::Vector{Charge{T}},
     params ::Option{T}          = defaultopt(T);
@@ -50,7 +50,7 @@ end
 
 # =========================================================================================
 """
-    function scalemodel{T}(
+    function scalemodel(
         charges::Vector{Charge{T}},
         radius ::T;
         # kwargs

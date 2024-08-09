@@ -10,7 +10,7 @@ with a single point charge located at its center (``ε_Ω = 1``).
 
 ## Special constructors
 
-    BornIon{T}(charge::T, radius::T)
+    BornIon(charge::T, radius::T)
 
 Centers the sphere at ``(0, 0, 0)^T``.
 """

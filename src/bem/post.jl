@@ -1,8 +1,6 @@
 # =========================================================================================
 """
-    rfenergy{T, R <: BEMResult{T}}(
-        bem       ::R
-    )
+    rfenergy(::BEMResult{T})
 
 Computes the local or nonlocal reaction field energy W* as
 ```math
@@ -47,9 +45,9 @@ end
 
 # =========================================================================================
 """
-    φΩ{T, R <: BEMResult{T}}(
+    φΩ(
         Ξ         ::Vector{Vector{T}},
-        bem       ::R
+        bem       ::BEMResult{T}
     )
 
 Computes the local or nonlocal interior electrostatic potential ``φ_Ω`` for the given set
@@ -98,9 +96,9 @@ end
 
 # =========================================================================================
 """
-    φΣ{T, B <: BEMResult{T}}(
+    φΣ(
         Ξ         ::Vector{Vector{T}},
-        bem       ::B
+        bem       ::BEMResult{T}
     )
 
 Computes the local or nonlocal exterior electrostatic potential ``φ_Σ`` for the given set

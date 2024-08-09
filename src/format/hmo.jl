@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    readhmo{T <: AbstractFloat}(
+    readhmo(
         stream::IOStream,
               ::Type{T}=Float64
     )
@@ -12,7 +12,7 @@ Reads a complete surface model from the given HMO file.
 
 # Alias
 
-    readhmo{T}(fname::String, ::Type{T}=Float64)
+    readhmo(fname::String, ::Type{T}=Float64)
 
 Reads the model using a file name rather than a `IOStream` object.
 """
@@ -34,7 +34,7 @@ end
 
 # =========================================================================================
 """
-    readhmo_nodes{T <: AbstractFloat}(
+    readhmo_nodes(
         stream::IOStream,
               ::Type{T}=Float64
     )
@@ -61,7 +61,7 @@ end
 
 # =========================================================================================
 """
-    readhmo_elements{T <: AbstractFloat}(
+    readhmo_elements(
         stream::IOStream,
         nodes ::Vector{Vector{T}}
     )
@@ -88,7 +88,7 @@ end
 
 # =========================================================================================
 """
-    readhmo_charges{T <: AbstractFloat}(
+    readhmo_charges(
         stream::IOStream,
               ::Type{T}=Float64
     )
@@ -115,7 +115,7 @@ end
 
 # =========================================================================================
 """
-    writehmo{T}(
+    writehmo(
         stream::IOStream,
         model ::Model{T, Triangle{T}}
     )
@@ -127,7 +127,7 @@ Creates a HMO file from the given surface model.
 
 # Alias
 
-    writehmo{T}(
+    writehmo(
         fname::String,
         model::Model{T, Triangle{T}}
     )

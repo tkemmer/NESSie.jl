@@ -61,8 +61,8 @@ function solve(
 end
 
 """
-    _solve_explicit{T, L <: LocalityType}(
-             ::L,
+    _solve_explicit(
+             ::Type{<: LocalityType},
         model::Model{T, Triangle{T}}
     )
 
@@ -190,8 +190,8 @@ end
 
 # =========================================================================================
 """
-    _solve_implicit{T, L <: LocalityType}(
-             ::L,
+    _solve_implicit(
+             ::Type{<: LocalityType},
         model::Model{T, Triangle{T}}
     )
 

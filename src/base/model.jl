@@ -27,7 +27,7 @@ Representation of a single surface triangle.
 
 # Special constructors
 ```julia
-Triangle{T}(
+Triangle(
     v1  ::Vector{T},
     v2  ::Vector{T},
     v3  ::Vector{T}
@@ -75,7 +75,7 @@ Representation of a single tetrahedron.
 
 # Special constructors
 ```julia
-Tetrahedron{T}(
+Tetrahedron(
     v1::Vector{T},
     v2::Vector{T},
     v3::Vector{T},
@@ -116,7 +116,7 @@ Representation of a single point charge.
 
 # Special constructors
 ```julia
-Charge{T}(
+Charge(
     posx::T,
     posy::T,
     posz::T,

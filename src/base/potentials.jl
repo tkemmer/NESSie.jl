@@ -34,7 +34,7 @@ struct LocalES    <: LocalityType end
 
 # =========================================================================================
 """
-    φmol{T}(
+    φmol(
         ξ        ::Vector{T},
         charges  ::Vector{Charge{T}};
         # kwargs
@@ -103,7 +103,7 @@ end
 
 # =========================================================================================
 """
-    ∂ₙφmol{T}(ξ::Triangle{T}, charges::Vector{Charge{T}})
+    ∂ₙφmol(ξ::Triangle{T}, charges::Vector{Charge{T}})
 
 Computes and returns the normal derivative of the given system's molecular potential in a
 structureless medium, using the given triangle's center as observation point and the
@@ -120,7 +120,7 @@ triangle's normal as reference normal.
 `T`
 
 ## Aliases
-    ∂ₙφmol{T}(model::Model{T, Triangle{T}})
+    ∂ₙφmol(model::Model{T, Triangle{T}})
 
 Computes the normal derivatives of the molecular potentials for the given surface model,
 using each triangle center and normal as observation point.
@@ -140,7 +140,7 @@ end
 
 # =========================================================================================
 """
-    ∇φmol{T}(ξ::Vector{T}, charges::Vector{Charge{T}})
+    ∇φmol(ξ::Vector{T}, charges::Vector{Charge{T}})
 
 Computes and returns the gradient of the given system's molecular potential in a
 structureless medium for the given observation point ξ.
@@ -156,7 +156,7 @@ structureless medium for the given observation point ξ.
 `Vector{T}`
 
 ## Aliases
-    ∇φmol{T}(Ξ::Vector{Vector{T}})
+    ∇φmol(Ξ::Vector{Vector{T}})
 
 Computes the molecular potential gradients for a list of observation points.
 """

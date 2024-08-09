@@ -24,8 +24,8 @@ struct InSpace <: ObservationPosition end
 
 # =========================================================================================
 """
-    function laplacepot{T, P <: PotentialType}(
-        ptype::Type{P},
+    function laplacepot(
+        ptype::Type{<: PotentialType},
         ξ    ::AbstractVector{T},
         elem ::Triangle{T},
         dist ::T;
@@ -62,8 +62,8 @@ end
 
 # =========================================================================================
 """
-    laplacepot{T, P <: PotentialType}(
-        ptype ::Type{P},
+    laplacepot(
+        ptype ::Type{<: PotentialType},
         ξ     ::AbstractVector{T},
         x1    ::AbstractVector{T},
         x2    ::AbstractVector{T},
@@ -149,9 +149,9 @@ end
 
 # =========================================================================================
 """
-    laplacepot{T, P <: PotentialType, O <: ObservationPosition}(
-             ::Type{P},
-             ::Type{O},
+    laplacepot(
+             ::Type{<: PotentialType},
+             ::Type{<: ObservationPosition},
         sinφ1::T,
         sinφ2::T,
         h    ::T,
@@ -256,16 +256,16 @@ end
 
 # =========================================================================================
 """
-    laplacecoll!{T, P <: PotentialType}(
-        ptype   ::Type{P},
+    laplacecoll!(
+        ptype   ::Type{<: PotentialType},
         dest    ::AbstractVector{T},
         elements::AbstractVector{Triangle{T}},
         Ξ       ::AbstractVector{Vector{T}},
         fvals   ::AbstractVector{T}
     )
 
-    laplacecoll!{T, P <: PotentialType}(
-        ptype   ::Type{P},
+    laplacecoll!(
+        ptype   ::Type{<: PotentialType},
         dest    ::AbstractMatrix{T},
         elements::AbstractVector{Triangle{T}},
         Ξ       ::AbstractVector{Vector{T}}
@@ -326,7 +326,7 @@ function laplacecoll!(
         for oidx in eachindex(Ξ)
             dist = distance(Ξ[oidx], elem)
             ξ .= Ξ[oidx]
-            
+
             # project ξ onto elem
             abs(dist) >= _etol(T) && _projectξ!(ξ, elem, dist)
 
@@ -339,8 +339,8 @@ end
 
 # =========================================================================================
 """
-    laplacecoll{T, P <: PotentialType}(
-        ptype::Type{P},
+    laplacecoll(
+        ptype::Type{<: PotentialType},
         ξ    ::AbstractVector{T},
         elem ::AbstractVector{Triangle{T}};
         # kwargs
@@ -379,7 +379,7 @@ end
 
 # =========================================================================================
 """
-    _logterm{T}(χ2::T, sinφ::T)
+    _logterm(χ2::T, sinφ::T)
 
 Utility function to compute
 ```math
@@ -400,7 +400,7 @@ end
 
 # =========================================================================================
 """
-    _projectξ!{T}(ξ::AbstractVector{T}, elem::Triangle{T}, dist::T)
+    _projectξ!(ξ::AbstractVector{T}, elem::Triangle{T}, dist::T)
 
 Projects ξ onto the surface element plane, overriding its previous coordinates.
 

@@ -1,8 +1,8 @@
 # =========================================================================================
 """
-    writevtk{T, M <: Model{T}}(
+    writevtk(
         stream::IOStream,
-        model ::M
+        model ::Model{T}
     )
 
 Creates a VTK-compatible output file from a given surface or volume model. The exact file
@@ -21,9 +21,9 @@ type is determined by the given model:
 
 # Alias
 
-    writevtk{T, M <: Model{T}}(
+    writevtk(
         fname::String,
-        model::M
+        model::Model{T}
     )
 
 Creates the VTK file by name rather than `IOStream` object.

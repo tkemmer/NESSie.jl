@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    readpqr{T <: AbstractFloat}(
+    readpqr(
         stream::IOStream,
               ::Type{T}=Float64
     )
@@ -15,7 +15,7 @@ Reads a charge model from the given PQR file.
 
 # Alias
 
-    readpqr{T}(fname::String, ::Type{T}=Float64)
+    readpqr(fname::String, ::Type{T}=Float64)
 
 Reads the charge model using a file name rather than a `IOStream` object.
 """

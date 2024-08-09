@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    readoff{T <: AbstractFloat}(
+    readoff(
         stream::IOStream,
               ::Type{T}=Float64
     )
@@ -19,7 +19,7 @@ Reads a surface model from the given OFF file.
 
 # Alias
 
-    readoff{T}(fname::String, ::Type{T}=Float64)
+    readoff(fname::String, ::Type{T}=Float64)
 
 Reads the model using a file name rather than a `IOStream` object.
 """
@@ -47,7 +47,7 @@ end
 
 # =========================================================================================
 """
-    readoff_nodes{T <: AbstractFloat}(
+    readoff_nodes(
         stream::IOStream,
         n     ::Int,
               ::Type{T}=Float64
@@ -69,7 +69,7 @@ end
 
 # =========================================================================================
 """
-    readoff_elements{T <: AbstractFloat}(
+    readoff_elements(
         stream::IOStream,
         n     ::Int,
         nodes ::Vector{Vector{T}},

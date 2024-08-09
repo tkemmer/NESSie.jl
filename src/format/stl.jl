@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    readstl{T}(
+    readstl(
         stream::IOStream,
               ::Type{T}=Float64
     )
@@ -18,7 +18,7 @@ Reads a surface model from the given STL file.
 
 # Alias
 
-    readstl{T}(
+    readstl(
         fname::String,
              ::Type{T}=Float64
     )
@@ -42,14 +42,14 @@ function readstl(
         v2 = map(T, [read(stream, Float32) for _ in 1:3])
         v3 = map(T, [read(stream, Float32) for _ in 1:3])
         skip(stream, 2)
- 
+
         # make sure nodes with the same coordinates refer to the same object
         v1 ∈ nodes || push!(nodes, v1)
         v2 ∈ nodes || push!(nodes, v2)
         v3 ∈ nodes || push!(nodes, v3)
         elements[i] = Triangle(
-            getkey(nodes.dict, v1, v1), 
-            getkey(nodes.dict, v2, v2), 
+            getkey(nodes.dict, v1, v1),
+            getkey(nodes.dict, v2, v2),
             getkey(nodes.dict, v3, v3)
         )
     end
@@ -67,7 +67,7 @@ end
 
 # =========================================================================================
 """
-    writestl{T}(
+    writestl(
         stream::IOStream,
         model ::Model{T, Triangle{T}}
     )
@@ -82,7 +82,7 @@ Creates a binary STL file from a given surface model.
 
 # Alias
 
-    writestl{T}(
+    writestl(
         fname::String,
         model::Model{T, Triangle{T}}
     )

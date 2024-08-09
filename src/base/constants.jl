@@ -126,7 +126,7 @@ end
 
 # =========================================================================================
 """
-    yukawa{T}(opt::Option{T})
+    yukawa(opt::Option{T})
 
 Exponent ``1/Λ`` for the fundamental solution of the yukawa operator
 

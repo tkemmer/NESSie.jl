@@ -1,7 +1,7 @@
 # =========================================================================================
 """
-    φΩ{T, L <: LocalityType}(
-           ::Type{L},
+    φΩ(
+           ::Type{<: LocalityType},
         ξ  ::Vector{T},
         ion::BornIon{T},
         opt::Option{T} = defaultopt(T)
@@ -44,8 +44,8 @@ end
 
 # =========================================================================================
 """
-    φΣ{T, L <: LocalityType}(
-           ::Type{L},
+    φΣ(
+           ::Type{<: LocalityType},
         ξ  ::Vector{T},
         ion::BornIon{T},
         opt::Option{T} = defaultopt(T)

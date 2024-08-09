@@ -1,8 +1,8 @@
 # =========================================================================================
 """
-    writeskel{T, M <: Model{T}}(
+    writeskel(
         stream::IOStream,
-        model ::M
+        model ::Model{T}
     )
 
 Creates a SKEL file from a given surface or volume model, representing the model as a
@@ -16,9 +16,9 @@ collection of points and polylines.
 
 # Alias
 
-    writeskel{T, M <: Model{T}}(
+    writeskel(
         fname::String,
-        model::M
+        model::Model{T}
     )
 
 Creates the SKEL file by name rather than `IOStream` object.
