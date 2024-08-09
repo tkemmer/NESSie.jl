@@ -10,5 +10,4 @@
     LocalBEMResult
     NonlocalBEMResult
     solve
-    solve_implicit
 ```

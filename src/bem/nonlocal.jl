@@ -25,7 +25,7 @@ end
 
 # =========================================================================================
 # Documented in bem/local.jl
-function solve(
+function _solve_explicit(
          ::Type{NonlocalES},
     model::Model{T, Triangle{T}}
 ) where T
@@ -221,7 +221,7 @@ function Base.:*(
     Kx2 = view(Kx, :, 2)
 
     [
-        A.Ky * ((ε∞/εΣ) .* x3 .- x1) .- Kx1 .+ (εΩ/ε∞-εΩ/εΣ) .* 
+        A.Ky * ((ε∞/εΣ) .* x3 .- x1) .- Kx1 .+ (εΩ/ε∞-εΩ/εΣ) .*
             (A.Vy * x2) .+ ((εΩ/ε∞) .* Vx2) .+ σx1;
         Kx1 .- Vx2 .+ σx1;
         (εΩ/ε∞) .* Vx2 .- Kx2 .+ (T(2π) * x3)
@@ -239,7 +239,7 @@ end
 
 # =========================================================================================
 # Documented in bem/local.jl
-function solve_implicit(
+function _solve_implicit(
          ::Type{NonlocalES},
     model::Model{T, Triangle{T}}
 ) where T
@@ -259,7 +259,7 @@ function solve_implicit(
 
     # create nonlocal system
     A = NonlocalSystemMatrix{T}(Ξ, model.elements, model.params)
-    b = A.K * umol .+ (1 - εΩ/εΣ) .* (A.Ky * umol) .- T(2π) .* umol .- (εΩ/ε∞) .* 
+    b = A.K * umol .+ (1 - εΩ/εΣ) .* (A.Ky * umol) .- T(2π) .* umol .- (εΩ/ε∞) .*
         (A.V * qmol) .+ (εΩ/εΣ - εΩ/ε∞) .* (A.Vy * qmol)
 
     cauchy = _solve_linear_system(A, b)

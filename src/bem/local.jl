@@ -28,25 +28,51 @@ end
 
 # =========================================================================================
 """
-    solve{T, L <: LocalityType}(
+    solve(::Type{<: LocalityType}, ::Model{T, Triangle{T}})
+
+Computes the full local or nonlocal cauchy data on the surface of the given biomolecule.
+
+# Return type
+`LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
+
+# Supported keyword arguments
+ - `method::Symbol = :gmres`
+   Solver implementation to be used (supported arguments: `:gmres` and `:blas`)
+
+!!! note
+    The `:blas` method uses an explicit representation for the BEM systems and requires a
+    substantial amount of memory that might easily exceed the available resources on your machine
+    (the memory demands scale quadratically with the number of surface elements). The `:gmres`
+    method, on the other hand, uses implicit system representations, which provide a small memory
+    footprint even for large systems (the memory demands scale only linearly with the number of
+    surface elements). This comes at the cost of additional computation time, which might exceed
+    several hours, depending on the system size. If possible, we recommend the use of our CUDA-
+    accelerated solvers from the [`CuNESSie.jl`](https://github.com/tkemmer/CuNESSie.jl) package
+    instead.
+ """
+function solve(
+    lt::Type{<: LocalityType},
+    model::Model{T, Triangle{T}};
+    method::Symbol = :gmres
+) where T
+    method === :gmres && return _solve_implicit(lt, model)
+    method === :blas  && return _solve_explicit(lt, model)
+    ArgumentError("Invalid method '$method'! Supported values: :gmres, :blas")
+end
+
+"""
+    _solve_explicit{T, L <: LocalityType}(
              ::L,
         model::Model{T, Triangle{T}}
     )
 
-Computes the full local or nonlocal cauchy data on the surface of the biomolecule using an *explicit* representation of the BEM system.
-
-!!! note
-    The explicit system representations require a substantial amount of memory and might easily
-    exceed the available resources on your machine (the memory demands scale quadratically with
-    the number of surface elements). If you encounter this problem, please consider switching to
-    [`solve_implicit`](@ref) or our CUDA-accelerated solvers from the
-    [`CuNESSie.jl`](https://github.com/tkemmer/CuNESSie.jl) package instead, which provide the
-    same function interface and are freely interchangeable.
+Computes the full local or nonlocal cauchy data on the surface of the biomolecule using an
+*explicit* representation of the BEM system.
 
 # Return type
 `LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
 """
-function solve(
+function _solve_explicit(
          ::Type{LocalES},
     model::Model{T, Triangle{T}}
 ) where T
@@ -164,26 +190,18 @@ end
 
 # =========================================================================================
 """
-    solve_implicit{T, L <: LocalityType}(
+    _solve_implicit{T, L <: LocalityType}(
              ::L,
         model::Model{T, Triangle{T}}
     )
 
-Computes the full local or nonlocal cauchy data on the surface of the biomolecule using an *implicit* representation of the BEM system.
-
-!!! note
-    The implicit system representations provide a small memory footprint even for large
-    biomolecular systems (the memory demands scale only linearly with the number of surface
-    elements). However, this comes at the cost of additional computation time, which might exceed
-    several hours, depending on the system size. If you encounter this problem, please consider
-    switching to [`solve`](@ref) or our CUDA-accelerated solvers from the
-    [`CuNESSie.jl`](https://github.com/tkemmer/CuNESSie.jl) package instead, which provide the
-    same function interface and are freely interchangeable.
+Computes the full local or nonlocal cauchy data on the surface of the biomolecule using an
+*implicit* representation of the BEM system.
 
 # Return type
 `LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
 """
-function solve_implicit(
+function _solve_implicit(
          ::Type{LocalES},
     model::Model{T, Triangle{T}}
 ) where T

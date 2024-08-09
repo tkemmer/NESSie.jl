@@ -32,12 +32,11 @@ More examples are available in the `docs/examples/` directory.
 
 
 ## Citing
-If you use `NESSie.jl` in your research, please cite the following publication:
+If you use `NESSie.jl` in your research, please cite the following publications:
 > Kemmer, T, Rjasanow, S., Hildebrandt, A (2018). NESSie. jl - Efficient and Intuitive
 > Finite Element and Boundary Element Methods for Nonlocal Protein Electrostatics in the
 > Julia Language. Journal of Computational Science 28, 193-203.
 
-If you use our implicit representations and solvers (`solve_implicit`), please also cite:
 > Kemmer, T (2021). Space-efficient and exact system representations for the nonlocal protein
 > electrostatics problem. Ph. D. thesis, Johannes Gutenberg University Mainz. Mainz, Germany.
 

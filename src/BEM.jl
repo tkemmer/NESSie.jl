@@ -9,7 +9,7 @@ using IterativeSolvers: gmres
 using LinearAlgebra
 using Preconditioners: DiagonalPreconditioner
 
-export BEMResult, LocalBEMResult, NonlocalBEMResult, rfenergy, solve, solve_implicit, φΩ, φΣ
+export BEMResult, LocalBEMResult, NonlocalBEMResult, rfenergy, solve, φΩ, φΣ
 
 """
     abstract type BEMResult{T, E <: SurfaceElement{T}} end
@@ -22,5 +22,7 @@ include("bem/implicit.jl")
 include("bem/local.jl")
 include("bem/nonlocal.jl")
 include("bem/post.jl")
+
+include("bem/deprecation.jl")
 
 end # module
