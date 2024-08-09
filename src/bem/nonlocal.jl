@@ -87,10 +87,10 @@ function _solve_explicit(
     _gemv!(1-εΩ/εΣ, buffer, umol, β)
 
     # m11 -= Kʸ-K
-    _axpy!(-1, buffer, m11)
+    axpy!(-1, buffer, m11)
 
     # m13 += ε∞/εΣ * (Kʸ-K)
-    _axpy!(ε∞/εΣ, buffer, m13)
+    axpy!(ε∞/εΣ, buffer, m13)
 
     #=
         generate and apply Vʸ-V
@@ -101,7 +101,7 @@ function _solve_explicit(
     _gemv!(εΩ * (1/εΣ - 1/ε∞), buffer, qmol, β)
 
     # m12 += (εΩ/ε∞ - εΩ/εΣ)(Vʸ-V)
-    _axpy!(εΩ * (1/ε∞ - 1/εΣ), buffer, m12)
+    axpy!(εΩ * (1/ε∞ - 1/εΣ), buffer, m12)
 
     #=
         generate and apply K
@@ -112,13 +112,13 @@ function _solve_explicit(
     _gemv!(one(T), buffer, umol, β)
 
     # m11 -= K
-    _axpy!(-1, buffer, m11)
+    axpy!(-1, buffer, m11)
 
     # m21 += K
-    _axpy!(1, buffer, m21)
+    axpy!(1, buffer, m21)
 
     # m33 -= K
-    _axpy!(-1, buffer, m33)
+    axpy!(-1, buffer, m33)
 
     #=
         generate and apply V
@@ -129,13 +129,13 @@ function _solve_explicit(
     _gemv!(-εΩ/ε∞, buffer, qmol, β)
 
     # m12 += εΩ/ε∞ * V
-    _axpy!(εΩ/ε∞, buffer, m12)
+    axpy!(εΩ/ε∞, buffer, m12)
 
     # m22 -= V
-    _axpy!(-1, buffer, m22)
+    axpy!(-1, buffer, m22)
 
     # m32 += εΩ/ε∞ * V
-    _axpy!(εΩ/ε∞, buffer, m32)
+    axpy!(εΩ/ε∞, buffer, m32)
 
     # solve system
     cauchy = m \ rhs
