@@ -1,6 +1,6 @@
 # Nonlocal Electrostatics in Structured Solvents
-[![](https://img.shields.io/github/actions/workflow/status/tkemmer/NESSie.jl/CI.yml?branch=master&style=for-the-badge)](https://github.com/tkemmer/NESSie.jl/actions/workflows/CI.yml)
-[![](https://img.shields.io/github/license/tkemmer/NESSie.jl?style=for-the-badge)](https://github.com/tkemmer/NESSie.jl/blob/master/LICENSE)
+[![](https://img.shields.io/github/actions/workflow/status/tkemmer/NESSie.jl/CI.yml?branch=develop&style=for-the-badge)](https://github.com/tkemmer/NESSie.jl/actions/workflows/CI.yml)
+[![](https://img.shields.io/github/license/tkemmer/NESSie.jl?style=for-the-badge)](https://github.com/tkemmer/NESSie.jl/blob/develop/LICENSE)
 [![](https://img.shields.io/badge/docs-stable-blue.svg?style=for-the-badge)](https://tkemmer.github.io/NESSie.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg?style=for-the-badge)](https://tkemmer.github.io/NESSie.jl/dev)
 
@@ -109,4 +109,4 @@ If you use our implicit representations and solvers (`solve_implicit`), please a
 > Kemmer, T (2021). Space-efficient and exact system representations for the nonlocal protein
 > electrostatics problem. Ph. D. thesis, Johannes Gutenberg University Mainz. Mainz, Germany.
 
-Citations items for BibTeX can be found in [CITATION.bib](https://github.com/tkemmer/NESSie.jl/blob/master/CITATION.bib).
+Citations items for BibTeX can be found in [CITATION.bib](https://github.com/tkemmer/NESSie.jl/blob/develop/CITATION.bib).

@@ -32,7 +32,7 @@ makedocs(
     checkdocs = :all,
     pages     = pages,
     format    = Documenter.HTML(
-        edit_link  = "master",
+        edit_link  = "develop",
         prettyurls = get(ENV, "CI", nothing) == "true"
     ),
     sitename  = "NESSie.jl",
@@ -41,5 +41,5 @@ makedocs(
 
 deploydocs(;
     repo = "github.com/tkemmer/NESSie.jl.git",
-    devbranch = "master"
+    devbranch = "develop"
 )
