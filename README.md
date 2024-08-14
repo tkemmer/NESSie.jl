@@ -14,7 +14,7 @@ This version of `NESSie.jl` requires Julia 1.6 or above. In the Julia shell, swi
 `Pkg` shell by pressing `]` and enter the following command:
 
 ```sh
-pkg> add https://github.com/tkemmer/NESSie.jl
+pkg> add NESSie
 ```
 
 Analogously, the `NESSie.jl` can be removed at any time using the following command in the
