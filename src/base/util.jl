@@ -13,7 +13,7 @@ and area. Returns the completely initialized Triangle as a copy.
 # Return type
 `Triangle`
 """
-function props(elem::Triangle{T}) where T
+function props(elem::Triangle)
     # reject degenerate triangles
     @assert !isdegenerate(elem) "Degenerate triangle $(elem)"
 
@@ -397,7 +397,7 @@ Fast Euclidean norm for 3-element vectors.
 # Return type
 `T`
 """
-@inline function _norm(u::AbstractVector{T}) where T
+@inline function _norm(u::AbstractVector)
     √_dot(u, u)
 end
 
@@ -412,7 +412,7 @@ IDs of the vector elements to the corresponding position in the vector.
 # Return type
 `Dict{UInt, UInt}`
 """
-@inline function reverseindex(v::AbstractVector{T}) where T
+@inline function reverseindex(v::AbstractVector)
     Dict{UInt, UInt}(objectid(e) => i for (i,e) in enumerate(v))
 end
 

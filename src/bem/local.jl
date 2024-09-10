@@ -161,7 +161,7 @@ struct LocalSystemMatrix{T} <: AbstractArray{T, 2}
     params::Option{T}
 end
 
-Base.size(A::LocalSystemMatrix{T}) where T = size(A.K)
+@inline Base.size(A::LocalSystemMatrix) = size(A.K)
 
 function LinearAlgebra.diag(
     A::LocalSystemMatrix{T},

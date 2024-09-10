@@ -191,7 +191,7 @@ struct NonlocalSystemMatrix{T} <: AbstractArray{T, 2}
     end
 end
 
-Base.size(A::NonlocalSystemMatrix{T}) where T = 3 .* size(A.K)
+@inline Base.size(A::NonlocalSystemMatrix) = 3 .* size(A.K)
 
 function LinearAlgebra.diag(A::NonlocalSystemMatrix{T}, k::Int = 0) where T
     k != 0 && error("diag not defined for k != 0 on ", typeof(A))
