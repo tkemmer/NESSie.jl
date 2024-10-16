@@ -16,7 +16,7 @@ Preconditioners = "af69fa37-3177-5a40-98ee-561f696e4fcd"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 
 [compat]
-Aqua = "0.8"
+Aqua = "0.8.9"
 Distances = "0.7, 0.8, 0.9, 0.10"
 ImplicitArrays = "0.2"
 IterativeSolvers = "0.8, 0.9"
