@@ -162,7 +162,7 @@ function Base.:*(
     x  ::AbstractVector{T}
 ) where T
     dst = zeros(T, size(A, 1))
-    Threads.@threads for i in 1:size(A, 1)
+    Threads.@threads :static for i in 1:size(A, 1)
         s = zero(T)
         for j in 1:size(A, 2)
             s += A[i, j] * x[j]
@@ -178,7 +178,7 @@ function Base.:*(
 ) where T
     m, n, p = (size(A)..., size(B, 2))
     dst = zeros(T, m, p)
-    Threads.@threads for i in 1:m
+    Threads.@threads :static for i in 1:m
         for k in 1:p
             s = zero(T)
             for j in 1:n
