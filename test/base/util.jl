@@ -174,28 +174,6 @@
         end
     end
 
-    @testset "unpack" begin
-        using NESSie: unpack
-
-        for T in testtypes
-            d = unpack(Vector{T}[])
-            @test typeof(d) == Vector{T}
-            @test d == []
-            d = unpack(Vector{T}[T[1], T[2], T[3]])
-            @test typeof(d) == Vector{T}
-            @test d == [1, 2, 3]
-            d = unpack(Vector{T}[T[1, 2], T[3, 4]])
-            @test typeof(d) == Vector{T}
-            @test d == [1, 2, 3, 4]
-            d = unpack(Vector{T}[T[1, 2, 3], T[4, 5, 6]])
-            @test typeof(d) == Vector{T}
-            @test d == [1, 2, 3, 4, 5, 6]
-            d = unpack(Vector{T}[T[1, 2, 3, 4, 5, 6]])
-            @test typeof(d) == Vector{T}
-            @test d == [1, 2, 3, 4, 5, 6]
-        end
-    end
-
     @testset "vertexnormals" begin
         using NESSie: vertexnormals
 

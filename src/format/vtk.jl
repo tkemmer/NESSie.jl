@@ -52,7 +52,7 @@ function writevtk(
     set_attribute(xpoints, "type", "$T")
     set_attribute(xpoints, "NumberOfComponents", "3")
     set_attribute(xpoints, "format", "ascii")
-    add_text(xpoints, join(unpack(model.nodes), " "))
+    add_text(xpoints, join(Iterators.flatten(model.nodes), " "))
 
     # Polys
     xpolys = new_child(xpiece, "Polys")
@@ -63,7 +63,7 @@ function writevtk(
     set_attribute(xconn, "Name", "connectivity")
     set_attribute(xconn, "format", "ascii")
     add_text(xconn, join([revidx[n]-1 for n in
-        unpack([Vector{T}[o.v1, o.v2, o.v3] for o in model.elements])], " "))
+        Iterators.flatten(Vector{T}[o.v1, o.v2, o.v3] for o in model.elements)], " "))
 
     # Polys/offsets
     xoffs = new_child(xpolys, "DataArray")
@@ -98,7 +98,7 @@ function writevtk(
     set_attribute(xpoints, "type", "$T")
     set_attribute(xpoints, "NumberOfComponents", "3")
     set_attribute(xpoints, "format", "ascii")
-    add_text(xpoints, join(unpack(model.nodes), " "))
+    add_text(xpoints, join(Iterators.flatten(model.nodes), " "))
 
     # Cells
     xcells = new_child(xpiece, "Cells")
@@ -109,7 +109,7 @@ function writevtk(
     set_attribute(xconn, "Name", "connectivity")
     set_attribute(xconn, "format", "ascii")
     add_text(xconn, join([revidx[n]-1 for n in
-        unpack([Vector{T}[o.v1, o.v2, o.v3, o.v4] for o in model.elements])], " "))
+        Iterators.flatten(Vector{T}[o.v1, o.v2, o.v3, o.v4] for o in model.elements)], " "))
 
     # Cells/offsets
     xoffs = new_child(xcells, "DataArray")

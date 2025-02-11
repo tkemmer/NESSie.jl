@@ -81,30 +81,6 @@ end
 
 # =========================================================================================
 """
-    unpack(data::Vector{Vector{T}})
-
-Unpacks the given vector of vectors into a single vector.
-
-# Return type
-`Vector{T}`
-
-# Example
-
-```jldoctest; setup = :(using NESSie: unpack)
-julia> unpack([[1, 2], [3]])
-3-element Vector{Int64}:
- 1
- 2
- 3
-```
-"""
-@inline function unpack(data::AbstractVector{Vector{T}}) where T
-    collect(T, x for y in data for x in y)
-end
-
-
-# =========================================================================================
-"""
     vertexnormals(model::Model{T, Triangle{T}})
 
 Returns a vector containing the normal vectors of the given model's triangles.

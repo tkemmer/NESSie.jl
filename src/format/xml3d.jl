@@ -33,7 +33,7 @@ function writexml3d_json(
         "data" => Dict(
             "position" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(nodes))]
+                "seq" => [Dict{String, Vector{Float64}}("value" => collect(T, Iterators.flatten(nodes)))]
             )
         )
     ))
@@ -53,18 +53,20 @@ function writexml3d_json(
                 "type" => "int",
                 "seq" => [Dict{String, Vector{Int}}(
                             "value" => [revidx[n]-1 for n
-                                in unpack([Vector{T}[o.v1, o.v2, o.v3] for o
-                                in model.elements])]
+                                in Iterators.flatten(Vector{T}[o.v1, o.v2, o.v3] for o
+                                in model.elements)]
                           )]
             ),
             "position" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(model.nodes))]
+                "seq" => [Dict{String, Vector{Float64}}(
+                            "value" => collect(T, Iterators.flatten(model.nodes))
+                          )]
             ),
             "normal" => Dict(
                 "type" => "float3",
                 "seq" => [Dict{String, Vector{Float64}}(
-                            "value" => unpack(vertexnormals(model))
+                            "value" => collect(T, Iterators.flatten(vertexnormals(model)))
                           )]
             )
         )
@@ -116,7 +118,7 @@ function writexml3d_xml(
     set_attribute(xmesh, "id", "mesh")
     xpos = new_child(xmesh, "float3")
     set_attribute(xpos, "name", "position")
-    add_text(xpos, join(unpack(nodes), " "))
+    add_text(xpos, join(Iterators.flatten(nodes), " "))
     println(stream, string(xdoc))
     nothing
 end

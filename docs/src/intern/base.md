@@ -26,6 +26,5 @@
     distance
     isdegenerate
     props
-    unpack
     vertexnormals
 ```
