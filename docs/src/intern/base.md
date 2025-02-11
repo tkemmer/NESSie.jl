@@ -19,6 +19,7 @@ Pages = ["base.md"]
 # [Utility functions](@id int-util-base)
 ```@docs
     _cos
+    _data_path
     _dot
     _norm
     _pluseye!

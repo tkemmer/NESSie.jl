@@ -419,6 +419,21 @@ end
 
 
 # =========================================================================================
+"""
+    _data_path(parts::String...)
+
+Returns the absolute path to NESSie's "data" directory, if used without arguments, or to
+the location relative to that, specified by `parts` (e.g., a directory within "data").
+
+# Return type
+`String`
+"""
+@inline function _data_path(parts::String...)
+    normpath(joinpath(Base.pkgdir(NESSie), "data", parts...))
+end
+
+
+# =========================================================================================
 # Convenience aliases
 
 const _axpy! = BLAS.axpy!

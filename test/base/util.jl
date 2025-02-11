@@ -301,6 +301,7 @@
         end
     end
 
+    @test_skip _data_path
     @test_skip _sign
     @test_skip cathetus
     @test_skip ddot
