@@ -3,6 +3,12 @@
 
     using NESSie.TestModel
 
+    @testset "defaultopt" begin
+        for T in testtypes
+            @test typeof(defaultopt(BornIon{T})) == Option{T}
+        end
+    end
+
     @testset "bornion" begin
         for T in testtypes
             @test typeof(bornion("Na", T)) == BornIon{T}

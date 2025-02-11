@@ -1,8 +1,9 @@
 # =========================================================================================
 """
-    struct BornIon{T <: AbstractFloat}
-        charge::Charge{T}  # point charge at the sphere's center
-        radius::T          # sphere radius in Å
+    mutable struct BornIon{T <: AbstractFloat}
+        charge::Charge{T}                          # point charge at the sphere center
+        radius::T                                  # sphere radius in Å
+        params::Option{T} = defaultopt(BornIon{T}) # system constants
     end
 
 Single Born ion, that is, a monoatomic ion represented as a spherically symmetric domain
@@ -10,17 +11,56 @@ with a single point charge located at its center (``ε_Ω = 1``).
 
 ## Special constructors
 
-    BornIon(charge::T, radius::T)
+    BornIon(charge::T, radius::T, params::Option{T} = defaultopt(BornIon{T}))
 
 Centers the sphere at ``(0, 0, 0)^T``.
 """
-@auto_hash_equals struct BornIon{T <: AbstractFloat}
+@auto_hash_equals mutable struct BornIon{T <: AbstractFloat}
     """Point charge at the sphere's center"""
     charge::Charge{T}
     """Sphere radius in Å"""
     radius::T
+    """System constants"""
+    params::Option{T}
+
+    @inline function BornIon{T}(
+        charge::Charge{T},
+        radius::T,
+        params::Option{T} = defaultopt(BornIon{T})
+    ) where T
+        new(charge, radius, params)
+    end
 end
-@inline BornIon(charge::T, radius::T) where T = BornIon(Charge(T[0, 0, 0], charge), radius)
+
+@inline BornIon(
+    charge::T,
+    radius::T,
+    params::Option{T} = defaultopt(BornIon{T})
+) where T = BornIon{T}(Charge(T[0, 0, 0], charge), radius, params)
+
+
+# =========================================================================================
+@doc raw"""
+    defaultopt(::Type{BornIon{T}})
+
+Default system parameters for vacuum-like systems in water.
+
+# Return type
+[`Option{T}`](@ref)
+
+# Default values
+ * ``ε_Ω = 1``
+ * ``ε_Σ = 78``
+ * ``ε_∞ = 1.8``
+ * ``λ = 20 Å``
+""" defaultopt
+for T in [:Float64, :Float32]
+    varname = Symbol("_defaultopt_born_", T)
+    @eval begin
+        const $(varname) = Option($(T)[1, 78, 1.8, 20]...)
+        @inline NESSie.defaultopt(::Type{BornIon{$(T)}}) = $(varname)
+    end
+end
 
 
 # =========================================================================================
