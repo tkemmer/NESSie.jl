@@ -127,43 +127,42 @@ end
 
 # =========================================================================================
 """
-    pluseye!(
+    _pluseye!(
         m::AbstractMatrix{T},
-        α::Number=one(T)
+        α::T=one(T)
     )
 
 Adds `α` to all diagonal elements of matrix `m`.
 
 # Return type
-`Void`
+`AbstractMatrix{T}`
 
 # Example
-```jldoctest; setup = :(using NESSie: pluseye!)
+```jldoctest; setup = :(using NESSie: _pluseye!)
 julia> m = 2 * ones(2, 2)
 2×2 Matrix{Float64}:
  2.0  2.0
  2.0  2.0
 
-julia> pluseye!(m); m
+julia> _pluseye!(m)
 2×2 Matrix{Float64}:
  3.0  2.0
  2.0  3.0
 
-julia> pluseye!(m, 2); m
+julia> _pluseye!(m, 2.0)
 2×2 Matrix{Float64}:
  5.0  2.0
  2.0  5.0
 ```
 """
-function pluseye!(
+@inline function _pluseye!(
         m::AbstractMatrix{T},
-        α::Number=one(T)
+        α::T=one(T)
     ) where T
-    α = convert(T, α)
     @inbounds for i in 1:min(size(m)...)
         m[i, i] += α
     end
-    nothing
+    m
 end
 
 

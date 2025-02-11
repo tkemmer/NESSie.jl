@@ -93,16 +93,16 @@
         end
     end
 
-    @testset "pluseye!" begin
-        using NESSie: pluseye!
+    @testset "_pluseye!" begin
+        using NESSie: _pluseye!
 
         for T in (Int, testtypes...)
             m = -ones(T, 3, 3)
-            pluseye!(m)
+            @test _pluseye!(m) === m
             @test typeof(m) == Array{T, 2}
             @test size(m) == (3, 3)
             @test m == [0 -1 -1; -1 0 -1; -1 -1 0]
-            pluseye!(m, 2)
+            @test _pluseye!(m, T(2)) === m
             @test typeof(m) == Array{T, 2}
             @test size(m) == (3, 3)
             @test m == [2 -1 -1; -1 2 -1; -1 -1 2]

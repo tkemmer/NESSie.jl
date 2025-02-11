@@ -54,9 +54,9 @@ function _solve_explicit(
     # initialize the system matrix;
     # since all other components of the system matrix will be premultiplied by 4π,
     # do the same for σ here
-    pluseye!(m11, T(4π * σ))
-    pluseye!(m21, T(4π * σ))
-    pluseye!(m33, T(4π * σ))
+    _pluseye!(m11, T(4π * σ))
+    _pluseye!(m21, T(4π * σ))
+    _pluseye!(m33, T(4π * σ))
 
     # compute molecular potential for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ

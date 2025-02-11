@@ -17,6 +17,7 @@
     _cos
     _dot
     _norm
+    _pluseye!
     _reverseindex
     _seek
     _sign
@@ -24,7 +25,6 @@
     ddot
     distance
     isdegenerate
-    pluseye!
     props
     unpack
     vertexnormals

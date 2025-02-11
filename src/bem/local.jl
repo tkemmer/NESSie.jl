@@ -100,7 +100,7 @@ function _solve_explicit(
     # Mᵤ = (1 + εΩ/εΣ) ⋅ σ;
     # since all other components of the system matrix will be premultiplied by 4π,
     # do the same for σ here
-    pluseye!(m, (1 + εΩ/εΣ) * T(4π * σ))
+    _pluseye!(m, (1 + εΩ/εΣ) * T(4π * σ))
 
     #=
         generate and apply V
@@ -121,7 +121,7 @@ function _solve_explicit(
 
     # bᵤ = (K - σ) ⋅ umol
     # again, we apply a prefactor of 4π to σ to match the other components of the vector
-    pluseye!(k, -T(4π * σ))
+    _pluseye!(k, -T(4π * σ))
     _gemv!(one(T), k, umol, b)
 
     #=
@@ -133,7 +133,7 @@ function _solve_explicit(
 
     # b_q = (σ + K) ⋅ u
     fill!(b, zero(T))
-    pluseye!(k, T(8π * σ)) # meh...
+    _pluseye!(k, T(8π * σ)) # meh...
     _gemv!(one(T), k, u, b)
 
     #=
