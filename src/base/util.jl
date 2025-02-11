@@ -127,46 +127,6 @@ end
 
 # =========================================================================================
 """
-    eye!(
-        m::AbstractMatrix{T},
-        α::Number=one(T)
-    )
-
-Initializes the given matrix `m` with `αI`, with `I` being an identity matrix with the same
-dimensions as `m`.
-
-# Return type
-`Void`
-
-# Example
-```jldoctest; setup = :(using NESSie: eye!)
-julia> m = 2 * ones(2, 2)
-2×2 Matrix{Float64}:
- 2.0  2.0
- 2.0  2.0
-
-julia> eye!(m); m
-2×2 Matrix{Float64}:
- 1.0  0.0
- 0.0  1.0
-
-julia> eye!(m, 2); m
-2×2 Matrix{Float64}:
- 2.0  0.0
- 0.0  2.0
-```
-"""
-@inline function eye!(
-        m::AbstractMatrix{T},
-        α::Number=one(T)
-    ) where T
-    fill!(m, zero(T))
-    pluseye!(m, α)
-end
-
-
-# =========================================================================================
-"""
     pluseye!(
         m::AbstractMatrix{T},
         α::Number=one(T)

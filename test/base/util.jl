@@ -93,8 +93,8 @@
         end
     end
 
-    @testset "eye! and pluseye!" begin
-        using NESSie: eye!, pluseye!
+    @testset "pluseye!" begin
+        using NESSie: pluseye!
 
         for T in (Int, testtypes...)
             m = -ones(T, 3, 3)
@@ -106,32 +106,6 @@
             @test typeof(m) == Array{T, 2}
             @test size(m) == (3, 3)
             @test m == [2 -1 -1; -1 2 -1; -1 -1 2]
-            eye!(m)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (3, 3)
-            @test m == [1 0 0; 0 1 0; 0 0 1]
-            eye!(m, 2)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (3, 3)
-            @test m == [2 0 0; 0 2 0; 0 0 2]
-            m = zeros(T, 2, 3)
-            eye!(m)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (2, 3)
-            @test m == [1 0 0; 0 1 0]
-            eye!(m, 2)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (2, 3)
-            @test m == [2 0 0; 0 2 0]
-            m = zeros(T, 3, 2)
-            eye!(m)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (3, 2)
-            @test m == [1 0; 0 1; 0 0]
-            eye!(m, 2)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (3, 2)
-            @test m == [2 0; 0 2; 0 0]
         end
     end
 

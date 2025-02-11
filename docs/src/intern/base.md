@@ -23,7 +23,6 @@
     cathetus
     ddot
     distance
-    eye!
     isdegenerate
     pluseye!
     props
