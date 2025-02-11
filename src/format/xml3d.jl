@@ -44,7 +44,7 @@ function writexml3d_json(
         stream::IOStream,
         model ::Model{T, Triangle{T}}
     ) where T
-    revidx = reverseindex(model.nodes)
+    revidx = _reverseindex(model.nodes)
     JSON3.write(stream, Dict(
         "format" => "xml3d-json",
         "version" => "0.4.0",
@@ -52,7 +52,7 @@ function writexml3d_json(
             "index" => Dict(
                 "type" => "int",
                 "seq" => [Dict{String, Vector{Int}}(
-                            "value" => [revidx[objectid(n)]-1 for n
+                            "value" => [revidx[n]-1 for n
                                 in unpack([Vector{T}[o.v1, o.v2, o.v3] for o
                                 in model.elements])]
                           )]

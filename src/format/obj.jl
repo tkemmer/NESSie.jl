@@ -37,12 +37,12 @@ function writeobj(
         println(stream, "vn ", vn[1], " ", vn[2], " ", vn[3])
     end
     # elements
-    ridx = reverseindex(model.nodes)
+    ridx = _reverseindex(model.nodes)
     for elm in model.elements
         print(stream, "f ")
-        print(stream, ridx[objectid(elm.v1)], "//", ridx[objectid(elm.v1)], " ")
-        print(stream, ridx[objectid(elm.v2)], "//", ridx[objectid(elm.v2)], " ")
-        println(stream, ridx[objectid(elm.v3)], "//", ridx[objectid(elm.v3)])
+        print(stream, ridx[elm.v1], "//", ridx[elm.v1], " ")
+        print(stream, ridx[elm.v2], "//", ridx[elm.v2], " ")
+        println(stream, ridx[elm.v3], "//", ridx[elm.v3])
     end
 end
 

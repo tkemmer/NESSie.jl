@@ -113,11 +113,11 @@ Returns a vector containing the normal vectors of the given model's triangles.
 `Vector{Vector{T}}`
 """
 function vertexnormals(model::Model{T, Triangle{T}}) where T
-    revidx = reverseindex(model.nodes)
+    revidx = _reverseindex(model.nodes)
     normals = Vector{T}[zeros(T, 3) for _ in 1:length(model.nodes)]
     count = zeros(T, length(model.nodes))
     @inbounds for elem in model.elements, node in (elem.v1, elem.v2, elem.v3)
-        idx = revidx[objectid(node)]
+        idx = revidx[node]
         count[idx] += 1
         normals[idx] .+= (elem.normal .- normals[idx]) ./ count[idx]
     end
@@ -404,16 +404,16 @@ end
 
 # =========================================================================================
 """
-    reverseindex(v::AbstractVector{T})
+    _reverseindex(v::AbstractVector{T})
 
 Creates a reverse index for the given vector `v`, that is, a dictionary linking the object
 IDs of the vector elements to the corresponding position in the vector.
 
 # Return type
-`Dict{UInt, UInt}`
+`IdDict`
 """
-@inline function reverseindex(v::AbstractVector)
-    Dict{UInt, UInt}(objectid(e) => i for (i,e) in enumerate(v))
+@inline function _reverseindex(v::AbstractVector)
+    IdDict(n => i for (i, n) in enumerate(v))
 end
 
 

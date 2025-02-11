@@ -175,28 +175,28 @@
         end
     end
 
-    @testset "reverseindex" begin
-        using NESSie: reverseindex
+    @testset "_reverseindex" begin
+        using NESSie: _reverseindex
 
         for T in testtypes
             v1 = T[1, 2, 3]
             v2 = T[4, 5, 6]
             v3 = T[7, 8, 9]
-            d = reverseindex(Vector{T}[])
-            @test typeof(d) == Dict{UInt, UInt}
-            @test d == Dict()
-            d = reverseindex(Vector{T}[v1, v2, v3])
-            @test typeof(d) == Dict{UInt, UInt}
+            d = _reverseindex(Vector{T}[])
+            @test typeof(d) == IdDict{Vector{T}, Int}
+            @test d == IdDict()
+            d = _reverseindex(Vector{T}[v1, v2, v3])
+            @test typeof(d) == IdDict{Vector{T}, Int}
             @test length(d) == 3
-            @test d[objectid(v1)] == 1
-            @test d[objectid(v2)] == 2
-            @test d[objectid(v3)] == 3
-            d = reverseindex(Vector{T}[v1, v1, v2])
-            @test typeof(d) == Dict{UInt, UInt}
+            @test d[v1] == 1
+            @test d[v2] == 2
+            @test d[v3] == 3
+            d = _reverseindex(Vector{T}[v1, v1, v2])
+            @test typeof(d) == IdDict{Vector{T}, Int}
             @test length(d) == 2
-            @test d[objectid(v1)] == 2
-            @test d[objectid(v2)] == 3
-            @test_throws KeyError d[objectid(v3)]
+            @test d[v1] == 2
+            @test d[v2] == 3
+            @test_throws KeyError d[v3]
         end
     end
 

@@ -5,7 +5,7 @@ import GeometryBasics
 using NESSie
 
 function GeometryBasics.mesh(model::Model{T, Triangle{T}}) where T
-    ridx = IdDict(n => i for (i, n) in enumerate(model.nodes))
+    ridx = NESSie._reverseindex(model.nodes)
 
     points = GeometryBasics.Point{3, T}.(model.nodes)
     faces = [

@@ -17,6 +17,7 @@
     _cos
     _dot
     _norm
+    _reverseindex
     _seek
     _sign
     cathetus
@@ -26,7 +27,6 @@
     isdegenerate
     pluseye!
     props
-    reverseindex
     unpack
     vertexnormals
 ```
