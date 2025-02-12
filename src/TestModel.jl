@@ -28,4 +28,7 @@ export NonlocalXieModel1
 
 include("testmodel/xie/potentials.jl")
 
+# deprecations
+include("testmodel/deprecation.jl")
+
 end # module

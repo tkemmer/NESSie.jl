@@ -3,8 +3,7 @@
     φΩ(
            ::Type{<: LocalityType},
         ξ  ::Vector{T},
-        ion::BornIon{T},
-        opt::Option{T} = defaultopt(T)
+        ion::BornIon{T}
     )
 
 Computes the interior local or nonlocal electrostatic potential ``φ_Ω`` for the given
@@ -22,19 +21,18 @@ observation point ``ξ``.
 function NESSie.φΩ(
         ::Type{LocalES},
         ξ::Vector{T},
-        ion::BornIon{T},
-        opt::Option{T}=defaultopt(T)
+        ion::BornIon{T}
     ) where T
     potprefactor(T) * ion.charge.val *
-        (1/euclidean(ion.charge.pos, ξ) + 1/ion.radius * (1/opt.εΣ - 1))
+        (1/euclidean(ion.charge.pos, ξ) + 1/ion.radius * (1/ion.params.εΣ - 1))
 end
 
 function NESSie.φΩ(
         ::Type{NonlocalES},
         ξ::Vector{T},
-        ion::BornIon{T},
-        opt::Option{T}=defaultopt(T)
+        ion::BornIon{T}
     ) where T
+    opt = ion.params
     r = euclidean(ion.charge.pos, ξ)
     ν = sqrt(opt.εΣ/opt.ε∞) * ion.radius / opt.λ
     potprefactor(T) * ion.charge.val * (1/r + 1/ion.radius/opt.εΣ *
@@ -47,8 +45,7 @@ end
     φΣ(
            ::Type{<: LocalityType},
         ξ  ::Vector{T},
-        ion::BornIon{T},
-        opt::Option{T} = defaultopt(T)
+        ion::BornIon{T}
     )
 
 Computes the exterior local or nonlocal electrostatic potential ``φ_Σ`` for the given
@@ -66,18 +63,17 @@ observation point ``ξ``.
 function NESSie.φΣ(
         ::Type{LocalES},
         ξ::Vector{T},
-        ion::BornIon{T},
-        opt::Option{T}=defaultopt(T)
+        ion::BornIon{T}
     ) where T
-    potprefactor(T) * ion.charge.val / opt.εΣ / euclidean(ion.charge.pos, ξ)
+    potprefactor(T) * ion.charge.val / ion.params.εΣ / euclidean(ion.charge.pos, ξ)
 end
 
 function NESSie.φΣ(
         ::Type{NonlocalES},
         ξ::Vector{T},
-        ion::BornIon{T},
-        opt::Option{T}=defaultopt(T)
+        ion::BornIon{T}
     ) where T
+    opt = ion.params
     r = euclidean(ion.charge.pos, ξ)
     ν = sqrt(opt.εΣ/opt.ε∞) * ion.radius / opt.λ
     potprefactor(T) * ion.charge.val / opt.εΣ /
