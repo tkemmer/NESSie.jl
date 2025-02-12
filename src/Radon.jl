@@ -254,7 +254,7 @@ to use the shorthand signature `regularyukawacoll` instead.
  * `yukawa` [Exponent](@ref int-constants) of the Yukawa operator's fundamental solution
 
 # Return type
-`Void`
+`T`
 """
 function radoncoll(
         ξ       ::AbstractVector{T},
@@ -368,7 +368,7 @@ triangle and observation point `ξ`.
  * `yukawa` [Exponent](@ref int-constants) of the Yukawa operator's fundamental solution
 
 # Return type
-`Void`
+`T`
 """
 @inline regularyukawacoll(
           ::Type{SingleLayer},

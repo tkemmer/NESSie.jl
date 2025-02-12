@@ -121,7 +121,7 @@ Quadrature points on a specific surface triangle, including weights.
 # Special constructors
 ```julia
 TriangleQuad(elem::Triangle{T})
-````
+```
 Computes quadrature points and weights for the given triangle.
 """
 struct TriangleQuad{T} <: ElementQuad{T}

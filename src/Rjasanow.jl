@@ -357,7 +357,7 @@ and observation point `ξ` [[Rja90]](@ref Bibliography).
     The result is premultiplied by 4π.
 
 # Return type
-`Void`
+`T`
 """
 function laplacecoll(
         ptype::Type{P},
