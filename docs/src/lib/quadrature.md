@@ -1,4 +1,7 @@
 # Quadrature
+```@meta
+    CurrentModule = NESSie
+```
 
 ## Quadrature points
 ```@docs
@@ -20,12 +23,12 @@
 
 ## Laplace potential
 ```@docs
-    NESSie.Rjasanow.laplacecoll
-    NESSie.Rjasanow.laplacecoll!
+    Rjasanow.laplacecoll
+    Rjasanow.laplacecoll!
 ```
 
 ## Yukawa potential
 ```@docs
-    NESSie.Radon.regularyukawacoll
-    NESSie.Radon.regularyukawacoll!
+    Radon.regularyukawacoll
+    Radon.regularyukawacoll!
 ```

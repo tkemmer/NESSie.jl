@@ -1,4 +1,7 @@
 # Solvers
+```@meta
+    CurrentModule = NESSie
+```
 
 ## BEM solvers
 ```@meta
