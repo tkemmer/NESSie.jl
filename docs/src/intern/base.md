@@ -3,6 +3,10 @@
     CurrentModule = NESSie
 ```
 
+```@index
+Pages = ["base.md"]
+```
+
 ## [Constants](@id int-constants)
 ```@docs
     _etol

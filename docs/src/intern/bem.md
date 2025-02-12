@@ -3,6 +3,10 @@
     CurrentModule = NESSie.BEM
 ```
 
+```@index
+Pages = ["bem.md"]
+```
+
 ## Solvers
 ``` @docs
     _get_laplace_matrices

@@ -3,6 +3,10 @@
     CurrentModule = NESSie.Rjasanow
 ```
 
+```@index
+Pages = ["rjasanow.md"]
+```
+
 ```@docs
     ObservationPosition
     InPlane

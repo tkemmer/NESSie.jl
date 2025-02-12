@@ -3,6 +3,10 @@
     CurrentModule = NESSie
 ```
 
+```@index
+Pages = ["models.md"]
+```
+
 ## Elements
 ```@docs
     Element

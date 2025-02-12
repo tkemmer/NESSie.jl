@@ -3,6 +3,10 @@
     CurrentModule = NESSie
 ```
 
+```@index
+Pages = ["electrostatics.md"]
+```
+
 ## Potential types
 ```@docs
     PotentialType

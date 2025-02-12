@@ -3,6 +3,10 @@
     CurrentModule = NESSie
 ```
 
+```@index
+Pages = ["constants.md"]
+```
+
 ## Global constants
 ```@docs
     ε0

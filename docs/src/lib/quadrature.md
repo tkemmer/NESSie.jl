@@ -3,6 +3,10 @@
     CurrentModule = NESSie
 ```
 
+```@index
+Pages = ["quadrature.md"]
+```
+
 ## Quadrature points
 ```@docs
     QuadraturePoints

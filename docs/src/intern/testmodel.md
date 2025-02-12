@@ -3,6 +3,10 @@
     CurrentModule = NESSie.TestModel
 ```
 
+```@index
+Pages = ["testmodel.md"]
+```
+
 ## [Utility functions](@id int-util-testmodel)
 ```@docs
     coefficients
