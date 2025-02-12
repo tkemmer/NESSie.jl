@@ -282,7 +282,7 @@ vector.
     The result is premultiplied by 4π.
 
 # Return type
-`Void`
+`Nothing`
 """
 function laplacecoll!(
         ptype   ::Type{P},

@@ -163,7 +163,7 @@ to use the shorthand signature `regularyukawacoll!` instead.
  * `yukawa` [Exponent](@ref int-constants) of the Yukawa operator's fundamental solution
 
 # Return type
-`Void`
+`Nothing`
 """
 function radoncoll!(
         dest    ::AbstractVector{T},
@@ -306,7 +306,7 @@ vector.
  * `yukawa` [Exponent](@ref int-constants) of the Yukawa operator's fundamental solution
 
 # Return type
-`Void`
+`Nothing`
 """
 @inline regularyukawacoll!(
             ::Type{SingleLayer},
