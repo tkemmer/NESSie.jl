@@ -3,6 +3,11 @@
 
     using NESSie.TestModel
 
+    const ion_names = [
+        "Li", "li", "Na", "na", "K", "k", "Rb", "rb", "Cs", "cs",
+        "Mg", "mg", "Ca", "ca", "Sr", "sr", "Ba", "ba"
+    ]
+
     @testset "defaultopt" begin
         for T in testtypes
             @test typeof(defaultopt(BornIon{T})) == Option{T}
@@ -10,8 +15,20 @@
     end
 
     @testset "bornion" begin
-        for T in testtypes
-            @test typeof(bornion("Na", T)) == BornIon{T}
+        for T in testtypes, name in ion_names
+            @test typeof(bornion(name, T)) == BornIon{T}
+        end
+    end
+
+    @testset "bornmodel" begin
+        for T in testtypes, name in ion_names
+            let model = bornmodel(name, T)
+                @test model isa Model{T, Triangle{T}}
+                @test !isempty(model.nodes)
+                @test !isempty(model.elements)
+                @test !isempty(model.charges)
+                @test model.params == defaultopt(BornIon{T})
+            end
         end
     end
 

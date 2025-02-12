@@ -32,6 +32,7 @@ Pages = ["models.md"]
 ```@docs
     BornIon
     bornion
+    bornmodel
     XieModel
     NonlocalXieModel1
 ```

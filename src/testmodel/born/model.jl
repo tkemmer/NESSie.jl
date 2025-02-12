@@ -103,3 +103,21 @@ for T in [:Float64, :Float32]
     end
 end
 @inline bornion(name::String) = bornion(name, Float64)
+
+
+# =========================================================================================
+"""
+    bornmodel(name::String, ::Type{Float64} = Float64)
+    bornmodel(name::String, ::Type{Float32})
+
+Returns surface models for built-in Born ions (c.f. [`bornion`](@ref)).
+
+# Return type
+[`Model{T, Triangle{T}}`](@ref)
+"""
+function bornmodel(name::String, ::Type{T} = Float64) where T
+    model = Format.readoff(_data_path("born", "$(lowercase(name)).off"), T)
+    model.charges = Format.readpqr(_data_path("born", "$(lowercase(name)).pqr"), T)
+    model.params = defaultopt(BornIon{T})
+    model
+end

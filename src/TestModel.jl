@@ -1,7 +1,7 @@
 module TestModel
 
 using ..NESSie
-using ..NESSie: _cos, _norm, ε0, ec, potprefactor
+using ..NESSie: _cos, _data_path, _norm, ε0, ec, potprefactor
 using AutoHashEquals
 using Distances: euclidean
 using LinearAlgebra: norm, rmul!
@@ -11,7 +11,7 @@ using SpecialFunctions: besseli, besselk
     Born models
 =#
 include("testmodel/born/model.jl")
-export BornIon, bornion
+export BornIon, bornion, bornmodel
 
 include("testmodel/born/potentials.jl")
 
