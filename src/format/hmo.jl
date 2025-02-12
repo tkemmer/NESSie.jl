@@ -123,7 +123,7 @@ end
 Creates a HMO file from the given surface model.
 
 # Return type
-`Void`
+`Nothing`
 
 # Alias
 

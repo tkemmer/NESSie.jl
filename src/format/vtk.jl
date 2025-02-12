@@ -17,7 +17,7 @@ type is determined by the given model:
 <https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf>
 
 # Return type
-`Void`
+`Nothing`
 
 # Alias
 

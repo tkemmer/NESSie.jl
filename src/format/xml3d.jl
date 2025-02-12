@@ -12,7 +12,7 @@ latter as point cloud) or from a given surface model.
 <https://github.com/xml3d/xml3d.js/wiki/External-resources>
 
 # Return type
-`Void`
+`Nothing`
 
 # Alias
 
@@ -94,7 +94,7 @@ as point cloud.
 <https://github.com/xml3d/xml3d.js/wiki/External-resources>
 
 # Return type
-`Void`
+`Nothing`
 
 # Alias
 

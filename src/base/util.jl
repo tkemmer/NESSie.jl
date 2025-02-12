@@ -241,7 +241,7 @@ is no such line, the stream handle will be set to EOF.
  * `skiptheline`    If true, said line will also be skipped
 
 # Return type
-`Void`
+`Nothing`
 """
 function _seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
     m = -1
