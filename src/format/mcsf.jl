@@ -17,7 +17,7 @@ Reads a volume model from the given GAMer-generated mcsf file.
  * `domain` Element domain (solute `:Ω`, solvent `:Σ`, or `:none`)
 
 # Return type
-`Model{T, Tetrahedron{T}}`
+[`Model{T, Tetrahedron{T}}`](@ref)
 
 # Aliases
 
@@ -104,7 +104,7 @@ end
 Reads all elements from the given GAMer-generated mcsf file.
 
 # Return type
-`Vector{Tetrahedron{T}}`
+[`Vector{Tetrahedron{T}}`](@ref Tetrahedron)
 """
 function readmcsf_elements(
         stream::IOStream,

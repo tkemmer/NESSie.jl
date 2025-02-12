@@ -13,7 +13,7 @@ Reads a surface model from the given MSMS-generated `.face` and `.vert` files.
     `Model` object is empty and has to be set separately.
 
 # Return type
-`Model{T, Triangle{T}}`
+[`Model{T, Triangle{T}}`](@ref)
 
 # Alias
 
@@ -76,7 +76,7 @@ end
 Reads all elements from the given MSMS-generated `.face` file.
 
 # Return type
-`Vector{Triangle{T}}`
+[`Vector{Triangle{T}}`](@ref Triangle)
 """
 function readmsms_elements(
         stream::IOStream,

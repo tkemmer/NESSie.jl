@@ -43,7 +43,7 @@ Generator function for built-in Born ions:
 | Ba   | +2     | 1.385                               |
 
 ## Return type
-`BornIon`
+[`BornIon{T}`](@ref)
 """ bornion
 for T in [:Float64, :Float32]
     varname = Symbol("bornions_", T)
