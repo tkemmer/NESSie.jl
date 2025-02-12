@@ -14,7 +14,6 @@ include("testmodel/born/model.jl")
 export BornIon, bornion
 
 include("testmodel/born/potentials.jl")
-export φΩ, φΣ
 
 #=
     Multi-charge spheres

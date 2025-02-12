@@ -19,7 +19,7 @@ observation point ``ξ``.
 !!! warning
     This function does not verify whether ξ is located inside of the sphere!
 """
-function φΩ(
+function NESSie.φΩ(
         ::Type{LocalES},
         ξ::Vector{T},
         ion::BornIon{T},
@@ -29,7 +29,7 @@ function φΩ(
         (1/euclidean(ion.charge.pos, ξ) + 1/ion.radius * (1/opt.εΣ - 1))
 end
 
-function φΩ(
+function NESSie.φΩ(
         ::Type{NonlocalES},
         ξ::Vector{T},
         ion::BornIon{T},
@@ -63,7 +63,7 @@ observation point ``ξ``.
 !!! warning
     This function does not verify whether ξ is located outside of the sphere!
 """
-function φΣ(
+function NESSie.φΣ(
         ::Type{LocalES},
         ξ::Vector{T},
         ion::BornIon{T},
@@ -72,7 +72,7 @@ function φΣ(
     potprefactor(T) * ion.charge.val / opt.εΣ / euclidean(ion.charge.pos, ξ)
 end
 
-function φΣ(
+function NESSie.φΣ(
         ::Type{NonlocalES},
         ξ::Vector{T},
         ion::BornIon{T},

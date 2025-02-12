@@ -14,7 +14,7 @@ where ``φ^*`` is the reaction field and ``ρ`` is the corresponding charge dist
 # Return type
 `T`
 """
-function rfenergy(bem::R) where {T, R <: BEMResult{T}}
+function NESSie.rfenergy(bem::R) where {T, R <: BEMResult{T}}
     qposs = [charge.pos for charge in bem.model.charges]
     qvals = [charge.val for charge in bem.model.charges]
 
@@ -62,7 +62,7 @@ of observation points `Ξ`.
 # Return type
 `Vector{T}`
 """
-function φΩ(
+function NESSie.φΩ(
         Ξ         ::Vector{Vector{T}},
         bem       ::R
     ) where {T, R <: BEMResult{T}}
@@ -113,7 +113,7 @@ of observation points `Ξ`.
 # Return type
 `Vector{T}`
 """
-function φΣ(
+function NESSie.φΣ(
         Ξ         ::Vector{Vector{T}},
         bem       ::LocalBEMResult{T}
     ) where T
@@ -142,7 +142,7 @@ function φΣ(
     φ
 end
 
-function φΣ(
+function NESSie.φΣ(
         Ξ         ::Vector{Vector{T}},
         bem       ::NonlocalBEMResult{T}
     ) where T

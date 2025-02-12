@@ -20,7 +20,7 @@ export meshunion, obspoints_line, obspoints_plane
 
 include("base/potentials.jl")
 export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES, φmol,
-    ∂ₙφmol, ∇φmol
+    ∂ₙφmol, ∇φmol, φΩ, φΣ
 
 # Submodules
 include("Format.jl")

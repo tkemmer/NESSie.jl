@@ -17,7 +17,7 @@ point ``ξ``.
 !!! warning
     This function does not verify whether ξ is located inside of the sphere!
 """
-function φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
+function NESSie.φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     a  = model.radius
     λ  = model.params.λ
     εΩ = model.params.εΩ
@@ -75,7 +75,7 @@ point ``ξ``.
 !!! warning
     This function does not verify whether ξ is located outside of the sphere!
 """
-function φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
+function NESSie.φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     a  = model.radius
     λ  = model.params.λ
     εΣ = model.params.εΣ

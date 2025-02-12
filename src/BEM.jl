@@ -10,7 +10,7 @@ using IterativeSolvers: gmres
 using LinearAlgebra
 using Preconditioners: DiagonalPreconditioner
 
-export BEMResult, LocalBEMResult, NonlocalBEMResult, rfenergy, solve, φΩ, φΣ
+export BEMResult, LocalBEMResult, NonlocalBEMResult, solve
 
 """
     abstract type BEMResult{T, E <: SurfaceElement{T}} end

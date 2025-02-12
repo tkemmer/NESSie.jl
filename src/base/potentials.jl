@@ -174,3 +174,8 @@ end
     ) where T
     [∇φmol(ξ, charges) for ξ in Ξ]
 end
+
+# Function stubs for potentials in submodules
+function φΣ end
+function φΩ end
+function rfenergy end

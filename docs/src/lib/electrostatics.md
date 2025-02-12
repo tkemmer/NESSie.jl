@@ -32,18 +32,16 @@ Pages = ["electrostatics.md"]
 
 ### Interior potentials
 ```@docs
-    BEM.φΩ
-    TestModel.φΩ
+    φΩ
 ```
 
 
 ### Exterior potentials
 ```@docs
-    BEM.φΣ
-    TestModel.φΣ
+    φΣ
 ```
 
-## Energies
+### Reaction field potentials
 ```@docs
-    BEM.rfenergy
+    rfenergy
 ```
