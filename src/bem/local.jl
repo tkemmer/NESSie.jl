@@ -33,7 +33,7 @@ end
 Computes the full local or nonlocal cauchy data on the surface of the given biomolecule.
 
 # Return type
-`LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
+[`LocalBEMResult{T, Triangle{T}}`](@ref) or [`NonlocalBEMResult{T, Triangle{T}}`](@ref)
 
 # Supported keyword arguments
  - `method::Symbol = :gmres`
@@ -70,7 +70,7 @@ Computes the full local or nonlocal cauchy data on the surface of the biomolecul
 *explicit* representation of the BEM system.
 
 # Return type
-`LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
+[`LocalBEMResult{T, Triangle{T}}`](@ref) or [`NonlocalBEMResult{T, Triangle{T}}`](@ref)
 """
 function _solve_explicit(
          ::Type{LocalES},
@@ -199,7 +199,7 @@ Computes the full local or nonlocal cauchy data on the surface of the biomolecul
 *implicit* representation of the BEM system.
 
 # Return type
-`LocalBEMResult{T, Triangle{T}}` or `NonlocalBEMResult{T, Triangle{T}}`
+[`LocalBEMResult{T, Triangle{T}}`](@ref) or [`NonlocalBEMResult{T, Triangle{T}}`](@ref)
 """
 function _solve_implicit(
          ::Type{LocalES},

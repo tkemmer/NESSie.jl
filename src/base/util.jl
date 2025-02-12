@@ -11,7 +11,7 @@ and area. Returns the completely initialized Triangle as a copy.
     The given triangle remains unchanged!
 
 # Return type
-`Triangle`
+[`Triangle`](@ref)
 """
 function props(elem::Triangle)
     # reject degenerate triangles
@@ -47,7 +47,7 @@ Merges two volume models, e.g., the models of a protein and the solvent. Duplica
 and charges (if any) are retained as well as the system constants of the first model.
 
 # Return type
-`Model{T, Tetrahedron{T}}`
+[`Model{T, Tetrahedron{T}}`](@ref)
 
 !!! note
     This function assumes that there are no duplicates within either of the node lists!

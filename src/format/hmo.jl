@@ -8,7 +8,7 @@
 Reads a complete surface model from the given HMO file.
 
 # Return type
-`Model{T, Triangle{T}}`
+[`Model{T, Triangle{T}}`](@ref)
 
 # Alias
 
@@ -69,7 +69,7 @@ end
 Reads all elements from the given HMO file.
 
 # Return type
-`Vector{Triangle{T}}`
+[`Vector{Triangle{T}}`](@ref Triangle)
 """
 function readhmo_elements(
         stream::IOStream,
@@ -96,7 +96,7 @@ end
 Reads all charges from the given HMO file.
 
 # Return type
-`Vector{Charge{T}}`
+[`Vector{Charge{T}}`](@ref Charge)
 """
 function readhmo_charges(
         stream::IOStream,

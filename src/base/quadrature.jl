@@ -68,7 +68,7 @@ Generator function for quadrature points:
  * *Tetrahedra*: 5 points per element [[Kea86]](@ref Bibliography)
 
 # Return type
-`QuadPts2D` or `QuadPts3D`
+[`QuadPts2D`](@ref) or [`QuadPts3D`](@ref)
 """ quadraturepoints
 for T in [:Float64, :Float32]
     varname = Symbol("triquadpts_", T)

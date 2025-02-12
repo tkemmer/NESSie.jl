@@ -68,7 +68,7 @@ located at 80% `radius` distance from the origin.
    the results to the reference.
 
 # Return type
-`Vector{Charge{T}}`
+[`Vector{Charge{T}}`](@ref Charge)
 """
 function scalemodel(
         charges::Vector{Charge{T}},

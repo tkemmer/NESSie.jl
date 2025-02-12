@@ -11,7 +11,7 @@ Reads a charge model from the given PQR file.
 <https://pdb2pqr.readthedocs.io/en/latest/formats/pqr.html>
 
 # Return type
-`Vector{Charge{T}}`
+[`Vector{Charge{T}}`](@ref Charge)
 
 # Alias
 
