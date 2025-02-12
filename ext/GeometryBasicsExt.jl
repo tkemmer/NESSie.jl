@@ -4,6 +4,16 @@ import GeometryBasics
 
 using NESSie
 
+"""
+    GeometryBasics.mesh(model::Model{T, Triangle{T}})
+
+Converts the given model into a GeometryBasics.jl-compatible mesh, e.g., for visualization
+through [Makie.jl](https://docs.makie.org/stable/reference/plots/mesh).
+
+# Return type
+[`GeometryBasics.Mesh`]
+(https://juliageometry.github.io/GeometryBasics.jl/stable/meshes/#GeometryBasics.Mesh-meshes)
+"""
 function GeometryBasics.mesh(model::Model{T, Triangle{T}}) where T
     ridx = NESSie._reverseindex(model.nodes)
 

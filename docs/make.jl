@@ -1,4 +1,4 @@
-using Documenter, NESSie
+using Documenter, GeometryBasics, NESSie
 
 const pages = [
     "Home" => "index.md",
@@ -25,7 +25,13 @@ const pages = [
 ]
 
 makedocs(
-    modules   = [NESSie, NESSie.BEM, NESSie.Format, NESSie.TestModel],
+    modules   = [
+        NESSie,
+        NESSie.BEM,
+        NESSie.Format,
+        NESSie.TestModel,
+        Base.get_extension(NESSie, :GeometryBasicsExt)
+    ],
     clean     = true,
     doctest   = true,
     linkcheck = true,
