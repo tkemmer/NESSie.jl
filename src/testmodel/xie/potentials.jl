@@ -14,6 +14,11 @@ point ``ξ``.
 # Return type
 `T`
 
+## Alias
+    φΩ(Ξ::Vector{Vector{T}}, model::NonlocalXieModel1{T})
+
+Computes the potentials for all observation points ``ξ \\in Ξ``.
+
 !!! warning
     This function does not verify whether ξ is located inside of the sphere!
 """
@@ -55,6 +60,10 @@ function NESSie.φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     (φ + φmol(ξ, model.charges) / 4π / εΩ) * T(ec/ε0)
 end
 
+@inline function NESSie.φΩ(Ξ, model::NonlocalXieModel1)
+    φΩ.(Ξ, Ref(model))
+end
+
 
 # =========================================================================================
 """
@@ -71,6 +80,11 @@ point ``ξ``.
 
 # Return type
 `T`
+
+## Alias
+    φΣ(Ξ::Vector{Vector{T}}, model::NonlocalXieModel1{T})
+
+Computes the potentials for all observation points ``ξ \\in Ξ``.
 
 !!! warning
     This function does not verify whether ξ is located outside of the sphere!
@@ -109,4 +123,8 @@ function NESSie.φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     end
 
     φ * T(ec/ε0)
+end
+
+@inline function NESSie.φΣ(Ξ, model::NonlocalXieModel1)
+    φΣ.(Ξ, Ref(model))
 end

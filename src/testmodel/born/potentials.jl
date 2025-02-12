@@ -1,10 +1,6 @@
 # =========================================================================================
 """
-    φΩ(
-           ::Type{<: LocalityType},
-        ξ  ::Vector{T},
-        ion::BornIon{T}
-    )
+    φΩ(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
 
 Computes the interior local or nonlocal electrostatic potential ``φ_Ω`` for the given
 observation point ``ξ``.
@@ -14,6 +10,11 @@ observation point ``ξ``.
 
 ## Return type
 `T`
+
+## Alias
+    φΩ(::Type{<: LocalityType}, Ξ::Vector{Vector{T}}, ion::BornIon{T})
+
+Computes the potentials for all observation points ``ξ \\in Ξ``.
 
 !!! warning
     This function does not verify whether ξ is located inside of the sphere!
@@ -39,14 +40,17 @@ function NESSie.φΩ(
         (1 - opt.εΣ + (opt.εΣ - opt.ε∞)/opt.ε∞ * sinh(ν)/ν * exp(-ν)))
 end
 
+@inline function NESSie.φΩ(
+    lt::Type{<: LocalityType},
+    Ξ,
+    ion::BornIon{T}
+) where T
+    φΩ.(lt, Ξ, Ref(ion))
+end
 
 # =========================================================================================
 """
-    φΣ(
-           ::Type{<: LocalityType},
-        ξ  ::Vector{T},
-        ion::BornIon{T}
-    )
+    φΣ(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
 
 Computes the exterior local or nonlocal electrostatic potential ``φ_Σ`` for the given
 observation point ``ξ``.
@@ -56,6 +60,11 @@ observation point ``ξ``.
 
 ## Return type
 `T`
+
+## Alias
+    φΣ(::Type{<: LocalityType}, Ξ::Vector{Vector{T}}, ion::BornIon{T})
+
+Computes the potentials for all observation points ``ξ \\in Ξ``.
 
 !!! warning
     This function does not verify whether ξ is located outside of the sphere!
@@ -78,4 +87,12 @@ function NESSie.φΣ(
     ν = sqrt(opt.εΣ/opt.ε∞) * ion.radius / opt.λ
     potprefactor(T) * ion.charge.val / opt.εΣ /
         r * (1 + (opt.εΣ - opt.ε∞)/opt.ε∞ * sinh(ν)/ν * exp(-ν * r/ion.radius))
+end
+
+@inline function NESSie.φΣ(
+    lt::Type{<: LocalityType},
+    Ξ,
+    ion::BornIon{T}
+) where T
+    φΣ.(lt, Ξ, Ref(ion))
 end
