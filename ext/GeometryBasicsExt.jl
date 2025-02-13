@@ -26,4 +26,32 @@ function GeometryBasics.mesh(model::Model{T, Triangle{T}}) where T
     GeometryBasics.Mesh(points, faces)
 end
 
+"""
+    function NESSie.Model(
+        mesh::GeometryBasics.Mesh{3, T, <: GeometryBasics.NgonFace{3}};
+        charges::Vector{Charge{T}} = Charge{T}[],
+        params::Option{T} = defaultopt(T)
+    )
+
+Converts the given GeometryBasics.jl mesh into a triangle-based model.
+
+# Return type
+[`Model{T, Triangle{T}}`](@ref)
+"""
+function NESSie.Model(
+    mesh::GeometryBasics.Mesh{3, T, <: GeometryBasics.NgonFace{3}};
+    charges::Vector{Charge{T}} = Charge{T}[],
+    params::Option{T} = defaultopt(T)
+) where T
+    model = Model{T, Triangle{T}}()
+    model.nodes = mesh.position
+    model.elements = collect(
+        Triangle{T},
+        Triangle(model.nodes[f[1]], model.nodes[f[2]], model.nodes[f[3]]) for f in mesh.faces
+    )
+    model.charges = charges
+    model.params = params
+    model
+end
+
 end # module
