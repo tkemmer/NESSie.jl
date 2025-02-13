@@ -86,7 +86,7 @@ end
 
 System parameters
 """
-mutable struct Option{T <: AbstractFloat}
+@auto_hash_equals mutable struct Option{T <: AbstractFloat}
     "dielectric constant of the solute"
     εΩ::T
     "dielectric constant of the solvent"

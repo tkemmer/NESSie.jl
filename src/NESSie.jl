@@ -2,6 +2,7 @@ __precompile__()
 
 module NESSie
 
+using AutoHashEquals
 using Distances: euclidean
 using LinearAlgebra: ⋅, ×, BLAS, norm, rmul!
 

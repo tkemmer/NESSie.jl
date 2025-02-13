@@ -18,7 +18,7 @@ abstract type QuadraturePoints{T <: AbstractFloat} end
 
 Quadrature points and weights for triangles
 """
-struct QuadPts2D{T} <: QuadraturePoints{T}
+@auto_hash_equals struct QuadPts2D{T} <: QuadraturePoints{T}
     """Number of points"""
     num::Int
     """x values"""
@@ -42,7 +42,7 @@ end
 
 Quadrature points and weights for tetrahedra
 """
-struct QuadPts3D{T} <: QuadraturePoints{T}
+@auto_hash_equals struct QuadPts3D{T} <: QuadraturePoints{T}
     """Number of points"""
     num::Int
     """x values"""
@@ -124,7 +124,7 @@ TriangleQuad(elem::Triangle{T})
 ```
 Computes quadrature points and weights for the given triangle.
 """
-struct TriangleQuad{T} <: ElementQuad{T}
+@auto_hash_equals struct TriangleQuad{T} <: ElementQuad{T}
     """Given element"""
     elem   ::Triangle{T}
     """Quadrature points on the given element as 3xN matrix"""

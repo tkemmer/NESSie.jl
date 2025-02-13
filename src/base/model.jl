@@ -37,7 +37,7 @@ Most commonly used constructor variant for creating a triangle by only specifyin
 The remaining member variables will automatically be computed via
 [`props`](@ref NESSie.props).
 """
-struct Triangle{T} <: SurfaceElement{T}
+@auto_hash_equals struct Triangle{T} <: SurfaceElement{T}
     "position of the first node"
     v1::Vector{T}
     "position of the second node"
@@ -84,7 +84,7 @@ Tetrahedron(
 ```
 Sets domain to `:none`.
 """
-struct Tetrahedron{T} <: VolumeElement{T}
+@auto_hash_equals struct Tetrahedron{T} <: VolumeElement{T}
     "position of the first node"
     v1::Vector{T}
     "position of the second node"
@@ -125,7 +125,7 @@ Charge(
 ```
 Constructor variant with flat argument list for `pos`.
 """
-struct Charge{T <: AbstractFloat}
+@auto_hash_equals struct Charge{T <: AbstractFloat}
     "position of the charge"
     pos::Vector{T}
     "charge value"
@@ -154,7 +154,7 @@ charges in the molecule and a set of system constants. The system can either be 
 as a surface model (e.g., a collection of molecule surface triangles) or as a volume model
 (e.g., a collection of tetrahedra for the molecule and its surrounding space).
 """
-mutable struct Model{T, E <: Element{T}}
+@auto_hash_equals mutable struct Model{T, E <: Element{T}}
     """mesh nodes"""
     nodes   ::Vector{Vector{T}}
     """mesh elements"""
