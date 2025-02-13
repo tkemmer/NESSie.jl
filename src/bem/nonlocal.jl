@@ -13,7 +13,7 @@ Result data of the nonlocal solving process to be used for potential computation
 post-processing, with `Ξ` being the list of observation points, that is, the set of
 triangle centroids.
 """
-struct NonlocalBEMResult{T, E} <: BEMResult{T, E}
+@auto_hash_equals struct NonlocalBEMResult{T, E} <: BEMResult{T, E}
     model::Model{T, E}
     u::SubArray{T,1}
     q::SubArray{T,1}

@@ -12,7 +12,7 @@ Result data of the local solving process to be used for potential computation an
 post-processing, with `Ξ` being the list of observation points, that is, the set of
 triangle centroids.
 """
-struct LocalBEMResult{T, E} <: BEMResult{T, E}
+@auto_hash_equals struct LocalBEMResult{T, E} <: BEMResult{T, E}
     """Surface model"""
     model::Model{T, E}
     """[γ₀int(φ*)](ξ) for all observation points ξ"""
