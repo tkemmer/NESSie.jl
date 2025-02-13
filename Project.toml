@@ -15,6 +15,12 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Preconditioners = "af69fa37-3177-5a40-98ee-561f696e4fcd"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 
+[weakdeps]
+GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
+
+[extensions]
+GeometryBasicsExt = "GeometryBasics"
+
 [compat]
 Aqua = "0.8.9"
 Distances = "0.7.2, 0.8, 0.9, 0.10"
@@ -29,12 +35,6 @@ SpecialFunctions = "0.9, 0.10, 1, 2"
 Test = "1.10"
 TestItemRunner = "1"
 julia = "1.10"
-
-[weakdeps]
-GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
-
-[extensions]
-GeometryBasicsExt = "GeometryBasics"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
