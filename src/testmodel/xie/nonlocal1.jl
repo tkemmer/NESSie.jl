@@ -30,7 +30,7 @@ the number of terms to be used to approximate the original infinite sum (Eq. 18)
 coefficient vectors are computed automatically via
 [`coefficients`](@ref NESSie.TestModel.coefficients).
 """
-struct NonlocalXieModel1{T}
+@auto_hash_equals struct NonlocalXieModel1{T}
     """radius of the origin-centered sphere"""
     radius::T
     """point charges in the sphere"""

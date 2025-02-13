@@ -24,7 +24,7 @@ XieModel(
 implementation ([[Xie16]](@ref Bibliography)). Use this flag if you intend to compare
 the results to the reference.
 """
-mutable struct XieModel{T}
+@auto_hash_equals mutable struct XieModel{T}
     "radius of the origin-centered sphere"
     radius::T
     "point charges in the sphere"

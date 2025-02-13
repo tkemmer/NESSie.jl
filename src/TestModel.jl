@@ -2,6 +2,7 @@ module TestModel
 
 using ..NESSie
 using ..NESSie: _cos, _norm, ε0, ec, potprefactor
+using AutoHashEquals
 using Distances: euclidean
 using LinearAlgebra: norm, rmul!
 using SpecialFunctions: besseli, besselk

@@ -14,7 +14,7 @@ with a single point charge located at its center (``ε_Ω = 1``).
 
 Centers the sphere at ``(0, 0, 0)^T``.
 """
-struct BornIon{T <: AbstractFloat}
+@auto_hash_equals struct BornIon{T <: AbstractFloat}
     """Point charge at the sphere's center"""
     charge::Charge{T}
     """Sphere radius in Å"""
