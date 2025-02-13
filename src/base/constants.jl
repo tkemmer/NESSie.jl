@@ -77,7 +77,7 @@ end
 
 # =========================================================================================
 """
-    struct Option{T <: AbstractFloat}
+    mutable struct Option{T <: AbstractFloat}
         εΩ::T       # dielectric constant of the solute
         εΣ::T       # dielectric constant of the solvent
         ε∞::T       # large-scale (bulk) solvent response
