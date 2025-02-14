@@ -60,7 +60,10 @@ function NESSie.φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     (φ + φmol(ξ, model.charges) / 4π / εΩ) * T(ec/ε0)
 end
 
-@inline function NESSie.φΩ(Ξ, model::NonlocalXieModel1)
+@inline function NESSie.φΩ(
+    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
+    model::NonlocalXieModel1{T}
+) where T
     φΩ.(Ξ, Ref(model))
 end
 
@@ -125,6 +128,9 @@ function NESSie.φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     φ * T(ec/ε0)
 end
 
-@inline function NESSie.φΣ(Ξ, model::NonlocalXieModel1)
+@inline function NESSie.φΣ(
+    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
+    model::NonlocalXieModel1{T}
+) where T
     φΣ.(Ξ, Ref(model))
 end

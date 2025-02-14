@@ -42,7 +42,7 @@ end
 
 @inline function NESSie.φΩ(
     lt::Type{<: LocalityType},
-    Ξ,
+    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
     ion::BornIon{T}
 ) where T
     φΩ.(lt, Ξ, Ref(ion))
@@ -91,7 +91,7 @@ end
 
 @inline function NESSie.φΣ(
     lt::Type{<: LocalityType},
-    Ξ,
+    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
     ion::BornIon{T}
 ) where T
     φΣ.(lt, Ξ, Ref(ion))
