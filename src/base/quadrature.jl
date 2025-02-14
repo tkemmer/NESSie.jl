@@ -68,7 +68,7 @@ Generator function for quadrature points:
  * *Tetrahedra*: 5 points per element [[Kea86]](@ref Bibliography)
 
 # Return type
-`QuadPts2D` or `QuadPts3D`
+[`QuadPts2D`](@ref) or [`QuadPts3D`](@ref)
 """ quadraturepoints
 for T in [:Float64, :Float32]
     varname = Symbol("triquadpts_", T)
@@ -121,7 +121,7 @@ Quadrature points on a specific surface triangle, including weights.
 # Special constructors
 ```julia
 TriangleQuad(elem::Triangle{T})
-````
+```
 Computes quadrature points and weights for the given triangle.
 """
 struct TriangleQuad{T} <: ElementQuad{T}

@@ -78,7 +78,7 @@ Creates a binary STL file from a given surface model.
 <http://www.fabbers.com/tech/STL_Format>
 
 # Return type
-`Void`
+`Nothing`
 
 # Alias
 

@@ -1,4 +1,7 @@
 # Electrostatics
+```@meta
+    CurrentModule = NESSie
+```
 
 ## Potential types
 ```@docs
@@ -20,23 +23,23 @@
 ```@docs
     φmol
     ∂ₙφmol
-    NESSie.∇φmol
+    ∇φmol
 ```
 
 ### Interior potentials
 ```@docs
-    NESSie.BEM.φΩ
-    NESSie.TestModel.φΩ
+    BEM.φΩ
+    TestModel.φΩ
 ```
 
 
 ### Exterior potentials
 ```@docs
-    NESSie.BEM.φΣ
-    NESSie.TestModel.φΣ
+    BEM.φΣ
+    TestModel.φΣ
 ```
 
 ## Energies
 ```@docs
-    NESSie.BEM.rfenergy
+    BEM.rfenergy
 ```

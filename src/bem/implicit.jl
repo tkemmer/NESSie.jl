@@ -99,7 +99,8 @@ Constructs and returns implicit representations for the single- and double-layer
 potential matrices `V` and `K` for the given observation points and surface elements.
 
 # Return type
-`Tuple{InteractionMatrix{T}, InteractionMatrix{T}}`
+[`Tuple{InteractionMatrix{T}, InteractionMatrix{T}}`]
+(https://tkemmer.github.io/ImplicitArrays.jl/stable/#ImplicitArrays.InteractionMatrix)
 """
 @inline function _get_laplace_matrices(
     Ξ       ::Vector{Vector{T}},
@@ -123,7 +124,8 @@ Constructs and returns implicit representations for the single- and double-layer
 potential matrices `V^Y` and `K^Y` for the given observation points and surface elements.
 
 # Return type
-`Tuple{InteractionMatrix{T}, InteractionMatrix{T}}`
+[`Tuple{InteractionMatrix{T}, InteractionMatrix{T}}`]
+(https://tkemmer.github.io/ImplicitArrays.jl/stable/#ImplicitArrays.InteractionMatrix)
 """
 @inline function _get_yukawa_matrices(
     Ξ::Vector{Vector{T}},

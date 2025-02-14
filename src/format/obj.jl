@@ -12,7 +12,7 @@ Creates a Wavefront OBJ file from a given surface model.
     <http://paulbourke.net/dataformats/obj/>
 
 # Return type
-`Void`
+`Nothing`
 
 # Alias
 

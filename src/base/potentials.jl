@@ -164,7 +164,7 @@ function ∇φmol(
         ξ      ::Vector{T},
         charges::Vector{Charge{T}}
     ) where T
-    isempty(charges) ? zero(T) :
+    isempty(charges) ? zeros(T, 3) :
         -sum(q.val * (ξ .- q.pos) / euclidean(ξ, q.pos)^3 for q in charges)
 end
 

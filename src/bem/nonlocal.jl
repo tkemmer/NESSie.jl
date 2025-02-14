@@ -165,8 +165,14 @@ Implicit representation of the nonlocal BEM system matrix.
 
 # Special constructors
 ```julia
-
+function NonlocalSystemMatrix{T}(
+    Ξ       ::Vector{Vector{T}},
+    elements::Vector{Triangle{T}},
+    params  ::Option{T}
+) where T
 ```
+Creates the nonlocal system matrix directly from the given observation points `Ξ` and
+surface `elements`.
 """
 struct NonlocalSystemMatrix{T} <: AbstractArray{T, 2}
     """Single-layer Laplace potentials"""

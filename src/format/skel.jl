@@ -12,7 +12,7 @@ collection of points and polylines.
 <http://www.geomview.org/docs/html/SKEL.html>
 
 # Return type
-`Void`
+`Nothing`
 
 # Alias
 

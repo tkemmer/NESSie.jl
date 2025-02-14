@@ -15,7 +15,7 @@ Reads a surface model from the given OFF file.
 <http://www.geomview.org/docs/html/OFF.html>
 
 # Return type
-`Model{T}`
+[`Model{T}`](@ref)
 
 # Alias
 
@@ -79,7 +79,7 @@ end
 Reads the first `n` elements from the given OFF file.
 
 # Return type
-`Vector{Triangle{T}}`
+[`Vector{Triangle{T}}`](@ref Triangle)
 """
 function readoff_elements(
         stream::IOStream,

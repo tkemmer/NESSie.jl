@@ -77,7 +77,7 @@ end
 
 # =========================================================================================
 """
-    struct Option{T <: AbstractFloat}
+    mutable struct Option{T <: AbstractFloat}
         εΩ::T       # dielectric constant of the solute
         εΣ::T       # dielectric constant of the solvent
         ε∞::T       # large-scale (bulk) solvent response
@@ -103,10 +103,10 @@ end
     defaultopt(T::Type{Float64} = Float64)
     defaultopt(T::Type{Float32})
 
-Default system parameters
+Default system parameters for proteins in water.
 
 # Return type
-[`Option{T}`](@ref NESSie.Option)
+[`Option{T}`](@ref Option)
 
 # Default values
  * ``ε_Ω = 2``

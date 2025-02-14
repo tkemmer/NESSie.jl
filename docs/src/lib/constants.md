@@ -1,4 +1,7 @@
 # Constants
+```@meta
+    CurrentModule = NESSie
+```
 
 ## Global constants
 ```@docs
