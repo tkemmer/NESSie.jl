@@ -16,11 +16,13 @@ include("base/quadrature.jl")
 export QuadraturePoints, QuadPts2D, QuadPts3D, ElementQuad, TriangleQuad, quadraturepoints
 
 include("base/util.jl")
-export meshunion, obspoints_line, obspoints_plane
+export meshunion, obspoints_plane
 
 include("base/potentials.jl")
 export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES, φmol,
     ∂ₙφmol, ∇φmol, φΩ, φΣ
+
+include("base/deprecation.jl")
 
 # Submodules
 include("Format.jl")

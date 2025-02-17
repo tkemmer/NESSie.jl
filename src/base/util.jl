@@ -354,31 +354,6 @@ end
 
 # =========================================================================================
 """
-    obspoints_line(
-        u::AbstractVector{T},
-        v::AbstractVector{T},
-        n::Int
-    )
-
-Generates `n` evenly distributed observation points along the line segment from `u` to `v`.
-
-# Return type
-`Generator -> Vector{T}`
-
-# Example
-```julia
-for ξ in obspoints_line([0, 0, 0], [1, 1, 1], 10)
-    ...
-end
-```
-"""
-@inline function obspoints_line(u::AbstractVector{T}, v::AbstractVector{T}, n::Int) where T
-    (u .+ T(i) .* (v .- u) for i in LinRange(0, 1, n))
-end
-
-
-# =========================================================================================
-"""
     obspoints_plane(
         a  ::AbstractVector{T},
         b  ::AbstractVector{T},
@@ -414,7 +389,7 @@ end
         nba::Int,
         nbc::Int
     ) where T
-    (obspoints_line(ξ, c .+ (ξ .- b), nbc) for ξ in obspoints_line(b, a, nba))
+    (LinRange(ξ, c .+ (ξ .- b), nbc) for ξ in LinRange(b, a, nba))
 end
 
 
