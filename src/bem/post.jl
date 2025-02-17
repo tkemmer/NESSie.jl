@@ -45,10 +45,7 @@ end
 
 # =========================================================================================
 """
-    φΩ(
-        Ξ         ::Vector{Vector{T}},
-        bem       ::BEMResult{T}
-    )
+    φΩ(Ξ::Vector{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal interior electrostatic potential ``φ_Ω`` for the given set
 of observation points `Ξ`.
@@ -63,9 +60,9 @@ of observation points `Ξ`.
 `Vector{T}`
 """
 function NESSie.φΩ(
-        Ξ         ::Vector{Vector{T}},
-        bem       ::R
-    ) where {T, R <: BEMResult{T}}
+    Ξ::AbstractVector{Vector{T}},
+    bem::R
+) where {T, R <: BEMResult{T}}
     # result vector
     φ = zeros(T, length(Ξ))
 
@@ -93,13 +90,14 @@ function NESSie.φΩ(
     φ
 end
 
+@inline function NESSie.φΩ(Ξ::Base.Generator, bem::BEMResult{T}) where T
+    φΩ(collect(Vector{T}, Ξ), bem)
+end
+
 
 # =========================================================================================
 """
-    φΣ(
-        Ξ         ::Vector{Vector{T}},
-        bem       ::BEMResult{T}
-    )
+    φΣ(Ξ::Vector{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal exterior electrostatic potential ``φ_Σ`` for the given set
 of observation points `Ξ`.
@@ -114,9 +112,9 @@ of observation points `Ξ`.
 `Vector{T}`
 """
 function NESSie.φΣ(
-        Ξ         ::Vector{Vector{T}},
-        bem       ::LocalBEMResult{T}
-    ) where T
+    Ξ::AbstractVector{Vector{T}},
+    bem::LocalBEMResult{T}
+) where T
     # result vector
     φ = zeros(T, length(Ξ))
     buf = Array{T}(undef, length(bem.model.elements))
@@ -143,9 +141,9 @@ function NESSie.φΣ(
 end
 
 function NESSie.φΣ(
-        Ξ         ::Vector{Vector{T}},
-        bem       ::NonlocalBEMResult{T}
-    ) where T
+    Ξ::AbstractVector{Vector{T}},
+    bem::NonlocalBEMResult{T}
+) where T
     # result vector
     φ = zeros(T, length(Ξ))
 
@@ -187,4 +185,8 @@ function NESSie.φΣ(
     rmul!(φ, potprefactor(T) / T(4π))
 
     φ
+end
+
+@inline function NESSie.φΣ(Ξ::Base.Generator, bem::BEMResult{T}) where T
+    φΣ(collect(Vector{T}, Ξ), bem)
 end
