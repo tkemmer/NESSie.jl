@@ -38,6 +38,12 @@ Computes the full local or nonlocal cauchy data on the surface of the given biom
 # Supported keyword arguments
  - `method::Symbol = :gmres`
    Solver implementation to be used (supported arguments: `:gmres` and `:blas`)
+ - `method=:gmres` *only*: all keyword arguments of [`IterativeSolvers.gmres`]
+   (https://iterativesolvers.julialinearalgebra.org/stable/linear_systems/gmres/), except
+   for `log`, using the following default values:
+    * `verbose::Bool = true`
+    * `restart::Int = 200`
+    * `Pl = Preconditioners.DiagonalPreconditioner(A)`
 
 !!! note
     The `:blas` method uses an explicit representation for the BEM systems and requires a
@@ -53,10 +59,11 @@ Computes the full local or nonlocal cauchy data on the surface of the given biom
 function solve(
     lt::Type{<: LocalityType},
     model::Model{T, Triangle{T}};
-    method::Symbol = :gmres
+    method::Symbol = :gmres,
+    kwargs...
 ) where T
-    method === :gmres && return _solve_implicit(lt, model)
-    method === :blas  && return _solve_explicit(lt, model)
+    method === :gmres && return _solve_implicit(lt, model; kwargs...)
+    method === :blas  && return _solve_explicit(lt, model; kwargs...)
     ArgumentError("Invalid method '$method'! Supported values: :gmres, :blas")
 end
 
@@ -203,7 +210,8 @@ Computes the full local or nonlocal cauchy data on the surface of the biomolecul
 """
 function _solve_implicit(
          ::Type{LocalES},
-    model::Model{T, Triangle{T}}
+    model::Model{T, Triangle{T}};
+    kwargs...
 ) where T
     # observation points ξ
     Ξ = [e.center for e in model.elements]
@@ -219,11 +227,11 @@ function _solve_implicit(
     # first system
     b = K * umol .- (T(2π) .* umol) .- (model.params.εΩ/model.params.εΣ .* (V * qmol))
     A = LocalSystemMatrix(K, model.params)
-    u = _solve_linear_system(A, b)
+    u = _solve_linear_system(A, b; kwargs...)
 
     # second system
     b .= T(2π) .* u .+ (K * u)
-    q = _solve_linear_system(V, b)
+    q = _solve_linear_system(V, b; kwargs...)
 
     LocalBEMResult(model, u, q, umol, qmol)
 end

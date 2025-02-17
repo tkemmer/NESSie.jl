@@ -150,12 +150,18 @@ Solves the linear system `Ax = b` from `A` and `b` using a Jacobi-preconditioned
 
 # Return type
 `Array{T, 1}`
+
+# Supported keyword arguments
+Everything from [`IterativeSolvers.gmres`]
+(https://iterativesolvers.julialinearalgebra.org/stable/linear_systems/gmres/) except for `log`.
 """
-@inline function _solve_linear_system(A::AbstractArray{T, 2}, b::AbstractArray{T, 1}) where T
-    gmres(A, b,
+@inline function _solve_linear_system(A::AbstractArray{T, 2}, b::AbstractArray{T, 1}; kwargs...) where T
+    gmres(A, b;
         verbose=true,
         restart=min(200, size(A, 2)),
-        Pl=DiagonalPreconditioner(A)
+        Pl=DiagonalPreconditioner(A),
+        kwargs...,
+        log = false # true would change the return type of gmres
     )
 end
 

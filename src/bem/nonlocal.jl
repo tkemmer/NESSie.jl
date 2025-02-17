@@ -247,7 +247,8 @@ end
 # Documented in bem/local.jl
 function _solve_implicit(
          ::Type{NonlocalES},
-    model::Model{T, Triangle{T}}
+    model::Model{T, Triangle{T}};
+    kwargs...
 ) where T
     # observation points
     Ξ = [e.center for e in model.elements]
@@ -268,7 +269,7 @@ function _solve_implicit(
     b = A.K * umol .+ (1 - εΩ/εΣ) .* (A.Ky * umol) .- T(2π) .* umol .- (εΩ/ε∞) .*
         (A.V * qmol) .+ (εΩ/εΣ - εΩ/ε∞) .* (A.Vy * qmol)
 
-    cauchy = _solve_linear_system(A, b)
+    cauchy = _solve_linear_system(A, b; kwargs...)
 
     NonlocalBEMResult(
         model,
