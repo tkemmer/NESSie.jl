@@ -68,7 +68,7 @@ where ``I_ν`` is the modified Bessel function of the first kind
 ```
 """
 function spherical_besseli(maxn::Int, r::T) where T <: AbstractFloat
-    i = √(π / 2r) * [besseli(n + one(T)/2, r) for n in -1:maxn]
+    i = √(π / 2r) .* collect(T, besseli(n + one(T)/2, r) for n in -1:maxn)
     n::Int -> i[n+2]
 end
 
@@ -98,6 +98,6 @@ where ``K_ν`` is the modified Bessel function of the second kind
 ```
 """
 function spherical_besselk(maxn::Int, r::T) where T <: AbstractFloat
-    k = √(π / 2r) * [besselk(n + one(T)/2, r) for n in -1:maxn]
+    k = √(π / 2r) .* collect(T, besselk(n + one(T)/2, r) for n in -1:maxn)
     n::Int -> k[n+2]
 end
