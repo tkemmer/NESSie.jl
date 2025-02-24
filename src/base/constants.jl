@@ -97,6 +97,17 @@ System parameters
     λ::T
 end
 
+@inline function Base.show(io::IO, ::MIME"text/plain", opt::Option)
+    show(io, opt)
+end
+
+@inline function Base.show(io::IO, opt::Option)
+    print(io,
+        "$(typeof(opt))",
+        "(εΩ = $(opt.εΩ), εΣ = $(opt.εΣ), ε∞ = $(opt.ε∞), λ = $(opt.λ))"
+    )
+end
+
 
 # =========================================================================================
 @doc raw"""

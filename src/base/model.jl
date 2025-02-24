@@ -60,6 +60,19 @@ end
     v3::Vector{T}
 ) where T = props(Triangle{T}(v1, v2, v3, T[], T[], zero(T), zero(T)))
 
+@inline function Base.show(io::IO, ::MIME"text/plain", elem::Triangle)
+    show(io, elem)
+end
+
+@inline function Base.show(io::IO, elem::Triangle)
+    print(io,
+        "$(typeof(elem))",
+        "(v1 = $(repr(elem.v1))",
+        ", v2 = $(repr(elem.v2))",
+        ", v3 = $(repr(elem.v3)))",
+    )
+end
+
 
 # =========================================================================================
 """
@@ -104,6 +117,20 @@ end
     v4::Vector{T}
 ) where T = Tetrahedron{T}(v1, v2, v3, v4, :none)
 
+@inline function Base.show(io::IO, ::MIME"text/plain", elem::Tetrahedron)
+    show(io, elem)
+end
+
+@inline function Base.show(io::IO, elem::Tetrahedron)
+    print(io,
+        "$(typeof(elem))",
+        "(v1 = $(repr(elem.v1))",
+        ", v2 = $(repr(elem.v2))",
+        ", v3 = $(repr(elem.v3))",
+        ", v4 = $(repr(elem.v4)))",
+    )
+end
+
 
 # =========================================================================================
 """
@@ -138,6 +165,18 @@ end
     posz::T,
     val ::T
 ) where T = Charge{T}([posx, posy, posz], val)
+
+@inline function Base.show(io::IO, ::MIME"text/plain", charge::Charge)
+    show(io, charge)
+end
+
+@inline function Base.show(io::IO, charge::Charge)
+    print(io,
+        "$(typeof(charge))",
+        "(pos = $(repr(charge.pos))",
+        ", val = $(charge.val))"
+    )
+end
 
 
 # =========================================================================================
@@ -178,3 +217,16 @@ end
     charges ::Vector{Charge{T}} = Charge{T}[],
     params  ::Option{T}         = defaultopt(T)
 ) where {T, E <: Element{T}}    = Model{T, E}(nodes, elements, charges, params)
+
+@inline function Base.show(io::IO, ::MIME"text/plain", model::Model)
+    show(io, model)
+end
+
+@inline function Base.show(io::IO, model::Model)
+    print(io,
+        "$(typeof(model))",
+        "(nodes = ", length(model.nodes),
+        ", elements = ", length(model.elements),
+        ", charges = ", length(model.charges), ")"
+    )
+end
