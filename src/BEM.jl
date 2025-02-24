@@ -19,6 +19,19 @@ Abstract base type for all BEM solver results
 """
 abstract type BEMResult{T, E <: SurfaceElement{T}} end
 
+@inline function Base.show(io::IO, ::MIME"text/plain", bem::BEMResult)
+    show(io, bem)
+end
+
+@inline function Base.show(io::IO, bem::BEMResult)
+    print(io,
+        "$(typeof(bem))",
+        "(nodes = ", length(bem.model.nodes),
+        ", elements = ", length(bem.model.elements),
+        ", charges = ", length(bem.model.charges), ")"
+    )
+end
+
 include("bem/implicit.jl")
 include("bem/local.jl")
 include("bem/nonlocal.jl")
