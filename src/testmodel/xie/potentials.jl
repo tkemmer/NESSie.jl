@@ -8,6 +8,10 @@
 Computes the interior nonlocal electrostatic potential ``φ_Ω`` for the given observation
 point ``ξ``.
 
+# Supported keyword arguments
+ - `tolerance::T = T(1e-10)` minimum distance assumed between ξ and a point charge when
+   computing molecular potentials (cf. [`φmol`](@ref)).
+
 # Unit
 ``V = \\frac{C}{F}``
 
@@ -22,7 +26,7 @@ Computes the potentials for all observation points ``ξ \\in Ξ``.
 !!! warning
     This function does not verify whether ξ is located inside of the sphere!
 """
-function NESSie.φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
+function NESSie.φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}; tolerance::T = T(1e-10)) where T
     a  = model.radius
     λ  = model.params.λ
     εΩ = model.params.εΩ
@@ -61,7 +65,7 @@ function NESSie.φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
         φ += φj * q.val
     end
 
-    (φ + φmol(ξ, model.charges) / 4π / εΩ) * T(ec/ε0)
+    (φ + φmol(ξ, model.charges; tolerance = tolerance) / 4π / εΩ) * T(ec/ε0)
 end
 
 @inline function NESSie.φΩ(
@@ -82,6 +86,10 @@ end
 Computes the exterior nonlocal electrostatic potential ``φ_Σ`` for the given observation
 point ``ξ``.
 
+# Supported keyword arguments
+ - `tolerance::T = T(1e-10)` minimum distance assumed between ξ and a point charge when
+   computing molecular potentials (cf. [`φmol`](@ref)).
+
 # Unit
 ``V = \\frac{C}{F}``
 
@@ -96,7 +104,7 @@ Computes the potentials for all observation points ``ξ \\in Ξ``.
 !!! warning
     This function does not verify whether ξ is located outside of the sphere!
 """
-function NESSie.φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
+function NESSie.φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}; tolerance::T = T(1e-10)) where T
     a  = model.radius
     λ  = model.params.λ
     εΩ = model.params.εΩ
@@ -119,7 +127,7 @@ function NESSie.φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
             _term1 = exp(κ * a) * (εΣ - ε∞)/εΩ * (a * εΣ + λ * (εΩ - εΣ) * sinh(a / λ))
             _term2 = (a * √(ε∞ * εΣ) + λ *(ε∞ - εΣ)) * sinh(a / λ) + a * εΣ * cosh(a / λ)
             _term3 = _term1 / _term2 * exp(-κ * r)
-            φ += (1 + _term3) / εΣ * q.val / T(4π) / max(r, T(1e-10))
+            φ += (1 + _term3) / εΣ * q.val / T(4π) / max(r, tolerance)
             continue
         end
 
