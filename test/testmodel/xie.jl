@@ -36,6 +36,16 @@
                 Charge(T[0, 1, 0, 4]...)
             ]
 
+            # single charge only
+            scaled = scalemodel([first(charges)], T(√(.5)/.8))
+            @test typeof(scaled) == Vector{Charge{T}}
+            @test scaled[1].pos ≈ T[0, 0, 0]
+            @test scaled[1].val == one(T)
+            scaled = scalemodel([Charge(T[1, 1, 1, 2]...)], T(√(.5)/.8))
+            @test typeof(scaled) == Vector{Charge{T}}
+            @test scaled[1].pos ≈ T[0, 0, 0]
+            @test scaled[1].val == 2one(T)
+
             # translation only
             scaled = scalemodel(charges, T(√(.5)/.8))
             @test typeof(scaled) == Vector{Charge{T}}

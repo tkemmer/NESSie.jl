@@ -58,9 +58,9 @@ end
     )
 
 Translates and rescales the given point charge model to fit inside an origin-centered
-sphere with the specified radius. More specifically, the function will center the given
-model at the origin and scaled in a way such that the outermost point charge will be
-located at 80% `radius` distance from the origin.
+sphere with the specified radius. More specifically, the model is centered at the origin and,
+if it contains more than one charge, scaled in a way such that the outermost point charge will
+be located at 80% `radius` distance from the origin.
 
 # Arguments
  * `compat` Enables compatibility mode and scales the model exactly like the reference
@@ -81,8 +81,8 @@ function scalemodel(
 
     # compute and apply scaling factor
     h = x -> compat ? ceil(x) : x  # in compat mode, scaling factor is rounded up
-    sf = .8radius / h(maximum(_norm(pos) for pos in newpos))
-    rmul!(newpos, sf)
+    sf = h(maximum(_norm(pos) for pos in newpos))
+    sf > 0 && rmul!(newpos, .8radius / sf)
 
     [Charge{T}(pos, q.val) for (pos, q) in zip(newpos, charges)]
 end
