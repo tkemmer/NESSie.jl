@@ -60,6 +60,19 @@ end
     len  ::Int
 ) where T = NonlocalXieModel1{T}(model, len)
 
+@inline function Base.show(io::IO, ::MIME"text/plain", xie::NonlocalXieModel1)
+    show(io, xie)
+end
+
+@inline function Base.show(io::IO, xie::NonlocalXieModel1)
+    print(io,
+        "$(typeof(xie))",
+        "(charges = ", length(xie.charges),
+        ", radius = $(xie.radius)",
+        ", len = $(xie.len))"
+    )
+end
+
 
 # =========================================================================================
 """

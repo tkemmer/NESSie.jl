@@ -38,6 +38,18 @@ end
     params::Option{T} = defaultopt(BornIon{T})
 ) where T = BornIon{T}(Charge(T[0, 0, 0], charge), radius, params)
 
+@inline function Base.show(io::IO, ::MIME"text/plain", ion::BornIon)
+    show(io, ion)
+end
+
+@inline function Base.show(io::IO, ion::BornIon)
+    print(io,
+        "$(typeof(ion))",
+        "(charge = ", repr(ion.charge),
+        ", radius = $(ion.radius))"
+    )
+end
+
 
 # =========================================================================================
 @doc raw"""

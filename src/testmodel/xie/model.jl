@@ -47,6 +47,18 @@ end
     compat ::Bool = false
 ) where T = XieModel{T}(radius, charges, params, compat=compat)
 
+@inline function Base.show(io::IO, ::MIME"text/plain", xie::XieModel)
+    show(io, xie)
+end
+
+@inline function Base.show(io::IO, xie::XieModel)
+    print(io,
+        "$(typeof(xie))",
+        "(charges = ", length(xie.charges),
+        ", radius = $(xie.radius))"
+    )
+end
+
 
 # =========================================================================================
 """
