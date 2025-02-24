@@ -29,21 +29,25 @@ function φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     φ = zero(T)
     for (qi, q) in enumerate(model.charges)   # Eq. (17a)
 
+        # if q is close to the origin, compute nonlocal Born potential
+        # Note: this test model uses a different definition than our Born implementation
+        # https://doi.org/10.4208/cicp.170811.211011s
+        if _norm(q.pos) < 1e-10
+            _term1 = (a * εΣ + λ * (εΩ - εΣ) * sinh(a / λ)) / (
+                (a * √(ε∞ * εΣ) + λ * (ε∞ - εΣ)) * sinh(a / λ) + a * εΣ * cosh(a / λ)
+            )
+            _term2 = (εΩ - εΣ - (ε∞ - εΣ) * _term1) / a / εΣ
+            φ += q.val / T(4π) / εΩ * _term2
+            continue
+        end
+
+        # otherwise, use Eq. (18)
         # if ξ is close to the origin, all terms for n > 0 become negligible
         if r < 1e-10
             φ += A₃[1, qi] * q.val
             continue
         end
 
-        # if q is close to the origin, compute nonlocal Born potential
-        # (see born/potentials.jl)
-        if _norm(q.pos) < 1e-10
-            ν = √(εΣ/ε∞) * a/λ
-            φ += q.val * (1/r + 1/a/εΣ * (1 - εΣ + (εΣ - ε∞)/ε∞ * sinh(ν)/ν * exp(-ν)))
-            continue
-        end
-
-        # otherwise, use Eq. (18)
         P = legendre(model.len, _cos(ξ, q.pos, r))
         φj = zero(T)
         for n in 0:model.len-1
@@ -78,6 +82,7 @@ point ``ξ``.
 function φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     a  = model.radius
     λ  = model.params.λ
+    εΩ = model.params.εΩ
     εΣ = model.params.εΣ
     ε∞ = model.params.ε∞
     A₁ = model.A₁
@@ -91,10 +96,13 @@ function φΣ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
     for (qi, q) in enumerate(model.charges)   # Eq. (17a)
 
         # if q is close to origin, compute nonlocal Born potential
-        # (see born/potentials.jl)
+        # Note: this test model uses a different definition than our Born implementation
+        # https://doi.org/10.4208/cicp.170811.211011s
         if _norm(q.pos) < 1e-10
-            ν = √(εΣ/ε∞) * a/λ
-            φ += q.val / εΣ / r * (1 + (εΣ - ε∞)/ε∞ * sinh(ν)/ν * exp(-ν * r/a))
+            _term1 = exp(κ * a) * (εΣ - ε∞)/εΩ * (a * εΣ + λ * (εΩ - εΣ) * sinh(a / λ))
+            _term2 = (a * √(ε∞ * εΣ) + λ *(ε∞ - εΣ)) * sinh(a / λ) + a * εΣ * cosh(a / λ)
+            _term3 = _term1 / _term2 * exp(-κ * r)
+            φ += (1 + _term3) / εΣ * q.val / T(4π) / max(r, T(1e-10))
             continue
         end
 
