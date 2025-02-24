@@ -36,7 +36,7 @@ function NESSie.φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
 
         # if ξ is close to the origin, all terms for n > 0 become negligible
         if r < 1e-10
-            φ += A₃[1, qi]
+            φ += A₃[1, qi] * q.val
             continue
         end
 
