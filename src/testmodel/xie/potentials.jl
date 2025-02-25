@@ -65,7 +65,7 @@ function NESSie.φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}; tolerance::T = 
         φ += φj * q.val
     end
 
-    (φ + φmol(ξ, model.charges; tolerance = tolerance) / 4π / εΩ) * T(ec/ε0)
+    (φ + φmol(ξ, model.charges; tolerance = tolerance) / T(4π) / εΩ) * T(ec/ε0)
 end
 
 @inline function NESSie.φΩ(
