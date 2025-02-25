@@ -56,7 +56,7 @@ function φΩ(ξ::Vector{T}, model::NonlocalXieModel1{T}) where T
         φ += φj * q.val
     end
 
-    (φ + φmol(ξ, model.charges) / 4π / εΩ) * T(ec/ε0)
+    (φ + φmol(ξ, model.charges) / T(4π) / εΩ) * T(ec/ε0)
 end
 
 
