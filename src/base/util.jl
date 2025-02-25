@@ -165,7 +165,7 @@ end
 """
     _seek(
         fh         ::IOStream,
-        prefix     ::String,
+        prefix     ::AbstractString,
         skiptheline::Bool = true
     )
 
@@ -178,7 +178,7 @@ is no such line, the stream handle will be set to EOF.
 # Return type
 `Nothing`
 """
-function _seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
+function _seek(fh::IOStream, prefix::AbstractString, skiptheline::Bool=true)
     m = -1
     found = false
     while !eof(fh)
@@ -395,7 +395,7 @@ end
 
 # =========================================================================================
 """
-    _data_path(parts::String...)
+    _data_path(parts::AbstractString...)
 
 Returns the absolute path to NESSie's "data" directory, if used without arguments, or to
 the location relative to that, specified by `parts` (e.g., a directory within "data").
@@ -403,7 +403,7 @@ the location relative to that, specified by `parts` (e.g., a directory within "d
 # Return type
 `String`
 """
-@inline function _data_path(parts::String...)
+@inline function _data_path(parts::AbstractString...)
     normpath(joinpath(Base.pkgdir(NESSie), "data", parts...))
 end
 
