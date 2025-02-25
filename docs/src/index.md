@@ -35,10 +35,10 @@ More examples are available in the `docs/examples/` directory.
 If you use `NESSie.jl` in your research, please cite the following publications:
 > Kemmer, T, Rjasanow, S., Hildebrandt, A (2018). NESSie. jl - Efficient and Intuitive
 > Finite Element and Boundary Element Methods for Nonlocal Protein Electrostatics in the
-> Julia Language. Journal of Computational Science 28, 193-203.
+> Julia Language. Journal of Computational Science 28, 193-203. DOI: [10.1016/j.jocs.2018.08.008](https://doi.org/10.1016/j.jocs.2018.08.008)
 
 > Kemmer, T (2021). Space-efficient and exact system representations for the nonlocal protein
-> electrostatics problem. Ph. D. thesis, Johannes Gutenberg University Mainz. Mainz, Germany.
+> electrostatics problem. Ph. D. thesis, Johannes Gutenberg University Mainz. Mainz, Germany. DOI: [10.25358/openscience-5689](https://doi.org/10.25358/openscience-5689)
 
 With BibTeX, you can use the following entries:
 ```
@@ -66,13 +66,13 @@ With BibTeX, you can use the following entries:
 
  * **[Åqv90]**
    J. Åqvist, Ion-water interaction potentials derived from free energy pertubation
-   simulations. J. Phys. Chem. 94: 8021, 1990.
+   simulations. J. Phys. Chem. 94: 8021, 1990. DOI: [10.1021/j100384a009](https://doi.org/10.1021/j100384a009)
 
  * **[Kea86]**
-   P. Keast, Moderate degree tetrahedral quadrature formulas. CMAME 55: 339-348, 1986.
+   P. Keast, Moderate degree tetrahedral quadrature formulas. CMAME 55: 339-348, 1986. DOI: [10.1016/0045-7825(86)90059-9](https://doi.org/10.1016/0045-7825(86)90059-9)
 
  * **[Rad48]**
-   J. Radon, Zur mechanischen Kubatur (in German). Monatsh. für Math. 52(4): 286-300, 1948.
+   J. Radon, Zur mechanischen Kubatur (in German). Monatsh. für Math. 52(4): 286-300, 1948. DOI: [10.1007/BF01525334](https://doi.org/10.1007/BF01525334)
 
  * **[Rja90]**
    S. Rjasanow, Vorkonditionierte iterative Auflösung von Randelementgleichungen für die
@@ -82,9 +82,9 @@ With BibTeX, you can use the following entries:
  * **[Ste03]**
    O. Steinbach, Numerische Näherungsverfahren für elliptische Randwertprobleme - Finite
    Elemente und Randelemente (in German). Advances in Numerical Matheamtics. Teubner
-   Verlag/GWV Fachverlage GmbH, Wiesbaden, 2003.
+   Verlag/GWV Fachverlage GmbH, Wiesbaden, 2003. DOI: [10.1007/978-3-322-80054-1](https://doi.org/10.1007/978-3-322-80054-1)
 
  * **[Xie16]**
    D. Xie, H. W. Volkmer, and J. Ying, Analytical solutions of nonlocal Poisson dielectric
    models with multiple point charges inside a dielectric sphere. Physical Review E 93(4):
-   043304, 2016.
+   043304, 2016. DOI: [10.1103/PhysRevE.93.043304](https://doi.org/10.1103/PhysRevE.93.043304)
