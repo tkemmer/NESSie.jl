@@ -19,7 +19,7 @@ Reads a surface model from the given STL file.
 # Alias
 
     readstl(
-        fname::String,
+        fname::AbstractString,
              ::Type{T}=Float64
     )
 
@@ -58,7 +58,7 @@ function readstl(
 end
 
 @inline function readstl(
-    fname::String,
+    fname::AbstractString,
          ::Type{T}=Float64
 ) where T
     open(fh -> readstl(fh, T), fname)
@@ -83,7 +83,7 @@ Creates a binary STL file from a given surface model.
 # Alias
 
     writestl(
-        fname::String,
+        fname::AbstractString,
         model::Model{T, Triangle{T}}
     )
 
@@ -108,6 +108,6 @@ function writestl(
     nothing
 end
 
-@inline function writestl(fname::String, model::Model{T, Triangle{T}}) where T
+@inline function writestl(fname::AbstractString, model::Model{T, Triangle{T}}) where T
     open(fh -> writestl(fh, model), fname, "w")
 end

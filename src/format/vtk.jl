@@ -22,7 +22,7 @@ type is determined by the given model:
 # Alias
 
     writevtk(
-        fname::String,
+        fname::AbstractString,
         model::Model{T}
     )
 
@@ -131,7 +131,7 @@ function writevtk(
 end
 
 @inline function writevtk(
-        fname::String,
+        fname::AbstractString,
         model::M
     ) where {T, M <: Model{T}}
     open(fh -> writevtk(fh, model), fname, "w")

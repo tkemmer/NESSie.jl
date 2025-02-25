@@ -17,7 +17,7 @@ Creates a Wavefront OBJ file from a given surface model.
 # Alias
 
     writeobj(
-        fname::String,
+        fname::AbstractString,
         model::Model{T, Triangle{T}}
     )
 
@@ -46,6 +46,6 @@ function writeobj(
     end
 end
 
-@inline function writeobj(fname::String, model::Model{T, Triangle{T}}) where T
+@inline function writeobj(fname::AbstractString, model::Model{T, Triangle{T}}) where T
     open(fh -> writeobj(fh, model), fname, "w")
 end

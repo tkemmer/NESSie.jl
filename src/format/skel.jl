@@ -17,7 +17,7 @@ collection of points and polylines.
 # Alias
 
     writeskel(
-        fname::String,
+        fname::AbstractString,
         model::Model{T}
     )
 
@@ -63,7 +63,7 @@ function writeskel(
 end
 
 @inline function writeskel(
-        fname::String,
+        fname::AbstractString,
         model::M
     ) where {T, M <: Model{T}}
     open(fh -> writeskel(fh, model), fname, "w")

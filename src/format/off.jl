@@ -19,7 +19,7 @@ Reads a surface model from the given OFF file.
 
 # Alias
 
-    readoff(fname::String, ::Type{T}=Float64)
+    readoff(fname::AbstractString, ::Type{T}=Float64)
 
 Reads the model using a file name rather than a `IOStream` object.
 """
@@ -38,7 +38,7 @@ function readoff(
 end
 
 @inline function readoff(
-        fname::String,
+        fname::AbstractString,
              ::Type{T}=Float64
     ) where T
     open(fh -> readoff(fh, T), fname)

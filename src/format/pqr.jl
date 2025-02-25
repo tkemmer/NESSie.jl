@@ -15,7 +15,7 @@ Reads a charge model from the given PQR file.
 
 # Alias
 
-    readpqr(fname::String, ::Type{T}=Float64)
+    readpqr(fname::AbstractString, ::Type{T}=Float64)
 
 Reads the charge model using a file name rather than a `IOStream` object.
 """
@@ -34,7 +34,7 @@ function readpqr(
 end
 
 @inline function readpqr(
-        fname::String,
+        fname::AbstractString,
              ::Type{T}=Float64
     ) where T
     open(fh -> readpqr(fh, T), fname)

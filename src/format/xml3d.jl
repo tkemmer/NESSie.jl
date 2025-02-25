@@ -17,7 +17,7 @@ latter as point cloud) or from a given surface model.
 # Alias
 
     writexml3d_json(
-        fname::String,
+        fname::AbstractString,
         nodes::Union{Vector{Vector{T}}), Model{T, Triangle{T}}}
     )
 
@@ -75,7 +75,7 @@ function writexml3d_json(
 end
 
 @inline function writexml3d_json(
-        fname::String,
+        fname::AbstractString,
         model::Union{Vector{Vector{T}},Model{T, Triangle{T}}}
     ) where T
     open(fh -> writexml3d_json(fh, model), fname, "w")
@@ -101,7 +101,7 @@ as point cloud.
 # Alias
 
     writexml3d_xml(
-        fname::String,
+        fname::AbstractString,
         nodes::Vector{Vector{T}}
     )
 
@@ -124,7 +124,7 @@ function writexml3d_xml(
 end
 
 @inline function writexml3d_xml(
-        fname::String,
+        fname::AbstractString,
         nodes::Vector{Vector{T}}
     ) where T
     open(fh -> writexml3d_xml(fh, nodes), fname, "w")
