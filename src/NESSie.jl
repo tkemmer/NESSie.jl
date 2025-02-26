@@ -4,8 +4,10 @@ module NESSie
 
 using AutoHashEquals
 using Distances: euclidean
+using Gmsh
 using LinearAlgebra: ⋅, ×, BLAS, norm, rmul!
 
+import FileIO, MeshIO
 import GeometryBasics
 
 include("base/constants.jl")

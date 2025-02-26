@@ -21,6 +21,7 @@ Pages = ["base.md"]
     _cos
     _data_path
     _dot
+    _generate_sphere
     _norm
     _pluseye!
     _reverseindex

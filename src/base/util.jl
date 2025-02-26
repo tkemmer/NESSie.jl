@@ -409,6 +409,51 @@ end
 
 
 # =========================================================================================
+"""
+    _generate_sphere(::Type{T}, center::Vector{Real}, radius::Real)
+
+Generates a surface model for a sphere of the given radius at the given center point
+through [Gmsh.jl](https://github.com/JuliaFEM/Gmsh.jl).
+
+# Supported keyword arguments
+ - `lc_min::Real = 0.1` corresponds to Gmsh's "Mesh.CharacteristicLengthMin"
+ - `lc_max::Real = 0.1` corresponds to Gmsh's "Mesh.CharacteristicLengthMax"
+
+# Return type
+[`Model{T, Triangle{T}}`](@ref)
+"""
+function _generate_sphere(
+    ::Type{T},
+    center::Vector{<:Real},
+    radius::Real;
+    lc_min::Real = 0.1,
+    lc_max::Real = 0.1
+) where T <: AbstractFloat
+    fname = "$(tempname(cleanup = false)).msh"
+    gmsh.initialize()
+    gmsh.model.add("sphere")
+    gmsh.model.occ.addSphere(center..., radius)
+    gmsh.model.occ.synchronize()
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMin", lc_min)
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMax", lc_max)
+    gmsh.model.mesh.generate(2)
+    gmsh.write(fname)
+    gmsh.finalize()
+
+    model = Model(FileIO.load(fname; pointtype = _pointtype(T)))
+    try
+        rm(fname)
+    catch
+        @warn "Couldn't remove temporary file $fname"
+    end
+    model
+end
+
+@inline _pointtype(::Type{Float64}) = GeometryBasics.Point3d
+@inline _pointtype(::Type{Float32}) = GeometryBasics.Point3f
+
+
+# =========================================================================================
 # Conversion to/from GeometryBasics.Mesh
 
 """
