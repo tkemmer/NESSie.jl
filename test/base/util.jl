@@ -1,6 +1,7 @@
 @testitem "Utilities" begin
     include("../testsetup.jl")
 
+    import GeometryBasics
     using LinearAlgebra: ⋅, norm
 
     @testset "_cos" begin
@@ -298,6 +299,54 @@
             @test Ξ[1] == [T[1, 1, 1], T[0.5, 1, 0.5], T[0, 1, 0]]
             @test Ξ[2] == [T[1, 0.5, 0.5], T[0.5, 0.5, 0], T[0, 0.5, -0.5]]
             @test Ξ[3] == [T[1, 0, 0], T[0.5, 0, -0.5], T[0, 0, -1]]
+        end
+    end
+
+    @testset "GeometryBasics.mesh" begin
+        for T in testtypes
+            let model = Model{T, NESSie.Triangle{T}}()
+                gbm = GeometryBasics.mesh(model)
+                @test gbm isa GeometryBasics.Mesh{3, T, GeometryBasics.TriangleFace{Int}}
+                @test isempty(gbm.position)
+                @test isempty(gbm.faces)
+            end
+
+            let model = Format.readoff(NESSie._data_path("born/na.off"), T)
+                nodes = Set((v...,) for v in model.nodes)
+                elems = Set((e.v1..., e.v2..., e.v3...) for e in model.elements)
+
+                gbm = GeometryBasics.mesh(model)
+                @test gbm isa GeometryBasics.Mesh{3, T, GeometryBasics.TriangleFace{Int}}
+                @test length(gbm.position) == length(model.nodes)
+                @test Set((p...,) for p in gbm.position) == nodes
+                @test length(gbm.faces) == length(model.elements)
+                @test Set(Tuple(c for p in gbm.position[[f...]] for c in p) for f in gbm.faces) == elems
+            end
+        end
+    end
+
+    @testset "NESSie.Model" begin
+        for T in testtypes
+            let model = Model{T, Triangle{T}}()
+                model2 = Model(GeometryBasics.mesh(model))
+                @test model2 isa Model{T, Triangle{T}}
+                @test isempty(model2.nodes)
+                @test isempty(model2.elements)
+                @test isempty(model2.charges)
+                @test model2.params == defaultopt(T)
+            end
+
+            let model = Format.readoff(NESSie._data_path("born/na.off"), T)
+                model.charges = Format.readpqr(NESSie._data_path("born/na.pqr"), T)
+                model.params  = Option{T}(1, 2, 3, 4)
+
+                model2 = Model(GeometryBasics.mesh(model); charges = model.charges, params = model.params)
+                @test model2 isa Model{T, Triangle{T}}
+                @test model2.nodes == model.nodes
+                @test model2.elements == model.elements
+                @test model2.charges == model.charges
+                @test model2.params == model.params
+            end
         end
     end
 

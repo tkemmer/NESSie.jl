@@ -29,8 +29,7 @@ makedocs(
         NESSie,
         NESSie.BEM,
         NESSie.Format,
-        NESSie.TestModel,
-        Base.get_extension(NESSie, :GeometryBasicsExt)
+        NESSie.TestModel
     ],
     clean     = true,
     doctest   = true,

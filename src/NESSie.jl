@@ -6,6 +6,8 @@ using AutoHashEquals
 using Distances: euclidean
 using LinearAlgebra: ⋅, ×, BLAS, norm, rmul!
 
+import GeometryBasics
+
 include("base/constants.jl")
 export ε0, Option, defaultopt
 
