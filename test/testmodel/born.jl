@@ -20,18 +20,6 @@
         end
     end
 
-    @testset "bornmodel" begin
-        for T in testtypes, name in ion_names
-            let model = bornmodel(name, T)
-                @test model isa Model{T, Triangle{T}}
-                @test !isempty(model.nodes)
-                @test !isempty(model.elements)
-                @test !isempty(model.charges)
-                @test model.params == defaultopt(BornIon{T})
-            end
-        end
-    end
-
     @testset "Model" begin
         for T in testtypes
             let model = Model(bornion(first(ion_names), T))

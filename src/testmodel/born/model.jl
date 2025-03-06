@@ -119,24 +119,6 @@ end
 
 # =========================================================================================
 """
-    bornmodel(name::AbstractString, ::Type{Float64} = Float64)
-    bornmodel(name::AbstractString, ::Type{Float32})
-
-Returns surface models for built-in Born ions (c.f. [`bornion`](@ref)).
-
-# Return type
-[`Model{T, Triangle{T}}`](@ref)
-"""
-function bornmodel(name::AbstractString, ::Type{T} = Float64) where T
-    model = Format.readoff(_data_path("born", "$(lowercase(name)).off"), T)
-    model.charges = Format.readpqr(_data_path("born", "$(lowercase(name)).pqr"), T)
-    model.params = defaultopt(BornIon{T})
-    model
-end
-
-
-# =========================================================================================
-"""
     Model(ion::BornIon)
 
 Converts the given [Born ion](@ref BornIon) into a triangle-based model, using

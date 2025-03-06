@@ -11,7 +11,7 @@ using SpecialFunctions: besseli, besselk
     Born models
 =#
 include("testmodel/born/model.jl")
-export BornIon, bornion, bornmodel
+export BornIon, bornion
 
 include("testmodel/born/potentials.jl")
 
