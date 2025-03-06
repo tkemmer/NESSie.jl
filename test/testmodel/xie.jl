@@ -72,6 +72,26 @@
         end
     end
 
+    @testset "Model" begin
+        for T in testtypes
+            charges = [
+                Charge(T[0, 0, 0, 1]...),
+                Charge(T[1, 0, 0, 2]...),
+                Charge(T[1, 1, 0, 3]...),
+                Charge(T[0, 1, 0, 4]...)
+            ]
+            xie = XieModel(2one(T), charges)
+
+            let model = Model(xie)
+                @test model isa Model{T, Triangle{T}}
+                @test !isempty(model.nodes)
+                @test !isempty(model.elements)
+                @test model.charges == xie.charges
+                @test model.params == defaultopt(T)
+            end
+        end
+    end
+
     @testset "legendre" begin
         using NESSie.TestModel: legendre
 

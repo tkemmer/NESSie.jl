@@ -98,3 +98,25 @@ function scalemodel(
 
     [Charge{T}(pos, q.val) for (pos, q) in zip(newpos, charges)]
 end
+
+
+# =========================================================================================
+"""
+    Model(xie::XieModel)
+
+Converts the given [Xie test model](@ref XieModel) into a triangle-based model, using
+[Gmsh.jl](https://github.com/JuliaFEM/Gmsh.jl) for the mesh generation.
+
+# Supported keyword arguments
+ - `lc_min::Real = 0.12` corresponds to Gmsh's "Mesh.CharacteristicLengthMin"
+ - `lc_max::Real = 0.13` corresponds to Gmsh's "Mesh.CharacteristicLengthMax"
+
+# Return type
+[`Model{T, Triangle{T}}`](@ref)
+"""
+@inline function NESSie.Model(xie::XieModel{T}; lc_min::Real = 0.12, lc_max::Real = 0.13) where T
+    model = _generate_sphere(T, zeros(T, 3), xie.radius; lc_min = lc_min, lc_max = lc_max)
+    model.charges = xie.charges
+    model.params  = xie.params
+    model
+end

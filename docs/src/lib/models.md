@@ -22,6 +22,7 @@ Pages = ["models.md"]
 ## System models
 ```@docs
     Model
+    Model(::TestModel.XieModel)
 ```
 
 ## Test models
