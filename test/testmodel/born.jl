@@ -32,6 +32,18 @@
         end
     end
 
+    @testset "Model" begin
+        for T in testtypes
+            let model = Model(bornion(first(ion_names), T))
+                @test model isa Model{T, Triangle{T}}
+                @test !isempty(model.nodes)
+                @test !isempty(model.elements)
+                @test !isempty(model.charges)
+                @test model.params == defaultopt(BornIon{T})
+            end
+        end
+    end
+
     @test_skip φΩ(LocalES)
     @test_skip φΣ(LocalES)
     @test_skip φΩ(NonlocalES)

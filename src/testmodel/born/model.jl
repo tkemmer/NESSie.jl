@@ -133,3 +133,25 @@ function bornmodel(name::AbstractString, ::Type{T} = Float64) where T
     model.params = defaultopt(BornIon{T})
     model
 end
+
+
+# =========================================================================================
+"""
+    Model(ion::BornIon)
+
+Converts the given [Born ion](@ref BornIon) into a triangle-based model, using
+[Gmsh.jl](https://github.com/JuliaFEM/Gmsh.jl) for the mesh generation.
+
+# Supported keyword arguments
+ - `lc_min::Real = 0.2` corresponds to Gmsh's "Mesh.CharacteristicLengthMin"
+ - `lc_max::Real = 0.25` corresponds to Gmsh's "Mesh.CharacteristicLengthMax"
+
+# Return type
+[`Model{T, Triangle{T}}`](@ref)
+"""
+@inline function NESSie.Model(ion::BornIon{T}; lc_min::Real = 0.2, lc_max::Real = 0.25) where T
+    model = _generate_sphere(T, ion.charge.pos, ion.radius; lc_min = lc_min, lc_max = lc_max)
+    model.charges = [ion.charge]
+    model.params  = ion.params
+    model
+end
