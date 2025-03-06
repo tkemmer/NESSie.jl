@@ -395,6 +395,58 @@ end
 
 # =========================================================================================
 """
+    guess_domain(ξ::Vector{T}, model::Model{T, Triangle{T}})
+
+Make an educated guess whether the given observation point `ξ` is located in the protein
+domain `Ω`, the solvent domain `Σ`, or the surface domain `Γ`.
+
+The domain is determined based on the relative position to the triangle with the closest
+centroid.
+
+# Supported keyword arguments
+ - `tolerance::T = 1e-3` maximum |cos| ⋅ norm allowed between the vector from the closest
+   triangle's centroid to ξ and the triangle's unit normal vector before ξ is no longer
+   considered to be part of the Γ domain.
+
+# Return type
+`Symbol` (`:Ω`, `:Σ`, or `:Γ`)
+
+## Alias
+    guess_domain(Ξ::Vector{Vector{T}}, model::Model{T, Triangle{T}})
+
+Determines the domain of each observation point `ξ` ∈ `Ξ`.
+"""
+function guess_domain(ξ::Vector{T}, model::Model{T, Triangle{T}}; tolerance::T = T(1e-3)) where T
+    elem = model.elements[_closest_element_id(ξ, model)]
+    s = elem.normal ⋅ (ξ .- elem.center)
+    abs(s) < tolerance ? :Γ : s < 0 ? :Ω : :Σ
+end
+
+@inline function guess_domain(
+    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
+    model::Model{T, Triangle{T}};
+    kwargs...
+) where T
+    guess_domain.(Ξ, Ref(model); kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    _closest_element_id(ξ::Vector{T}, model::Model{T, Triangle{T}})
+
+Returns the index of the element in the given model with the closest centroid to ξ.
+
+# Return type
+`Int`
+"""
+@inline function _closest_element_id(ξ::Vector{T}, model::Model{T, Triangle{T}}) where T
+    argmin(map(τ -> norm(ξ .- τ.center), model.elements))
+end
+
+
+# =========================================================================================
+"""
     _data_path(parts::AbstractString...)
 
 Returns the absolute path to NESSie's "data" directory, if used without arguments, or to

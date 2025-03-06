@@ -302,6 +302,34 @@
         end
     end
 
+    @testset "guess_domain" begin
+        for T in testtypes
+            nodes    = Vector{T}[T[0, 0, 0], T[0, 0, 3], T[0, 3, 0], T[3, 0, 0]]
+            elements = [Triangle(nodes[1], nodes[2], nodes[3]),
+                        Triangle(nodes[1], nodes[4], nodes[2]),
+                        Triangle(nodes[1], nodes[3], nodes[4]),
+                        Triangle(nodes[2], nodes[4], nodes[3])]
+
+            let model = Model(nodes, elements)
+                for node in model.nodes
+                    @test guess_domain(node, model) === :Γ
+                end
+                for elem in model.elements
+                    @test guess_domain(elem.center, model) === :Γ
+                end
+                @test guess_domain(T[1.5, 0, 0], model) === :Γ
+                @test guess_domain(T[0.0001, 0.0001, 0.0001], model) === :Γ
+                @test guess_domain(T[0.0001, 0.0001, 0.0001], model; tolerance = T(1e-4)) === :Ω
+                @test guess_domain(T[0.001, 0.001, 0.001], model) === :Ω
+                @test guess_domain(T[3//4, 3//4, 3//4], model) === :Ω
+                @test guess_domain(T[-0.0001, -0.0001, -0.0001], model) === :Γ
+                @test guess_domain(T[-0.0001, -0.0001, -0.0001], model; tolerance = T(1e-4)) === :Σ
+                @test guess_domain(T[-0.001, -0.001, -0.001], model) === :Σ
+                @test guess_domain(T[-1, -1, -1], model) === :Σ
+            end
+        end
+    end
+
     @testset "GeometryBasics.mesh" begin
         for T in testtypes
             let model = Model{T, NESSie.Triangle{T}}()

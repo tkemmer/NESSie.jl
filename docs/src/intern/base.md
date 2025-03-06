@@ -18,6 +18,7 @@ Pages = ["base.md"]
 
 # [Utility functions](@id int-util-base)
 ```@docs
+    _closest_element_id
     _cos
     _data_path
     _dot
