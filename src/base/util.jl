@@ -83,7 +83,7 @@ end
 """
     vertexnormals(model::Model{T, Triangle{T}})
 
-Returns a vector containing the normal vectors of the given model's triangles.
+Returns a vector containing the normal vectors of the given model's vertices.
 
 # Return type
 `Vector{Vector{T}}`
