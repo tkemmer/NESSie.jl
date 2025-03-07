@@ -342,7 +342,7 @@ end
     laplacecoll(
         ptype::Type{<: PotentialType},
         ξ    ::AbstractVector{T},
-        elem ::AbstractVector{Triangle{T}};
+        elem ::Triangle{T};
         # kwargs
         dat  ::AbstractVector{T} = Vector{T}(undef, 12)
     )
