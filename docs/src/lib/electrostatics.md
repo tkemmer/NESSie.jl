@@ -30,15 +30,11 @@ Pages = ["electrostatics.md"]
     ∇φmol
 ```
 
-### Interior potentials
+### Electrostatic potentials
 ```@docs
     φΩ
-```
-
-
-### Exterior potentials
-```@docs
     φΣ
+    φΓ
 ```
 
 ### Reaction field potentials

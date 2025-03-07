@@ -1,7 +1,8 @@
 module BEM
 
 using ..NESSie
-using ..NESSie: _axpy!, _etol, _gemm, _gemv, _gemv!, _pluseye!, σ, ec, potprefactor, yukawa
+using ..NESSie: _axpy!, _closest_element_id, _etol, _gemm, _gemv, _gemv!, _pluseye!, σ, ec,
+    potprefactor, yukawa
 using AutoHashEquals
 using Base: Threads
 using Distances: euclidean

@@ -45,6 +45,37 @@ end
 
 # =========================================================================================
 """
+    function NESSie.φΓ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the local or nonlocal surface potential ``φ_Γ`` for the given set of observation
+points `Ξ`.
+
+!!! warning
+    This function does not verify whether all points in `Ξ` are located in ``Γ``!
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`Vector{T}`
+"""
+@inline function NESSie.φΓ(
+    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T}
+) where T
+    φΓ.(Ξ, Ref(bem))
+end
+
+function NESSie.φΓ(ξ::Vector{T}, bem::BEMResult{T}) where T
+    (
+        bem.u[_closest_element_id(ξ, bem.model)] +
+        φmol(ξ, bem.model.charges) / bem.model.params.εΩ
+    ) / T(4π / ε0 * ec)
+end
+
+
+# =========================================================================================
+"""
     φΩ(Ξ::Vector{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal interior electrostatic potential ``φ_Ω`` for the given set
