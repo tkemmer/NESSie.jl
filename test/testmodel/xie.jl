@@ -179,4 +179,5 @@
     @test_skip coefficients
     @test_skip φΣ
     @test_skip φΩ
+    @test_skip espotential
 end

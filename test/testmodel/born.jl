@@ -32,8 +32,7 @@
         end
     end
 
-    @test_skip φΩ(LocalES)
-    @test_skip φΣ(LocalES)
-    @test_skip φΩ(NonlocalES)
-    @test_skip φΣ(NonlocalES)
+    @test_skip φΩ
+    @test_skip φΣ
+    @test_skip espotential
 end

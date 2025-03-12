@@ -1,5 +1,37 @@
 # =========================================================================================
 """
+    espotential(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
+
+Computes the electrostatic potential at the given observation point ξ for the given born
+ion.
+
+# Return type
+`T`
+
+# Alias
+    espotential(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
+
+Computes the electrostatic potentials for all observation points ``ξ \\in Ξ``.
+"""
+@inline function NESSie.espotential(
+    lt::Type{<: LocalityType},
+    ξ::Vector{T},
+    ion::BornIon{T}
+) where T
+    euclidean(ξ, ion.charge.pos) <= ion.radius ? φΩ(lt, ξ, ion) : φΣ(lt, ξ, ion)
+end
+
+@inline function NESSie.espotential(
+    lt::Type{<: LocalityType},
+    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
+    ion::BornIon{T}
+) where T
+    espotential.(lt, Ξ, Ref(ion))
+end
+
+
+# =========================================================================================
+"""
     φΩ(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
 
 Computes the interior local or nonlocal electrostatic potential ``φ_Ω`` for the given

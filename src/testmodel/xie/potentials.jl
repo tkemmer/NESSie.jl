@@ -1,5 +1,35 @@
 # =========================================================================================
 """
+    espotential(ξ::Vector{T}, model::NonlocalXieModel1{T})
+
+Computes the electrostatic potential at the given observation point ξ for the given test
+model.
+
+# Return type
+`T`
+
+# Alias
+    espotential(Ξ::AbstractVector{Vector{T}}, model::NonlocalXieModel1{T})
+
+Computes the electrostatic potentials for all observation points ``ξ \\in Ξ``.
+"""
+@inline function NESSie.espotential(
+    ξ::Vector{T},
+    model::NonlocalXieModel1{T}
+) where T
+    norm(ξ) <= model.radius ? φΩ(ξ, model) : φΣ(ξ, model)
+end
+
+@inline function NESSie.espotential(
+    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
+    model::NonlocalXieModel1{T}
+) where T
+    espotential.(Ξ, Ref(model))
+end
+
+
+# =========================================================================================
+"""
     function φΩ(
         ξ    ::Vector{T},
         model::NonlocalXieModel1{T}
