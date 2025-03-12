@@ -125,6 +125,10 @@ end
     φΩ(collect(Vector{T}, Ξ), bem)
 end
 
+@inline function NESSie.φΩ(ξ::Vector{T}, bem::BEMResult{T}) where T
+    only(φΩ([ξ], bem))
+end
+
 
 # =========================================================================================
 """
@@ -220,4 +224,8 @@ end
 
 @inline function NESSie.φΣ(Ξ::Base.Generator, bem::BEMResult{T}) where T
     φΣ(collect(Vector{T}, Ξ), bem)
+end
+
+@inline function NESSie.φΣ(ξ::Vector{T}, bem::BEMResult{T}) where T
+    only(φΣ([ξ], bem))
 end
