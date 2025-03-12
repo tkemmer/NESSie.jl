@@ -45,6 +45,50 @@ end
 
 # =========================================================================================
 """
+    espotential(ξ::Vector{T}, bem::BEMResult{T})
+
+Computes the electrostatic potential at the given observation point ξ for the given BEM
+result. This function tries to automatically locate the given observation point using
+[`guess_domain`](@ref).
+
+# Supported keyword arguments
+See [`guess_domain`](@ref)
+
+# Return type
+`T`
+
+# Alias
+    espotential(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the electrostatic potentials for all observation points ``ξ \\in Ξ``.
+"""
+function NESSie.espotential(ξ::Vector{T}, bem::BEMResult{T}; kwargs...) where T
+    loc = guess_domain(ξ, bem.model; kwargs...)
+    loc === :Ω && return φΩ(ξ, bem)
+    loc === :Σ && return φΣ(ξ, bem)
+    loc === :Γ && return φΓ(ξ, bem)
+    error("unknown location $loc")
+end
+
+function NESSie.espotential(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T}; kwargs...) where T
+    locs = guess_domain.(Ξ, Ref(bem.model); kwargs...)
+    unknown_locs = setdiff(locs, [:Ω, :Σ, :Γ])
+    !isempty(unknown_locs) && error("unknown locations $unknown_locs")
+
+    ret = Array{T}(undef, length(Ξ))
+    view(ret, locs .== :Ω) .= φΩ(view(Ξ, locs .== :Ω), bem)
+    view(ret, locs .== :Σ) .= φΣ(view(Ξ, locs .== :Σ), bem)
+    view(ret, locs .== :Γ) .= φΓ(view(Ξ, locs .== :Γ), bem)
+    ret
+end
+
+@inline function NESSie.espotential(Ξ::Base.Generator, bem::BEMResult{T}; kwargs...) where T
+    espotential(collect(Vector{T}, Ξ), bem; kwargs...)
+end
+
+
+# =========================================================================================
+"""
     function NESSie.φΓ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal surface potential ``φ_Γ`` for the given set of observation

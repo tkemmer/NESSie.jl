@@ -32,6 +32,7 @@ Pages = ["electrostatics.md"]
 
 ### Electrostatic potentials
 ```@docs
+    espotential
     φΩ
     φΣ
     φΓ

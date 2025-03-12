@@ -5,5 +5,6 @@
     @test_skip φΩ
     @test_skip φΣ
     @test_skip φΓ
+    @test_skip espotential
     @test_skip rfenergy
 end
