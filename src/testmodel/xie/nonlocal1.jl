@@ -12,7 +12,7 @@
 
 Representation of the first nonlocal Poisson dielectric model described in
 [[Xie16]](@ref Bibliography). This model comprises a full
-[`XieModel`](@ref NESSie.TestModel.XieModel) and the coefficients ``A_{in}`` with
+[`XieSphere`](@ref NESSie.TestModel.XieSphere) and the coefficients ``A_{in}`` with
 ``i = 1, 2, 3`` (cf. Eqs. (20a-c)) for each point charge in the model, which are used in
 the computation of the electrostatic potentials.
 
@@ -21,11 +21,11 @@ the computation of the electrostatic potentials.
 
 # Constructor
     NonlocalXieModel1(
-        model::XieModel{T},
+        model::XieSphere{T},
         len  ::Int
     )
 
-The model is created solely from the given [`XieModel`](@ref NESSie.TestModel.XieModel) and
+The model is created solely from the given [`XieSphere`](@ref NESSie.TestModel.XieSphere) and
 the number of terms to be used to approximate the original infinite sum (Eq. 18). The
 coefficient vectors are computed automatically via
 [`coefficients`](@ref NESSie.TestModel.coefficients).
@@ -47,7 +47,7 @@ coefficient vectors are computed automatically via
     A₃::Array{T, 2}
 
     NonlocalXieModel1{T}(
-        model::XieModel{T},
+        model::XieSphere{T},
         len  ::Int
     ) where T = begin
         (A₁, A₂, A₃) = coefficients(model, len)
@@ -56,7 +56,7 @@ coefficient vectors are computed automatically via
 end
 
 @inline NonlocalXieModel1(
-    model::XieModel{T},
+    model::XieSphere{T},
     len  ::Int
 ) where T = NonlocalXieModel1{T}(model, len)
 
@@ -77,12 +77,12 @@ end
 # =========================================================================================
 """
     function coefficients(
-        model::XieModel{T},
+        model::XieSphere{T},
         len  ::Int
     )
 
 Computes the coefficients ``A_{in}`` with ``i=1, 2, 3`` for the given
-[`XieModel`](@ref NESSie.TestModel.XieModel) and the desired number of terms.
+[`XieSphere`](@ref NESSie.TestModel.XieSphere) and the desired number of terms.
 
 # Return type
 `Tuple{
@@ -91,7 +91,7 @@ Computes the coefficients ``A_{in}`` with ``i=1, 2, 3`` for the given
     Array{T, 2}
 }`
 """
-function coefficients(model::XieModel{T}, len::Int) where T
+function coefficients(model::XieSphere{T}, len::Int) where T
     a  = model.radius
     λ  = model.params.λ
     εΩ = model.params.εΩ

@@ -22,7 +22,7 @@ Pages = ["models.md"]
 ## System models
 ```@docs
     Model
-    Model(::TestModel.XieModel)
+    Model(::TestModel.XieSphere)
 ```
 
 ## Test models
@@ -33,6 +33,6 @@ Pages = ["models.md"]
 ```@docs
     BornIon
     bornion
-    XieModel
+    XieSphere
     NonlocalXieModel1
 ```

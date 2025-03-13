@@ -1,6 +1,6 @@
 # =========================================================================================
 """
-    mutable struct XieModel{T}
+    mutable struct XieSphere{T}
         radius ::T                                 # radius of the origin-centered sphere
         charges::Vector{Charge{T}}                 # point charges in the sphere
         params ::Option{T}         = defaultopt(T) # system constants
@@ -12,7 +12,7 @@ sphere with the specified radius.
 
 # Special contructors
 ```julia
-XieModel(
+XieSphere(
     radius ::T,
     charges::Vector{Charge{T}},
     params ::Option{T}          = defaultopt(T);
@@ -24,7 +24,7 @@ XieModel(
 implementation ([[Xie16]](@ref Bibliography)). Use this flag if you intend to compare
 the results to the reference.
 """
-@auto_hash_equals mutable struct XieModel{T}
+@auto_hash_equals mutable struct XieSphere{T}
     "radius of the origin-centered sphere"
     radius::T
     "point charges in the sphere"
@@ -32,7 +32,7 @@ the results to the reference.
     "system constants"
     params::Option{T}
 
-    XieModel{T}(
+    XieSphere{T}(
         radius ::T,
         charges::Vector{Charge{T}},
         params ::Option{T} = defaultopt(T);
@@ -40,18 +40,18 @@ the results to the reference.
     ) where T = new(radius, scalemodel(charges, radius, compat=compat), params)
 end
 
-@inline XieModel(
+@inline XieSphere(
     radius ::T,
     charges::Vector{Charge{T}},
     params ::Option{T} = defaultopt(T);
     compat ::Bool = false
-) where T = XieModel{T}(radius, charges, params, compat=compat)
+) where T = XieSphere{T}(radius, charges, params, compat=compat)
 
-@inline function Base.show(io::IO, ::MIME"text/plain", xie::XieModel)
+@inline function Base.show(io::IO, ::MIME"text/plain", xie::XieSphere)
     show(io, xie)
 end
 
-@inline function Base.show(io::IO, xie::XieModel)
+@inline function Base.show(io::IO, xie::XieSphere)
     print(io,
         "$(typeof(xie))",
         "(charges = ", length(xie.charges),
@@ -102,9 +102,9 @@ end
 
 # =========================================================================================
 """
-    Model(xie::XieModel)
+    Model(xie::XieSphere)
 
-Converts the given [Xie test model](@ref XieModel) into a triangle-based model, using
+Converts the given [Xie sphere](@ref XieSphere) into a triangle-based model, using
 [Gmsh.jl](https://github.com/JuliaFEM/Gmsh.jl) for the mesh generation.
 
 # Supported keyword arguments
@@ -114,7 +114,7 @@ Converts the given [Xie test model](@ref XieModel) into a triangle-based model, 
 # Return type
 [`Model{T, Triangle{T}}`](@ref)
 """
-@inline function NESSie.Model(xie::XieModel{T}; lc_min::Real = 0.12, lc_max::Real = 0.13) where T
+@inline function NESSie.Model(xie::XieSphere{T}; lc_min::Real = 0.12, lc_max::Real = 0.13) where T
     model = _generate_sphere(T, zeros(T, 3), xie.radius; lc_min = lc_min, lc_max = lc_max)
     model.charges = xie.charges
     model.params  = xie.params

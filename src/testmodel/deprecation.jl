@@ -31,3 +31,6 @@ function NESSie.φΣ(
     ion_copy.params = opt
     φΣ(lt, ξ, ion_copy)
 end
+
+# `XieModel` renamed to `XieSphere` in v1.5
+Base.@deprecate_binding XieModel XieSphere

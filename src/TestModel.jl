@@ -19,7 +19,7 @@ include("testmodel/born/potentials.jl")
     Multi-charge spheres
 =#
 include("testmodel/xie/model.jl")
-export XieModel
+export XieSphere
 
 include("testmodel/xie/common.jl")
 

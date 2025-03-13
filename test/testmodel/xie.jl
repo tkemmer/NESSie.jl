@@ -3,7 +3,7 @@
 
     using NESSie.TestModel
 
-    @testset "XieModel" begin
+    @testset "XieSphere" begin
         using NESSie.TestModel: scalemodel
 
         for T in testtypes
@@ -14,8 +14,8 @@
                 Charge(T[0, 1, 0, 4]...)
             ]
 
-            model = XieModel(2one(T), charges)
-            @test typeof(model) == XieModel{T}
+            model = XieSphere(2one(T), charges)
+            @test typeof(model) == XieSphere{T}
             @test model.radius == 2one(T)
             for (q1, q2) in zip(model.charges, scalemodel(charges, model.radius))
                 @test q1.pos == q2.pos
@@ -80,7 +80,7 @@
                 Charge(T[1, 1, 0, 3]...),
                 Charge(T[0, 1, 0, 4]...)
             ]
-            xie = XieModel(2one(T), charges)
+            xie = XieSphere(2one(T), charges)
 
             let model = Model(xie)
                 @test model isa Model{T, Triangle{T}}
