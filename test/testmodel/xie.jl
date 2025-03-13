@@ -176,7 +176,7 @@
     end
 
     @test_skip NonlocalXieModel1
-    @test_skip coefficients
+    @test_skip _xie_coefficients
     @test_skip φΣ
     @test_skip φΩ
     @test_skip espotential

@@ -5,9 +5,9 @@
         charges::Vector{Charge{T}} # point charges in the sphere
         params ::Option{T}         # system constants
         len    ::Int               # number of terms to be computed
-        A₁     ::Array{T, 2}       # coefficients A₁ for each charge
-        A₂     ::Array{T, 2}       # coefficients A₂ for each charge
-        A₃     ::Array{T, 2}       # coefficients A₃ for each charge
+        M₁     ::Matrix{T}         # coefficients A₁ for each charge
+        M₂     ::Matrix{T}         # coefficients A₂ for each charge
+        M₃     ::Matrix{T}         # coefficients A₃ for each charge
     end
 
 Representation of the first nonlocal Poisson dielectric model described in
@@ -16,82 +16,19 @@ Representation of the first nonlocal Poisson dielectric model described in
 ``i = 1, 2, 3`` (cf. Eqs. (20a-c)) for each point charge in the model, which are used in
 the computation of the electrostatic potentials.
 
-!!! note
-    This type does not provide a trivial constructor.
-
 # Constructor
-    NonlocalXieModel1(
-        model::XieSphere{T},
-        len  ::Int
-    )
+    NonlocalXieModel1(model::XieSphere{T}, len::Int)
 
 The model is created solely from the given [`XieSphere`](@ref NESSie.TestModel.XieSphere) and
-the number of terms to be used to approximate the original infinite sum (Eq. 18). The
-coefficient vectors are computed automatically via
-[`coefficients`](@ref NESSie.TestModel.coefficients).
+the number of terms to be used to approximate the original infinite sum (Eq. 18).
 """
-@auto_hash_equals struct NonlocalXieModel1{T}
-    """radius of the origin-centered sphere"""
-    radius::T
-    """point charges in the sphere"""
-    charges::Vector{Charge{T}}
-    """system constants"""
-    params::Option{T}
-    """number of terms to be computed"""
-    len::Int
-    """coefficients A₁ₙ for each charge"""
-    A₁::Array{T, 2}
-    """coefficients A₂ₙ for each charge"""
-    A₂::Array{T, 2}
-    """coefficients A₃ₙ for each charge"""
-    A₃::Array{T, 2}
+const NonlocalXieModel1{T} = XieTestModel{T, :NonlocalXieModel1}
 
-    NonlocalXieModel1{T}(
-        model::XieSphere{T},
-        len  ::Int
-    ) where T = begin
-        (A₁, A₂, A₃) = coefficients(model, len)
-        new(model.radius, model.charges, model.params, len, A₁, A₂, A₃)
-    end
+@inline function NonlocalXieModel1(model::XieSphere{T}, len::Int) where T
+    NonlocalXieModel1{T}(model, len)
 end
 
-@inline NonlocalXieModel1(
-    model::XieSphere{T},
-    len  ::Int
-) where T = NonlocalXieModel1{T}(model, len)
-
-@inline function Base.show(io::IO, ::MIME"text/plain", xie::NonlocalXieModel1)
-    show(io, xie)
-end
-
-@inline function Base.show(io::IO, xie::NonlocalXieModel1)
-    print(io,
-        "$(typeof(xie))",
-        "(charges = ", length(xie.charges),
-        ", radius = $(xie.radius)",
-        ", len = $(xie.len))"
-    )
-end
-
-
-# =========================================================================================
-"""
-    function coefficients(
-        model::XieSphere{T},
-        len  ::Int
-    )
-
-Computes the coefficients ``A_{in}`` with ``i=1, 2, 3`` for the given
-[`XieSphere`](@ref NESSie.TestModel.XieSphere) and the desired number of terms.
-
-# Return type
-`Tuple{
-    Array{T, 2},
-    Array{T, 2},
-    Array{T, 2}
-}`
-"""
-function coefficients(model::XieSphere{T}, len::Int) where T
+function _xie_coefficients(::Type{NonlocalXieModel1{T}}, model::XieSphere{T}, len::Int) where T
     a  = model.radius
     λ  = model.params.λ
     εΩ = model.params.εΩ

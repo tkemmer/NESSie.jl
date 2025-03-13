@@ -34,5 +34,6 @@ Pages = ["models.md"]
     BornIon
     bornion
     XieSphere
+    XieTestModel
     NonlocalXieModel1
 ```

@@ -9,7 +9,7 @@ Pages = ["testmodel.md"]
 
 ## [Utility functions](@id int-util-testmodel)
 ```@docs
-    coefficients
+    _xie_coefficients
     legendre
     scalemodel
     spherical_besseli

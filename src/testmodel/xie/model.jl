@@ -62,6 +62,74 @@ end
 
 # =========================================================================================
 """
+    struct XieTestModel{T, M} end
+
+Common abstraction for all Xie sphere-based test models.
+"""
+@auto_hash_equals struct XieTestModel{T, M}
+    """radius of the origin-centered sphere"""
+    radius::T
+    """point charges in the sphere"""
+    charges::Vector{Charge{T}}
+    """system constants"""
+    params::Option{T}
+    """number of terms to be computed"""
+    len::Int
+    """coefficients A₁ₙ or C₁ₙ for each charge"""
+    M₁::Matrix{T}
+    """coefficients A₂ₙ or C₂ₙ for each charge"""
+    M₂::Matrix{T}
+    """coefficients A₃ₙ or C₃ₙ for each charge"""
+    M₃::Matrix{T}
+
+    @inline function XieTestModel{T, M}(
+        model::XieSphere{T},
+        len::Int
+    ) where {T, M}
+        new(
+            model.radius,
+            model.charges,
+            model.params,
+            len,
+            _xie_coefficients(XieTestModel{T, M}, model, len)...
+        )
+    end
+end
+
+@inline function Base.show(io::IO, ::MIME"text/plain", xie::XieTestModel)
+    show(io, xie)
+end
+
+@inline function Base.show(io::IO, xie::XieTestModel)
+    print(io,
+        "$(typeof(xie))",
+        "(charges = ", length(xie.charges),
+        ", radius = $(xie.radius)",
+        ", len = $(xie.len))"
+    )
+end
+
+
+# =========================================================================================
+"""
+    function _xie_coefficients(
+        ::XieTestModel{T}
+        model::XieSphere{T},
+        len  ::Int
+    )
+
+Depending on the concrete test model, computes the coefficients ``A_{in}`` or ``C_{in}``
+with ``i=1, 2, 3`` for the given [`XieSphere`](@ref NESSie.TestModel.XieSphere) and the
+desired number of terms.
+
+# Return type
+`NTuple{3, Matrix{T}}`
+"""
+function _xie_coefficients end
+
+
+# =========================================================================================
+"""
     function scalemodel(
         charges::Vector{Charge{T}},
         radius ::T;
