@@ -128,18 +128,18 @@ function coefficients(model::XieModel{T}, len::Int) where T
 
     @inbounds for (qi, q) in enumerate(model.charges)
         r  = _norm(q.pos)
-        iᵣ = spherical_besseli(len, max(1e-10, r/λ))
+        iᵣ = spherical_besseli(len, max(T(1e-10), r/λ))
         for n in 0:len-1
             dₙ = d[n+1]
             wₙ = w[n+1]
-            A₁[n+1, qi] = (2n + 1) / (4π * dₙ) *
+            A₁[n+1, qi] = (2n + 1) / (T(4π) * dₙ) *
                           (r^n / a^(n+1) * wₙ - c * n * iᵣ(n) * kₐ(n))
-            A₂[n+1, qi] = λ * (2n + 1) / (4π * εΩ * dₙ) / a^(n+3) *
+            A₂[n+1, qi] = λ * (2n + 1) / (T(4π) * εΩ * dₙ) / a^(n+3) *
                           ((εΣ - εΩ) * (n + 1) * r^n / a^n * iₐ(n) -
                           (n * (εΩ + εΣ) + εΣ) * iᵣ(n))
             A₃[n+1, qi] = A₁[n+1, qi] / a^(2n + 1) +
                           A₂[n+1, qi] * (ε∞ - εΣ) / (ε∞ * a^n) * kₐ(n) -
-                          r^n / (4π * εΩ * a^(2n+1))
+                          r^n / (T(4π) * εΩ * a^(2n+1))
         end
     end
     (A₁, A₂, A₃)
