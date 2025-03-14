@@ -80,7 +80,7 @@ function NESSie.φΩ(ξ::Vector{T}, model::XieTestModel{T}; tolerance::T = T(1e-
             continue
         end
 
-        # otherwise, use Eq. (18)
+        # otherwise, use Eq. (18)/(38a)
         # if ξ is close to the origin, all terms for n > 0 become negligible
         if r < T(1e-10)
             φ += M₃[1, qi] * q.val
@@ -161,7 +161,7 @@ function NESSie.φΣ(ξ::Vector{T}, model::XieTestModel{T}; tolerance::T = T(1e-
             continue
         end
 
-        # otherwise, use Eq. (18)
+        # otherwise, use Eq. (18)/(38b)
         P = legendre(model.len, _cos(ξ, q.pos, r))
         φj = zero(T)
         for n in 0:model.len-1

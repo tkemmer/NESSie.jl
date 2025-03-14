@@ -176,6 +176,7 @@
     end
 
     @test_skip NonlocalXieModel1
+    @test_skip NonlocalXieModel2
     @test_skip _xie_coefficients
     @test_skip φΣ
     @test_skip φΩ

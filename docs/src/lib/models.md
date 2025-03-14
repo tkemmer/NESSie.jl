@@ -36,4 +36,5 @@ Pages = ["models.md"]
     XieSphere
     XieTestModel
     NonlocalXieModel1
+    NonlocalXieModel2
 ```

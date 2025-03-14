@@ -26,6 +26,9 @@ include("testmodel/xie/common.jl")
 include("testmodel/xie/nonlocal1.jl")
 export NonlocalXieModel1
 
+include("testmodel/xie/nonlocal2.jl")
+export NonlocalXieModel2
+
 include("testmodel/xie/potentials.jl")
 
 # deprecations
