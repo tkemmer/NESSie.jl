@@ -175,6 +175,7 @@
         end
     end
 
+    @test_skip LocalXieModel
     @test_skip NonlocalXieModel1
     @test_skip NonlocalXieModel2
     @test_skip _xie_coefficients

@@ -23,6 +23,9 @@ export XieSphere, XieTestModel
 
 include("testmodel/xie/common.jl")
 
+include("testmodel/xie/local.jl")
+export LocalXieModel
+
 include("testmodel/xie/nonlocal1.jl")
 export NonlocalXieModel1
 
