@@ -2,23 +2,22 @@
 This directory contains example code for electrostatics computations using the local and
 nonlocal BEM solvers. The potentials are usually computed for simple test models and
 compared to their analytical solutions (or approximations of it) as provided by the
-`NESSie.TestModel` module. The example scripts can be used with the data provided in
-the `data/` directory of this repository.
+`NESSie.TestModel` module.
 
 
 ## Prerequisites
-All code examples presented here additionally require
-[PyPlot.jl](https://github.com/JuliaPy/PyPlot.jl). Make sure to have this package installed:
+In addition to NESSie.jl, all code examples presented here additionally require
+[Plots.jl](https://github.com/JuliaPlots/Plots.jl). Make sure to have this package installed:
 ```sh
-pkg> add PyPlot
+pkg> add Plots
 ```
 
 ## `bornbem.jl`
-Comparison of local and nonlocal exterior potentials of Born ions.
+Comparison of local and nonlocal potentials of Born ions.
 
 ### Usage
 ```bash
-julia bornbem.jl BORN_ION
+julia -i bornbem.jl BORN_ION
 ```
 where `ION_NAME` is a valid Born ion name (see
 [Documentation](
@@ -27,10 +26,10 @@ where `ION_NAME` is a valid Born ion name (see
 
 
 ## `xiebem.jl`
-Comparison of nonlocal reaction field potentials (or electrostatic potentials) for a
-Poisson test model generated from a given PQR file.
+Comparison of nonlocal electrostatic and reaction field potentials for a Poisson test model
+generated from a given PQR file.
 
 ### Usage
 ```bash
-julia xiebem.jl [PQR_FILE]
+julia -i xiebem.jl [PQR_FILE]
 ```

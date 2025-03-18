@@ -1,72 +1,60 @@
-push!(LOAD_PATH,"../../src/")
-
 #=
     bornbem.jl
 
-    Comparison of local and nonlocal exterior potentials of Born ions.
+    Comparison of local and nonlocal potentials of Born ions.
 =#
 
 using NESSie
-using NESSie.BEM
-using NESSie.TestModel
-using NESSie.Format
-using PyPlot: figure, plot, show, legend, xlabel, ylabel, title, axvline
+using NESSie.BEM, NESSie.TestModel
+using Plots
 
-function plotexterior(name::String, maxdist::Float64=10., resolution::Int=100)
-    name          = lowercase(name)
-    born          = bornion(name)
-    model         = readoff("../../data/born/$name.off")
-    model.charges = readpqr("../../data/born/$name.pqr")
-    model.params  = Option(1., 78., 1., 23.)
-    Ξ             = collect(obspoints_line(
-                        [0., 0., born.radius],
-                        [0., 0., maxdist],
-                        resolution)
-                    )
-    figure()
-    title("$name ion (radius=$(born.radius) Å)")
-    axvline(born.radius, color=(.5, .5, .5), linestyle="--", linewidth=3)
+function plotpot(name::String, maxdist::Float64=10., resolution::Int=100)
+    name  = titlecase(name)
+    born  = bornion(name)
+    model = Model(born)
+    Ξ     = LinRange([0., 0., born.radius / 2], [0., 0., maxdist], resolution)
 
-    xvals = [ξ[3] for ξ in Ξ]
+    plot_x = getindex.(Ξ, 3)
+    p = vline([born.radius]; color = :black, linewidth = 1, linestyle = :solid, label = nothing)
+
     print("Local Born... ")
-    plot(
-        xvals,
-        [TestModel.φΣ(LocalES, ξ, born, model.params) for ξ in Ξ],
-        label="Born (local)"
+    plot!(p, plot_x, espotential(LocalES, Ξ, born); label="Born (local)",
+        title  = "$name ion (radius=$(born.radius) Å)",
+        xlabel = "Distance from point charge in Å",
+        ylabel = "Electrostatic potential in V",
+        yscale = :log10
     )
 
     print("done!\nNonlocal Born... ")
-    plot(
-        xvals,
-        [TestModel.φΣ(NonlocalES, ξ, born, model.params) for ξ in Ξ],
-        label="Born (nonlocal)"
+    plot!(p, plot_x, espotential(NonlocalES, Ξ, born);
+        label = "Born (nonlocal)"
     )
 
     print("done!\nLocal BEM... ")
-    plot(
-        xvals,
-        BEM.φΣ(Ξ, solve(LocalES, model)),
-        label="BEM (local)"
+    plot!(p, plot_x, espotential(Ξ, solve(LocalES, model; method = :blas));
+        label = "BEM (local)",
+        marker = :circle,
+        markersize = 2,
+        linetype = :scatter
     )
 
     print("done!\nNonlocal BEM... ")
-    plot(
-        xvals,
-        BEM.φΣ(Ξ, solve(NonlocalES, model)),
-        label="BEM (nonlocal)"
+    plot!(p, plot_x, espotential(Ξ, solve(NonlocalES, model; method = :blas));
+        label = "BEM (nonlocal)",
+        marker = :plus,
+        markersize = 2,
+        markercolor = :black,
+        linetype = :scatter
     )
-    println("done!")
 
-    legend()
-    xlabel("Distance from point charge [Å]")
-    ylabel("Exterior potential [V]")
-    show()
+    println("done!")
+    display(p)
 end
 
 if length(ARGS) < 1
-    println("\n\e[1mUsage\e[0m: julia bornbem.jl ION_NAME")
+    println("\n\e[1mUsage\e[0m: julia -i bornbem.jl ION_NAME")
     println("\nwhere ION_NAME is a valid Born ion name (see documentation).")
     exit(1)
 end
 
-plotexterior(ARGS[1])
+plotpot(ARGS[1])
