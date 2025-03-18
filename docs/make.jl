@@ -12,15 +12,15 @@ const pages = [
         "lib/models.md",
         "lib/quadrature.md",
         "lib/solvers.md",
-        "lib/util.md"
-    ],
-    "Internals" => [
-        "intern/base.md",
-        "intern/bem.md",
-        "intern/format.md",
-        "intern/radon.md",
-        "intern/rjasanow.md",
-        "intern/testmodel.md"
+        "lib/util.md",
+        "Internals" => [
+            "intern/base.md",
+            "intern/bem.md",
+            "intern/format.md",
+            "intern/radon.md",
+            "intern/rjasanow.md",
+            "intern/testmodel.md"
+        ]
     ]
 ]
 
