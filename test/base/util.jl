@@ -318,12 +318,12 @@
                     @test guess_domain(elem.center, model) === :Γ
                 end
                 @test guess_domain(T[1.5, 0, 0], model) === :Γ
-                @test guess_domain(T[0.0001, 0.0001, 0.0001], model) === :Γ
-                @test guess_domain(T[0.0001, 0.0001, 0.0001], model; tolerance = T(1e-4)) === :Ω
+                @test guess_domain(T[0.00001, 0.00001, 0.00001], model; surface_margin = T(1e-4)) === :Γ
+                @test guess_domain(T[0.00001, 0.00001, 0.00001], model) === :Ω
                 @test guess_domain(T[0.001, 0.001, 0.001], model) === :Ω
                 @test guess_domain(T[3//4, 3//4, 3//4], model) === :Ω
-                @test guess_domain(T[-0.0001, -0.0001, -0.0001], model) === :Γ
-                @test guess_domain(T[-0.0001, -0.0001, -0.0001], model; tolerance = T(1e-4)) === :Σ
+                @test guess_domain(T[-0.00001, -0.00001, -0.00001], model; surface_margin = T(1e-4)) === :Γ
+                @test guess_domain(T[-0.00001, -0.00001, -0.00001], model) === :Σ
                 @test guess_domain(T[-0.001, -0.001, -0.001], model) === :Σ
                 @test guess_domain(T[-1, -1, -1], model) === :Σ
             end

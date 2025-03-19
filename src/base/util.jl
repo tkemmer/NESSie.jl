@@ -404,9 +404,9 @@ The domain is determined based on the relative position to the triangle with the
 centroid.
 
 # Supported keyword arguments
- - `tolerance::T = 1e-3` maximum |cos| ⋅ norm allowed between the vector from the closest
-   triangle's centroid to ξ and the triangle's unit normal vector before ξ is no longer
-   considered to be part of the Γ domain.
+ - `surface_margin::T = 1e-3` maximum |cos| ⋅ norm allowed between the vector from the
+   closest triangle's centroid to ξ and the triangle's unit normal vector before ξ is no
+   longer considered to be part of the Γ domain.
 
 # Return type
 `Symbol` (`:Ω`, `:Σ`, or `:Γ`)
@@ -416,10 +416,14 @@ centroid.
 
 Determines the domain of each observation point `ξ` ∈ `Ξ`.
 """
-function guess_domain(ξ::Vector{T}, model::Model{T, Triangle{T}}; tolerance::T = T(1e-3)) where T
+function guess_domain(
+    ξ::Vector{T},
+    model::Model{T, Triangle{T}};
+    surface_margin::T = T(1e-6)
+) where T
     elem = model.elements[_closest_element_id(ξ, model)]
     s = elem.normal ⋅ (ξ .- elem.center)
-    abs(s) < tolerance ? :Γ : s < 0 ? :Ω : :Σ
+    abs(s) < surface_margin ? :Γ : s < 0 ? :Ω : :Σ
 end
 
 @inline function guess_domain(
