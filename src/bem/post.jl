@@ -54,6 +54,9 @@ result. This function tries to automatically locate the given observation point 
 # Supported keyword arguments
 See [`guess_domain`](@ref)
 
+# Unit
+``V = \\frac{C}{F}``
+
 # Return type
 `T`
 
