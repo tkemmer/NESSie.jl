@@ -34,6 +34,37 @@ struct LocalES    <: LocalityType end
 
 # =========================================================================================
 """
+    molpotential(ξ::Vector{T}, model::Model{T})
+    molpotential(Ξ::AbstractVector{Vector{T}}, model::Model{T})
+
+Computes the molecular potential(s) at the given observation point(s) ξ (Ξ) for the given
+model.
+
+# Supported keyword arguments
+ - `tolerance::T = 1e-10` minimum distance assumed between any observation point and point
+   charge. Closer distances are replaced by this value.
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+@inline function molpotential(ξ::Vector{T}, model::Model{T}; kwargs...) where T
+    φmol(ξ, model.charges; kwargs...) / model.params.εΩ * potprefactor(T)
+end
+
+@inline function molpotential(
+    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    model::Model{T};
+    kwargs...
+) where T
+    molpotential.(Ξ, Ref(model); kwargs...)
+end
+
+
+# =========================================================================================
+"""
     φmol(
         ξ::Vector{T},
         charges::AbstractVector{Charge{T}};

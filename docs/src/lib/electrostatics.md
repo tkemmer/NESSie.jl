@@ -25,6 +25,7 @@ Pages = ["electrostatics.md"]
 
 ### Molecular potentials
 ```@docs
+    molpotential
     φmol
     ∂ₙφmol
     ∇φmol
