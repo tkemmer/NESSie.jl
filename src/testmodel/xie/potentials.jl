@@ -1,72 +1,199 @@
 # =========================================================================================
 """
-    espotential(ξ::Vector{T}, model::NonlocalXieModel1{T})
+    espotential(ξ::Vector{T}, xie::XieTestModel{T})
+    espotential(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
 
-Computes the electrostatic potential at the given observation point ξ for the given test
-model.
+Computes the local or nonlocal electrostatic potential(s) at the given observation point(s)
+ξ (Ξ) for the given Xie test model.
 
-# Return type
-`T`
-
-# Alias
-    espotential(Ξ::AbstractVector{Vector{T}}, model::NonlocalXieModel1{T})
-
-Computes the electrostatic potentials for all observation points ``ξ \\in Ξ``.
-"""
-@inline function NESSie.espotential(
-    ξ::Vector{T},
-    model::XieTestModel{T}
-) where T
-    norm(ξ) <= model.radius ? φΩ(ξ, model) : φΣ(ξ, model)
-end
-
-@inline function NESSie.espotential(
-    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
-    model::XieTestModel{T}
-) where T
-    espotential.(Ξ, Ref(model))
-end
-
-
-# =========================================================================================
-"""
-    function φΩ(
-        ξ    ::Vector{T},
-        model::XieTestModel{T}
-    )
-
-Computes the interior nonlocal electrostatic potential ``φ_Ω`` for the given observation
-point ``ξ``.
+The electrostatic potential is computed as the sum of the corresponding
+[reaction field potential](@ref rfpotential) and the [molecular potential](@ref molpotential).
 
 # Supported keyword arguments
- - `tolerance::T = T(1e-10)` minimum distance assumed between ξ and a point charge when
-   computing molecular potentials (cf. [`φmol`](@ref)).
+See [`molpotential`](@ref)
 
 # Unit
 ``V = \\frac{C}{F}``
 
 # Return type
-`T`
+`T` or `Vector{T}`
 
-## Alias
-    φΩ(Ξ::Vector{Vector{T}}, model::XieTestModel{T})
+# Alias
+    espotential(domain::Symbol, ξ::Vector{T}, xie::XieTestModel{T})
+    espotential(domain::Symbol, Ξ::AbstractVector{T}, xie::XieTestModel{T})
 
-Computes the potentials for all observation points ``ξ \\in Ξ``.
-
-!!! warning
-    This function does not verify whether ξ is located inside of the sphere!
+Computes the electrostatic potential(s) for the given observation point(s) ξ (Ξ) and the
+given domain `:Ω`, `:Σ`, or `:Γ`.
 """
-function NESSie.φΩ(ξ::Vector{T}, model::XieTestModel{T}; tolerance::T = T(1e-10)) where T
-    a  = model.radius
-    λ  = model.params.λ
-    εΩ = model.params.εΩ
-    εΣ = model.params.εΣ
-    ε∞ = model.params.ε∞
-    M₃ = model.M₃
+@inline function NESSie.espotential(
+    domain::Symbol,
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::XieTestModel{T};
+    kwargs...
+) where T
+    domain === :Ω && return _espotential_Ω(ξorΞ, xie; kwargs...)
+    domain === :Γ && return _espotential_Ω(ξorΞ, xie; kwargs...)
+    domain === :Σ && return _espotential_Σ(ξorΞ, xie; kwargs...)
+    error("unknown domain $domain")
+end
+
+@inline function NESSie.espotential(
+    ξ::Vector{T},
+    xie::XieTestModel{T};
+    kwargs...
+) where T
+    norm(ξ) <= xie.radius ?
+        espotential(:Ω, ξ, xie; kwargs...) :
+        espotential(:Σ, ξ, xie; kwargs...)
+end
+
+@inline function NESSie.espotential(
+    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::XieTestModel{T};
+    kwargs...
+) where T
+    espotential.(Ξ, Ref(xie); kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    molpotential(ξ::Vector{T}, xie::XieSphere{T})
+    molpotential(ξ::Vector{T}, xie::XieTestModel{T})
+    molpotential(Ξ::AbstractVector{Vector{T}}, xie::XieSphere{T})
+    molpotential(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+
+Computes the molecular potential(s) at the given observation point(s) ξ (Ξ) for the given
+Xie sphere or Xie test model.
+
+# Supported keyword arguments
+ - `tolerance::T = 1e-10` minimum distance assumed between any observation point and point
+   charge. Closer distances are replaced by this value.
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+@inline function NESSie.molpotential(
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::Union{XieSphere{T}, <: XieTestModel{T}};
+    kwargs...
+) where T
+    potprefactor(T) .* φmol(ξorΞ, xie.charges; kwargs...) ./ xie.params.εΩ
+end
+
+
+# =========================================================================================
+"""
+    rfpotential(ξ::Vector{T}, xie::XieTestModel{T})
+    rfpotential(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+
+Computes the local or nonlocal reaction field potential(s) at the given observation point(s)
+ξ (Ξ) for the given Xie test model.
+
+# Supported keyword arguments
+See [`molpotential`](@ref)
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+
+# Alias
+    rfpotential(domain::Symbol, ξ::Vector{T}, xie::XieTestModel{T})
+    rfpotential(domain::Symbol, Ξ::AbstractVector{T}, xie::XieTestModel{T})
+
+Computes the reaction field potential(s) for the given observation point(s) ξ (Ξ) and the
+given domain `:Ω`, `:Σ`, or `:Γ`.
+"""
+@inline function NESSie.rfpotential(
+    domain::Symbol,
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::XieTestModel{T};
+    kwargs...
+) where T
+    domain === :Ω && return _rfpotential_Ω(ξorΞ, xie)
+    domain === :Γ && return _rfpotential_Ω(ξorΞ, xie)
+    domain === :Σ && return _rfpotential_Σ(ξorΞ, xie; kwargs...)
+    error("unknown domain $domain")
+end
+
+@inline function NESSie.rfpotential(
+    ξ::Vector{T},
+    xie::XieTestModel{T};
+    kwargs...
+) where T
+    norm(ξ) <= xie.radius ?
+        rfpotential(:Ω, ξ, xie; kwargs...) :
+        rfpotential(:Σ, ξ, xie; kwargs...)
+end
+
+@inline function NESSie.rfpotential(
+    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::XieTestModel{T};
+    kwargs...
+) where T
+    rfpotential.(Ξ, Ref(xie); kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    _espotential_Ω(ξ::Vector{T}, xie::XieTestModel{T})
+    _espotential_Ω(Ξ::AbstractVector{T}, xie::XieTestModel{T})
+
+Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
+inside the test model sphere.
+
+# Supported keyword arguments
+See [`molpotential`](@ref)
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+@inline function _espotential_Ω(
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::XieTestModel{T};
+    kwargs...
+) where T
+    _rfpotential_Ω(ξorΞ, xie) .+ molpotential(ξorΞ, xie; kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    _rfpotential_Ω(ξ::Vector{T}, xie::XieTestModel{T})
+    _rfpotential_Ω(Ξ::AbstractVector{T}, xie::XieTestModel{T})
+
+Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
+inside the test model sphere.
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+function _rfpotential_Ω(
+    ξ::Vector{T},
+    xie::XieTestModel{T}
+) where T
+    a  = xie.radius
+    λ  = xie.params.λ
+    εΩ = xie.params.εΩ
+    εΣ = xie.params.εΣ
+    ε∞ = xie.params.ε∞
+    M₃ = xie.M₃
     r  = _norm(ξ)
 
     φ = zero(T)
-    for (qi, q) in enumerate(model.charges)   # Eq. (17a)
+    for (qi, q) in enumerate(xie.charges)   # Eq. (17a)
 
         # if q is close to the origin, compute nonlocal Born potential
         # Note: this test model uses a different definition than our Born implementation
@@ -87,30 +214,163 @@ function NESSie.φΩ(ξ::Vector{T}, model::XieTestModel{T}; tolerance::T = T(1e-
             continue
         end
 
-        P = legendre(model.len, _cos(ξ, q.pos, r))
+        P = legendre(xie.len, _cos(ξ, q.pos, r))
         φj = zero(T)
-        for n in 0:model.len-1
+        for n in 0:xie.len-1
             φj += M₃[n+1, qi] * r^n * P(n)
         end
         φ += φj * q.val
     end
 
-    (φ + φmol(ξ, model.charges; tolerance = tolerance) / T(4π) / εΩ) * T(ec/ε0)
+    φ * T(ec/ε0)
 end
 
-@inline function NESSie.φΩ(
-    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
-    model::XieTestModel{T}
+@inline function _rfpotential_Ω(
+    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::XieTestModel{T}
 ) where T
-    φΩ.(Ξ, Ref(model))
+    _rfpotential_Ω.(Ξ, Ref(xie))
+end
+
+
+# =========================================================================================
+"""
+    _espotential_Σ(ξ::Vector{T}, xie::XieTestModel{T})
+    _espotential_Σ(Ξ::AbstractVector{T}, xie::XieTestModel{T})
+
+Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
+outside the test model sphere.
+
+# Supported keyword arguments
+See [`molpotential`](@ref)
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+function _espotential_Σ(
+    ξ::Vector{T},
+    xie::XieTestModel{T};
+    tolerance::T = T(1e-10)
+) where T
+    a  = xie.radius
+    λ  = xie.params.λ
+    εΩ = xie.params.εΩ
+    εΣ = xie.params.εΣ
+    ε∞ = xie.params.ε∞
+    M₁ = xie.M₁
+    M₂ = xie.M₂
+    κ  = λ \ √(εΣ/ε∞)
+    r  = _norm(ξ)
+
+    kᵣ = spherical_besselk(xie.len, κ * r)
+
+    φ = zero(T)
+    for (qi, q) in enumerate(xie.charges)   # Eq. (17a)
+
+        # if q is close to origin, compute nonlocal Born potential
+        # Note: this test model uses a different definition than our Born implementation
+        # https://doi.org/10.4208/cicp.170811.211011s
+        if _norm(q.pos) < 1e-10
+            _term1 = exp(κ * a) * (εΣ - ε∞)/εΩ * (a * εΣ + λ * (εΩ - εΣ) * sinh(a / λ))
+            _term2 = (a * √(ε∞ * εΣ) + λ *(ε∞ - εΣ)) * sinh(a / λ) + a * εΣ * cosh(a / λ)
+            _term3 = _term1 / _term2 * exp(-κ * r)
+            φ += (1 + _term3) / εΣ * q.val / T(4π) / max(r, tolerance)
+            continue
+        end
+
+        # otherwise, use Eq. (18)/(38b)
+        P = legendre(xie.len, _cos(ξ, q.pos, r))
+        φj = zero(T)
+        for n in 0:xie.len-1
+            φj += (ε∞ - εΣ)/ε∞ * M₂[n+1, qi] * kᵣ(n) * P(n) +
+                  M₁[n+1, qi] / r^(n+1) * P(n)
+        end
+        φ += φj * q.val
+    end
+
+    φ * T(ec/ε0)
+end
+
+@inline function _espotential_Σ(
+    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::XieTestModel{T};
+    kwargs...
+) where T
+    _espotential_Σ.(Ξ, Ref(xie); kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    _rfpotential_Σ(ξ::Vector{T}, xie::XieTestModel{T})
+    _rfpotential_Σ(Ξ::AbstractVector{T}, xie::XieTestModel{T})
+
+Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
+outside the test model sphere.
+
+# Supported keyword arguments
+See [`molpotential`](@ref)
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+@inline function _rfpotential_Σ(
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::XieTestModel{T};
+    kwargs...
+) where T
+    _espotential_Σ(ξorΞ, xie; kwargs...) .- molpotential(ξorΞ, xie; kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    function φΩ(
+        ξ  ::Vector{T},
+        xie::XieTestModel{T}
+    )
+
+Computes the interior nonlocal electrostatic potential ``φ_Ω`` for the given observation
+point ``ξ``.
+
+# Supported keyword arguments
+ - `tolerance::T = T(1e-10)` minimum distance assumed between ξ and a point charge when
+   computing molecular potentials (cf. [`φmol`](@ref)).
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T`
+
+## Alias
+    φΩ(Ξ::Vector{Vector{T}}, xie::XieTestModel{T})
+
+Computes the potentials for all observation points ``ξ \\in Ξ``.
+
+!!! warning
+    This function does not verify whether ξ is located inside of the sphere!
+"""
+@inline function NESSie.φΩ(
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::XieTestModel{T};
+    kwargs...
+) where T
+    _espotential_Ω(ξorΞ, xie; kwargs...)
 end
 
 
 # =========================================================================================
 """
     function φΣ(
-        ξ    ::Vector{T},
-        model::XieTestModel{T}
+        ξ  ::Vector{T},
+        xie::XieTestModel{T}
     )
 
 Computes the exterior nonlocal electrostatic potential ``φ_Σ`` for the given observation
@@ -127,56 +387,17 @@ point ``ξ``.
 `T`
 
 ## Alias
-    φΣ(Ξ::Vector{Vector{T}}, model::XieTestModel{T})
+    φΣ(Ξ::Vector{Vector{T}}, xie::XieTestModel{T})
 
 Computes the potentials for all observation points ``ξ \\in Ξ``.
 
 !!! warning
     This function does not verify whether ξ is located outside of the sphere!
 """
-function NESSie.φΣ(ξ::Vector{T}, model::XieTestModel{T}; tolerance::T = T(1e-10)) where T
-    a  = model.radius
-    λ  = model.params.λ
-    εΩ = model.params.εΩ
-    εΣ = model.params.εΣ
-    ε∞ = model.params.ε∞
-    M₁ = model.M₁
-    M₂ = model.M₂
-    κ  = λ \ √(εΣ/ε∞)
-    r  = _norm(ξ)
-
-    kᵣ = spherical_besselk(model.len, κ * r)
-
-    φ = zero(T)
-    for (qi, q) in enumerate(model.charges)   # Eq. (17a)
-
-        # if q is close to origin, compute nonlocal Born potential
-        # Note: this test model uses a different definition than our Born implementation
-        # https://doi.org/10.4208/cicp.170811.211011s
-        if _norm(q.pos) < 1e-10
-            _term1 = exp(κ * a) * (εΣ - ε∞)/εΩ * (a * εΣ + λ * (εΩ - εΣ) * sinh(a / λ))
-            _term2 = (a * √(ε∞ * εΣ) + λ *(ε∞ - εΣ)) * sinh(a / λ) + a * εΣ * cosh(a / λ)
-            _term3 = _term1 / _term2 * exp(-κ * r)
-            φ += (1 + _term3) / εΣ * q.val / T(4π) / max(r, tolerance)
-            continue
-        end
-
-        # otherwise, use Eq. (18)/(38b)
-        P = legendre(model.len, _cos(ξ, q.pos, r))
-        φj = zero(T)
-        for n in 0:model.len-1
-            φj += (ε∞ - εΣ)/ε∞ * M₂[n+1, qi] * kᵣ(n) * P(n) +
-                  M₁[n+1, qi] / r^(n+1) * P(n)
-        end
-        φ += φj * q.val
-    end
-
-    φ * T(ec/ε0)
-end
-
 @inline function NESSie.φΣ(
-    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
-    model::XieTestModel{T}
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    xie::XieTestModel{T},
+    kwargs...
 ) where T
-    φΣ.(Ξ, Ref(model))
+    _espotential_Σ(ξorΞ, xie; kwargs...)
 end
