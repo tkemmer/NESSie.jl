@@ -32,7 +32,5 @@
         end
     end
 
-    @test_skip φΩ
-    @test_skip φΣ
     @test_skip espotential
 end

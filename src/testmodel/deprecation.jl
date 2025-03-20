@@ -34,3 +34,9 @@ end
 
 # `XieModel` renamed to `XieSphere` in v1.5
 Base.@deprecate_binding XieModel XieSphere
+
+# removed in v1.5
+@deprecate NESSie.φΩ(lt, ξorΞ, ion::BornIon) espotential(:Ω, ξorΞ, ion) false
+@deprecate NESSie.φΣ(lt, ξorΞ, ion::BornIon) espotential(:Σ, ξorΞ, ion) false
+@deprecate NESSie.φΩ(ξorΞ, xie::XieTestModel) espotential(:Ω, ξorΞ, xie) false
+@deprecate NESSie.φΣ(ξorΞ, xie::XieTestModel) espotential(:Σ, ξorΞ, xie) false
