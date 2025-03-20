@@ -60,8 +60,8 @@ function _solve_explicit(
 
     # compute molecular potential for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = εΩ .\   φmol(model)
-    qmol = εΩ .\ ∂ₙφmol(model)
+    umol = εΩ .\ _molpotential(model)
+    qmol = εΩ .\ _molpotential_dn(model)
 
     # create right hand side
     rhs = zeros(T, 3 * numelem)
@@ -261,8 +261,8 @@ function _solve_implicit(
 
     # compute molecular potential for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = εΩ .\   φmol(model, tolerance=_etol(T))
-    qmol = εΩ .\ ∂ₙφmol(model)
+    umol = εΩ .\ _molpotential(model, tolerance=_etol(T))
+    qmol = εΩ .\ _molpotential_dn(model)
 
     # create nonlocal system
     A = NonlocalSystemMatrix{T}(Ξ, model.elements, model.params)

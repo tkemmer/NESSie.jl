@@ -88,8 +88,8 @@ function _solve_explicit(
 
     # compute molecular potentials for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = model.params.εΩ .\   φmol(model)
-    qmol = model.params.εΩ .\ ∂ₙφmol(model)
+    umol = model.params.εΩ .\ _molpotential(model)
+    qmol = model.params.εΩ .\ _molpotential_dn(model)
 
     # convenience aliases
     εΩ = model.params.εΩ
@@ -218,8 +218,8 @@ function _solve_implicit(
 
     # compute molecular potentials for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = model.params.εΩ .\   φmol(model, tolerance=_etol(T))
-    qmol = model.params.εΩ .\ ∂ₙφmol(model)
+    umol = model.params.εΩ .\ _molpotential(model, tolerance=_etol(T))
+    qmol = model.params.εΩ .\ _molpotential_dn(model)
 
     # potential matrices
     V, K = _get_laplace_matrices(Ξ, model.elements)
