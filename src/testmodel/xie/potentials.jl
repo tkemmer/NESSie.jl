@@ -1,5 +1,29 @@
 # =========================================================================================
 """
+    rfenergy(::XieTestModel{T})
+
+Computes the local or nonlocal reaction field energy W* as
+```math
+W^* = ∫φ^* ρ \\quad dΩ
+```
+where ``φ^*`` is the reaction field and ``ρ`` is the corresponding charge distribution.
+
+# Unit
+``\\frac{kJ}{mol}``
+
+# Return type
+`T`
+"""
+function NESSie.rfenergy(xie::XieTestModel{T}; kwargs...) where T
+    Ξ = collect(Vector{T}, charge.pos for charge in xie.charges)
+    ζ = collect(T, charge.val for charge in xie.charges)
+
+    ζ ⋅ rfpotential(:Ω, Ξ, xie; kwargs...) * T(ec * 6.022140857e10 / 2)
+end
+
+
+# =========================================================================================
+"""
     espotential(ξ::Vector{T}, xie::XieTestModel{T})
     espotential(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
 

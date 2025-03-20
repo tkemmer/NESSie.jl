@@ -38,6 +38,10 @@ Pages = ["electrostatics.md"]
 
 ### Reaction field potentials
 ```@docs
-    rfenergy
     rfpotential
+```
+
+## Potential energies
+```@docs
+    rfenergy
 ```

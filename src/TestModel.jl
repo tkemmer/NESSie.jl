@@ -4,7 +4,7 @@ using ..NESSie
 using ..NESSie: _cos, _data_path, _generate_sphere, _norm, ε0, ec, potprefactor
 using AutoHashEquals
 using Distances: euclidean
-using LinearAlgebra: norm, rmul!
+using LinearAlgebra: ⋅, norm, rmul!
 using SpecialFunctions: besseli, besselk
 
 #=

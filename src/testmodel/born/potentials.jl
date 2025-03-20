@@ -1,5 +1,29 @@
 # =========================================================================================
 """
+    rfenergy(::Type{<: LocalityType}, ::BornIon{T})
+
+Computes the local or nonlocal reaction field energy W* as
+```math
+W^* = ∫φ^* ρ \\quad dΩ
+```
+where ``φ^*`` is the reaction field and ``ρ`` is the corresponding charge distribution.
+
+# Unit
+``\\frac{kJ}{mol}``
+
+# Return type
+`T`
+"""
+function NESSie.rfenergy(lt::Type{<: LocalityType}, ion::BornIon{T}; kwargs...) where T
+    ξ = ion.charge.pos
+    ζ = ion.charge.val
+
+    ζ * rfpotential(:Ω, lt, ξ, ion; kwargs...) * T(ec * 6.022140857e10 / 2)
+end
+
+
+# =========================================================================================
+"""
     espotential(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
     espotential(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
 
