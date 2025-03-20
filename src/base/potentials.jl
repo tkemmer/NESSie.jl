@@ -215,9 +215,6 @@ end
 end
 
 # Function stubs for potentials in submodules
-function φΣ end
-function φΩ end
-function φΓ end
 function espotential end
 function rfpotential end
 function rfenergy end

@@ -24,7 +24,7 @@ export guess_domain, meshunion, obspoints_plane
 
 include("base/potentials.jl")
 export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES, φmol,
-    ∂ₙφmol, ∇φmol, φΩ, φΣ, φΓ, espotential, molpotential, rfenergy, rfpotential
+    ∂ₙφmol, ∇φmol, espotential, molpotential, rfenergy, rfpotential
 
 include("base/deprecation.jl")
 
