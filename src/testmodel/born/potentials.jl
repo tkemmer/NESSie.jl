@@ -106,7 +106,7 @@ born ion.
     ion::BornIon{T};
     kwargs...
 ) where T
-    potprefactor(T) .* φmol(ξorΞ, [ion.charge]; kwargs...)
+    potprefactor(T) .* _molpotential(ξorΞ, [ion.charge]; kwargs...)
 end
 
 

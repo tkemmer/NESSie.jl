@@ -105,7 +105,7 @@ Xie sphere or Xie test model.
     xie::Union{XieSphere{T}, <: XieTestModel{T}};
     kwargs...
 ) where T
-    potprefactor(T) .* φmol(ξorΞ, xie.charges; kwargs...) ./ xie.params.εΩ
+    potprefactor(T) .* _molpotential(ξorΞ, xie.charges; kwargs...) ./ xie.params.εΩ
 end
 
 
