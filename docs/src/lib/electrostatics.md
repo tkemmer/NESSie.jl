@@ -36,7 +36,6 @@ Pages = ["electrostatics.md"]
     espotential
     φΩ
     φΣ
-    φΓ
 ```
 
 ### Reaction field potentials
