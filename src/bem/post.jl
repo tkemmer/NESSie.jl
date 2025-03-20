@@ -122,6 +122,33 @@ end
 
 # =========================================================================================
 """
+    molpotential(ξ::Vector{T}, bem::BEMResult{T})
+    molpotential(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the molecular potential(s) at the given observation point(s) ξ (Ξ) for the given
+BEM result.
+
+# Supported keyword arguments
+ - `tolerance::T = 1e-10` minimum distance assumed between any observation point and point
+   charge. Closer distances are replaced by this value.
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+@inline function NESSie.molpotential(
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T};
+    kwargs...
+) where T
+    molpotential(ξorΞ, bem.model; kwargs...)
+end
+
+
+# =========================================================================================
+"""
     rfpotential(ξ::Vector{T}, bem::BEMResult{T})
     rfpotential(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
@@ -272,7 +299,7 @@ See [`molpotential`](@ref)
     bem::BEMResult{T};
     kwargs...
 ) where T
-    _rfpotential_Ω(Ξ, bem) + molpotential(Ξ, bem.model; kwargs...)
+    _rfpotential_Ω(Ξ, bem) .+ molpotential(Ξ, bem; kwargs...)
 end
 
 @inline function _espotential_Ω(Ξ::Base.Generator, bem::BEMResult{T}; kwargs...) where T
@@ -450,7 +477,7 @@ See [`molpotential`](@ref)
     bem::BEMResult{T};
     kwargs...
 ) where T
-    _espotential_Σ(Ξ, bem) - molpotential(Ξ, bem.model; kwargs...)
+    _espotential_Σ(Ξ, bem) .- molpotential(Ξ, bem; kwargs...)
 end
 
 @inline function _rfpotential_Σ(Ξ::Base.Generator, bem:: BEMResult{T}; kwargs...) where T
