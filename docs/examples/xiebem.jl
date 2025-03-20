@@ -59,18 +59,15 @@ xie = TestModel.XieModel(
     compat=true
 )
 nlxie1 = NonlocalXieModel2(xie, numiter)
-molpot = φmol(Ξ, nlxie1.charges)/4π/εΩ/ε0*NESSie.ec # molecular potential
-
-plot_z = espotential(Ξ, nlxie1)
-p1 = plotpotential(plot_x, plot_y, plot_z; name = "Nonlocal Poisson Test Model")
-p2 = plotpotential(plot_x, plot_y, plot_z .- molpot; reac = true)
+p1 = plotpotential(plot_x, plot_y, espotential(Ξ, nlxie1); name = "Nonlocal Poisson Test Model")
+p2 = plotpotential(plot_x, plot_y, rfpotential(Ξ, nlxie1); reac = true)
 
 # BEM
 surf = Model(xie)
 
-plot_z = espotential(Ξ, solve(NonlocalES, surf; method = :blas))
-p3 = plotpotential(plot_x, plot_y, plot_z; name = "Nonlocal BEM")
-p4 = plotpotential(plot_x, plot_y, plot_z .- molpot; reac = true)
+bem = solve(NonlocalES, surf; method = :blas)
+p3 = plotpotential(plot_x, plot_y, espotential(Ξ, bem); name = "Nonlocal BEM")
+p4 = plotpotential(plot_x, plot_y, rfpotential(Ξ, bem); reac = true)
 
 # synchronize z-axes
 zl13 = extrema([zlims(p1)..., zlims(p3)...])
