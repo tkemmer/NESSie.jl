@@ -6,6 +6,13 @@
 ```@index
 Pages = ["testmodel.md"]
 ```
+## Potentials
+```@docs
+_espotential_Ω
+_espotential_Σ
+_rfpotential_Ω
+_rfpotential_Σ
+```
 
 ## [Utility functions](@id int-util-testmodel)
 ```@docs
