@@ -6,7 +6,7 @@ function NESSie.φΩ(
     opt::Option{T}
 ) where T
     Base.depwarn(
-        "The `opt` parameter is deprecated and will be removed in a future" *
+        "The `opt` parameter is deprecated and will be removed in a future " *
         "release! Instead, please set `ion.params` accordingly.",
         :φΩ
     )
@@ -23,7 +23,7 @@ function NESSie.φΣ(
     opt::Option{T}
 ) where T
     Base.depwarn(
-        "The `opt` parameter is deprecated and will be removed in a future" *
+        "The `opt` parameter is deprecated and will be removed in a future " *
         "release! Instead, please set `ion.params` accordingly.",
         :φΣ
     )
