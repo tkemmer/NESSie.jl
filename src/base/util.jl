@@ -427,7 +427,7 @@ function guess_domain(
 end
 
 @inline function guess_domain(
-    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
     model::Model{T, Triangle{T}};
     kwargs...
 ) where T

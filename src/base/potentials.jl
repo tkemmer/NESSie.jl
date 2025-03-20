@@ -116,7 +116,7 @@ as observation point.
 end
 
 @inline function φmol(
-    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
     charges::AbstractVector{Charge{T}};
     kwargs...
 ) where T
@@ -167,7 +167,7 @@ using each triangle center and normal as observation point.
 end
 
 @inline function ∂ₙφmol(
-    Ξ::Union{AbstractVector{Triangle{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractVector{Triangle{T}}, <: Base.Generator},
     charges::AbstractVector{Charge{T}}
 ) where T
     ∂ₙφmol.(Ξ, Ref(charges))
@@ -208,7 +208,7 @@ Computes the molecular potential gradients for a list of observation points.
 end
 
 @inline function ∇φmol(
-    Ξ::Union{AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
     charges::AbstractVector{Charge{T}}
 ) where T
     ∇φmol.(Ξ, Ref(charges))
