@@ -23,21 +23,9 @@ Pages = ["electrostatics.md"]
 
 ## Potentials
 
-### Molecular potentials
-```@docs
-    molpotential
-    φmol
-    ∂ₙφmol
-    ∇φmol
-```
-
-### Electrostatic potentials
 ```@docs
     espotential
-```
-
-### Reaction field potentials
-```@docs
+    molpotential
     rfpotential
 ```
 

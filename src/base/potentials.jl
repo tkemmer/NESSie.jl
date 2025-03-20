@@ -51,7 +51,7 @@ model.
 `T` or `Vector{T}`
 """
 @inline function molpotential(ξ::Vector{T}, model::Model{T}; kwargs...) where T
-    φmol(ξ, model.charges; kwargs...) / model.params.εΩ * potprefactor(T)
+    _molpotential(ξ, model.charges; kwargs...) / model.params.εΩ * potprefactor(T)
 end
 
 @inline function molpotential(
@@ -65,49 +65,33 @@ end
 
 # =========================================================================================
 """
-    φmol(
-        ξ::Vector{T},
-        charges::AbstractVector{Charge{T}};
-        # keyword arguments
-        tolerance::T = T(1e-10)
-    )
+    _molpotential(ξ::Vector{T}, charges::AbstractVector{Charge{T}})
+    _molpotential(Ξ::AbstractVector{Vector{T}}, charges::AbstractVector{Charge{T}})
 
-Computes and returns the molecular potential of the given system of point charges in a
-structureless medium for the given observation point ξ:
+Computes and returns the molecular potential(s) of the given system of point charges in a
+structureless medium for the given observation point(s) ξ (Ξ):
 
 ```math
 φ_{mol}(ξ) = \\frac{1}{4π ε_0 ε_Ω} \\sum_i \\frac{qᵢ}{|rᵢ-ξ|}
 ```
 
-If ``|rᵢ-ξ|`` is smaller than the given `tolerance`, the value is replaced by `tolerance`
-for the affected charge.
-
-!!! note
-    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε_Ω``
+# Supported keyword arguments
+ - `tolerance::T = 1e-10` minimum distance assumed between any observation point and point
+   charge. Closer distances are replaced by this value.
 
 ## Return type
-`T`
+`T` or `Vector{T}`
 
 ## Aliases
-    φmol{T}(
-        Ξ::AbstractVector{Vector{T}},
-        charges::AbstractVector{Charge{T}};
-        # keyword arguments
-        tolerance::T = T(1e-10)
-    )
-
-Computes the molecular potentials for a list of observation points.
-
-    φmol{T}(
-        model::Model{T, Triangle{T}};
-        # keyword arguments
-        tolerance::T = T(1e-10)
-    )
+    _molpotential(model::Model{T, Triangle{T}})
 
 Computes the molecular potentials for the given surface model, using each triangle center
 as observation point.
+
+!!! note
+    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε_Ω``
 """
-@inline function φmol(
+@inline function _molpotential(
     ξ::Vector{T},
     charges::AbstractVector{Charge{T}};
     tolerance::T=T(1e-10)
@@ -115,105 +99,76 @@ as observation point.
     sum(q.val / max(euclidean(ξ, q.pos), tolerance) for q in charges; init = zero(T))
 end
 
-@inline function φmol(
+@inline function _molpotential(
     Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
     charges::AbstractVector{Charge{T}};
     kwargs...
 ) where T
-    φmol.(Ξ, Ref(charges); kwargs...)
+    _molpotential.(Ξ, Ref(charges); kwargs...)
 end
 
-@inline function φmol(
+@inline function _molpotential(
     model::Model{T, Triangle{T}};
     kwargs...
 ) where T
-    φmol((elem.center for elem in model.elements), model.charges; kwargs...)
+    _molpotential((elem.center for elem in model.elements), model.charges; kwargs...)
 end
 
 
 # =========================================================================================
 """
-    ∂ₙφmol(ξ::Triangle{T}, charges::AbstractVector{Charge{T}})
+    _molpotential_dn(ξ::Vector{T}, charges::AbstractVector{Charge{T}})
+    _molpotential_dn(Ξ::AbstractVector{Vector{T}}, charges::AbstractVector{Charge{T}})
 
-Computes and returns the normal derivative of the given system's molecular potential in a
-structureless medium, using the given triangle's center as observation point and the
-triangle's normal as reference normal.
+Computes and returns the normal derivative(s) of the molecular potential(s) of the given
+system of point charges in a structureless medium for the given observation point(s) ξ (Ξ):
 
 ```math
 ∂ₙφ_{mol}(ξ) = -\\frac{1}{4π ε_0 ε_Ω} \\sum_i \\frac{qᵢ}{|rᵢ-ξ|³} (rᵢ-ξ) ⋅ n
 ```
 
-!!! note
-    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε_Ω``
+# Supported keyword arguments
+ - `tolerance::T = 1e-10` minimum distance cubed assumed between any observation point and
+   point charge. Smaller values are replaced by this.
 
 ## Return type
-`T`
+`T` or `Vector{T}`
 
 ## Aliases
-    ∂ₙφmol(Ξ::AbstractVector{Triangle{T}}, charges::AbstractVector{Charge{T}})
+    _molpotential_dn(model::Model{T, Triangle{T}})
 
-Computes the normal derivatives of the molecular potentials for all given surface triangles.
+Computes the molecular potentials for the given surface model, using each triangle center
+as observation point.
 
-    ∂ₙφmol(model::Model{T, Triangle{T}})
-
-Computes the normal derivatives of the molecular potentials for the given surface model,
-using each triangle center and normal as observation point.
+!!! note
+    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε_Ω``
 """
-@inline function ∂ₙφmol(
+@inline function _molpotential_dn(
     ξ::Triangle{T},
-    charges::AbstractVector{Charge{T}}
+    charges::AbstractVector{Charge{T}};
+    tolerance::T = T(1e-10)
 ) where T
-    -sum(q.val * ddot(ξ.center, q.pos, ξ.normal) / euclidean(ξ.center, q.pos)^3 for q in charges; init = zero(T))
+    -sum(
+        q.val * ddot(ξ.center, q.pos, ξ.normal) / max(euclidean(ξ.center, q.pos)^3, tolerance)
+        for q in charges;
+        init = zero(T)
+    )
 end
 
-@inline function ∂ₙφmol(
+@inline function _molpotential_dn(
     Ξ::Union{<: AbstractVector{Triangle{T}}, <: Base.Generator},
-    charges::AbstractVector{Charge{T}}
+    charges::AbstractVector{Charge{T}};
+    kwargs...
 ) where T
-    ∂ₙφmol.(Ξ, Ref(charges))
+    _molpotential_dn.(Ξ, Ref(charges); kwargs...)
 end
 
-@inline function ∂ₙφmol(model::Model{T, Triangle{T}}) where T
-    ∂ₙφmol(model.elements, model.charges)
+@inline function _molpotential_dn(model::Model{T, Triangle{T}}; kwargs...) where T
+    _molpotential_dn(model.elements, model.charges; kwargs...)
 end
 
 
 # =========================================================================================
-"""
-    ∇φmol(ξ::Vector{T}, charges::AbstractVector{Charge{T}})
-
-Computes and returns the gradient of the given system's molecular potential in a
-structureless medium for the given observation point ξ.
-
-```math
-∇φ_{mol}(ξ) = -\\frac{1}{4π ε_0 ε_Ω} \\sum_i \\frac{qᵢ}{|rᵢ-ξ|³} (rᵢ-ξ)
-```
-
-!!! note
-    The return value is premultiplied by ``4π ⋅ ε₀ ⋅ ε_Ω``
-
-## Return type
-`Vector{T}`
-
-## Aliases
-    ∇φmol(Ξ::AbstractVector{Vector{T}})
-
-Computes the molecular potential gradients for a list of observation points.
-"""
-@inline function ∇φmol(
-    ξ::Vector{T},
-    charges::AbstractVector{Charge{T}}
-) where T
-    -sum(q.val * (ξ .- q.pos) / euclidean(ξ, q.pos)^3 for q in charges; init = zeros(T, 3))
-end
-
-@inline function ∇φmol(
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
-    charges::AbstractVector{Charge{T}}
-) where T
-    ∇φmol.(Ξ, Ref(charges))
-end
-
 # Function stubs for potentials in submodules
 function espotential end
 function rfpotential end

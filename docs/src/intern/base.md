@@ -16,6 +16,12 @@ Pages = ["base.md"]
     yukawa
 ```
 
+# Potentials
+```@docs
+    _molpotential
+    _molpotential_dn
+```
+
 # [Utility functions](@id int-util-base)
 ```@docs
     _closest_element_id
