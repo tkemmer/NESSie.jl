@@ -239,15 +239,11 @@ See [`molpotential`](@ref)
 `T` or `Vector{T}`
 """
 @inline function _espotential_Γ(
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T};
     kwargs...
 ) where T
-    _espotential_Γ.(Ξ, Ref(bem); kwargs...)
-end
-
-@inline function _espotential_Γ(ξ::Vector{T}, bem::BEMResult{T}; kwargs...) where T
-    _rfpotential_Γ(ξ, bem) + molpot(ξ, bem.model; kwargs...)
+    _rfpotential_Γ(ξorΞ, bem) .+ molpotential(ξorΞ, bem.model; kwargs...)
 end
 
 
@@ -295,19 +291,11 @@ See [`molpotential`](@ref)
 `T` or `Vector{T}`
 """
 @inline function _espotential_Ω(
-    Ξ::AbstractVector{Vector{T}},
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T};
     kwargs...
 ) where T
-    _rfpotential_Ω(Ξ, bem) .+ molpotential(Ξ, bem; kwargs...)
-end
-
-@inline function _espotential_Ω(Ξ::Base.Generator, bem::BEMResult{T}; kwargs...) where T
-    _espotential_Ω(collect(Vector{T}, Ξ), bem; kwargs...)
-end
-
-@inline function _espotential_Ω(ξ::Vector{T}, bem::BEMResult{T}; kwargs...) where T
-    only(_espotential_Ω([ξ], bem); kwargs...)
+    _rfpotential_Ω(ξorΞ, bem) .+ molpotential(ξorΞ, bem; kwargs...)
 end
 
 
@@ -325,7 +313,7 @@ inside the molecule.
 # Return type
 `T` or `Vector{T}`
 """
-function _rfpotential_Ω(Ξ::AbstractVector{Vector{T}}, bem:: BEMResult{T}) where T
+function _rfpotential_Ω(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T}) where T
     # result vector
     φ = zeros(T, length(Ξ))
 
@@ -473,17 +461,9 @@ See [`molpotential`](@ref)
 `T` or `Vector{T}`
 """
 @inline function _rfpotential_Σ(
-    Ξ::AbstractVector{Vector{T}},
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T};
     kwargs...
 ) where T
-    _espotential_Σ(Ξ, bem) .- molpotential(Ξ, bem; kwargs...)
-end
-
-@inline function _rfpotential_Σ(Ξ::Base.Generator, bem:: BEMResult{T}; kwargs...) where T
-    _rfpotential_Σ(collect(Vector{T}, Ξ), bem; kwargs...)
-end
-
-@inline function _rfpotential_Σ(ξ::Vector{T}, bem::BEMResult{T}; kwargs...) where T
-    only(_rfpotential_Σ([ξ], bem; kwargs...))
+    _espotential_Σ(ξorΞ, bem) .- molpotential(ξorΞ, bem; kwargs...)
 end
