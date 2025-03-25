@@ -31,6 +31,7 @@ jobs:
         version:
           - 'lts'
           - '1.11'
+          - '1.12-nightly'
           - 'nightly'
         os:
           - ubuntu-latest
@@ -38,6 +39,8 @@ jobs:
           - x64
           - x86
         include:
+          - version: '1.12-nightly'
+            experimental: true
           - version: 'nightly'
             experimental: true
     steps:
