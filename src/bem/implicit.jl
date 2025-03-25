@@ -16,7 +16,10 @@ struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
     """Pre-allocated vector for internal use"""
     dat::Vector{T}
 
-    Kfun{T}() where T = new(Vector{T}(undef, 12 * Threads.nthreads()))
+    @inline function Kfun{T}() where T
+        nt = Threads.nthreads(:interactive) + Threads.nthreads(:default)
+        new(Vector{T}(undef, 12nt))
+    end
 end
 
 @inline function (f::Kfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
@@ -61,7 +64,10 @@ struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
     """Pre-allocated vector for internal use"""
     dat::Vector{T}
 
-    Vfun{T}() where T = new(Vector{T}(undef, 12 * Threads.nthreads()))
+    @inline function Vfun{T}() where T
+        nt = Threads.nthreads(:interactive) + Threads.nthreads(:default)
+        new(Vector{T}(undef, 12nt))
+    end
 end
 
 @inline function (f::Vfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
