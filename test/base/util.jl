@@ -378,6 +378,34 @@
         end
     end
 
+    @testset "GeometryBasics.Rect" begin
+        for T in testtypes
+            let model = Model{T, NESSie.Triangle{T}}()
+                box = GeometryBasics.Rect(model)
+                @test box isa GeometryBasics.Rect3{T}
+                @test box.origin == zeros(T, 3)
+                @test box.widths == zeros(T, 3)
+
+                box = GeometryBasics.Rect(model; padding = one(T))
+                @test box isa GeometryBasics.Rect3{T}
+                @test box.origin == -ones(T, 3)
+                @test box.widths == 2 .* ones(T, 3)
+            end
+
+            let model = Format.readoff(NESSie._data_path("born/na.off"), T)
+                box = GeometryBasics.Rect(model)
+                @test box isa GeometryBasics.Rect3{T}
+                @test box.origin ≈ fill(T(-1.0049999952), 3)
+                @test box.widths ≈ fill(T(2 * 1.0049999952), 3)
+
+                box = GeometryBasics.Rect(model; padding = one(T))
+                @test box isa GeometryBasics.Rect3{T}
+                @test box.origin ≈ fill(T(-2.0049999952), 3)
+                @test box.widths ≈ fill(T(2 * 1.0049999952 + 2), 3)
+            end
+        end
+    end
+
     @test_skip _data_path
     @test_skip _sign
     @test_skip cathetus

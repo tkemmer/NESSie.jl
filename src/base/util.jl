@@ -564,6 +564,30 @@ end
 
 
 # =========================================================================================
+"""
+    GeometryBasics.Rect(model::Model{T, Triangle{T}})
+
+Creates and returns a bounding box for the given model.
+
+# Supported keyword arguments
+ - `padding::T = 0` Adds `padding` to each side of the (otherwise flush) bounding box,
+   effectively increasing its size by 2 ⋅ `padding` in each direction.
+
+# Return type
+[`GeometryBasics.Rect3{T}`]
+(https://juliageometry.github.io/GeometryBasics.jl/stable/primitives/#HyperRectangle)
+   """
+function GeometryBasics.Rect(model::Model{T, Triangle{T}}; padding::T = zero(T)) where T
+    xdims = extrema(getindex.(model.nodes, 1); init = zeros(T, 2)) .+ (-padding, padding)
+    ydims = extrema(getindex.(model.nodes, 2); init = zeros(T, 2)) .+ (-padding, padding)
+    zdims = extrema(getindex.(model.nodes, 3); init = zeros(T, 2)) .+ (-padding, padding)
+    GeometryBasics.Rect(
+        T[xdims[1], ydims[1], zdims[1]],
+        T[xdims[2] - xdims[1], ydims[2] - ydims[1], zdims[2] - zdims[1]])
+end
+
+
+# =========================================================================================
 # Convenience aliases
 
 const _axpy! = BLAS.axpy!

@@ -5,8 +5,9 @@ Pages = ["util.md"]
 ```
 
 ```@docs
-    guess_domain
+    GeometryBasics.Rect
     GeometryBasics.mesh
+    guess_domain
     meshunion
     obspoints_plane
 ```
