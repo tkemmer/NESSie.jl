@@ -11,7 +11,7 @@ Pages = ["rjasanow.md"]
     ObservationPosition
     InPlane
     InSpace
-    laplacepot
+    _laplacepot
     _logterm
     _projectξ!
 ```
