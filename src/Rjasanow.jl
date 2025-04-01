@@ -120,8 +120,8 @@ function laplacepot(
     # Note that the equation (as given above) uses a polar coordinate system with ξ being
     # the pole and h giving the polar axis. The negative angles are needed whenever the
     # corresponding triangle side lies below the polar axis.
-    sinφ1 = max(-one(T), min(one(T), _cos(u1, v, u1norm, vnorm)))
-    sinφ2 = max(-one(T), min(one(T), _cos(u2, v, u2norm, vnorm)))
+    sinφ1 = clamp(_cos(u1, v, u1norm, vnorm), -one(T), one(T))
+    sinφ2 = clamp(_cos(u2, v, u2norm, vnorm), -one(T), one(T))
 
     # Compute the height of the triangle
     h = cathetus(u1norm, sinφ1)
