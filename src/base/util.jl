@@ -445,7 +445,17 @@ Returns the index of the element in the given model with the closest centroid to
 `Int`
 """
 @inline function _closest_element_id(ξ::Vector{T}, model::Model{T, Triangle{T}}) where T
-    argmin(map(τ -> norm(ξ .- τ.center), model.elements))
+    # faster variant of
+    # argmin(_norm(ξ .- τ.center) for τ in model.elements)
+
+    (mini, minn) = (1, T(Inf))
+    for (i, elem) in enumerate(model.elements)
+        n = euclidean(ξ, elem.center)
+        if n < minn
+            (mini, minn) = (i, n)
+        end
+    end
+    mini
 end
 
 
