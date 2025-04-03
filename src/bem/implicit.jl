@@ -166,7 +166,7 @@ Solves the linear system `Ax = b` from `A` and `b` using a Jacobi-preconditioned
 end
 
 function Base.:*(
-    A  ::InteractionMatrix{T},
+    A  ::InteractionMatrix{T, Vector{T}, Triangle{T}},
     x  ::AbstractVector{T}
 ) where T
     dst = zeros(T, size(A, 1))
@@ -181,7 +181,7 @@ function Base.:*(
 end
 
 function Base.:*(
-    A  ::InteractionMatrix{T},
+    A  ::InteractionMatrix{T, Vector{T}, Triangle{T}},
     B  ::SubArray{T, 2}
 ) where T
     m, n, p = (size(A)..., size(B, 2))
