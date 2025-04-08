@@ -197,6 +197,14 @@ struct NonlocalSystemMatrix{T} <: AbstractArray{T, 2}
     end
 end
 
+@inline function NonlocalSystemMatrix(
+    Ξ       ::Vector{Vector{T}},
+    elements::Vector{Triangle{T}},
+    params  ::Option{T}
+) where T
+    NonlocalSystemMatrix{T}(Ξ, elements, params)
+end
+
 @inline Base.size(A::NonlocalSystemMatrix) = 3 .* size(A.K)
 
 function LinearAlgebra.diag(A::NonlocalSystemMatrix{T}, k::Int = 0) where T
