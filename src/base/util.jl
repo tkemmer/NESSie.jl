@@ -422,7 +422,7 @@ function guess_domain(
     surface_margin::T = T(1e-6)
 ) where T
     elem = model.elements[_closest_element_id(ξ, model)]
-    s = elem.normal ⋅ (ξ .- elem.center)
+    s = ddot(ξ, elem.center, elem.normal)
     abs(s) < surface_margin ? :Γ : s < 0 ? :Ω : :Σ
 end
 
@@ -431,7 +431,7 @@ end
     model::Model{T, Triangle{T}};
     kwargs...
 ) where T
-    guess_domain.(Ξ, Ref(model); kwargs...)
+    collect(Symbol, guess_domain(ξ, model; kwargs...) for ξ in Ξ)
 end
 
 
@@ -449,8 +449,8 @@ Returns the index of the element in the given model with the closest centroid to
     # argmin(_norm(ξ .- τ.center) for τ in model.elements)
 
     (mini, minn) = (1, T(Inf))
-    for (i, elem) in enumerate(model.elements)
-        n = euclidean(ξ, elem.center)
+    for i in eachindex(model.elements)
+        n = euclidean(ξ, model.elements[i].center)
         if n < minn
             (mini, minn) = (i, n)
         end
