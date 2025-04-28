@@ -59,7 +59,7 @@ end
     model::Model{T};
     kwargs...
 ) where T
-    molpotential.(Ξ, Ref(model); kwargs...)
+    collect(T, molpotential(ξ, model; kwargs...) for ξ in Ξ)
 end
 
 
@@ -104,7 +104,7 @@ end
     charges::AbstractVector{Charge{T}};
     kwargs...
 ) where T
-    _molpotential.(Ξ, Ref(charges); kwargs...)
+    collect(T, _molpotential(ξ, charges; kwargs...) for ξ in Ξ)
 end
 
 @inline function _molpotential(
@@ -160,7 +160,7 @@ end
     charges::AbstractVector{Charge{T}};
     kwargs...
 ) where T
-    _molpotential_dn.(Ξ, Ref(charges); kwargs...)
+    collect(T, _molpotential_dn(ξ, charges; kwargs...) for ξ in Ξ)
 end
 
 @inline function _molpotential_dn(model::Model{T, Triangle{T}}; kwargs...) where T

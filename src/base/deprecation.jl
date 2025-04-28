@@ -66,7 +66,7 @@ end
         "and will be removed in a future release. No replacement is currently planned!",
         :∇φmol
     )
-    -sum(q.val * (ξ .- q.pos) / euclidean(ξ, q.pos)^3 for q in charges; init = zeros(T, 3))
+    -sum(q.val .* (ξ .- q.pos) ./ euclidean(ξ, q.pos)^3 for q in charges; init = zeros(T, 3))
 end
 
 @inline function ∇φmol(
@@ -78,5 +78,5 @@ end
         "and will be removed in a future release. No replacement is currently planned!",
         :∇φmol
     )
-    ∇φmol.(Ξ, Ref(charges))
+    collect(Vector{T}, ∇φmol(ξ, charges) for ξ in Ξ)
 end
