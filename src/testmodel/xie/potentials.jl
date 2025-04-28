@@ -76,7 +76,7 @@ end
     xie::XieTestModel{T};
     kwargs...
 ) where T
-    espotential.(Ξ, Ref(xie); kwargs...)
+    collect(T, espotential(ξ, xie; kwargs...) for ξ in Ξ)
 end
 
 
@@ -160,7 +160,7 @@ end
     xie::XieTestModel{T};
     kwargs...
 ) where T
-    rfpotential.(Ξ, Ref(xie); kwargs...)
+    collect(T, rfpotential(ξ, xie; kwargs...) for ξ in Ξ)
 end
 
 
@@ -253,7 +253,7 @@ end
     Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
     xie::XieTestModel{T}
 ) where T
-    _rfpotential_Ω.(Ξ, Ref(xie))
+    collect(T, _rfpotential_Ω(ξ, xie) for ξ in Ξ)
 end
 
 
@@ -323,7 +323,7 @@ end
     xie::XieTestModel{T};
     kwargs...
 ) where T
-    _espotential_Σ.(Ξ, Ref(xie); kwargs...)
+    collect(T, _espotential_Σ(ξ, xie; kwargs...) for ξ in Ξ)
 end
 
 

@@ -79,7 +79,7 @@ end
     ion::BornIon{T};
     kwargs...
 ) where T
-    espotential.(lt, Ξ, Ref(ion); kwargs...)
+    collect(T, espotential(lt, ξ, ion; kwargs...) for ξ in Ξ)
 end
 
 
@@ -164,7 +164,7 @@ end
     ion::BornIon{T};
     kwargs...
 ) where T
-    rfpotential.(lt, Ξ, Ref(ion); kwargs...)
+    collect(T, rfpotential(lt, ξ, ion; kwargs...) for ξ in Ξ)
 end
 
 
@@ -233,7 +233,7 @@ end
     Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
     ion::BornIon{T}
 ) where T
-    _rfpotential_Ω.(lt, Ξ, Ref(ion))
+    collect(T, _rfpotential_Ω(lt, ξ, ion) for ξ in Ξ)
 end
 
 
@@ -282,7 +282,7 @@ end
     ion::BornIon{T};
     kwargs...
 ) where T
-    _espotential_Σ.(lt, Ξ, Ref(ion); kwargs...)
+    collect(T, _espotential_Σ(lt, ξ, ion; kwargs...) for ξ in Ξ)
 end
 
 
@@ -331,5 +331,5 @@ end
     ion::BornIon{T};
     kwargs...
 ) where T
-    _rfpotential_Σ.(lt, Ξ, Ref(ion); kwargs...)
+    collect(T, _rfpotential_Σ(lt, ξ, ion; kwargs...) for ξ in Ξ)
 end
