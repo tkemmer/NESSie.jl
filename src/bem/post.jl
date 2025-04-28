@@ -78,9 +78,9 @@ function NESSie.espotential(
     bem::BEMResult{T};
     tolerance::T = T(1e-10)
 ) where T
-    domain === :Ω && return _espotential_Ω(ξorΞ, bem; tolerance = tolerance)
+    domain === :Ω && return _espotential_Ω(ξorΞ, bem; tolerance)
     domain === :Σ && return _espotential_Σ(ξorΞ, bem)
-    domain === :Γ && return _espotential_Γ(ξorΞ, bem; tolerance = tolerance)
+    domain === :Γ && return _espotential_Γ(ξorΞ, bem; tolerance)
     error("unknown domain $domain")
 end
 
@@ -90,7 +90,7 @@ end
     surface_margin::T = T(1e-6),
     kwargs...
 ) where T
-    domain = guess_domain(ξ, bem.model; surface_margin = surface_margin)
+    domain = guess_domain(ξ, bem.model; surface_margin)
     espotential(domain, ξ, bem; kwargs...)
 end
 
@@ -100,7 +100,7 @@ function NESSie.espotential(
     surface_margin::T = T(1e-6),
     kwargs...
 ) where T
-    domains = guess_domain.(Ξ, Ref(bem.model); surface_margin = surface_margin)
+    domains = guess_domain(Ξ, bem.model; surface_margin)
     unknown_domains = setdiff(domains, [:Ω, :Σ, :Γ])
     !isempty(unknown_domains) && error("unknown domains $unknown_domains")
 
@@ -180,7 +180,7 @@ given domain `:Ω`, `:Σ`, or `:Γ`.
     tolerance::T = T(1e-10)
 ) where T
     domain === :Ω && return _rfpotential_Ω(ξorΞ, bem)
-    domain === :Σ && return _rfpotential_Σ(ξorΞ, bem; tolerance = tolerance)
+    domain === :Σ && return _rfpotential_Σ(ξorΞ, bem; tolerance)
     domain === :Γ && return _rfpotential_Γ(ξorΞ, bem)
     error("unknown domain $domain")
 end
@@ -191,7 +191,7 @@ end
     surface_margin::T = T(1e-6),
     kwargs...
 ) where T
-    domain = guess_domain(ξ, bem.model; surface_margin = surface_margin)
+    domain = guess_domain(ξ, bem.model; surface_margin)
     rfpotential(domain, ξ, bem; kwargs...)
 end
 
@@ -201,7 +201,7 @@ function NESSie.rfpotential(
     surface_margin::T = T(1e-6),
     kwargs...
 ) where T
-    domains = guess_domain.(Ξ, Ref(bem.model); surface_margin = surface_margin)
+    domains = guess_domain(Ξ, bem.model; surface_margin)
     unknown_domains = setdiff(domains, [:Ω, :Σ, :Γ])
     !isempty(unknown_domains) && error("unknown domains $unknown_domains")
 
@@ -269,7 +269,7 @@ end
     Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T}
 ) where T
-    _rfpotential_Γ.(Ξ, Ref(bem))
+    collect(T, _rfpotential_Γ(ξ, bem) for ξ in Ξ)
 end
 
 
