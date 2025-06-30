@@ -165,8 +165,13 @@ Solves the linear system `Ax = b` from `A` and `b` using a Jacobi-preconditioned
     )
 end
 
+const _ImplicitBEMMatrix{T} = Union{
+    InteractionMatrix{T, Vector{T}, Triangle{T}},
+    InteractionMatrix{T, Vector{T}, TriangleQuad{T}}
+}
+
 function Base.:*(
-    A  ::InteractionMatrix{T, Vector{T}, Triangle{T}},
+    A  ::_ImplicitBEMMatrix{T},
     x  ::AbstractVector{T}
 ) where T
     dst = zeros(T, size(A, 1))
@@ -181,7 +186,7 @@ function Base.:*(
 end
 
 function Base.:*(
-    A  ::InteractionMatrix{T, Vector{T}, Triangle{T}},
+    A  ::_ImplicitBEMMatrix{T},
     B  ::SubArray{T, 2}
 ) where T
     m, n, p = (size(A)..., size(B, 2))
@@ -200,7 +205,7 @@ end
 
 @inline function LinearAlgebra.mul!(
     dst::AbstractArray{T, 1},
-    A  ::InteractionMatrix{T, Vector{T}, Triangle{T}},
+    A  ::_ImplicitBEMMatrix{T},
     B  ::AbstractArray{T}
 ) where T
     dst .= A * B
