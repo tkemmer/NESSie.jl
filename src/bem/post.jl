@@ -206,10 +206,22 @@ function NESSie.rfpotential(
     !isempty(unknown_domains) && error("unknown domains $unknown_domains")
 
     ret = Array{T}(undef, length(Ξ))
-    view(ret, domains .== :Ω) .= rfpotential(:Ω, view(Ξ, domains .== :Ω), bem; kwargs...)
-    view(ret, domains .== :Σ) .= rfpotential(:Σ, view(Ξ, domains .== :Σ), bem; kwargs...)
-    view(ret, domains .== :Γ) .= rfpotential(:Γ, view(Ξ, domains .== :Γ), bem; kwargs...)
+    _rfpotential!(ret, :Ω, Ξ, bem, domains; kwargs...)
+    _rfpotential!(ret, :Σ, Ξ, bem, domains; kwargs...)
+    _rfpotential!(ret, :Γ, Ξ, bem, domains; kwargs...)
     ret
+end
+
+@inline function _rfpotential!(
+    dst::Vector{T},
+    loc::Symbol,
+    Ξ::AbstractVector{Vector{T}},
+    bem::BEMResult{T},
+    domains::Vector{Symbol};
+    kwargs...
+) where T
+    mask = domains .== loc
+    view(dst, mask) .= rfpotential(loc, view(Ξ, mask), bem; kwargs...)
 end
 
 @inline function NESSie.rfpotential(
