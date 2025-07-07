@@ -44,7 +44,7 @@ See [`molpotential`](@ref)
 
 # Alias
     espotential(domain::Symbol, ::Type{<: LocalityType}, ξ::Vector{T}, ::BornIon{T})
-    espotential(domain::Symbol, ::Type{<: LocalityType}, Ξ::AbstractVector{T}, ::BornIon{T})
+    espotential(domain::Symbol, ::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ::BornIon{T})
 
 Computes the electrostatic potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
@@ -129,7 +129,7 @@ See [`molpotential`](@ref)
 
 # Alias
     rfpotential(domain::Symbol, ::Type{<: LocalityType}, ξ::Vector{T}, ::BornIon{T})
-    rfpotential(domain::Symbol, ::Type{<: LocalityType}, Ξ::AbstractVector{T}, ::BornIon{T})
+    rfpotential(domain::Symbol, ::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ::BornIon{T})
 
 Computes the reaction field potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
@@ -171,7 +171,7 @@ end
 # =========================================================================================
 """
     _espotential_Ω(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
-    _espotential_Ω(::Type{<: LocalityType}, Ξ::AbstractVector{T}, ion::BornIon{T})
+    _espotential_Ω(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 inside the Born sphere.
@@ -198,7 +198,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Ω(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
-    _rfpotential_Ω(::Type{<: LocalityType}, Ξ::AbstractVector{T}, ion::BornIon{T})
+    _rfpotential_Ω(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 inside the Born sphere.
@@ -240,7 +240,7 @@ end
 # =========================================================================================
 """
     _espotential_Σ(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
-    _espotential_Σ(::Type{<: LocalityType}, Ξ::AbstractVector{T}, ion::BornIon{T})
+    _espotential_Σ(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 outside the Born sphere.
@@ -289,7 +289,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Σ(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
-    _rfpotential_Σ(::Type{<: LocalityType}, Ξ::AbstractVector{T}, ion::BornIon{T})
+    _rfpotential_Σ(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 outside the Born sphere.

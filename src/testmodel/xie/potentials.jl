@@ -44,7 +44,7 @@ See [`molpotential`](@ref)
 
 # Alias
     espotential(domain::Symbol, ξ::Vector{T}, xie::XieTestModel{T})
-    espotential(domain::Symbol, Ξ::AbstractVector{T}, xie::XieTestModel{T})
+    espotential(domain::Symbol, Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
 
 Computes the electrostatic potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
@@ -128,7 +128,7 @@ See [`molpotential`](@ref)
 
 # Alias
     rfpotential(domain::Symbol, ξ::Vector{T}, xie::XieTestModel{T})
-    rfpotential(domain::Symbol, Ξ::AbstractVector{T}, xie::XieTestModel{T})
+    rfpotential(domain::Symbol, Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
 
 Computes the reaction field potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
@@ -167,7 +167,7 @@ end
 # =========================================================================================
 """
     _espotential_Ω(ξ::Vector{T}, xie::XieTestModel{T})
-    _espotential_Ω(Ξ::AbstractVector{T}, xie::XieTestModel{T})
+    _espotential_Ω(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 inside the test model sphere.
@@ -193,7 +193,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Ω(ξ::Vector{T}, xie::XieTestModel{T})
-    _rfpotential_Ω(Ξ::AbstractVector{T}, xie::XieTestModel{T})
+    _rfpotential_Ω(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 inside the test model sphere.
@@ -260,7 +260,7 @@ end
 # =========================================================================================
 """
     _espotential_Σ(ξ::Vector{T}, xie::XieTestModel{T})
-    _espotential_Σ(Ξ::AbstractVector{T}, xie::XieTestModel{T})
+    _espotential_Σ(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 outside the test model sphere.
@@ -330,7 +330,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Σ(ξ::Vector{T}, xie::XieTestModel{T})
-    _rfpotential_Σ(Ξ::AbstractVector{T}, xie::XieTestModel{T})
+    _rfpotential_Σ(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 outside the test model sphere.
