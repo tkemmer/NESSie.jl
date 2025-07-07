@@ -67,7 +67,7 @@ The electrostatic potential is computed as the sum of the corresponding
 
 # Alias
     espotential(domain::Symbol, ξ::Vector{T}, bem::BEMResult{T})
-    espotential(domain::Symbol, Ξ::AbstractVector{T}, bem::BEMResult{T})
+    espotential(domain::Symbol, Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
 Computes the electrostatic potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
@@ -168,7 +168,7 @@ point(s) using [`guess_domain`](@ref).
 
 # Alias
     rfpotential(domain::Symbol, ξ::Vector{T}, bem::BEMResult{T})
-    rfpotential(domain::Symbol, Ξ::AbstractVector{T}, bem::BEMResult{T})
+    rfpotential(domain::Symbol, Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
 Computes the reaction field potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
@@ -236,7 +236,7 @@ end
 # =========================================================================================
 """
     _espotential_Γ(ξ::Vector{T}, bem::BEMResult{T})
-    _espotential_Γ(Ξ::AbstractVector{T}, bem::BEMResult{T})
+    _espotential_Γ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 on the molecular surface.
@@ -262,7 +262,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Γ(ξ::Vector{T}, bem::BEMResult{T})
-    _rfpotential_Γ(Ξ::AbstractVector{T}, bem::BEMResult{T})
+    _rfpotential_Γ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 on the molecular surface.
@@ -288,7 +288,7 @@ end
 # =========================================================================================
 """
     _espotential_Ω(ξ::Vector{T}, bem::BEMResult{T})
-    _espotential_Ω(Ξ::AbstractVector{T}, bem::BEMResult{T})
+    _espotential_Ω(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 inside the molecule.
@@ -314,7 +314,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Ω(ξ::Vector{T}, bem::BEMResult{T})
-    _rfpotential_Ω(Ξ::AbstractVector{T}, bem::BEMResult{T})
+    _rfpotential_Ω(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 inside the molecule.
@@ -359,7 +359,7 @@ end
 # =========================================================================================
 """
     _espotential_Σ(ξ::Vector{T}, bem::BEMResult{T})
-    _espotential_Σ(Ξ::AbstractVector{T}, bem::BEMResult{T})
+    _espotential_Σ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 in the solvent domain.
@@ -458,7 +458,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Σ(ξ::Vector{T}, bem::BEMResult{T})
-    _rfpotential_Σ(Ξ::AbstractVector{T}, bem::BEMResult{T})
+    _rfpotential_Σ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 in the solvent domain.
