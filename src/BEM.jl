@@ -5,6 +5,7 @@ using ..NESSie: _axpy!, _closest_element_id, _etol, _gemm, _gemv, _gemv!, _molpo
     _molpotential_dn, _pluseye!, σ, ec, potprefactor, yukawa
 using AutoHashEquals
 using Base: Threads
+using ChunkSplitters: index_chunks
 using Distances: euclidean
 using ImplicitArrays: BlockMatrix, FixedValueArray, InteractionFunction, InteractionMatrix
 using IterativeSolvers: gmres

@@ -1,30 +1,13 @@
 # =========================================================================================
 """
-    struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
-        dat::Vector{T}   # pre-allocated vector for internal use
-    end
+    struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 
 Interaction function for an implicit representation of potential matrix `K`.
-
-# Special constructors
-```julia
-Kfun{T}()
-```
-Automatically initializes the internal data vector. Replaces the default constructor.
 """
-struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
-    """Pre-allocated vector for internal use"""
-    dat::Vector{T}
+struct Kfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 
-    @inline function Kfun{T}() where T
-        nt = Threads.nthreads(:interactive) + Threads.nthreads(:default)
-        new(Vector{T}(undef, 12nt))
-    end
-end
-
-@inline function (f::Kfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    t = Threads.threadid()
-    Rjasanow.laplacecoll(DoubleLayer, ξ, elem; dat=view(f.dat, (t-1)*12+1:t*12))
+@inline function (f::Kfun{T})(ξ::Vector{T}, elem::Triangle{T}; kwargs...) where T
+    Rjasanow.laplacecoll(DoubleLayer, ξ, elem; kwargs...)
 end
 
 
@@ -48,31 +31,14 @@ end
 
 # =========================================================================================
 """
-    struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
-        dat::Vector{T}   # pre-allocated vector for internal use
-    end
+    struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 
 Interaction function for an implicit representation of potential matrix `V`.
-
-# Special constructors
-```julia
-Vfun{T}()
-```
-Automatically initializes the internal data vector. Replaces the default constructor.
 """
-struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T}
-    """Pre-allocated vector for internal use"""
-    dat::Vector{T}
+struct Vfun{T} <: InteractionFunction{Vector{T}, Triangle{T}, T} end
 
-    @inline function Vfun{T}() where T
-        nt = Threads.nthreads(:interactive) + Threads.nthreads(:default)
-        new(Vector{T}(undef, 12nt))
-    end
-end
-
-@inline function (f::Vfun{T})(ξ::Vector{T}, elem::Triangle{T}) where T
-    t = Threads.threadid()
-    Rjasanow.laplacecoll(SingleLayer, ξ, elem; dat=view(f.dat, (t-1)*12+1:t*12))
+@inline function (f::Vfun{T})(ξ::Vector{T}, elem::Triangle{T}; kwargs...) where T
+    Rjasanow.laplacecoll(SingleLayer, ξ, elem; kwargs...)
 end
 
 
@@ -176,36 +142,86 @@ const _ImplicitBEMMatrix{T} = Union{
     InteractionMatrix{T, Vector{T}, TriangleQuad{T}}
 }
 
-function Base.:*(
-    A  ::_ImplicitBEMMatrix{T},
-    x  ::AbstractVector{T}
+function _mul!(
+    dst::AbstractVector{T},
+    A::_ImplicitBEMMatrix{T},
+    x::AbstractVector{T};
+    kwargs...
 ) where T
-    dst = zeros(T, size(A, 1))
-    Threads.@threads :static for i in 1:size(A, 1)
+    for i in 1:size(A, 1)
         s = zero(T)
         for j in 1:size(A, 2)
-            s += A[i, j] * x[j]
+            s += getindex(A, i, j; kwargs...) * x[j]
         end
         dst[i] = s
     end
     dst
 end
 
-function Base.:*(
-    A  ::_ImplicitBEMMatrix{T},
-    B  ::SubArray{T, 2}
+function _mul!(
+    dst::AbstractMatrix{T},
+    A::_ImplicitBEMMatrix{T},
+    B::AbstractMatrix{T};
+    kwargs...
 ) where T
     m, n, p = (size(A)..., size(B, 2))
-    dst = zeros(T, m, p)
-    Threads.@threads :static for i in 1:m
+    for i in 1:m
         for k in 1:p
             s = zero(T)
             for j in 1:n
-                s += A[i, j] * B[j, k]
+                s += getindex(A, i, j; kwargs...) * B[j, k]
             end
             dst[i, k] = s
         end
     end
+    dst
+end
+
+function Base.:*(
+    A::InteractionMatrix{T, Vector{T}, Triangle{T}},
+    x::AbstractVector{T}
+) where T
+    dst = zeros(T, size(A, 1))
+    tasks = map(index_chunks(eachrow(A); n = Threads.nthreads())) do idx
+        Threads.@spawn _mul!(view(dst, idx), InteractionMatrix(A, idx, :), x; dat = Vector{T}(undef, 12))
+    end
+    wait.(tasks)
+    dst
+end
+
+function Base.:*(
+    A::InteractionMatrix{T, Vector{T}, TriangleQuad{T}},
+    x::AbstractVector{T}
+) where T
+    dst = zeros(T, size(A, 1))
+    tasks = map(index_chunks(eachrow(A); n = Threads.nthreads())) do idx
+        Threads.@spawn _mul!(view(dst, idx), InteractionMatrix(A, idx, :), x)
+    end
+    wait.(tasks)
+    dst
+end
+
+function Base.:*(
+    A::InteractionMatrix{T, Vector{T}, Triangle{T}},
+    B::SubArray{T, 2}
+) where T
+    dst = zeros(T, size(A, 1), size(B, 2))
+    tasks = map(index_chunks(eachrow(A); n = Threads.nthreads())) do idx
+        Threads.@spawn _mul!(view(dst, idx, :), InteractionMatrix(A, idx, :), B; dat = Vector{T}(undef, 12))
+    end
+    wait.(tasks)
+    dst
+end
+
+function Base.:*(
+    A::InteractionMatrix{T, Vector{T}, TriangleQuad{T}},
+    B::SubArray{T, 2}
+) where T
+    dst = zeros(T, size(A, 1), size(B, 2))
+    tasks = map(index_chunks(eachrow(A); n = Threads.nthreads())) do idx
+        Threads.@spawn _mul!(view(dst, idx, :), InteractionMatrix(A, idx, :), B)
+    end
+    wait.(tasks)
     dst
 end
 
