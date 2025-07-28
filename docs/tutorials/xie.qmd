@@ -1,0 +1,102 @@
+---
+title: Poisson test models
+engine: julia
+---
+
+```{julia}
+#| echo: false
+#| output: false
+
+using NESSie
+Base.active_module() = NESSie
+```
+
+```{julia}
+#| output: false
+
+lval = 2.0   # grid size [-lval, lval]² in xy-plane
+gres = 40    # grid resolution (gres x gres)
+
+# generate observation points
+Ξ = collect(Iterators.flatten(obspoints_plane(
+    [-lval, lval, zero(lval)],
+    [-lval, -lval, zero(lval)],
+    [ lval, -lval, zero(lval)],
+    gres, gres
+)))
+
+# coordinate shorthand for plotting
+plot_x = getindex.(Ξ, 1)
+plot_y = getindex.(Ξ, 2);
+```
+
+```{julia}
+using NESSie.TestModel
+
+opt = Option(2.0, 80.0, 2.0, 20.0)
+xie = TestModel.XieSphere(1.0, Format.readpqr(nessie_data_path("xie/2LZX.pqr")), opt)
+```
+
+## Local electrostatics
+```{julia}
+using Plots
+
+xie_local = LocalXieModel(xie, 20)
+
+surface(plot_x, plot_y, rfpotential(Ξ, xie_local);
+    title = "Local Poisson test model",
+    xlabel = "x (Å)",
+    ylabel = "y (Å)",
+    zlabel = "Reaction field potential (V)",
+    cmap = :viridis
+)
+```
+
+```{julia}
+using NESSie.BEM
+
+bem_local = solve(LocalES, Model(xie); method = :blas)
+
+surface(plot_x, plot_y, rfpotential(Ξ, bem_local);
+    title = "Local Poisson test model (BEM approximation)",
+    xlabel = "x (Å)",
+    ylabel = "y (Å)",
+    zlabel = "Reaction field potential (V)",
+    cmap = :viridis
+)
+```
+
+## Nonlocal electrostatics
+```{julia}
+xie_nonlocal = NonlocalXieModel2(xie, 20)
+
+surface(plot_x, plot_y, rfpotential(Ξ, xie_nonlocal);
+    title = "Nonlocal Poisson test model",
+    xlabel = "x (Å)",
+    ylabel = "y (Å)",
+    zlabel = "Reaction field potential (V)",
+    cmap = :viridis
+)
+```
+
+```{julia}
+bem_nonlocal = solve(NonlocalES, Model(xie); method = :blas)
+
+surface(plot_x, plot_y, rfpotential(Ξ, bem_nonlocal, surface_margin = 0.05);
+    title = "Nonlocal Poisson test model (BEM approximation)",
+    xlabel = "x (Å)",
+    ylabel = "y (Å)",
+    zlabel = "Reaction field potential (V)",
+    cmap = :viridis
+)
+```
+
+```{julia}
+surface(plot_x, plot_y, espotential(Ξ, bem_nonlocal);
+    title = "Nonlocal Poisson test model (BEM approximation, side view)",
+    xlabel = "x (Å)",
+    zlabel = "Electrostatic potential (V)",
+    camera = (0, 0),
+    yticks = []
+)
+```

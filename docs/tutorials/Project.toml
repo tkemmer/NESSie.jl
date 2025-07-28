@@ -1,0 +1,6 @@
+[deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
+MarchingCubes = "299715c1-40a9-479a-aaf9-4a633d36f717"
+NESSie = "f00e83c4-bd01-11e9-272c-ff1b96fb444d"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"

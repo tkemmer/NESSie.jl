@@ -1,0 +1,46 @@
+# Protein electrostatics
+
+
+``` julia
+using NESSie.BEM
+using CairoMakie
+import GeometryBasics
+
+model = Format.readhmo(nessie_data_path("benchmark/2lzx-5k.hmo"))
+bem   = solve(NonlocalES, model; method = :blas)
+
+f, ax, plt = mesh(GeometryBasics.mesh(model); color = :gray)
+```
+
+![](proteins_files/figure-commonmark/cell-3-output-1.png)
+
+``` julia
+gridsize = 40
+box = Rect(model; padding = 6.0)
+
+x = range(box.origin[1], box.origin[1] + box.widths[1]; length=gridsize)
+y = range(box.origin[2], box.origin[2] + box.widths[2]; length=gridsize)
+z = range(box.origin[3], box.origin[3] + box.widths[3]; length=gridsize)
+
+Ξ = [[xi, yi, zi] for xi in x, yi in y, zi in z]
+```
+
+``` julia
+using MarchingCubes
+
+pot = reshape(espotential(reshape(Ξ, length(Ξ)), bem), size(Ξ))
+
+mc1 = MC(pot; x, y, z)
+march(mc1, 0.2)
+isosurf1 = MarchingCubes.makemesh(GeometryBasics, mc1)
+
+mc2 = MC(pot; x, y, z)
+march(mc2, -0.2)
+isosurf2 = MarchingCubes.makemesh(GeometryBasics, mc2)
+
+mesh!(ax, isosurf1; color = :blue, alpha = 0.1)
+mesh!(ax, isosurf2; color = :red, alpha = 0.1)
+f
+```
+
+![](proteins_files/figure-commonmark/cell-5-output-1.png)
