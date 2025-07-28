@@ -68,6 +68,9 @@ With BibTeX, you can use the following entries:
    J. Åqvist, Ion-water interaction potentials derived from free energy pertubation
    simulations. J. Phys. Chem. 94: 8021, 1990. DOI: [10.1021/j100384a009](https://doi.org/10.1021/j100384a009)
 
+ * **[Hil05]**
+   A. Hildebrandt, Biomolecules in a structured solvent: A novel formulation of nonlocal electrostatics and its numerical solution. PhD thesis. Saarbrücken, Germany. Saarland University, 2005. DOI: [10.22028/D291-25912](https://doi.org/10.22028/D291-25912)
+
  * **[Kea86]**
    P. Keast, Moderate degree tetrahedral quadrature formulas. CMAME 55: 339-348, 1986. DOI: [10.1016/0045-7825(86)90059-9](https://doi.org/10.1016/0045-7825(86)90059-9)
 
