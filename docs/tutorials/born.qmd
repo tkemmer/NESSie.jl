@@ -1,0 +1,60 @@
+---
+title: Born ions
+engine: julia
+---
+
+```{julia}
+#| echo: false
+#| output: false
+
+using NESSie
+Base.active_module() = NESSie
+```
+
+```{julia}
+#| output: false
+
+using NESSie.TestModel
+
+name = "Ca"
+ion  = bornion(name)
+Ξ    = LinRange([0, 0, ion.radius - 0.2], [0, 0, ion.radius + 0.2], 100)
+```
+
+```{julia}
+using Plots
+
+born_local    = espotential(LocalES, Ξ, ion)
+born_nonlocal = espotential(NonlocalES, Ξ, ion)
+
+p = plot(getindex.(Ξ, 3), [born_local, born_nonlocal];
+    title = "Electrostatic potentials of $name Born ions",
+    label = ["Born (local)" "Born (nonlocal)"],
+    xlabel = "Distance from point charge (Å)",
+    ylabel = "Electrostatic potential (V)",
+    legend = :bottomleft,
+    yscale = :log10
+)
+
+# mark ion surface
+vline!(p, [ion.radius]; color = :black, lw = 2, label = nothing)
+```
+
+```{julia}
+model = Model(ion; lc_max = 0.08)
+```
+
+```{julia}
+using NESSie.BEM
+
+bem_local    = espotential(Ξ, solve(LocalES,    model; method = :blas))
+bem_nonlocal = espotential(Ξ, solve(NonlocalES, model; method = :blas))
+
+plot!(p, getindex.(Ξ, 3), [bem_local, bem_nonlocal];
+    label = ["BEM (local)" "BEM (nonlocal)"],
+    marker = [:circle :plus],
+    markersize = 2,
+    markercolor = :black,
+    linetype = :scatter
+)
+```

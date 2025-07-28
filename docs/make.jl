@@ -2,6 +2,11 @@ using Documenter, GeometryBasics, NESSie
 
 const pages = [
     "Home" => "index.md",
+    "Tutorials" => [
+        "tutorials/born.md",
+        "tutorials/xie.md",
+        "tutorials/proteins.md"
+    ],
     "Data formats" => [
         "formats/input.md",
         "formats/output.md"
