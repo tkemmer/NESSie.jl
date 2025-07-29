@@ -10,7 +10,7 @@ using Plots
     NESSie.BEM modules.
 =#
 if length(ARGS) > 1 || startswith(get(ARGS, 1, ""), "-")
-    println("\n\e[1mUsage\e[0m: julia xiebem.jl [PQR_FILE]")
+    println("\n\e[1mUsage\e[0m: julia -i xiebem.jl [PQR_FILE]")
     exit(1)
 end
 
@@ -58,9 +58,9 @@ xie = TestModel.XieModel(
     Option(εΩ, εΣ, ε∞, λ),
     compat=true
 )
-nlxie1 = NonlocalXieModel2(xie, numiter)
-p1 = plotpotential(plot_x, plot_y, espotential(Ξ, nlxie1); name = "Nonlocal Poisson Test Model")
-p2 = plotpotential(plot_x, plot_y, rfpotential(Ξ, nlxie1); reac = true)
+nlxie2 = NonlocalXieModel2(xie, numiter)
+p1 = plotpotential(plot_x, plot_y, espotential(Ξ, nlxie2); name = "Nonlocal Poisson Test Model")
+p2 = plotpotential(plot_x, plot_y, rfpotential(Ξ, nlxie2); reac = true)
 
 # BEM
 surf = Model(xie)
