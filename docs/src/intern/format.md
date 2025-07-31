@@ -3,6 +3,10 @@
     CurrentModule = NESSie.Format
 ```
 
+```@index
+Pages = ["format.md"]
+```
+
 ## [Input formats](@id int-input)
 ```@docs
     readhmo_nodes

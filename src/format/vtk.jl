@@ -22,7 +22,7 @@ type is determined by the given model:
 # Alias
 
     writevtk(
-        fname::String,
+        fname::AbstractString,
         model::Model{T}
     )
 
@@ -33,7 +33,7 @@ function writevtk(
         model ::Model{T, Triangle{T}}
     ) where T
     xdoc = XMLDocument()
-    revidx = reverseindex(model.nodes)
+    revidx = _reverseindex(model.nodes)
 
     # VTKFile
     xroot = create_root(xdoc, "VTKFile")
@@ -52,7 +52,7 @@ function writevtk(
     set_attribute(xpoints, "type", "$T")
     set_attribute(xpoints, "NumberOfComponents", "3")
     set_attribute(xpoints, "format", "ascii")
-    add_text(xpoints, join(unpack(model.nodes), " "))
+    add_text(xpoints, join(Iterators.flatten(model.nodes), " "))
 
     # Polys
     xpolys = new_child(xpiece, "Polys")
@@ -62,8 +62,8 @@ function writevtk(
     set_attribute(xconn, "type", "Int32")
     set_attribute(xconn, "Name", "connectivity")
     set_attribute(xconn, "format", "ascii")
-    add_text(xconn, join([revidx[objectid(n)]-1 for n in
-        unpack([Vector{T}[o.v1, o.v2, o.v3] for o in model.elements])], " "))
+    add_text(xconn, join([revidx[n]-1 for n in
+        Iterators.flatten(Vector{T}[o.v1, o.v2, o.v3] for o in model.elements)], " "))
 
     # Polys/offsets
     xoffs = new_child(xpolys, "DataArray")
@@ -82,7 +82,7 @@ function writevtk(
         model ::Model{T, Tetrahedron{T}}
     ) where T
     xdoc = XMLDocument()
-    revidx = reverseindex(model.nodes)
+    revidx = _reverseindex(model.nodes)
 
     # VTKFile
     xroot = create_root(xdoc, "VTKFile")
@@ -98,7 +98,7 @@ function writevtk(
     set_attribute(xpoints, "type", "$T")
     set_attribute(xpoints, "NumberOfComponents", "3")
     set_attribute(xpoints, "format", "ascii")
-    add_text(xpoints, join(unpack(model.nodes), " "))
+    add_text(xpoints, join(Iterators.flatten(model.nodes), " "))
 
     # Cells
     xcells = new_child(xpiece, "Cells")
@@ -108,8 +108,8 @@ function writevtk(
     set_attribute(xconn, "type", "Int32")
     set_attribute(xconn, "Name", "connectivity")
     set_attribute(xconn, "format", "ascii")
-    add_text(xconn, join([revidx[objectid(n)]-1 for n in
-        unpack([Vector{T}[o.v1, o.v2, o.v3, o.v4] for o in model.elements])], " "))
+    add_text(xconn, join([revidx[n]-1 for n in
+        Iterators.flatten(Vector{T}[o.v1, o.v2, o.v3, o.v4] for o in model.elements)], " "))
 
     # Cells/offsets
     xoffs = new_child(xcells, "DataArray")
@@ -131,7 +131,7 @@ function writevtk(
 end
 
 @inline function writevtk(
-        fname::String,
+        fname::AbstractString,
         model::M
     ) where {T, M <: Model{T}}
     open(fh -> writevtk(fh, model), fname, "w")

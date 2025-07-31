@@ -2,6 +2,8 @@ module Rjasanow
 
 using ..NESSie
 using ..NESSie: _cos, _etol, _norm, _sign, cathetus, distance
+using ChunkSplitters
+using LinearAlgebra
 
 export laplacecoll, laplacecoll!
 
@@ -24,7 +26,7 @@ struct InSpace <: ObservationPosition end
 
 # =========================================================================================
 """
-    function laplacepot(
+    function _laplacepot(
         ptype::Type{<: PotentialType},
         ξ    ::AbstractVector{T},
         elem ::Triangle{T},
@@ -47,22 +49,22 @@ observation point `ξ`. The latter needs to be projected onto the surface elemen
 # Return type
 `T`
 """
-@inline function laplacepot(
-        ptype::Type{P},
-        ξ    ::AbstractVector{T},
-        elem ::Triangle{T},
-        dist ::T;
-        dat  ::AbstractVector{T} = Vector{T}(undef, 9)
-    ) where {T, P <: PotentialType}
-    laplacepot(ptype, ξ, elem.v1, elem.v2, elem.normal, dist; dat=dat) +
-    laplacepot(ptype, ξ, elem.v2, elem.v3, elem.normal, dist; dat=dat) +
-    laplacepot(ptype, ξ, elem.v3, elem.v1, elem.normal, dist; dat=dat)
+@inline function _laplacepot(
+    ptype::Type{<: PotentialType},
+    ξ::AbstractVector{T},
+    elem::Triangle{T},
+    dist::T;
+    dat::AbstractVector{T} = Vector{T}(undef, 9)
+) where T
+    _laplacepot(ptype, ξ, elem.v1, elem.v2, elem.normal, dist; dat) +
+    _laplacepot(ptype, ξ, elem.v2, elem.v3, elem.normal, dist; dat) +
+    _laplacepot(ptype, ξ, elem.v3, elem.v1, elem.normal, dist; dat)
 end
 
 
 # =========================================================================================
 """
-    laplacepot(
+    _laplacepot(
         ptype ::Type{<: PotentialType},
         ξ     ::AbstractVector{T},
         x1    ::AbstractVector{T},
@@ -89,15 +91,15 @@ onto the surface element plane  [[Rja90]](@ref Bibliography).
 # Return type
 `T`
 """
-function laplacepot(
-        ptype ::Type{P},
-        ξ     ::AbstractVector{T},
-        x1    ::AbstractVector{T},
-        x2    ::AbstractVector{T},
-        normal::AbstractVector{T},
-        dist  ::T;
-        dat   ::AbstractVector{T} = Vector{T}(undef, 9)
-    ) where {T, P <: PotentialType}
+function _laplacepot(
+    ptype::Type{<: PotentialType},
+    ξ::AbstractVector{T},
+    x1::AbstractVector{T},
+    x2::AbstractVector{T},
+    normal::AbstractVector{T},
+    dist::T;
+    dat::AbstractVector{T} = Vector{T}(undef, 9)
+) where T
     u1 = view(dat, 1:3)
     u2 = view(dat, 4:6)
     v  = view(dat, 7:9)
@@ -120,8 +122,8 @@ function laplacepot(
     # Note that the equation (as given above) uses a polar coordinate system with ξ being
     # the pole and h giving the polar axis. The negative angles are needed whenever the
     # corresponding triangle side lies below the polar axis.
-    sinφ1 = max(-one(T), min(one(T), _cos(u1, v, u1norm, vnorm)))
-    sinφ2 = max(-one(T), min(one(T), _cos(u2, v, u2norm, vnorm)))
+    sinφ1 = clamp(_cos(u1, v, u1norm, vnorm), -one(T), one(T))
+    sinφ2 = clamp(_cos(u2, v, u2norm, vnorm), -one(T), one(T))
 
     # Compute the height of the triangle
     h = cathetus(u1norm, sinφ1)
@@ -140,16 +142,14 @@ function laplacepot(
     # side of v the observation point lies. This is equivalent to checking whether the
     # normal of the triangle here and the one of the surface element (which are obviously
     # (anti)parallel) are oriented alike.
-    pot = abs(dist) < _etol(T) ?
-        laplacepot(ptype, InPlane, sinφ1, sinφ2, h, dist) :
-        laplacepot(ptype, InSpace, sinφ1, sinφ2, h, dist)
-    _sign(u1, u2, normal) * pot
+    _sign(u1, u2, normal) *
+        _laplacepot(ptype, abs(dist) < _etol(T) ? InPlane : InSpace, sinφ1, sinφ2, h, dist)
 end
 
 
 # =========================================================================================
 """
-    laplacepot(
+    _laplacepot(
              ::Type{<: PotentialType},
              ::Type{<: ObservationPosition},
         sinφ1::T,
@@ -172,32 +172,31 @@ sines of the angles ``φ₁`` and ``φ₂`` between `h` and the triangle sides e
 # Return type
 `T`
 """
-@inline function laplacepot(
-             ::Type{SingleLayer},
-             ::Type{InPlane},
-        sinφ1::T,
-        sinφ2::T,
-        h    ::T,
-        d    ::T
-    ) where T
+@inline function _laplacepot(
+    ::Type{SingleLayer},
+    ::Type{InPlane},
+    sinφ1::T,
+    sinφ2::T,
+    h::T,
+    d::T
+) where T
     #=
         h/8π * [ln((1 + sin(φ))/(1 - sin(φ)))]   from φ1 to φ2
         = h/8π * [ln((1 + sin(φ2))/(1 - sin(φ2))) - ln((1 + sin(φ1))/(1 - sin(φ1)))]
         = h/8π * ln((1 + sin(φ2))(1 - sin(φ1))/((1 - sin(φ2))(1 + sin(φ1))))
-
         The equation in the original source misses a factor of 0.5!
     =#
     h * log((1+sinφ2) * (1-sinφ1) / ((1-sinφ2) * (1+sinφ1))) / 2
 end
 
-@inline function laplacepot(
-             ::Type{SingleLayer},
-             ::Type{InSpace},
-        sinφ1::T,
-        sinφ2::T,
-        h    ::T,
-        d    ::T
-    ) where T
+@inline function _laplacepot(
+    ::Type{SingleLayer},
+    ::Type{InSpace},
+    sinφ1::T,
+    sinφ2::T,
+    h::T,
+    d::T
+) where T
     #=
         h/8π * <1> + d/4π * <2>
 
@@ -225,14 +224,14 @@ end
     result + d * (asin(χ * sinφ2) - asin(sinφ2) - asin(χ * sinφ1) + asin(sinφ1))
 end
 
-@inline function laplacepot(
-             ::Type{DoubleLayer},
-             ::Type{InPlane},
-        sinφ1::T,
-        sinφ2::T,
-        h    ::T,
-        d    ::T
-    ) where T
+@inline function _laplacepot(
+    ::Type{DoubleLayer},
+    ::Type{InPlane},
+    sinφ1::T,
+    sinφ2::T,
+    h::T,
+    d::T
+) where T
     #=
         1/4π * ∫-1/|ξ-r'|^3 * (ξ-r')⋅n dr'
         = 1/4π * ∫-1/|ξ-r'|^3 * 0 dr'
@@ -241,14 +240,14 @@ end
     zero(T)
 end
 
-@inline function laplacepot(
-             ::Type{DoubleLayer},
-             ::Type{InSpace},
-        sinφ1::T,
-        sinφ2::T,
-        h    ::T,
-        d    ::T
-    ) where T
+@inline function _laplacepot(
+    ::Type{DoubleLayer},
+    ::Type{InSpace},
+    sinφ1::T,
+    sinφ2::T,
+    h::T,
+    d::T
+) where T
     χ  = abs(d) / √(d^2 + h^2)
     sign(d) * (asin(χ * sinφ1) - asin(sinφ1) - asin(χ * sinφ2) + asin(sinφ2))
 end
@@ -285,52 +284,63 @@ vector.
 `Nothing`
 """
 function laplacecoll!(
-        ptype   ::Type{P},
-        dest    ::AbstractVector{T},
-        elements::AbstractVector{Triangle{T}},
-        Ξ       ::AbstractVector{Vector{T}},
-        fvals   ::AbstractVector{T}
-    ) where {T, P <: PotentialType}
+    ptype::Type{<: PotentialType},
+    dest::AbstractVector{T},
+    elements::AbstractVector{Triangle{T}},
+    Ξ::AbstractVector{Vector{T}},
+    fvals::AbstractVector{T}
+) where T
+    tasks = map(index_chunks(Ξ; n = Threads.nthreads(), minsize = 100)) do idx
+        Threads.@spawn _laplacecoll!(ptype, view(dest, idx), elements, view(Ξ, idx), fvals)
+    end
+    wait.(tasks)
+    nothing
+end
+
+function _laplacecoll!(
+    ptype::Type{<: PotentialType},
+    dest::AbstractVector{T},
+    elements::AbstractVector{Triangle{T}},
+    Ξ::AbstractVector{Vector{T}},
+    fvals::AbstractVector{T}
+) where T
     @assert length(dest) == length(Ξ)
     @assert length(fvals) == length(elements)
 
-    ξ = Vector{T}(undef, 3)
-    dat = Vector{T}(undef, 9)
-    @inbounds for eidx in eachindex(elements)
-        elem = elements[eidx]
-        for oidx in eachindex(Ξ)
-            dist = distance(Ξ[oidx], elem)
-            ξ .= Ξ[oidx]
-
-            # project ξ onto elem
-            abs(dist) >= _etol(T) && _projectξ!(ξ, elem, dist)
-
-            dest[oidx] += laplacepot(ptype, ξ, elem, dist; dat=dat) * fvals[eidx]
+    dat = Vector{T}(undef, 12)
+    @inbounds for (oidx, ξ) in enumerate(Ξ)
+        for (eidx, elem) in enumerate(elements)
+            dest[oidx] += laplacecoll(ptype, ξ, elem; dat) * fvals[eidx]
         end
     end
     nothing
 end
 
 function laplacecoll!(
-        ptype   ::Type{P},
-        dest    ::AbstractMatrix{T},
-        elements::AbstractVector{Triangle{T}},
-        Ξ       ::AbstractVector{Vector{T}},
-    ) where {T, P <: PotentialType}
+    ptype::Type{<: PotentialType},
+    dest::AbstractMatrix{T},
+    elements::AbstractVector{Triangle{T}},
+    Ξ::AbstractVector{Vector{T}}
+) where T
+    tasks = map(index_chunks(Ξ; n = Threads.nthreads(), minsize = 100)) do idx
+        Threads.@spawn _laplacecoll!(ptype, view(dest, idx, :), elements, view(Ξ, idx))
+    end
+    wait.(tasks)
+    nothing
+end
+
+function _laplacecoll!(
+    ptype::Type{<: PotentialType},
+    dest::AbstractMatrix{T},
+    elements::AbstractVector{Triangle{T}},
+    Ξ::AbstractVector{Vector{T}}
+) where T
     @assert size(dest) == (length(Ξ), length(elements))
 
-    ξ = Vector{T}(undef, 3)
-    dat = Vector{T}(undef, 9)
-    @inbounds for eidx in eachindex(elements)
-        elem = elements[eidx]
-        for oidx in eachindex(Ξ)
-            dist = distance(Ξ[oidx], elem)
-            ξ .= Ξ[oidx]
-
-            # project ξ onto elem
-            abs(dist) >= _etol(T) && _projectξ!(ξ, elem, dist)
-
-            dest[oidx, eidx] = laplacepot(ptype, ξ, elem, dist; dat=dat)
+    dat = Vector{T}(undef, 12)
+    @inbounds for (eidx, elem) in enumerate(elements)
+        for (oidx, ξ) in enumerate(Ξ)
+            dest[oidx, eidx] = laplacecoll(ptype, ξ, elem; dat)
         end
     end
     nothing
@@ -360,12 +370,11 @@ and observation point `ξ` [[Rja90]](@ref Bibliography).
 `T`
 """
 function laplacecoll(
-        ptype::Type{P},
-        ξ    ::AbstractVector{T},
-        elem ::Triangle{T};
-        dat  ::AbstractVector{T} = Vector{T}(undef, 12)
-    ) where {T, P <: PotentialType}
-
+    ptype::Type{<: PotentialType},
+    ξ::AbstractVector{T},
+    elem::Triangle{T};
+    dat::AbstractVector{T} = Vector{T}(undef, 12)
+) where T
     dist = distance(ξ, elem)
     ξ_p = view(dat, 1:3)
     ξ_p .= ξ
@@ -373,7 +382,7 @@ function laplacecoll(
     # project ξ onto elem
     abs(dist) >= _etol(T) && _projectξ!(ξ_p, elem, dist)
 
-    laplacepot(ptype, ξ_p, elem, dist; dat=view(dat, 4:12))
+    _laplacepot(ptype, ξ_p, elem, dist; dat=view(dat, 4:12))
 end
 
 
@@ -410,5 +419,11 @@ Projects ξ onto the surface element plane, overriding its previous coordinates.
 @inline function _projectξ!(ξ::AbstractVector{T}, elem::Triangle{T}, dist::T) where T
     ξ .-= dist .* elem.normal
 end
+
+# =========================================================================================
+# Deprecation
+
+# renamed in v1.5 (unexported but used by CuNESSie's tests)
+@deprecate laplacepot _laplacepot false
 
 end # module

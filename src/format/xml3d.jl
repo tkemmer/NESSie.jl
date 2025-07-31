@@ -17,7 +17,7 @@ latter as point cloud) or from a given surface model.
 # Alias
 
     writexml3d_json(
-        fname::String,
+        fname::AbstractString,
         nodes::Union{Vector{Vector{T}}), Model{T, Triangle{T}}}
     )
 
@@ -33,7 +33,7 @@ function writexml3d_json(
         "data" => Dict(
             "position" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(nodes))]
+                "seq" => [Dict{String, Vector{Float64}}("value" => collect(T, Iterators.flatten(nodes)))]
             )
         )
     ))
@@ -44,7 +44,7 @@ function writexml3d_json(
         stream::IOStream,
         model ::Model{T, Triangle{T}}
     ) where T
-    revidx = reverseindex(model.nodes)
+    revidx = _reverseindex(model.nodes)
     JSON3.write(stream, Dict(
         "format" => "xml3d-json",
         "version" => "0.4.0",
@@ -52,19 +52,21 @@ function writexml3d_json(
             "index" => Dict(
                 "type" => "int",
                 "seq" => [Dict{String, Vector{Int}}(
-                            "value" => [revidx[objectid(n)]-1 for n
-                                in unpack([Vector{T}[o.v1, o.v2, o.v3] for o
-                                in model.elements])]
+                            "value" => [revidx[n]-1 for n
+                                in Iterators.flatten(Vector{T}[o.v1, o.v2, o.v3] for o
+                                in model.elements)]
                           )]
             ),
             "position" => Dict(
                 "type" => "float3",
-                "seq" => [Dict{String, Vector{Float64}}("value" => unpack(model.nodes))]
+                "seq" => [Dict{String, Vector{Float64}}(
+                            "value" => collect(T, Iterators.flatten(model.nodes))
+                          )]
             ),
             "normal" => Dict(
                 "type" => "float3",
                 "seq" => [Dict{String, Vector{Float64}}(
-                            "value" => unpack(vertexnormals(model))
+                            "value" => collect(T, Iterators.flatten(vertexnormals(model)))
                           )]
             )
         )
@@ -73,7 +75,7 @@ function writexml3d_json(
 end
 
 @inline function writexml3d_json(
-        fname::String,
+        fname::AbstractString,
         model::Union{Vector{Vector{T}},Model{T, Triangle{T}}}
     ) where T
     open(fh -> writexml3d_json(fh, model), fname, "w")
@@ -99,7 +101,7 @@ as point cloud.
 # Alias
 
     writexml3d_xml(
-        fname::String,
+        fname::AbstractString,
         nodes::Vector{Vector{T}}
     )
 
@@ -116,13 +118,13 @@ function writexml3d_xml(
     set_attribute(xmesh, "id", "mesh")
     xpos = new_child(xmesh, "float3")
     set_attribute(xpos, "name", "position")
-    add_text(xpos, join(unpack(nodes), " "))
+    add_text(xpos, join(Iterators.flatten(nodes), " "))
     println(stream, string(xdoc))
     nothing
 end
 
 @inline function writexml3d_xml(
-        fname::String,
+        fname::AbstractString,
         nodes::Vector{Vector{T}}
     ) where T
     open(fh -> writexml3d_xml(fh, nodes), fname, "w")

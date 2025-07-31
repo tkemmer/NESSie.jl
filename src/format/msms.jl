@@ -17,7 +17,7 @@ Reads a surface model from the given MSMS-generated `.face` and `.vert` files.
 
 # Alias
 
-    readmsms(fname::String, ::Type{T}=Float64)
+    readmsms(fname::AbstractString, ::Type{T}=Float64)
 
 Reads the model using a common file name prefix (`fname.{vert,face}`) for both files
 rather than `IOStream` objects.
@@ -33,7 +33,7 @@ function readmsms(
 end
 
 @inline function readmsms(
-        fname::String,
+        fname::AbstractString,
              ::Type{T}=Float64
     ) where T <: AbstractFloat
     open(ff -> open(fv -> readmsms(fv, ff, T), "$fname.vert"), "$fname.face")

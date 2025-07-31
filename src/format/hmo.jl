@@ -12,7 +12,7 @@ Reads a complete surface model from the given HMO file.
 
 # Alias
 
-    readhmo(fname::String, ::Type{T}=Float64)
+    readhmo(fname::AbstractString, ::Type{T}=Float64)
 
 Reads the model using a file name rather than a `IOStream` object.
 """
@@ -25,7 +25,7 @@ function readhmo(
 end
 
 @inline function readhmo(
-        fname::String,
+        fname::AbstractString,
              ::Type{T}=Float64
     ) where T
     open(fh -> readhmo(fh, T), fname)
@@ -128,7 +128,7 @@ Creates a HMO file from the given surface model.
 # Alias
 
     writehmo(
-        fname::String,
+        fname::AbstractString,
         model::Model{T, Triangle{T}}
     )
 
@@ -167,6 +167,6 @@ function writehmo(
     return
 end
 
-@inline function writehmo(fname::String, model::Model{T, Triangle{T}}) where T
+@inline function writehmo(fname::AbstractString, model::Model{T, Triangle{T}}) where T
     open(fh -> writehmo(fh, model), fname, "w")
 end

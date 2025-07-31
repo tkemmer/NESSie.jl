@@ -1,105 +1,78 @@
-push!(LOAD_PATH,"../../src/")
-
 using NESSie
-using NESSie.BEM
-using NESSie.Format: readoff, readpqr
-using NESSie.TestModel
-
-using LinearAlgebra: norm
-using PyPlot: cm_get_cmap, figure, plot_trisurf, show, title, xlabel, ylabel, zlabel, zlim
+using NESSie.BEM, NESSie.TestModel
+using Plots
 
 #=
     xiebem.jl
 
-    Comparison of nonlocal reaction field potentials (or electrostatic potentials) for a
-    Poisson test model generated from a given PQR file. The potentials are computed using
-    the NESSie.TestModel and NESSie.BEM modules.
+    Comparison of nonlocal electrostatic and reaction field potentials for a Poisson test model
+    generated from a given PQR file. The potentials are computed using the NESSie.TestModel and
+    NESSie.BEM modules.
 =#
 if length(ARGS) > 1 || startswith(get(ARGS, 1, ""), "-")
-    println("\n\e[1mUsage\e[0m: julia xiebem.jl [PQR_FILE]")
+    println("\n\e[1mUsage\e[0m: julia -i xiebem.jl [PQR_FILE]")
     exit(1)
 end
 
+const εΩ = 2.               # dielectric constant (protein)
+const εΣ = 80.              # dielectric constant (solvent)
+const ε∞ = 1.8              # dielectric bulk response (solvent)
+const λ  = 15.              # correlation length (Å)
+const radius = 1.           # test model sphere radius (Å)
+const numiter = 20          # number of iterations (test model)
+const lval = 2.             # grid size [-l, l]² in xz-plane
+const grid = 40             # grid resolution (grid x grid)
+const fpqr = "xie/2LZX.pqr" # PQR file (ignored when given as argument)
 
-const εΩ = 2.                           # dielectric constant (protein)
-const εΣ = 80.                          # dielectric constant (solvent)
-const ε∞ = 1.8                          # dielectric bulk response (solvent)
-const λ  = 15.                          # correlation length (Å)
-const radius = 1.                       # test model sphere radius (Å)
-const numiter = 20                      # number of iterations (test model)
-const reac = true                       # generate reaction field only
-const lval = 2.                         # grid size [-l, l]² in xz-plane
-const grid = 40                         # grid resolution (grid x grid)
-const fpqr = "../../data/xie/2LZX.pqr"  # PQR file (ignored when given as argument)
-
-function plotpotential(
-        x   ::Vector{T},
-        y   ::Vector{T},
-        z   ::Vector{T},
-        name::String = ""
-    ) where T
-    figure()
-    plot_trisurf(x, y, z, cmap=cm_get_cmap("viridis"))
-    length(name) > 0 && (title(name))
-    xlabel("x component [\$\\AA\$]")
-    ylabel("z component [\$\\AA\$]")
-    zlabel(reac ? "Reaction field potential [V]" : "Electrostatic potential [V]")
-    nothing
+@inline function plotpotential(
+    x   ::Vector{T},
+    y   ::Vector{T},
+    z   ::Vector{T};
+    name::String = "",
+    reac::Bool = false
+) where T
+    surface(x, y, z;
+        cmap = :viridis,
+        title = name,
+        xlabel = "x in Å",
+        ylabel = "y in Å",
+        zlabel = reac ? "Reaction field potential in V" : "Electrostatic potential in V",
+        colorbar = false
+    )
 end
 
 # generate observation points
-Ξ = [ξ for Ξ in obspoints_plane(
-        [-lval, zero(lval),  lval],
-        [-lval, zero(lval), -lval],
-        [ lval, zero(lval), -lval],
-        grid, grid
-    ) for ξ in Ξ]
+Ξ = collect(Iterators.flatten(obspoints_plane(
+    [-lval,  lval, zero(lval)],
+    [-lval, -lval, zero(lval)],
+    [ lval, -lval, zero(lval)],
+    grid, grid
+)))
+plot_x = getindex.(Ξ, 1)
+plot_y = getindex.(Ξ, 2)
 
-# x- and y-axes of the plots
-x = [ξ[1] for ξ in Ξ]
-y = [ξ[3] for ξ in Ξ]
+# Nonlocal Xie model 2
+xie = TestModel.XieModel(
+    radius,
+    Format.readpqr(get(ARGS, 1, nessie_data_path(fpqr))),
+    Option(εΩ, εΣ, ε∞, λ),
+    compat=true
+)
+nlxie2 = NonlocalXieModel2(xie, numiter)
+p1 = plotpotential(plot_x, plot_y, espotential(Ξ, nlxie2); name = "Nonlocal Poisson Test Model")
+p2 = plotpotential(plot_x, plot_y, rfpotential(Ξ, nlxie2); reac = true)
 
-#=
-    Nonlocal Xie model 1
-=#
-nlxie1 = NonlocalXieModel1(
-            TestModel.XieModel(
-                radius,
-                readpqr(get(ARGS, 1, fpqr)),
-                Option(εΩ, εΣ, ε∞, λ),
-                compat=true),
-            numiter
-        )
-molpot  = φmol(Ξ, nlxie1.charges)/4π/εΩ/ε0*NESSie.ec # molecular potential
+# BEM
+surf = Model(xie)
 
-z = [
-        norm(ξ) < nlxie1.radius ?
-        TestModel.φΩ(ξ, nlxie1) :
-        TestModel.φΣ(ξ, nlxie1) for ξ in Ξ
-    ]
-reac && (z -= molpot)
+bem = solve(NonlocalES, surf; method = :blas)
+p3 = plotpotential(plot_x, plot_y, espotential(Ξ, bem); name = "Nonlocal BEM")
+p4 = plotpotential(plot_x, plot_y, rfpotential(Ξ, bem); reac = true)
 
-zmin = (any(x -> x < 0, z) ? 1.2 : .8) * minimum(z)
-zmax = (any(x -> x > 0, z) ? 1.2 : .8) * maximum(z)
-plotpotential(x, y, z, "Nonlocal Poisson Test Model")
+# synchronize z-axes
+zl13 = extrema([zlims(p1)..., zlims(p3)...])
+zl24 = extrema([zlims(p2)..., zlims(p4)...])
+zlims!(p1, zl13); zlims!(p3, zl13)
+zlims!(p2, zl24); zlims!(p4, zl24)
 
-#=
-    BEM
-=#
-surf = readoff("../../data/xie/unitsphere.off")
-surf.charges = nlxie1.charges
-surf.params  = nlxie1.params
-bem = solve(NonlocalES, surf)
-
-zΣ = BEM.φΣ(Ξ, bem)
-zΩ = BEM.φΩ(Ξ, bem)
-z  = [norm(ξ) < nlxie1.radius ? zΩ[i] : zΣ[i] for (i, ξ) in enumerate(Ξ)]
-reac && (z -= molpot)
-
-zmin = min(zmin, (any(x -> x < 0, z) ? 1.2 : .8) * minimum(z))
-zmax = max(zmax, (any(x -> x > 0, z) ? 1.2 : .8) * maximum(z))
-zlim((zmin, zmax))
-plotpotential(x, y, z, "Nonlocal BEM")
-zlim((zmin, zmax))
-
-show()
+display(plot(p1, p3, p2, p4; layout = (2, 2), size = (1000, 1000)))

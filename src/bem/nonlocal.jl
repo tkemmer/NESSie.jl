@@ -13,11 +13,11 @@ Result data of the nonlocal solving process to be used for potential computation
 post-processing, with `Ξ` being the list of observation points, that is, the set of
 triangle centroids.
 """
-struct NonlocalBEMResult{T, E} <: BEMResult{T, E}
+@auto_hash_equals struct NonlocalBEMResult{T, E, A <: AbstractArray{T, 1}} <: BEMResult{T, E}
     model::Model{T, E}
-    u::SubArray{T,1}
-    q::SubArray{T,1}
-    w::SubArray{T,1}
+    u::A
+    q::A
+    w::A
     umol::Vector{T}
     qmol::Vector{T}
 end
@@ -54,14 +54,14 @@ function _solve_explicit(
     # initialize the system matrix;
     # since all other components of the system matrix will be premultiplied by 4π,
     # do the same for σ here
-    pluseye!(m11, T(4π * σ))
-    pluseye!(m21, T(4π * σ))
-    pluseye!(m33, T(4π * σ))
+    _pluseye!(m11, T(4π * σ))
+    _pluseye!(m21, T(4π * σ))
+    _pluseye!(m33, T(4π * σ))
 
     # compute molecular potential for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = εΩ .\   φmol(model)
-    qmol = εΩ .\ ∂ₙφmol(model)
+    umol = εΩ .\ _molpotential(model)
+    qmol = εΩ .\ _molpotential_dn(model)
 
     # create right hand side
     rhs = zeros(T, 3 * numelem)
@@ -197,7 +197,15 @@ struct NonlocalSystemMatrix{T} <: AbstractArray{T, 2}
     end
 end
 
-Base.size(A::NonlocalSystemMatrix{T}) where T = 3 .* size(A.K)
+@inline function NonlocalSystemMatrix(
+    Ξ       ::Vector{Vector{T}},
+    elements::Vector{Triangle{T}},
+    params  ::Option{T}
+) where T
+    NonlocalSystemMatrix{T}(Ξ, elements, params)
+end
+
+@inline Base.size(A::NonlocalSystemMatrix) = 3 .* size(A.K)
 
 function LinearAlgebra.diag(A::NonlocalSystemMatrix{T}, k::Int = 0) where T
     k != 0 && error("diag not defined for k != 0 on ", typeof(A))
@@ -247,7 +255,8 @@ end
 # Documented in bem/local.jl
 function _solve_implicit(
          ::Type{NonlocalES},
-    model::Model{T, Triangle{T}}
+    model::Model{T, Triangle{T}};
+    kwargs...
 ) where T
     # observation points
     Ξ = [e.center for e in model.elements]
@@ -260,15 +269,15 @@ function _solve_implicit(
 
     # compute molecular potential for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = εΩ .\   φmol(model, tolerance=_etol(T))
-    qmol = εΩ .\ ∂ₙφmol(model)
+    umol = εΩ .\ _molpotential(model, tolerance=_etol(T))
+    qmol = εΩ .\ _molpotential_dn(model)
 
     # create nonlocal system
     A = NonlocalSystemMatrix{T}(Ξ, model.elements, model.params)
     b = A.K * umol .+ (1 - εΩ/εΣ) .* (A.Ky * umol) .- T(2π) .* umol .- (εΩ/ε∞) .*
         (A.V * qmol) .+ (εΩ/εΣ - εΩ/ε∞) .* (A.Vy * qmol)
 
-    cauchy = _solve_linear_system(A, b)
+    cauchy = _solve_linear_system(A, b; kwargs...)
 
     NonlocalBEMResult(
         model,

@@ -3,6 +3,10 @@
     CurrentModule = NESSie
 ```
 
+```@index
+Pages = ["electrostatics.md"]
+```
+
 ## Potential types
 ```@docs
     PotentialType
@@ -19,27 +23,13 @@
 
 ## Potentials
 
-### Molecular potentials
 ```@docs
-    φmol
-    ∂ₙφmol
-    ∇φmol
+    espotential
+    molpotential
+    rfpotential
 ```
 
-### Interior potentials
+## Potential energies
 ```@docs
-    BEM.φΩ
-    TestModel.φΩ
-```
-
-
-### Exterior potentials
-```@docs
-    BEM.φΣ
-    TestModel.φΣ
-```
-
-## Energies
-```@docs
-    BEM.rfenergy
+    rfenergy
 ```

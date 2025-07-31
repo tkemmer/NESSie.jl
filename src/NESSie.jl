@@ -2,8 +2,13 @@ __precompile__()
 
 module NESSie
 
+using AutoHashEquals
 using Distances: euclidean
+using Gmsh
 using LinearAlgebra: ⋅, ×, BLAS, norm, rmul!
+
+import FileIO, MeshIO
+import GeometryBasics
 
 include("base/constants.jl")
 export ε0, Option, defaultopt
@@ -15,11 +20,13 @@ include("base/quadrature.jl")
 export QuadraturePoints, QuadPts2D, QuadPts3D, ElementQuad, TriangleQuad, quadraturepoints
 
 include("base/util.jl")
-export meshunion, obspoints_line, obspoints_plane
+export guess_domain, meshunion, nessie_data_path, obspoints_plane
 
 include("base/potentials.jl")
-export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES, φmol,
-    ∂ₙφmol, ∇φmol
+export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES,
+    espotential, molpotential, rfenergy, rfpotential
+
+include("base/deprecation.jl")
 
 # Submodules
 include("Format.jl")

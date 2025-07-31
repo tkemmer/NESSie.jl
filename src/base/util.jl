@@ -13,7 +13,7 @@ and area. Returns the completely initialized Triangle as a copy.
 # Return type
 [`Triangle`](@ref)
 """
-function props(elem::Triangle{T}) where T
+function props(elem::Triangle)
     # reject degenerate triangles
     @assert !isdegenerate(elem) "Degenerate triangle $(elem)"
 
@@ -81,30 +81,6 @@ end
 
 # =========================================================================================
 """
-    unpack(data::Vector{Vector{T}})
-
-Unpacks the given vector of vectors into a single vector.
-
-# Return type
-`Vector{T}`
-
-# Example
-
-```jldoctest; setup = :(using NESSie: unpack)
-julia> unpack([[1, 2], [3]])
-3-element Vector{Int64}:
- 1
- 2
- 3
-```
-"""
-@inline function unpack(data::AbstractVector{Vector{T}}) where T
-    collect(T, x for y in data for x in y)
-end
-
-
-# =========================================================================================
-"""
     vertexnormals(model::Model{T, Triangle{T}})
 
 Returns a vector containing the normal vectors of the given model's vertices.
@@ -113,11 +89,11 @@ Returns a vector containing the normal vectors of the given model's vertices.
 `Vector{Vector{T}}`
 """
 function vertexnormals(model::Model{T, Triangle{T}}) where T
-    revidx = reverseindex(model.nodes)
+    revidx = _reverseindex(model.nodes)
     normals = Vector{T}[zeros(T, 3) for _ in 1:length(model.nodes)]
     count = zeros(T, length(model.nodes))
     @inbounds for elem in model.elements, node in (elem.v1, elem.v2, elem.v3)
-        idx = revidx[objectid(node)]
+        idx = revidx[node]
         count[idx] += 1
         normals[idx] .+= (elem.normal .- normals[idx]) ./ count[idx]
     end
@@ -127,83 +103,42 @@ end
 
 # =========================================================================================
 """
-    eye!(
+    _pluseye!(
         m::AbstractMatrix{T},
-        α::Number=one(T)
-    )
-
-Initializes the given matrix `m` with `αI`, with `I` being an identity matrix with the same
-dimensions as `m`.
-
-# Return type
-`Void`
-
-# Example
-```jldoctest; setup = :(using NESSie: eye!)
-julia> m = 2 * ones(2, 2)
-2×2 Matrix{Float64}:
- 2.0  2.0
- 2.0  2.0
-
-julia> eye!(m); m
-2×2 Matrix{Float64}:
- 1.0  0.0
- 0.0  1.0
-
-julia> eye!(m, 2); m
-2×2 Matrix{Float64}:
- 2.0  0.0
- 0.0  2.0
-```
-"""
-@inline function eye!(
-        m::AbstractMatrix{T},
-        α::Number=one(T)
-    ) where T
-    fill!(m, zero(T))
-    pluseye!(m, α)
-end
-
-
-# =========================================================================================
-"""
-    pluseye!(
-        m::AbstractMatrix{T},
-        α::Number=one(T)
+        α::T=one(T)
     )
 
 Adds `α` to all diagonal elements of matrix `m`.
 
 # Return type
-`Void`
+`AbstractMatrix{T}`
 
 # Example
-```jldoctest; setup = :(using NESSie: pluseye!)
+```jldoctest; setup = :(using NESSie: _pluseye!)
 julia> m = 2 * ones(2, 2)
 2×2 Matrix{Float64}:
  2.0  2.0
  2.0  2.0
 
-julia> pluseye!(m); m
+julia> _pluseye!(m)
 2×2 Matrix{Float64}:
  3.0  2.0
  2.0  3.0
 
-julia> pluseye!(m, 2); m
+julia> _pluseye!(m, 2.0)
 2×2 Matrix{Float64}:
  5.0  2.0
  2.0  5.0
 ```
 """
-function pluseye!(
+@inline function _pluseye!(
         m::AbstractMatrix{T},
-        α::Number=one(T)
+        α::T=one(T)
     ) where T
-    α = convert(T, α)
     @inbounds for i in 1:min(size(m)...)
         m[i, i] += α
     end
-    nothing
+    m
 end
 
 
@@ -230,7 +165,7 @@ end
 """
     _seek(
         fh         ::IOStream,
-        prefix     ::String,
+        prefix     ::AbstractString,
         skiptheline::Bool = true
     )
 
@@ -243,7 +178,7 @@ is no such line, the stream handle will be set to EOF.
 # Return type
 `Nothing`
 """
-function _seek(fh::IOStream, prefix::String, skiptheline::Bool=true)
+function _seek(fh::IOStream, prefix::AbstractString, skiptheline::Bool=true)
     m = -1
     found = false
     while !eof(fh)
@@ -397,48 +332,23 @@ Fast Euclidean norm for 3-element vectors.
 # Return type
 `T`
 """
-@inline function _norm(u::AbstractVector{T}) where T
+@inline function _norm(u::AbstractVector)
     √_dot(u, u)
 end
 
 
 # =========================================================================================
 """
-    reverseindex(v::AbstractVector{T})
+    _reverseindex(v::AbstractVector{T})
 
 Creates a reverse index for the given vector `v`, that is, a dictionary linking the object
 IDs of the vector elements to the corresponding position in the vector.
 
 # Return type
-`Dict{UInt, UInt}`
+`IdDict`
 """
-@inline function reverseindex(v::AbstractVector{T}) where T
-    Dict{UInt, UInt}(objectid(e) => i for (i,e) in enumerate(v))
-end
-
-
-# =========================================================================================
-"""
-    obspoints_line(
-        u::AbstractVector{T},
-        v::AbstractVector{T},
-        n::Int
-    )
-
-Generates `n` evenly distributed observation points along the line segment from `u` to `v`.
-
-# Return type
-`Generator -> Vector{T}`
-
-# Example
-```julia
-for ξ in obspoints_line([0, 0, 0], [1, 1, 1], 10)
-    ...
-end
-```
-"""
-@inline function obspoints_line(u::AbstractVector{T}, v::AbstractVector{T}, n::Int) where T
-    (u .+ T(i) .* (v .- u) for i in LinRange(0, 1, n))
+@inline function _reverseindex(v::AbstractVector)
+    IdDict(n => i for (i, n) in enumerate(v))
 end
 
 
@@ -479,7 +389,211 @@ end
         nba::Int,
         nbc::Int
     ) where T
-    (obspoints_line(ξ, c .+ (ξ .- b), nbc) for ξ in obspoints_line(b, a, nba))
+    (LinRange(ξ, c .+ (ξ .- b), nbc) for ξ in LinRange(b, a, nba))
+end
+
+
+# =========================================================================================
+"""
+    guess_domain(ξ::Vector{T}, model::Model{T, Triangle{T}})
+
+Make an educated guess whether the given observation point `ξ` is located in the protein
+domain `Ω`, the solvent domain `Σ`, or the surface domain `Γ`.
+
+The domain is determined based on the relative position to the triangle with the closest
+centroid.
+
+# Supported keyword arguments
+ - `surface_margin::T = 1e-3` maximum |cos| ⋅ norm allowed between the vector from the
+   closest triangle's centroid to ξ and the triangle's unit normal vector before ξ is no
+   longer considered to be part of the Γ domain.
+
+# Return type
+`Symbol` (`:Ω`, `:Σ`, or `:Γ`)
+
+## Alias
+    guess_domain(Ξ::Vector{Vector{T}}, model::Model{T, Triangle{T}})
+
+Determines the domain of each observation point `ξ` ∈ `Ξ`.
+"""
+function guess_domain(
+    ξ::Vector{T},
+    model::Model{T, Triangle{T}};
+    surface_margin::T = T(1e-6)
+) where T
+    elem = model.elements[_closest_element_id(ξ, model)]
+    s = ddot(ξ, elem.center, elem.normal)
+    abs(s) < surface_margin ? :Γ : s < 0 ? :Ω : :Σ
+end
+
+@inline function guess_domain(
+    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    model::Model{T, Triangle{T}};
+    kwargs...
+) where T
+    collect(Symbol, guess_domain(ξ, model; kwargs...) for ξ in Ξ)
+end
+
+
+# =========================================================================================
+"""
+    _closest_element_id(ξ::Vector{T}, model::Model{T, Triangle{T}})
+
+Returns the index of the element in the given model with the closest centroid to ξ.
+
+# Return type
+`Int`
+"""
+@inline function _closest_element_id(ξ::Vector{T}, model::Model{T, Triangle{T}}) where T
+    # faster variant of
+    # argmin(_norm(ξ .- τ.center) for τ in model.elements)
+
+    (mini, minn) = (1, T(Inf))
+    for i in eachindex(model.elements)
+        n = euclidean(ξ, model.elements[i].center)
+        if n < minn
+            (mini, minn) = (i, n)
+        end
+    end
+    mini
+end
+
+
+# =========================================================================================
+"""
+    nessie_data_path(parts::AbstractString...)
+
+Returns the absolute path to NESSie's "data" directory, if used without arguments, or to
+the location relative to that, specified by `parts` (e.g., a directory within "data").
+
+# Return type
+`String`
+"""
+@inline function nessie_data_path(parts::AbstractString...)
+    normpath(joinpath(Base.pkgdir(NESSie), "data", parts...))
+end
+
+
+# =========================================================================================
+"""
+    _generate_sphere(::Type{T}, center::Vector{Real}, radius::Real)
+
+Generates a surface model for a sphere of the given radius at the given center point
+through [Gmsh.jl](https://github.com/JuliaFEM/Gmsh.jl).
+
+# Supported keyword arguments
+ - `lc_min::Real = 0.1` corresponds to Gmsh's "Mesh.CharacteristicLengthMin"
+ - `lc_max::Real = 0.1` corresponds to Gmsh's "Mesh.CharacteristicLengthMax"
+
+# Return type
+[`Model{T, Triangle{T}}`](@ref)
+"""
+function _generate_sphere(
+    ::Type{T},
+    center::Vector{<:Real},
+    radius::Real;
+    lc_min::Real = 0.1,
+    lc_max::Real = 0.1
+) where T <: AbstractFloat
+    fname = "$(tempname(cleanup = false)).msh"
+    gmsh.initialize()
+    gmsh.model.add("sphere")
+    gmsh.model.occ.addSphere(center..., radius)
+    gmsh.model.occ.synchronize()
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMin", lc_min)
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMax", lc_max)
+    gmsh.model.mesh.generate(2)
+    gmsh.write(fname)
+    gmsh.finalize()
+
+    model = Model(FileIO.load(fname; pointtype = _pointtype(T)))
+    try
+        rm(fname)
+    catch
+        @warn "Couldn't remove temporary file $fname"
+    end
+    model
+end
+
+@inline _pointtype(::Type{Float64}) = GeometryBasics.Point3d
+@inline _pointtype(::Type{Float32}) = GeometryBasics.Point3f
+
+
+# =========================================================================================
+# Conversion to/from GeometryBasics.Mesh
+
+"""
+    GeometryBasics.mesh(model::Model{T, Triangle{T}})
+
+Converts the given model into a GeometryBasics.jl-compatible mesh, e.g., for visualization
+through [Makie.jl](https://docs.makie.org/stable/reference/plots/mesh).
+
+# Return type
+[`GeometryBasics.Mesh`]
+(https://juliageometry.github.io/GeometryBasics.jl/stable/meshes/#GeometryBasics.Mesh-meshes)
+"""
+function GeometryBasics.mesh(model::Model{T, Triangle{T}}) where T
+    ridx = _reverseindex(model.nodes)
+
+    points = GeometryBasics.Point{3, T}.(model.nodes)
+    faces = [
+        GeometryBasics.TriangleFace(ridx[elem.v1], ridx[elem.v2], ridx[elem.v3])
+        for elem in model.elements
+    ]
+
+    GeometryBasics.Mesh(points, faces)
+end
+
+"""
+    function Model(
+        mesh::GeometryBasics.Mesh{3, T, <: GeometryBasics.NgonFace{3}};
+        charges::Vector{Charge{T}} = Charge{T}[],
+        params::Option{T} = defaultopt(T)
+    )
+
+Converts the given GeometryBasics.jl mesh into a triangle-based model.
+
+# Return type
+[`Model{T, Triangle{T}}`](@ref)
+"""
+function Model(
+    mesh::GeometryBasics.Mesh{3, T, <: GeometryBasics.NgonFace{3}};
+    charges::Vector{Charge{T}} = Charge{T}[],
+    params::Option{T} = defaultopt(T)
+) where T
+    model = Model{T, Triangle{T}}()
+    model.nodes = mesh.position
+    model.elements = collect(
+        Triangle{T},
+        Triangle(model.nodes[f[1]], model.nodes[f[2]], model.nodes[f[3]]) for f in mesh.faces
+    )
+    model.charges = charges
+    model.params = params
+    model
+end
+
+
+# =========================================================================================
+"""
+    GeometryBasics.Rect(model::Model{T, Triangle{T}})
+
+Creates and returns a bounding box for the given model.
+
+# Supported keyword arguments
+ - `padding::T = 0` Adds `padding` to each side of the (otherwise flush) bounding box,
+   effectively increasing its size by 2 ⋅ `padding` in each direction.
+
+# Return type
+[`GeometryBasics.Rect3{T}`]
+(https://juliageometry.github.io/GeometryBasics.jl/stable/primitives/#HyperRectangle)
+   """
+function GeometryBasics.Rect(model::Model{T, Triangle{T}}; padding::T = zero(T)) where T
+    xdims = extrema(getindex.(model.nodes, 1); init = zeros(T, 2)) .+ (-padding, padding)
+    ydims = extrema(getindex.(model.nodes, 2); init = zeros(T, 2)) .+ (-padding, padding)
+    zdims = extrema(getindex.(model.nodes, 3); init = zeros(T, 2)) .+ (-padding, padding)
+    GeometryBasics.Rect(
+        T[xdims[1], ydims[1], zdims[1]],
+        T[xdims[2] - xdims[1], ydims[2] - ydims[1], zdims[2] - zdims[1]])
 end
 
 

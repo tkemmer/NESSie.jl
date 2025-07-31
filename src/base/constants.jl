@@ -86,7 +86,7 @@ end
 
 System parameters
 """
-mutable struct Option{T <: AbstractFloat}
+@auto_hash_equals mutable struct Option{T <: AbstractFloat}
     "dielectric constant of the solute"
     εΩ::T
     "dielectric constant of the solvent"
@@ -95,6 +95,17 @@ mutable struct Option{T <: AbstractFloat}
     ε∞::T
     "correlation length scale [λ] = Å"
     λ::T
+end
+
+@inline function Base.show(io::IO, ::MIME"text/plain", opt::Option)
+    show(io, opt)
+end
+
+@inline function Base.show(io::IO, opt::Option)
+    print(io,
+        "$(typeof(opt))",
+        "(εΩ = $(opt.εΩ), εΣ = $(opt.εΣ), ε∞ = $(opt.ε∞), λ = $(opt.λ))"
+    )
 end
 
 
@@ -137,4 +148,4 @@ Exponent ``1/Λ`` for the fundamental solution of the yukawa operator
 # Return type
 `T`
 """
-@inline yukawa(opt::Option{T}) where T = √(opt.εΣ/opt.ε∞)/opt.λ
+@inline yukawa(opt::Option) = √(opt.εΣ/opt.ε∞)/opt.λ

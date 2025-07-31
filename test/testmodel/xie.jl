@@ -3,7 +3,7 @@
 
     using NESSie.TestModel
 
-    @testset "XieModel" begin
+    @testset "XieSphere" begin
         using NESSie.TestModel: scalemodel
 
         for T in testtypes
@@ -14,8 +14,8 @@
                 Charge(T[0, 1, 0, 4]...)
             ]
 
-            model = XieModel(2one(T), charges)
-            @test typeof(model) == XieModel{T}
+            model = XieSphere(2one(T), charges)
+            @test typeof(model) == XieSphere{T}
             @test model.radius == 2one(T)
             for (q1, q2) in zip(model.charges, scalemodel(charges, model.radius))
                 @test q1.pos == q2.pos
@@ -69,6 +69,26 @@
             @test scaled[3].val == 3one(T)
             @test scaled[4].pos ≈ T[-√.5, √.5, 0]
             @test scaled[4].val == 4one(T)
+        end
+    end
+
+    @testset "Model" begin
+        for T in testtypes
+            charges = [
+                Charge(T[0, 0, 0, 1]...),
+                Charge(T[1, 0, 0, 2]...),
+                Charge(T[1, 1, 0, 3]...),
+                Charge(T[0, 1, 0, 4]...)
+            ]
+            xie = XieSphere(2one(T), charges)
+
+            let model = Model(xie)
+                @test model isa Model{T, Triangle{T}}
+                @test !isempty(model.nodes)
+                @test !isempty(model.elements)
+                @test model.charges == xie.charges
+                @test model.params == defaultopt(T)
+            end
         end
     end
 
@@ -155,8 +175,9 @@
         end
     end
 
+    @test_skip LocalXieModel
     @test_skip NonlocalXieModel1
-    @test_skip coefficients
-    @test_skip φΣ
-    @test_skip φΩ
+    @test_skip NonlocalXieModel2
+    @test_skip _xie_coefficients
+    @test_skip espotential
 end

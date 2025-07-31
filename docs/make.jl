@@ -1,4 +1,4 @@
-using Documenter, NESSie
+using Documenter, GeometryBasics, NESSie
 
 const pages = [
     "Home" => "index.md",
@@ -12,20 +12,25 @@ const pages = [
         "lib/models.md",
         "lib/quadrature.md",
         "lib/solvers.md",
-        "lib/util.md"
-    ],
-    "Internals" => [
-        "intern/base.md",
-        "intern/bem.md",
-        "intern/format.md",
-        "intern/radon.md",
-        "intern/rjasanow.md",
-        "intern/testmodel.md"
+        "lib/util.md",
+        "Internals" => [
+            "intern/base.md",
+            "intern/bem.md",
+            "intern/format.md",
+            "intern/radon.md",
+            "intern/rjasanow.md",
+            "intern/testmodel.md"
+        ]
     ]
 ]
 
 makedocs(
-    modules   = [NESSie, NESSie.BEM, NESSie.Format, NESSie.TestModel],
+    modules   = [
+        NESSie,
+        NESSie.BEM,
+        NESSie.Format,
+        NESSie.TestModel
+    ],
     clean     = true,
     doctest   = true,
     linkcheck = true,

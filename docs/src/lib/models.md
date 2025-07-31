@@ -3,6 +3,10 @@
     CurrentModule = NESSie
 ```
 
+```@index
+Pages = ["models.md"]
+```
+
 ## Elements
 ```@docs
     Element
@@ -18,6 +22,7 @@
 ## System models
 ```@docs
     Model
+    Model(::TestModel.XieSphere)
 ```
 
 ## Test models
@@ -28,6 +33,9 @@
 ```@docs
     BornIon
     bornion
-    XieModel
+    XieSphere
+    XieTestModel
+    LocalXieModel
     NonlocalXieModel1
+    NonlocalXieModel2
 ```

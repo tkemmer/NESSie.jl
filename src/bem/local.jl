@@ -12,7 +12,7 @@ Result data of the local solving process to be used for potential computation an
 post-processing, with `Ξ` being the list of observation points, that is, the set of
 triangle centroids.
 """
-struct LocalBEMResult{T, E} <: BEMResult{T, E}
+@auto_hash_equals struct LocalBEMResult{T, E} <: BEMResult{T, E}
     """Surface model"""
     model::Model{T, E}
     """[γ₀int(φ*)](ξ) for all observation points ξ"""
@@ -38,6 +38,12 @@ Computes the full local or nonlocal cauchy data on the surface of the given biom
 # Supported keyword arguments
  - `method::Symbol = :gmres`
    Solver implementation to be used (supported arguments: `:gmres` and `:blas`)
+ - `method=:gmres` *only*: all keyword arguments of [`IterativeSolvers.gmres`]
+   (https://iterativesolvers.julialinearalgebra.org/stable/linear_systems/gmres/), except
+   for `log`, using the following default values:
+    * `verbose::Bool = true`
+    * `restart::Int = 200`
+    * `Pl = Preconditioners.DiagonalPreconditioner(A)`
 
 !!! note
     The `:blas` method uses an explicit representation for the BEM systems and requires a
@@ -53,10 +59,11 @@ Computes the full local or nonlocal cauchy data on the surface of the given biom
 function solve(
     lt::Type{<: LocalityType},
     model::Model{T, Triangle{T}};
-    method::Symbol = :gmres
+    method::Symbol = :gmres,
+    kwargs...
 ) where T
-    method === :gmres && return _solve_implicit(lt, model)
-    method === :blas  && return _solve_explicit(lt, model)
+    method === :gmres && return _solve_implicit(lt, model; kwargs...)
+    method === :blas  && return _solve_explicit(lt, model; kwargs...)
     ArgumentError("Invalid method '$method'! Supported values: :gmres, :blas")
 end
 
@@ -81,8 +88,8 @@ function _solve_explicit(
 
     # compute molecular potentials for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = model.params.εΩ .\   φmol(model)
-    qmol = model.params.εΩ .\ ∂ₙφmol(model)
+    umol = model.params.εΩ .\ _molpotential(model)
+    qmol = model.params.εΩ .\ _molpotential_dn(model)
 
     # convenience aliases
     εΩ = model.params.εΩ
@@ -100,7 +107,7 @@ function _solve_explicit(
     # Mᵤ = (1 + εΩ/εΣ) ⋅ σ;
     # since all other components of the system matrix will be premultiplied by 4π,
     # do the same for σ here
-    pluseye!(m, (1 + εΩ/εΣ) * T(4π * σ))
+    _pluseye!(m, (1 + εΩ/εΣ) * T(4π * σ))
 
     #=
         generate and apply V
@@ -121,7 +128,7 @@ function _solve_explicit(
 
     # bᵤ = (K - σ) ⋅ umol
     # again, we apply a prefactor of 4π to σ to match the other components of the vector
-    pluseye!(k, -T(4π * σ))
+    _pluseye!(k, -T(4π * σ))
     _gemv!(one(T), k, umol, b)
 
     #=
@@ -133,7 +140,7 @@ function _solve_explicit(
 
     # b_q = (σ + K) ⋅ u
     fill!(b, zero(T))
-    pluseye!(k, T(8π * σ)) # meh...
+    _pluseye!(k, T(8π * σ)) # meh...
     _gemv!(one(T), k, u, b)
 
     #=
@@ -161,7 +168,7 @@ struct LocalSystemMatrix{T} <: AbstractArray{T, 2}
     params::Option{T}
 end
 
-Base.size(A::LocalSystemMatrix{T}) where T = size(A.K)
+@inline Base.size(A::LocalSystemMatrix) = size(A.K)
 
 function LinearAlgebra.diag(
     A::LocalSystemMatrix{T},
@@ -203,15 +210,16 @@ Computes the full local or nonlocal cauchy data on the surface of the biomolecul
 """
 function _solve_implicit(
          ::Type{LocalES},
-    model::Model{T, Triangle{T}}
+    model::Model{T, Triangle{T}};
+    kwargs...
 ) where T
     # observation points ξ
     Ξ = [e.center for e in model.elements]
 
     # compute molecular potentials for the point charges;
     # molecular potentials are initially premultiplied by 4π⋅ε0⋅εΩ
-    umol = model.params.εΩ .\   φmol(model, tolerance=_etol(T))
-    qmol = model.params.εΩ .\ ∂ₙφmol(model)
+    umol = model.params.εΩ .\ _molpotential(model, tolerance=_etol(T))
+    qmol = model.params.εΩ .\ _molpotential_dn(model)
 
     # potential matrices
     V, K = _get_laplace_matrices(Ξ, model.elements)
@@ -219,11 +227,11 @@ function _solve_implicit(
     # first system
     b = K * umol .- (T(2π) .* umol) .- (model.params.εΩ/model.params.εΣ .* (V * qmol))
     A = LocalSystemMatrix(K, model.params)
-    u = _solve_linear_system(A, b)
+    u = _solve_linear_system(A, b; kwargs...)
 
     # second system
     b .= T(2π) .* u .+ (K * u)
-    q = _solve_linear_system(V, b)
+    q = _solve_linear_system(V, b; kwargs...)
 
     LocalBEMResult(model, u, q, umol, qmol)
 end

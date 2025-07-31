@@ -14,7 +14,7 @@ where ``φ^*`` is the reaction field and ``ρ`` is the corresponding charge dist
 # Return type
 `T`
 """
-function rfenergy(bem::R) where {T, R <: BEMResult{T}}
+function NESSie.rfenergy(bem::R) where {T, R <: BEMResult{T}}
     qposs = [charge.pos for charge in bem.model.charges]
     qvals = [charge.val for charge in bem.model.charges]
 
@@ -45,27 +45,287 @@ end
 
 # =========================================================================================
 """
-    φΩ(
-        Ξ         ::Vector{Vector{T}},
-        bem       ::BEMResult{T}
-    )
+    espotential(ξ::Vector{T}, bem::BEMResult{T})
+    espotential(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
-Computes the local or nonlocal interior electrostatic potential ``φ_Ω`` for the given set
-of observation points `Ξ`.
+Computes the local or nonlocal electrostatic potential(s) at the given observation point(s)
+ξ (Ξ) for the given BEM result. This function tries to automatically locate the observation
+point(s) using [`guess_domain`](@ref).
 
-!!! warning
-    This function does not verify whether all points in `Ξ` are located in ``Ω``!
+The electrostatic potential is computed as the sum of the corresponding
+[reaction field potential](@ref rfpotential) and the [molecular potential](@ref molpotential).
+
+# Supported keyword arguments
+ - `surface_margin::T = 1e-6` see [`guess_domain`](@ref)
+ - `tolerance::T = 1e-10` see [`molpotential`](@ref)
 
 # Unit
 ``V = \\frac{C}{F}``
 
 # Return type
-`Vector{T}`
+`T` or `Vector{T}`
+
+# Alias
+    espotential(domain::Symbol, ξ::Vector{T}, bem::BEMResult{T})
+    espotential(domain::Symbol, Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the electrostatic potential(s) for the given observation point(s) ξ (Ξ) and the
+given domain `:Ω`, `:Σ`, or `:Γ`.
 """
-function φΩ(
-        Ξ         ::Vector{Vector{T}},
-        bem       ::R
-    ) where {T, R <: BEMResult{T}}
+function NESSie.espotential(
+    domain::Symbol,
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T};
+    tolerance::T = T(1e-10)
+) where T
+    domain === :Ω && return _espotential_Ω(ξorΞ, bem; tolerance)
+    domain === :Σ && return _espotential_Σ(ξorΞ, bem)
+    domain === :Γ && return _espotential_Γ(ξorΞ, bem; tolerance)
+    error("unknown domain $domain")
+end
+
+@inline function NESSie.espotential(
+    ξ::Vector{T},
+    bem::BEMResult{T};
+    surface_margin::T = T(1e-6),
+    kwargs...
+) where T
+    domain = guess_domain(ξ, bem.model; surface_margin)
+    espotential(domain, ξ, bem; kwargs...)
+end
+
+function NESSie.espotential(
+    Ξ::AbstractVector{Vector{T}},
+    bem::BEMResult{T};
+    surface_margin::T = T(1e-6),
+    kwargs...
+) where T
+    domains = guess_domain(Ξ, bem.model; surface_margin)
+    unknown_domains = setdiff(domains, [:Ω, :Σ, :Γ])
+    !isempty(unknown_domains) && error("unknown domains $unknown_domains")
+
+    ret = Array{T}(undef, length(Ξ))
+    view(ret, domains .== :Ω) .= espotential(:Ω, view(Ξ, domains .== :Ω), bem; kwargs...)
+    view(ret, domains .== :Σ) .= espotential(:Σ, view(Ξ, domains .== :Σ), bem; kwargs...)
+    view(ret, domains .== :Γ) .= espotential(:Γ, view(Ξ, domains .== :Γ), bem; kwargs...)
+    ret
+end
+
+@inline function NESSie.espotential(
+    Ξ::Base.Generator,
+    bem::BEMResult{T};
+    kwargs...
+) where T
+    espotential(collect(Vector{T}, Ξ), bem; kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    molpotential(ξ::Vector{T}, bem::BEMResult{T})
+    molpotential(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the molecular potential(s) at the given observation point(s) ξ (Ξ) for the given
+BEM result.
+
+# Supported keyword arguments
+ - `tolerance::T = 1e-10` minimum distance assumed between any observation point and point
+   charge. Closer distances are replaced by this value.
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+@inline function NESSie.molpotential(
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T};
+    kwargs...
+) where T
+    molpotential(ξorΞ, bem.model; kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    rfpotential(ξ::Vector{T}, bem::BEMResult{T})
+    rfpotential(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the local or nonlocal reaction field potential(s) at the given observation point(s)
+ξ (Ξ) for the given BEM result. This function tries to automatically locate the observation
+point(s) using [`guess_domain`](@ref).
+
+# Supported keyword arguments
+ - `surface_margin::T = 1e-6` see [`guess_domain`](@ref)
+ - `tolerance::T = 1e-10` see [`molpotential`](@ref)
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+
+# Alias
+    rfpotential(domain::Symbol, ξ::Vector{T}, bem::BEMResult{T})
+    rfpotential(domain::Symbol, Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the reaction field potential(s) for the given observation point(s) ξ (Ξ) and the
+given domain `:Ω`, `:Σ`, or `:Γ`.
+"""
+@inline function NESSie.rfpotential(
+    domain::Symbol,
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T};
+    tolerance::T = T(1e-10)
+) where T
+    domain === :Ω && return _rfpotential_Ω(ξorΞ, bem)
+    domain === :Σ && return _rfpotential_Σ(ξorΞ, bem; tolerance)
+    domain === :Γ && return _rfpotential_Γ(ξorΞ, bem)
+    error("unknown domain $domain")
+end
+
+@inline function NESSie.rfpotential(
+    ξ::Vector{T},
+    bem::BEMResult{T};
+    surface_margin::T = T(1e-6),
+    kwargs...
+) where T
+    domain = guess_domain(ξ, bem.model; surface_margin)
+    rfpotential(domain, ξ, bem; kwargs...)
+end
+
+function NESSie.rfpotential(
+    Ξ::AbstractVector{Vector{T}},
+    bem::BEMResult{T};
+    surface_margin::T = T(1e-6),
+    kwargs...
+) where T
+    domains = guess_domain(Ξ, bem.model; surface_margin)
+    unknown_domains = setdiff(domains, [:Ω, :Σ, :Γ])
+    !isempty(unknown_domains) && error("unknown domains $unknown_domains")
+
+    ret = Array{T}(undef, length(Ξ))
+    _rfpotential!(ret, :Ω, Ξ, bem, domains; kwargs...)
+    _rfpotential!(ret, :Σ, Ξ, bem, domains; kwargs...)
+    _rfpotential!(ret, :Γ, Ξ, bem, domains; kwargs...)
+    ret
+end
+
+@inline function _rfpotential!(
+    dst::Vector{T},
+    loc::Symbol,
+    Ξ::AbstractVector{Vector{T}},
+    bem::BEMResult{T},
+    domains::Vector{Symbol};
+    kwargs...
+) where T
+    mask = domains .== loc
+    view(dst, mask) .= rfpotential(loc, view(Ξ, mask), bem; kwargs...)
+end
+
+@inline function NESSie.rfpotential(
+    Ξ::Base.Generator,
+    bem::BEMResult{T};
+    kwargs...
+) where T
+    rfpotential(collect(Vector{T}, Ξ), bem; kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    _espotential_Γ(ξ::Vector{T}, bem::BEMResult{T})
+    _espotential_Γ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
+on the molecular surface.
+
+# Supported keyword arguments
+See [`molpotential`](@ref)
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+@inline function _espotential_Γ(
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T};
+    kwargs...
+) where T
+    _rfpotential_Γ(ξorΞ, bem) .+ molpotential(ξorΞ, bem.model; kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    _rfpotential_Γ(ξ::Vector{T}, bem::BEMResult{T})
+    _rfpotential_Γ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
+on the molecular surface.
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+@inline function _rfpotential_Γ(ξ::Vector{T}, bem::BEMResult{T}) where T
+    bem.u[_closest_element_id(ξ, bem.model)] * potprefactor(T)
+end
+
+@inline function _rfpotential_Γ(
+    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T}
+) where T
+    collect(T, _rfpotential_Γ(ξ, bem) for ξ in Ξ)
+end
+
+
+# =========================================================================================
+"""
+    _espotential_Ω(ξ::Vector{T}, bem::BEMResult{T})
+    _espotential_Ω(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
+inside the molecule.
+
+# Supported keyword arguments
+See [`molpotential`](@ref)
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+@inline function _espotential_Ω(
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T};
+    kwargs...
+) where T
+    _rfpotential_Ω(ξorΞ, bem) .+ molpotential(ξorΞ, bem; kwargs...)
+end
+
+
+# =========================================================================================
+"""
+    _rfpotential_Ω(ξ::Vector{T}, bem::BEMResult{T})
+    _rfpotential_Ω(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
+inside the molecule.
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+function _rfpotential_Ω(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T}) where T
     # result vector
     φ = zeros(T, length(Ξ))
 
@@ -80,43 +340,40 @@ function φΩ(
     # (W and Vtilde were premultiplied by 4π! 4π⋅ε0 from u and q still to be applied)
     rmul!(φ, T(1 / 4π))
 
-    # φ += 1/εΩ ⋅ φ*mol(ξ)
-    # (φ*mol was premultiplied by 4π⋅ε0⋅εΩ; 4π⋅ε0 remain to be applied)
-    _axpy!(1/bem.model.params.εΩ, φmol(Ξ, bem.model.charges), φ)
-
     # Apply remaining prefactors:
-    # ▶ 4π⋅ε0     for u, q, and umol
+    # ▶ 4π⋅ε0     for u and q
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
     rmul!(φ, potprefactor(T))
+end
 
-    φ
+@inline function _rfpotential_Ω(Ξ::Base.Generator, bem:: BEMResult{T}) where T
+    _rfpotential_Ω(collect(Vector{T}, Ξ), bem)
+end
+
+@inline function _rfpotential_Ω(ξ::Vector{T}, bem::BEMResult{T}) where T
+    only(_rfpotential_Ω([ξ], bem))
 end
 
 
 # =========================================================================================
 """
-    φΣ(
-        Ξ         ::Vector{Vector{T}},
-        bem       ::BEMResult{T}
-    )
+    _espotential_Σ(ξ::Vector{T}, bem::BEMResult{T})
+    _espotential_Σ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
 
-Computes the local or nonlocal exterior electrostatic potential ``φ_Σ`` for the given set
-of observation points `Ξ`.
-
-!!! warning
-    This function does not verify whether all points in `Ξ` are located in ``Σ``!
+Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
+in the solvent domain.
 
 # Unit
 ``V = \\frac{C}{F}``
 
 # Return type
-`Vector{T}`
+`T` or `Vector{T}`
 """
-function φΣ(
-        Ξ         ::Vector{Vector{T}},
-        bem       ::LocalBEMResult{T}
-    ) where T
+function _espotential_Σ(
+    Ξ::AbstractVector{Vector{T}},
+    bem::LocalBEMResult{T}
+) where T
     # result vector
     φ = zeros(T, length(Ξ))
     buf = Array{T}(undef, length(bem.model.elements))
@@ -142,10 +399,10 @@ function φΣ(
     φ
 end
 
-function φΣ(
-        Ξ         ::Vector{Vector{T}},
-        bem       ::NonlocalBEMResult{T}
-    ) where T
+function _espotential_Σ(
+    Ξ::AbstractVector{Vector{T}},
+    bem::NonlocalBEMResult{T}
+) where T
     # result vector
     φ = zeros(T, length(Ξ))
 
@@ -187,4 +444,38 @@ function φΣ(
     rmul!(φ, potprefactor(T) / T(4π))
 
     φ
+end
+
+@inline function _espotential_Σ(Ξ::Base.Generator, bem::BEMResult{T}) where T
+    _espotential_Σ(collect(Vector{T}, Ξ), bem)
+end
+
+@inline function _espotential_Σ(ξ::Vector{T}, bem::BEMResult{T}) where T
+    only(_espotential_Σ([ξ], bem))
+end
+
+
+# =========================================================================================
+"""
+    _rfpotential_Σ(ξ::Vector{T}, bem::BEMResult{T})
+    _rfpotential_Σ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+
+Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
+in the solvent domain.
+
+# Supported keyword arguments
+See [`molpotential`](@ref)
+
+# Unit
+``V = \\frac{C}{F}``
+
+# Return type
+`T` or `Vector{T}`
+"""
+@inline function _rfpotential_Σ(
+    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T};
+    kwargs...
+) where T
+    _espotential_Σ(ξorΞ, bem) .- molpotential(ξorΞ, bem; kwargs...)
 end

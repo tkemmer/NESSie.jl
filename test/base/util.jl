@@ -1,6 +1,7 @@
 @testitem "Utilities" begin
     include("../testsetup.jl")
 
+    import GeometryBasics
     using LinearAlgebra: ⋅, norm
 
     @testset "_cos" begin
@@ -93,45 +94,19 @@
         end
     end
 
-    @testset "eye! and pluseye!" begin
-        using NESSie: eye!, pluseye!
+    @testset "_pluseye!" begin
+        using NESSie: _pluseye!
 
         for T in (Int, testtypes...)
             m = -ones(T, 3, 3)
-            pluseye!(m)
+            @test _pluseye!(m) === m
             @test typeof(m) == Array{T, 2}
             @test size(m) == (3, 3)
             @test m == [0 -1 -1; -1 0 -1; -1 -1 0]
-            pluseye!(m, 2)
+            @test _pluseye!(m, T(2)) === m
             @test typeof(m) == Array{T, 2}
             @test size(m) == (3, 3)
             @test m == [2 -1 -1; -1 2 -1; -1 -1 2]
-            eye!(m)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (3, 3)
-            @test m == [1 0 0; 0 1 0; 0 0 1]
-            eye!(m, 2)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (3, 3)
-            @test m == [2 0 0; 0 2 0; 0 0 2]
-            m = zeros(T, 2, 3)
-            eye!(m)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (2, 3)
-            @test m == [1 0 0; 0 1 0]
-            eye!(m, 2)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (2, 3)
-            @test m == [2 0 0; 0 2 0]
-            m = zeros(T, 3, 2)
-            eye!(m)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (3, 2)
-            @test m == [1 0; 0 1; 0 0]
-            eye!(m, 2)
-            @test typeof(m) == Array{T, 2}
-            @test size(m) == (3, 2)
-            @test m == [2 0; 0 2; 0 0]
         end
     end
 
@@ -175,50 +150,28 @@
         end
     end
 
-    @testset "reverseindex" begin
-        using NESSie: reverseindex
+    @testset "_reverseindex" begin
+        using NESSie: _reverseindex
 
         for T in testtypes
             v1 = T[1, 2, 3]
             v2 = T[4, 5, 6]
             v3 = T[7, 8, 9]
-            d = reverseindex(Vector{T}[])
-            @test typeof(d) == Dict{UInt, UInt}
-            @test d == Dict()
-            d = reverseindex(Vector{T}[v1, v2, v3])
-            @test typeof(d) == Dict{UInt, UInt}
+            d = _reverseindex(Vector{T}[])
+            @test typeof(d) == IdDict{Vector{T}, Int}
+            @test d == IdDict()
+            d = _reverseindex(Vector{T}[v1, v2, v3])
+            @test typeof(d) == IdDict{Vector{T}, Int}
             @test length(d) == 3
-            @test d[objectid(v1)] == 1
-            @test d[objectid(v2)] == 2
-            @test d[objectid(v3)] == 3
-            d = reverseindex(Vector{T}[v1, v1, v2])
-            @test typeof(d) == Dict{UInt, UInt}
+            @test d[v1] == 1
+            @test d[v2] == 2
+            @test d[v3] == 3
+            d = _reverseindex(Vector{T}[v1, v1, v2])
+            @test typeof(d) == IdDict{Vector{T}, Int}
             @test length(d) == 2
-            @test d[objectid(v1)] == 2
-            @test d[objectid(v2)] == 3
-            @test_throws KeyError d[objectid(v3)]
-        end
-    end
-
-    @testset "unpack" begin
-        using NESSie: unpack
-
-        for T in testtypes
-            d = unpack(Vector{T}[])
-            @test typeof(d) == Vector{T}
-            @test d == []
-            d = unpack(Vector{T}[T[1], T[2], T[3]])
-            @test typeof(d) == Vector{T}
-            @test d == [1, 2, 3]
-            d = unpack(Vector{T}[T[1, 2], T[3, 4]])
-            @test typeof(d) == Vector{T}
-            @test d == [1, 2, 3, 4]
-            d = unpack(Vector{T}[T[1, 2, 3], T[4, 5, 6]])
-            @test typeof(d) == Vector{T}
-            @test d == [1, 2, 3, 4, 5, 6]
-            d = unpack(Vector{T}[T[1, 2, 3, 4, 5, 6]])
-            @test typeof(d) == Vector{T}
-            @test d == [1, 2, 3, 4, 5, 6]
+            @test d[v1] == 2
+            @test d[v2] == 3
+            @test_throws KeyError d[v3]
         end
     end
 
@@ -349,6 +302,111 @@
         end
     end
 
+    @testset "guess_domain" begin
+        for T in testtypes
+            nodes    = Vector{T}[T[0, 0, 0], T[0, 0, 3], T[0, 3, 0], T[3, 0, 0]]
+            elements = [Triangle(nodes[1], nodes[2], nodes[3]),
+                        Triangle(nodes[1], nodes[4], nodes[2]),
+                        Triangle(nodes[1], nodes[3], nodes[4]),
+                        Triangle(nodes[2], nodes[4], nodes[3])]
+
+            let model = Model(nodes, elements)
+                for node in model.nodes
+                    @test guess_domain(node, model) === :Γ
+                end
+                for elem in model.elements
+                    @test guess_domain(elem.center, model) === :Γ
+                end
+                @test guess_domain(T[1.5, 0, 0], model) === :Γ
+                @test guess_domain(T[0.00001, 0.00001, 0.00001], model; surface_margin = T(1e-4)) === :Γ
+                @test guess_domain(T[0.00001, 0.00001, 0.00001], model) === :Ω
+                @test guess_domain(T[0.001, 0.001, 0.001], model) === :Ω
+                @test guess_domain(T[3//4, 3//4, 3//4], model) === :Ω
+                @test guess_domain(T[-0.00001, -0.00001, -0.00001], model; surface_margin = T(1e-4)) === :Γ
+                @test guess_domain(T[-0.00001, -0.00001, -0.00001], model) === :Σ
+                @test guess_domain(T[-0.001, -0.001, -0.001], model) === :Σ
+                @test guess_domain(T[-1, -1, -1], model) === :Σ
+            end
+        end
+    end
+
+    @testset "GeometryBasics.mesh" begin
+        for T in testtypes
+            let model = Model{T, NESSie.Triangle{T}}()
+                gbm = GeometryBasics.mesh(model)
+                @test gbm isa GeometryBasics.Mesh{3, T, GeometryBasics.TriangleFace{Int}}
+                @test isempty(gbm.position)
+                @test isempty(gbm.faces)
+            end
+
+            let model = Format.readoff(nessie_data_path("born/na.off"), T)
+                nodes = Set((v...,) for v in model.nodes)
+                elems = Set((e.v1..., e.v2..., e.v3...) for e in model.elements)
+
+                gbm = GeometryBasics.mesh(model)
+                @test gbm isa GeometryBasics.Mesh{3, T, GeometryBasics.TriangleFace{Int}}
+                @test length(gbm.position) == length(model.nodes)
+                @test Set((p...,) for p in gbm.position) == nodes
+                @test length(gbm.faces) == length(model.elements)
+                @test Set(Tuple(c for p in gbm.position[[f...]] for c in p) for f in gbm.faces) == elems
+            end
+        end
+    end
+
+    @testset "NESSie.Model" begin
+        for T in testtypes
+            let model = Model{T, Triangle{T}}()
+                model2 = Model(GeometryBasics.mesh(model))
+                @test model2 isa Model{T, Triangle{T}}
+                @test isempty(model2.nodes)
+                @test isempty(model2.elements)
+                @test isempty(model2.charges)
+                @test model2.params == defaultopt(T)
+            end
+
+            let model = Format.readoff(nessie_data_path("born/na.off"), T)
+                model.charges = Format.readpqr(nessie_data_path("born/na.pqr"), T)
+                model.params  = Option{T}(1, 2, 3, 4)
+
+                model2 = Model(GeometryBasics.mesh(model); charges = model.charges, params = model.params)
+                @test model2 isa Model{T, Triangle{T}}
+                @test model2.nodes == model.nodes
+                @test model2.elements == model.elements
+                @test model2.charges == model.charges
+                @test model2.params == model.params
+            end
+        end
+    end
+
+    @testset "GeometryBasics.Rect" begin
+        for T in testtypes
+            let model = Model{T, NESSie.Triangle{T}}()
+                box = GeometryBasics.Rect(model)
+                @test box isa GeometryBasics.Rect3{T}
+                @test box.origin == zeros(T, 3)
+                @test box.widths == zeros(T, 3)
+
+                box = GeometryBasics.Rect(model; padding = one(T))
+                @test box isa GeometryBasics.Rect3{T}
+                @test box.origin == -ones(T, 3)
+                @test box.widths == 2 .* ones(T, 3)
+            end
+
+            let model = Format.readoff(nessie_data_path("born/na.off"), T)
+                box = GeometryBasics.Rect(model)
+                @test box isa GeometryBasics.Rect3{T}
+                @test box.origin ≈ fill(T(-1.0049999952), 3)
+                @test box.widths ≈ fill(T(2 * 1.0049999952), 3)
+
+                box = GeometryBasics.Rect(model; padding = one(T))
+                @test box isa GeometryBasics.Rect3{T}
+                @test box.origin ≈ fill(T(-2.0049999952), 3)
+                @test box.widths ≈ fill(T(2 * 1.0049999952 + 2), 3)
+            end
+        end
+    end
+
+    @test_skip nessie_data_path
     @test_skip _sign
     @test_skip cathetus
     @test_skip ddot

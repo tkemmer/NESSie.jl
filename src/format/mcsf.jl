@@ -22,7 +22,7 @@ Reads a volume model from the given GAMer-generated mcsf file.
 # Aliases
 
     readmcsf(
-        fname ::String,
+        fname ::AbstractString,
               ::Type{T}=Float64;
         # kwargs
         domain::Symbol=:none
@@ -31,8 +31,8 @@ Reads a volume model from the given GAMer-generated mcsf file.
 Reads the model using a file name rather than a `IOStream` object.
 
     readmcsf(
-        fnameΩ::String,
-        fnameΣ::String,
+        fnameΩ::AbstractString,
+        fnameΣ::AbstractString,
               ::Type{T}=Float64
     )
 
@@ -49,7 +49,7 @@ function readmcsf(
 end
 
 @inline function readmcsf(
-        fname ::String,
+        fname ::AbstractString,
               ::Type{T}=Float64;
         domain::Symbol=:none
     ) where T
@@ -57,8 +57,8 @@ end
 end
 
 @inline function readmcsf(
-        fnameΩ::String,
-        fnameΣ::String,
+        fnameΩ::AbstractString,
+        fnameΣ::AbstractString,
               ::Type{T}=Float64
     ) where T
     meshunion(readmcsf(fnameΩ, T, domain=:Ω), readmcsf(fnameΣ, T, domain=:Σ))
