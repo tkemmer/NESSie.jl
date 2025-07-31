@@ -26,7 +26,6 @@ Pages = ["base.md"]
 ```@docs
     _closest_element_id
     _cos
-    _data_path
     _dot
     _generate_sphere
     _norm

@@ -461,7 +461,7 @@ end
 
 # =========================================================================================
 """
-    _data_path(parts::AbstractString...)
+    nessie_data_path(parts::AbstractString...)
 
 Returns the absolute path to NESSie's "data" directory, if used without arguments, or to
 the location relative to that, specified by `parts` (e.g., a directory within "data").
@@ -469,7 +469,7 @@ the location relative to that, specified by `parts` (e.g., a directory within "d
 # Return type
 `String`
 """
-@inline function _data_path(parts::AbstractString...)
+@inline function nessie_data_path(parts::AbstractString...)
     normpath(joinpath(Base.pkgdir(NESSie), "data", parts...))
 end
 

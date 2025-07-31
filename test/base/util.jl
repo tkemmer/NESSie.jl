@@ -339,7 +339,7 @@
                 @test isempty(gbm.faces)
             end
 
-            let model = Format.readoff(NESSie._data_path("born/na.off"), T)
+            let model = Format.readoff(nessie_data_path("born/na.off"), T)
                 nodes = Set((v...,) for v in model.nodes)
                 elems = Set((e.v1..., e.v2..., e.v3...) for e in model.elements)
 
@@ -364,8 +364,8 @@
                 @test model2.params == defaultopt(T)
             end
 
-            let model = Format.readoff(NESSie._data_path("born/na.off"), T)
-                model.charges = Format.readpqr(NESSie._data_path("born/na.pqr"), T)
+            let model = Format.readoff(nessie_data_path("born/na.off"), T)
+                model.charges = Format.readpqr(nessie_data_path("born/na.pqr"), T)
                 model.params  = Option{T}(1, 2, 3, 4)
 
                 model2 = Model(GeometryBasics.mesh(model); charges = model.charges, params = model.params)
@@ -392,7 +392,7 @@
                 @test box.widths == 2 .* ones(T, 3)
             end
 
-            let model = Format.readoff(NESSie._data_path("born/na.off"), T)
+            let model = Format.readoff(nessie_data_path("born/na.off"), T)
                 box = GeometryBasics.Rect(model)
                 @test box isa GeometryBasics.Rect3{T}
                 @test box.origin ≈ fill(T(-1.0049999952), 3)
@@ -406,7 +406,7 @@
         end
     end
 
-    @test_skip _data_path
+    @test_skip nessie_data_path
     @test_skip _sign
     @test_skip cathetus
     @test_skip ddot

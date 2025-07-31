@@ -1,7 +1,7 @@
 bem_suite = SUITE["BEM"]["Post-processing"]
 
 for T in (Float32, Float64)
-    model = Format.readhmo(NESSie._data_path("benchmark/2lzx-5k.hmo"), T)
+    model = Format.readhmo(nessie_data_path("benchmark/2lzx-5k.hmo"), T)
     bem_local = BEM.solve(LocalES, model; method = :blas)
     bem_nonlocal = BEM.solve(NonlocalES, model; method = :blas)
 

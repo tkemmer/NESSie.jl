@@ -1,7 +1,7 @@
 bem_suite = SUITE["BEM"]["Matrix-vector mult"]
 
 for T in (Float32, Float64)
-    model   = Format.readhmo(NESSie._data_path("benchmark/2lzx-5k.hmo"), T)
+    model   = Format.readhmo(nessie_data_path("benchmark/2lzx-5k.hmo"), T)
     numelem = length(model.elements)
     yuk     = NESSie.yukawa(model.params)
     Ξ       = [e.center for e in model.elements]

@@ -20,7 +20,7 @@ include("base/quadrature.jl")
 export QuadraturePoints, QuadPts2D, QuadPts3D, ElementQuad, TriangleQuad, quadraturepoints
 
 include("base/util.jl")
-export guess_domain, meshunion, obspoints_plane
+export guess_domain, meshunion, nessie_data_path, obspoints_plane
 
 include("base/potentials.jl")
 export PotentialType, SingleLayer, DoubleLayer, LocalityType, LocalES, NonlocalES,

@@ -54,7 +54,7 @@ plot_y = getindex.(Ξ, 2)
 # Nonlocal Xie model 2
 xie = TestModel.XieModel(
     radius,
-    Format.readpqr(get(ARGS, 1, NESSie._data_path(fpqr))),
+    Format.readpqr(get(ARGS, 1, nessie_data_path(fpqr))),
     Option(εΩ, εΣ, ε∞, λ),
     compat=true
 )
