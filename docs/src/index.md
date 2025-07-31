@@ -52,12 +52,12 @@ With BibTeX, you can use the following entries:
     doi = {10.1016/j.jocs.2018.08.008}
 }
 @phdthesis{cunessie-2021,
-	author = {Kemmer, Thomas},
-	title = {{Space-efficient and exact system representations for the nonlocal protein electrostatics problem}},
-	year = {2021},
-	school = {Johannes Gutenberg University Mainz},
-	address = {Mainz, Germany},
-	doi = {10.25358/openscience-5689}
+    author = {Kemmer, Thomas},
+    title = {{Space-efficient and exact system representations for the nonlocal protein electrostatics problem}},
+    year = {2021},
+    school = {Johannes Gutenberg University Mainz},
+    address = {Mainz, Germany},
+    doi = {10.25358/openscience-5689}
 }
 ```
 
