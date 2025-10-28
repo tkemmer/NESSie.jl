@@ -29,6 +29,9 @@ jobs:
         arch:
           - x64
           - x86
+        include:
+          - version: '1.12'
+          - experimental: true
     steps:
       - uses: actions/checkout@v5
       - uses: julia-actions/setup-julia@v2
