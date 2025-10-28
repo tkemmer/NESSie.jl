@@ -2,8 +2,8 @@ name = "NESSie"
 uuid = "f00e83c4-bd01-11e9-272c-ff1b96fb444d"
 license = "MIT"
 desc = "Nonlocal Electrostatics in Structured Solvents"
-authors = ["Thomas Kemmer <thomas@binaryden.de>"]
 version = "1.5.0"
+authors = ["Thomas Kemmer <thomas@binaryden.de>"]
 
 [deps]
 AutoHashEquals = "15f4f7f2-30c1-5605-9d31-71845cf9641f"
@@ -35,16 +35,16 @@ JSON3 = "1.11.1"
 LightXML = "0.9"
 LinearAlgebra = "1.10"
 MeshIO = "0.5.2"
+ParallelTestRunner = "2.0.1"
 Preconditioners = "0.6"
 SpecialFunctions = "0.9, 0.10, 1, 2"
 Test = "1.10"
-TestItemRunner = "1"
 julia = "1.10"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+ParallelTestRunner = "d3525ed8-44d0-4b2c-a655-542cee43accc"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-TestItemRunner = "f8b46487-2199-4994-9208-9a1283c18c0a"
 
 [targets]
-test = ["Aqua", "Test", "TestItemRunner"]
+test = ["Aqua", "ParallelTestRunner", "Test"]
