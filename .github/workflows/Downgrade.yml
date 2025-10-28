@@ -31,6 +31,8 @@ jobs:
           - x64
           - x86
         include:
+          - version: '1.12'
+            experimental: true
           - version: 'nightly'
             experimental: true
     steps:
