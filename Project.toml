@@ -37,7 +37,7 @@ LinearAlgebra = "1.10"
 MeshIO = "0.5.2"
 ParallelTestRunner = "2.0.1"
 Preconditioners = "0.6"
-SpecialFunctions = "0.9, 0.10, 1, 2"
+SpecialFunctions = "2"
 Test = "1.10"
 julia = "1.10"
 
