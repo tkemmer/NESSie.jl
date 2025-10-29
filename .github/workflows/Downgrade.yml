@@ -31,7 +31,7 @@ jobs:
           - x86
         include:
           - version: '1.12'
-          - experimental: true
+            experimental: true
     env:
       RESOLVER_PATH: "/tmp/resolver"
     steps:
