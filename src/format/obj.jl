@@ -8,8 +8,8 @@
 Creates a Wavefront OBJ file from a given surface model.
 
 # Specification
-    <https://www.loc.gov/preservation/digital/formats/fdd/fdd000507.shtml>
-    <http://paulbourke.net/dataformats/obj/>
+- <https://www.loc.gov/preservation/digital/formats/fdd/fdd000507.shtml>
+- <https://paulbourke.net/dataformats/obj/>
 
 # Return type
 `Nothing`
