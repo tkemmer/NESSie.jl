@@ -529,7 +529,7 @@ Converts the given model into a GeometryBasics.jl-compatible mesh, e.g., for vis
 through [Makie.jl](https://docs.makie.org/stable/reference/plots/mesh).
 
 # Return type
-[`GeometryBasics.Mesh`]
+[`GeometryBasics.Mesh`]\
 (https://juliageometry.github.io/GeometryBasics.jl/stable/meshes/#GeometryBasics.Mesh-meshes)
 """
 function GeometryBasics.mesh(model::Model{T, Triangle{T}}) where T
@@ -584,7 +584,7 @@ Creates and returns a bounding box for the given model.
    effectively increasing its size by 2 ⋅ `padding` in each direction.
 
 # Return type
-[`GeometryBasics.Rect3{T}`]
+[`GeometryBasics.Rect3{T}`]\
 (https://juliageometry.github.io/GeometryBasics.jl/stable/primitives/#HyperRectangle)
    """
 function GeometryBasics.Rect(model::Model{T, Triangle{T}}; padding::T = zero(T)) where T

@@ -71,7 +71,7 @@ Constructs and returns implicit representations for the single- and double-layer
 potential matrices `V` and `K` for the given observation points and surface elements.
 
 # Return type
-[`Tuple{InteractionMatrix{T}, InteractionMatrix{T}}`]
+[`Tuple{InteractionMatrix{T}, InteractionMatrix{T}}`]\
 (https://tkemmer.github.io/ImplicitArrays.jl/stable/#ImplicitArrays.InteractionMatrix)
 """
 @inline function _get_laplace_matrices(
@@ -96,7 +96,7 @@ Constructs and returns implicit representations for the single- and double-layer
 potential matrices `V^Y` and `K^Y` for the given observation points and surface elements.
 
 # Return type
-[`Tuple{InteractionMatrix{T}, InteractionMatrix{T}}`]
+[`Tuple{InteractionMatrix{T}, InteractionMatrix{T}}`]\
 (https://tkemmer.github.io/ImplicitArrays.jl/stable/#ImplicitArrays.InteractionMatrix)
 """
 @inline function _get_yukawa_matrices(
@@ -124,7 +124,7 @@ Solves the linear system `Ax = b` from `A` and `b` using a Jacobi-preconditioned
 `Array{T, 1}`
 
 # Supported keyword arguments
-Everything from [`IterativeSolvers.gmres`]
+Everything from [`IterativeSolvers.gmres`]\
 (https://iterativesolvers.julialinearalgebra.org/stable/linear_systems/gmres/) except for `log`.
 """
 @inline function _solve_linear_system(A::AbstractArray{T, 2}, b::AbstractArray{T, 1}; kwargs...) where T
