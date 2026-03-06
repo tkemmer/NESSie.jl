@@ -34,6 +34,7 @@ makedocs(
     clean     = true,
     doctest   = true,
     linkcheck = true,
+    linkcheck_timeout = 30,
     checkdocs = :all,
     pages     = pages,
     format    = Documenter.HTML(
