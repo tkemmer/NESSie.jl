@@ -24,7 +24,6 @@ jobs:
         version:
           - 'lts'
           - '1.12'
-          - 'nightly'
         os:
           - ubuntu-latest
         arch:
@@ -32,8 +31,6 @@ jobs:
           - x86
         include:
           - version: '1.12'
-            experimental: true
-          - version: 'nightly'
             experimental: true
     steps:
       - uses: actions/checkout@v6
