@@ -2,7 +2,7 @@ name = "NESSie"
 uuid = "f00e83c4-bd01-11e9-272c-ff1b96fb444d"
 license = "MIT"
 desc = "Nonlocal Electrostatics in Structured Solvents"
-version = "1.5.0"
+version = "1.5.1"
 authors = ["Thomas Kemmer <thomas@binaryden.de>"]
 
 [deps]
