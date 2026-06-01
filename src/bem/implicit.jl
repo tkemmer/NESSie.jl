@@ -137,9 +137,11 @@ Everything from [`IterativeSolvers.gmres`]\
     )
 end
 
+const _ImplicitTriangleMatrix{T} = InteractionMatrix{T, Vector{T}, Triangle{T}}
+const _ImplicitTriangleQuadMatrix{T} = InteractionMatrix{T, Vector{T}, TriangleQuad{T}}
 const _ImplicitBEMMatrix{T} = Union{
-    InteractionMatrix{T, Vector{T}, Triangle{T}},
-    InteractionMatrix{T, Vector{T}, TriangleQuad{T}}
+    _ImplicitTriangleMatrix{T},
+    _ImplicitTriangleQuadMatrix{T}
 }
 
 function _mul!(
