@@ -21,6 +21,12 @@ MeshIO = "7269a6da-0436-5bbc-96c2-40638cbb6118"
 Preconditioners = "af69fa37-3177-5a40-98ee-561f696e4fcd"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 
+[weakdeps]
+SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
+
+[extensions]
+NESSieSciMLBaseExt = "SciMLBase"
+
 [compat]
 Aqua = "0.8.14"
 AutoHashEquals = "2.2.0"
@@ -39,6 +45,7 @@ ParallelTestRunner = "2.0.1"
 Preconditioners = "0.6"
 SpecialFunctions = "2"
 Test = "1.10"
+SciMLBase = "3.15"
 julia = "1.10"
 
 [extras]
