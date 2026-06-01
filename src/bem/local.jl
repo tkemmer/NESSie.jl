@@ -38,7 +38,7 @@ Computes the full local or nonlocal cauchy data on the surface of the given biom
 # Supported keyword arguments
  - `method::Symbol = :gmres`
    Solver implementation to be used (supported arguments: `:gmres` and `:blas`)
- - `method=:gmres` *only*: all keyword arguments of [`IterativeSolvers.gmres`]
+ - `method=:gmres` *only*: all keyword arguments of [`IterativeSolvers.gmres`]\
    (https://iterativesolvers.julialinearalgebra.org/stable/linear_systems/gmres/), except
    for `log`, using the following default values:
     * `verbose::Bool = true`

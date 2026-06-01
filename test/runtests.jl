@@ -1,84 +1,16 @@
-using NESSie
-using TestItemRunner
+using ParallelTestRunner
+import NESSie
 
-# All tests. Will be used if no command line arguments are given.
-const tests = [
-    "base/constants.jl",
-    "base/model.jl",
-    "base/potentials.jl",
-    "base/quadrature.jl",
-    "base/util.jl",
-    "bem/local.jl",
-    "bem/nonlocal.jl",
-    "format/hmo.jl",
-    "format/mcsf.jl",
-    "format/msms.jl",
-    "format/obj.jl",
-    "format/off.jl",
-    "format/pqr.jl",
-    "format/skel.jl",
-    "format/stl.jl",
-    "format/vtk.jl",
-    "format/xml3d.jl",
-    "testmodel/born.jl",
-    "testmodel/xie.jl",
-    "aqua.jl",
-    "radon.jl",
-    "rjasanow.jl"
-]
+const init_code = quote
+    using NESSie
 
-function printusage()
-    println("\n\e[1mNESSie.jl test suite\e[0m")
-    println("====================\n")
-    println("\e[1mUsage:\e[0m\n")
-    println("\truntests.jl [--help] [<test>...]\n")
-    println("If called without arguments, this program will run all available tests.")
-    println("\n\e[1mOptions:\e[0m\n")
-    println("\t\e[1m--help\e[0m\tPrint this message and exit")
-    println("\n\e[1mAvailable tests:\e[0m\n")
-    for test in tests
-        println("\t$(test[1:end-3])")
-    end
-    println()
+    include(nessie_data_path("../test/testsetup.jl"))
 end
 
-#=
-    Validate args and return test files
-=#
-function checkargs(args)
-    ret = String[]
-    err = String[]
-    for arg in args
-        if arg == "--help"
-            printusage()
-            exit(0)
-        end
-        if arg[1] == '-'
-            push!(err, "\e[1;31mInvalid option \e[39m$arg\e[0m")
-            continue
-        end
-        if arg in tests || "$(arg).jl" in tests
-            push!(ret, endswith(arg, ".jl") ? arg : "$(arg).jl")
-        else
-            push!(err, "\e[1;31mInvalid test file \e[39m$arg\e[0m")
-        end
-    end
-    if length(err) > 0
-        println("\e[1;31mERROR:\e[0m\n")
-        for e in err
-            println(" * $e")
-        end
-        print("\n\e[1;31mRun\e[39m runtests.jl --help")
-        println(" \e[31mfor a list of available options and tests.\e[0m")
-        exit(1)
-    end
-    ret
-end
+testsuite = find_tests(@__DIR__)
+delete!(testsuite, "testsetup")
 
-# Run tests
-if length(ARGS) > 0
-    testfiles = checkargs(ARGS)
-    @run_package_tests filter=ti -> any(endswith.(ti.filename,testfiles)) verbose=true
-else
-    @run_package_tests verbose=true
-end
+# Compat: remove file extension from test names
+replace!(e -> endswith(e, ".jl") ? e[1:end-3] : e, ARGS)
+
+runtests(NESSie, ["--verbose", ARGS...]; init_code, testsuite)
