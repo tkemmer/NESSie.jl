@@ -1,4 +1,6 @@
-using Documenter, GeometryBasics, NESSie
+using NESSie, NESSie.BEM, NESSie.Format, NESSie.Radon, NESSie.Rjasanow, NESSie.TestModel
+using GeometryBasics
+using Documenter, DocumenterCodeBlocks
 
 const pages = [
     "Home" => "index.md",
@@ -34,6 +36,8 @@ makedocs(
         NESSie,
         NESSie.BEM,
         NESSie.Format,
+        NESSie.Radon,
+        NESSie.Rjasanow,
         NESSie.TestModel
     ],
     clean     = true,
@@ -47,7 +51,8 @@ makedocs(
         prettyurls = get(ENV, "CI", nothing) == "true"
     ),
     sitename  = "NESSie.jl",
-    repo      = Remotes.GitHub("tkemmer", "NESSie.jl")
+    repo      = Remotes.GitHub("tkemmer", "NESSie.jl"),
+    plugins   = [CodeBlocks()],
 )
 
 deploydocs(;
