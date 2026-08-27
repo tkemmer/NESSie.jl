@@ -1,6 +1,6 @@
 # Quadrature
 ```@meta
-    CurrentModule = NESSie
+CurrentModule = NESSie
 ```
 
 ```@index
@@ -9,30 +9,30 @@ Pages = ["quadrature.md"]
 
 ## Quadrature points
 ```@docs
-    QuadraturePoints
-    QuadPts2D
-    QuadPts3D
+QuadraturePoints
+QuadPts2D
+QuadPts3D
 ```
 
 ## Quadrature points on elements
 ```@docs
-    ElementQuad
-    TriangleQuad
+ElementQuad
+TriangleQuad
 ```
 
 ## Generators
 ```@docs
-    quadraturepoints
+quadraturepoints
 ```
 
 ## Laplace potential
 ```@docs
-    Rjasanow.laplacecoll
-    Rjasanow.laplacecoll!
+Rjasanow.laplacecoll
+Rjasanow.laplacecoll!
 ```
 
 ## Yukawa potential
 ```@docs
-    Radon.regularyukawacoll
-    Radon.regularyukawacoll!
+Radon.regularyukawacoll
+Radon.regularyukawacoll!
 ```

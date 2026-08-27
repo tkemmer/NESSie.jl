@@ -1,7 +1,7 @@
 # Input formats
 
 ```@meta
-    CurrentModule = NESSie.Format
+CurrentModule = NESSie.Format
 ```
 
 Currently supported input file formats with different models:
@@ -17,30 +17,30 @@ Currently supported input file formats with different models:
 
 ## HMO
 ```@docs
-    readhmo
+readhmo
 ```
 
 ## Mcsf
 ```@docs
-    readmcsf
+readmcsf
 ```
 
 ## MSMS
 ```@docs
-    readmsms
+readmsms
 ```
 
 ## OFF
 ```@docs
-    readoff
+readoff
 ```
 
 ## PQR
 ```@docs
-    readpqr
+readpqr
 ```
 
 ## STL
 ```@docs
-    readstl
+readstl
 ```

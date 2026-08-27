@@ -1,6 +1,6 @@
 # Constants
 ```@meta
-    CurrentModule = NESSie
+CurrentModule = NESSie
 ```
 
 ```@index
@@ -9,11 +9,11 @@ Pages = ["constants.md"]
 
 ## Global constants
 ```@docs
-    ε0
+ε0
 ```
 
 ## System constants
 ```@docs
-    Option
-    defaultopt
+Option
+defaultopt
 ```

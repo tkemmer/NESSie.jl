@@ -1,6 +1,6 @@
 # Electrostatics
 ```@meta
-    CurrentModule = NESSie
+CurrentModule = NESSie
 ```
 
 ```@index
@@ -9,27 +9,27 @@ Pages = ["electrostatics.md"]
 
 ## Potential types
 ```@docs
-    PotentialType
-    SingleLayer
-    DoubleLayer
+PotentialType
+SingleLayer
+DoubleLayer
 ```
 
 ## Locality assumption
 ```@docs
-    LocalityType
-    LocalES
-    NonlocalES
+LocalityType
+LocalES
+NonlocalES
 ```
 
 ## Potentials
 
 ```@docs
-    espotential
-    molpotential
-    rfpotential
+espotential
+molpotential
+rfpotential
 ```
 
 ## Potential energies
 ```@docs
-    rfenergy
+rfenergy
 ```

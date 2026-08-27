@@ -1,6 +1,6 @@
 # Solvers
 ```@meta
-    CurrentModule = NESSie
+CurrentModule = NESSie
 ```
 
 ```@index
@@ -9,12 +9,12 @@ Pages = ["solvers.md"]
 
 ## BEM solvers
 ```@meta
-    CurrentModule = NESSie.BEM
+CurrentModule = NESSie.BEM
 ```
 
 ```@docs
-    BEMResult
-    LocalBEMResult
-    NonlocalBEMResult
-    solve
+BEMResult
+LocalBEMResult
+NonlocalBEMResult
+solve
 ```

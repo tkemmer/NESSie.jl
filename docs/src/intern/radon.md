@@ -1,6 +1,6 @@
 # `NESSie.Radon`
 ```@meta
-    CurrentModule = NESSie.Radon
+CurrentModule = NESSie.Radon
 ```
 
 ```@index
@@ -9,5 +9,5 @@ Pages = ["radon.md"]
 
 
 ```@docs
-    _regularyukawapot
+_regularyukawapot
 ```

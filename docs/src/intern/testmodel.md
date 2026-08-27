@@ -1,6 +1,6 @@
 # `NESSie.TestModel`
 ```@meta
-    CurrentModule = NESSie.TestModel
+CurrentModule = NESSie.TestModel
 ```
 
 ```@index
@@ -16,9 +16,9 @@ _rfpotential_Σ
 
 ## [Utility functions](@id int-util-testmodel)
 ```@docs
-    _xie_coefficients
-    legendre
-    scalemodel
-    spherical_besseli
-    spherical_besselk
+_xie_coefficients
+legendre
+scalemodel
+spherical_besseli
+spherical_besselk
 ```

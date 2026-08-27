@@ -1,7 +1,7 @@
 # Output formats
 
 ```@meta
-    CurrentModule = NESSie.Format
+CurrentModule = NESSie.Format
 ```
 
 Currently supported output file formats with different models:
@@ -16,25 +16,25 @@ Currently supported output file formats with different models:
 
 ## [HMO](@id hmoout)
 ```@docs
-    writehmo
+writehmo
 ```
 
 ## OBJ
 ```@docs
-    writeobj
+writeobj
 ```
 
 ## SKEL
 ```@docs
-    writeskel
+writeskel
 ```
 
 ## [STL](@id stlout)
 ```@docs
-    writestl
+writestl
 ```
 
 ## VTK
 ```@docs
-    writevtk
+writevtk
 ```

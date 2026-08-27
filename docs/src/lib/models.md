@@ -1,6 +1,6 @@
 # Models
 ```@meta
-    CurrentModule = NESSie
+CurrentModule = NESSie
 ```
 
 ```@index
@@ -9,33 +9,33 @@ Pages = ["models.md"]
 
 ## Elements
 ```@docs
-    Element
-    Triangle
-    Tetrahedron
+Element
+Triangle
+Tetrahedron
 ```
 
 ## Charge models
 ```@docs
-    Charge
+Charge
 ```
 
 ## System models
 ```@docs
-    Model
-    Model(::TestModel.XieSphere)
+Model
+Model(::TestModel.XieSphere)
 ```
 
 ## Test models
 ```@meta
-    CurrentModule = NESSie.TestModel
+CurrentModule = NESSie.TestModel
 ```
 
 ```@docs
-    BornIon
-    bornion
-    XieSphere
-    XieTestModel
-    LocalXieModel
-    NonlocalXieModel1
-    NonlocalXieModel2
+BornIon
+bornion
+XieSphere
+XieTestModel
+LocalXieModel
+NonlocalXieModel1
+NonlocalXieModel2
 ```
