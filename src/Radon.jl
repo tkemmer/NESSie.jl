@@ -152,9 +152,9 @@ end
         yukawa  ::T
     )
 
-Computes the regular part of the single or double layer Yukawa potential (that is, Yukawa
-minus Laplace) using a seven-point Radon cubature [[Rad48]](@ref Bibliography) for a given
-list of triangles and observation points `Ξ`.
+Computes the regular part of the single or double layer Yukawa potential (i.e., Yukawa minus
+Laplace) for a given list of triangles and observation points `Ξ`. The method uses a seven-
+point Radon cubature [[Rad48]](@ref Bibliography).
 
 The first version of this function uses a vector as destination `dest`, where each element
 represents the dot product of the corresponding coefficient matrix row and the `fvals`
@@ -258,9 +258,9 @@ end
         yukawa::T
     )
 
-Computes the regular part of the single or double layer Yukawa potential (that is, Yukawa
-minus Laplace) using a seven-point Radon cubature [[Rad48]](@ref Bibliography) for a given
-triangle and observation point `ξ`.
+Computes the regular part of the single or double layer Yukawa potential (i.e., Yukawa minus
+Laplace) for a given triangle and observation point `ξ`. The method uses a seven-point Radon
+cubature [[Rad48]](@ref Bibliography).
 
 !!! note
     The result is premultiplied by 4π.

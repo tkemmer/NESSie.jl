@@ -72,18 +72,6 @@ The electrostatic potential is computed as the sum of the corresponding
 Computes the electrostatic potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
 """
-function NESSie.espotential(
-    domain::Symbol,
-    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
-    bem::BEMResult{T};
-    tolerance::T = T(1e-10)
-) where T
-    domain === :Ω && return _espotential_Ω(ξorΞ, bem; tolerance)
-    domain === :Σ && return _espotential_Σ(ξorΞ, bem)
-    domain === :Γ && return _espotential_Γ(ξorΞ, bem; tolerance)
-    error("unknown domain $domain")
-end
-
 @inline function NESSie.espotential(
     ξ::Vector{T},
     bem::BEMResult{T};
@@ -118,6 +106,19 @@ end
 ) where T
     espotential(collect(Vector{T}, Ξ), bem; kwargs...)
 end
+
+function NESSie.espotential(
+    domain::Symbol,
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T};
+    tolerance::T = T(1e-10)
+) where T
+    domain === :Ω && return _espotential_Ω(ξorΞ, bem; tolerance)
+    domain === :Σ && return _espotential_Σ(ξorΞ, bem)
+    domain === :Γ && return _espotential_Γ(ξorΞ, bem; tolerance)
+    error("unknown domain $domain")
+end
+
 
 
 # =========================================================================================
@@ -174,18 +175,6 @@ Computes the reaction field potential(s) for the given observation point(s) ξ (
 given domain `:Ω`, `:Σ`, or `:Γ`.
 """
 @inline function NESSie.rfpotential(
-    domain::Symbol,
-    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
-    bem::BEMResult{T};
-    tolerance::T = T(1e-10)
-) where T
-    domain === :Ω && return _rfpotential_Ω(ξorΞ, bem)
-    domain === :Σ && return _rfpotential_Σ(ξorΞ, bem; tolerance)
-    domain === :Γ && return _rfpotential_Γ(ξorΞ, bem)
-    error("unknown domain $domain")
-end
-
-@inline function NESSie.rfpotential(
     ξ::Vector{T},
     bem::BEMResult{T};
     surface_margin::T = T(1e-6),
@@ -230,6 +219,18 @@ end
     kwargs...
 ) where T
     rfpotential(collect(Vector{T}, Ξ), bem; kwargs...)
+end
+
+@inline function NESSie.rfpotential(
+    domain::Symbol,
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
+    bem::BEMResult{T};
+    tolerance::T = T(1e-10)
+) where T
+    domain === :Ω && return _rfpotential_Ω(ξorΞ, bem)
+    domain === :Σ && return _rfpotential_Σ(ξorΞ, bem; tolerance)
+    domain === :Γ && return _rfpotential_Γ(ξorΞ, bem)
+    error("unknown domain $domain")
 end
 
 
