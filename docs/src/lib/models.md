@@ -10,6 +10,8 @@ Pages = ["models.md"]
 ## Elements
 ```@docs
 Element
+SurfaceElement
+VolumeElement
 Triangle
 Tetrahedron
 ```

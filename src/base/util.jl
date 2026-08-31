@@ -7,9 +7,6 @@
 Computes the given triangle's properties, that is, centroid, normal, distance to origin,
 and area. Returns the completely initialized Triangle as a copy.
 
-!!! warning
-    The given triangle remains unchanged!
-
 # Return type
 [`Triangle`](@ref)
 """

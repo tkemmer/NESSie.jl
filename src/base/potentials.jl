@@ -1,34 +1,52 @@
 # =========================================================================================
-for T in [:PotentialType, :SingleLayer, :DoubleLayer]
-    @eval @doc """
-        abstract type PotentialType end
-        struct SingleLayer <: PotentialType end
-        struct DoubleLayer <: PotentialType end
+"""
+    abstract type PotentialType end
+    struct SingleLayer <: PotentialType end
+    struct DoubleLayer <: PotentialType end
 
-    Enum-like representation of single and double layer potentials
-    """ $T
-end
+Enum-like representation of single and double layer potentials
+"""
 abstract type PotentialType end
+
+"""
+    struct SingleLayer <: PotentialType end
+
+Enum-like representation of single layer potentials
+"""
 struct SingleLayer <: PotentialType end
+
+"""
+    struct DoubleLayer <: PotentialType end
+
+Enum-like representation of double layer potentials
+"""
 struct DoubleLayer <: PotentialType end
 
 
 # =========================================================================================
-for T in [:LocalityType, :LocalES, :NonlocalES]
-    @eval @doc """
-        abstract type LocalityType end
-        struct NonlocalES <: LocalityType end
-        struct LocalES    <: LocalityType end
+"""
+    abstract type LocalityType end
+    struct NonlocalES <: LocalityType end
+    struct LocalES    <: LocalityType end
 
-    Enum-like representation of locality assumption:
-     * *Local electrostatics*:
-       Complete independence of solvent molecules
-     * *Nonlocal electrostatics*:
-       Allow solvent molecule correlation effects (with area-of-effect radius λ)
-    """ $T
-end
+Enum-like representation of locality assumptions
+"""
 abstract type LocalityType end
+
+"""
+    struct NonlocalES <: LocalityType end
+
+Enum-like representation of nonlocal electrostatics problems, allowing solvent molecule
+correlation effects (with area-of-effect radius λ)
+"""
 struct NonlocalES <: LocalityType end
+
+"""
+    struct LocalES <: LocalityType end
+
+Enum-like representation of local electrostatics problems, assuming complete independenc of
+solvent molecules
+"""
 struct LocalES    <: LocalityType end
 
 

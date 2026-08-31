@@ -144,7 +144,7 @@ be located at 80% `radius` distance from the origin.
 
 # Arguments
  * `compat` Enables compatibility mode and scales the model exactly like the reference
-   implementation ([[Xie16]](@ref Bibliography)). Use this flag if you intend to compare
+   implementation [[Xie16]](@ref Bibliography). Use this flag if you intend to compare
    the results to the reference.
 
 # Return type

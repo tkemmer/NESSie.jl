@@ -1,13 +1,23 @@
 # =========================================================================================
 """
     abstract type Element{T <: AbstractFloat} end
-    abstract type SurfaceElement{T} <: Element{T} end
-    abstract type VolumeElement{T}  <: Element{T} end
 
-Abstract base types for all elements.
+Abstract base types for all surface and volume elements
 """
 abstract type Element{T <: AbstractFloat} end
+
+"""
+    abstract type SurfaceElement{T} <: Element{T} end
+
+Abstract base type for all surface elements
+"""
 abstract type SurfaceElement{T} <: Element{T} end
+
+"""
+    abstract type VolumeElement{T}  <: Element{T} end
+
+Abstract base type for all volume elements
+"""
 abstract type VolumeElement{T}  <: Element{T} end
 
 

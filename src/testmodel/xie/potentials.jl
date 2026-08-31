@@ -2,7 +2,7 @@
 """
     rfenergy(::XieTestModel{T})
 
-Computes the local or nonlocal reaction field energy W* as
+Computes the local or nonlocal reaction field energy W*
 ```math
 W^* = ∫φ^* ρ \\quad dΩ
 ```

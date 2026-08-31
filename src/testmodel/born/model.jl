@@ -55,7 +55,7 @@ end
 @doc raw"""
     defaultopt(::Type{BornIon{T}})
 
-Default system parameters for vacuum-like systems in water.
+Default system parameters for Born ions in water.
 
 # Return type
 [`Option{T}`](@ref)
@@ -80,7 +80,7 @@ end
     bornion(name::AbstractString, ::Type{Float64} = Float64)
     bornion(name::AbstractString, ::Type{Float32})
 
-Generator function for built-in Born ions:
+Generator function for built-in Born ions
 
 | Name | Charge | Radius [[Åqv90]](@ref Bibliography) |
 |------|-------:|------------------------------------:|
