@@ -80,7 +80,7 @@ end
     mutable struct Option{T <: AbstractFloat}
         εΩ::T       # dielectric constant of the solute
         εΣ::T       # dielectric constant of the solvent
-        ε∞::T       # large-scale (bulk) solvent response
+        ε∞::T       # high-frequency solvent response
         λ ::T       # correlation length scale [λ] = Å
     end
 
@@ -91,7 +91,7 @@ System parameters
     εΩ::T
     "dielectric constant of the solvent"
     εΣ::T
-    "large-scale (bulk) solvent response"
+    "high-frequency solvent response"
     ε∞::T
     "correlation length scale [λ] = Å"
     λ::T

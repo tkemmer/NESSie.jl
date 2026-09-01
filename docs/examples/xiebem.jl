@@ -16,7 +16,7 @@ end
 
 const εΩ = 2.               # dielectric constant (protein)
 const εΣ = 80.              # dielectric constant (solvent)
-const ε∞ = 1.8              # dielectric bulk response (solvent)
+const ε∞ = 1.8              # high-frequency dielectric response (solvent)
 const λ  = 15.              # correlation length (Å)
 const radius = 1.           # test model sphere radius (Å)
 const numiter = 20          # number of iterations (test model)
