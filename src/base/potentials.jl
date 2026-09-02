@@ -35,7 +35,7 @@ struct LocalES    <: LocalityType end
 # =========================================================================================
 """
     molpotential(ξ::Vector{T}, model::Model{T})
-    molpotential(Ξ::AbstractVector{Vector{T}}, model::Model{T})
+    molpotential(Ξ::AbstractArray{Vector{T}}, model::Model{T})
 
 Computes the molecular potential(s) at the given observation point(s) ξ (Ξ) for the given
 model.
@@ -55,7 +55,7 @@ model.
 end
 
 @inline function molpotential(
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     model::Model{T};
     kwargs...
 ) where T
@@ -66,7 +66,7 @@ end
 # =========================================================================================
 """
     _molpotential(ξ::Vector{T}, charges::AbstractVector{Charge{T}})
-    _molpotential(Ξ::AbstractVector{Vector{T}}, charges::AbstractVector{Charge{T}})
+    _molpotential(Ξ::AbstractArray{Vector{T}}, charges::AbstractVector{Charge{T}})
 
 Computes and returns the molecular potential(s) of the given system of point charges in a
 structureless medium for the given observation point(s) ξ (Ξ):
@@ -100,7 +100,7 @@ as observation point.
 end
 
 @inline function _molpotential(
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     charges::AbstractVector{Charge{T}};
     kwargs...
 ) where T
@@ -156,7 +156,7 @@ as observation point.
 end
 
 @inline function _molpotential_dn(
-    Ξ::Union{<: AbstractVector{Triangle{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Triangle{T}}, <: Base.Generator},
     charges::AbstractVector{Charge{T}};
     kwargs...
 ) where T

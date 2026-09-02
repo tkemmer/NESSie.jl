@@ -412,7 +412,7 @@ centroid.
 `Symbol` (`:Ω`, `:Σ`, or `:Γ`)
 
 ## Alias
-    guess_domain(Ξ::Vector{Vector{T}}, model::Model{T, Triangle{T}})
+    guess_domain(Ξ::AbstractArray{Vector{T}}, model::Model{T, Triangle{T}})
 
 Determines the domain of each observation point `ξ` ∈ `Ξ`.
 """
@@ -427,7 +427,7 @@ function guess_domain(
 end
 
 @inline function guess_domain(
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     model::Model{T, Triangle{T}};
     kwargs...
 ) where T
