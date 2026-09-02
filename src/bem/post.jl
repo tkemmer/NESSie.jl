@@ -46,7 +46,7 @@ end
 # =========================================================================================
 """
     espotential(ξ::Vector{T}, bem::BEMResult{T})
-    espotential(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    espotential(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal electrostatic potential(s) at the given observation point(s)
 ξ (Ξ) for the given BEM result. This function tries to automatically locate the observation
@@ -63,18 +63,18 @@ The electrostatic potential is computed as the sum of the corresponding
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 
 # Alias
     espotential(domain::Symbol, ξ::Vector{T}, bem::BEMResult{T})
-    espotential(domain::Symbol, Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    espotential(domain::Symbol, Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the electrostatic potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
 """
 function NESSie.espotential(
     domain::Symbol,
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T};
     tolerance::T = T(1e-10)
 ) where T
@@ -95,7 +95,7 @@ end
 end
 
 function NESSie.espotential(
-    Ξ::AbstractVector{Vector{T}},
+    Ξ::AbstractArray{Vector{T}},
     bem::BEMResult{T};
     surface_margin::T = T(1e-6),
     kwargs...
@@ -104,7 +104,7 @@ function NESSie.espotential(
     unknown_domains = setdiff(domains, [:Ω, :Σ, :Γ])
     !isempty(unknown_domains) && error("unknown domains $unknown_domains")
 
-    ret = Array{T}(undef, length(Ξ))
+    ret = similar(Ξ, T)
     view(ret, domains .== :Ω) .= espotential(:Ω, view(Ξ, domains .== :Ω), bem; kwargs...)
     view(ret, domains .== :Σ) .= espotential(:Σ, view(Ξ, domains .== :Σ), bem; kwargs...)
     view(ret, domains .== :Γ) .= espotential(:Γ, view(Ξ, domains .== :Γ), bem; kwargs...)
@@ -123,7 +123,7 @@ end
 # =========================================================================================
 """
     molpotential(ξ::Vector{T}, bem::BEMResult{T})
-    molpotential(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    molpotential(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the molecular potential(s) at the given observation point(s) ξ (Ξ) for the given
 BEM result.
@@ -136,10 +136,10 @@ BEM result.
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function NESSie.molpotential(
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T};
     kwargs...
 ) where T
@@ -150,7 +150,7 @@ end
 # =========================================================================================
 """
     rfpotential(ξ::Vector{T}, bem::BEMResult{T})
-    rfpotential(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    rfpotential(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal reaction field potential(s) at the given observation point(s)
 ξ (Ξ) for the given BEM result. This function tries to automatically locate the observation
@@ -164,18 +164,18 @@ point(s) using [`guess_domain`](@ref).
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 
 # Alias
     rfpotential(domain::Symbol, ξ::Vector{T}, bem::BEMResult{T})
-    rfpotential(domain::Symbol, Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    rfpotential(domain::Symbol, Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the reaction field potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
 """
 @inline function NESSie.rfpotential(
     domain::Symbol,
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T};
     tolerance::T = T(1e-10)
 ) where T
@@ -196,7 +196,7 @@ end
 end
 
 function NESSie.rfpotential(
-    Ξ::AbstractVector{Vector{T}},
+    Ξ::AbstractArray{Vector{T}},
     bem::BEMResult{T};
     surface_margin::T = T(1e-6),
     kwargs...
@@ -205,7 +205,7 @@ function NESSie.rfpotential(
     unknown_domains = setdiff(domains, [:Ω, :Σ, :Γ])
     !isempty(unknown_domains) && error("unknown domains $unknown_domains")
 
-    ret = Array{T}(undef, length(Ξ))
+    ret = similar(Ξ, T)
     _rfpotential!(ret, :Ω, Ξ, bem, domains; kwargs...)
     _rfpotential!(ret, :Σ, Ξ, bem, domains; kwargs...)
     _rfpotential!(ret, :Γ, Ξ, bem, domains; kwargs...)
@@ -213,11 +213,11 @@ function NESSie.rfpotential(
 end
 
 @inline function _rfpotential!(
-    dst::Vector{T},
+    dst::AbstractArray{T},
     loc::Symbol,
-    Ξ::AbstractVector{Vector{T}},
+    Ξ::AbstractArray{Vector{T}},
     bem::BEMResult{T},
-    domains::Vector{Symbol};
+    domains::AbstractArray{Symbol};
     kwargs...
 ) where T
     mask = domains .== loc
@@ -236,7 +236,7 @@ end
 # =========================================================================================
 """
     _espotential_Γ(ξ::Vector{T}, bem::BEMResult{T})
-    _espotential_Γ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    _espotential_Γ(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 on the molecular surface.
@@ -248,10 +248,10 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function _espotential_Γ(
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T};
     kwargs...
 ) where T
@@ -262,7 +262,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Γ(ξ::Vector{T}, bem::BEMResult{T})
-    _rfpotential_Γ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    _rfpotential_Γ(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 on the molecular surface.
@@ -271,14 +271,14 @@ on the molecular surface.
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function _rfpotential_Γ(ξ::Vector{T}, bem::BEMResult{T}) where T
     bem.u[_closest_element_id(ξ, bem.model)] * potprefactor(T)
 end
 
 @inline function _rfpotential_Γ(
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T}
 ) where T
     collect(T, _rfpotential_Γ(ξ, bem) for ξ in Ξ)
@@ -288,7 +288,7 @@ end
 # =========================================================================================
 """
     _espotential_Ω(ξ::Vector{T}, bem::BEMResult{T})
-    _espotential_Ω(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    _espotential_Ω(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 inside the molecule.
@@ -300,10 +300,10 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function _espotential_Ω(
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T};
     kwargs...
 ) where T
@@ -314,7 +314,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Ω(ξ::Vector{T}, bem::BEMResult{T})
-    _rfpotential_Ω(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    _rfpotential_Ω(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 inside the molecule.
@@ -323,28 +323,34 @@ inside the molecule.
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
-function _rfpotential_Ω(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T}) where T
-    # result vector
-    φ = zeros(T, length(Ξ))
+function _rfpotential_Ω(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T}) where T
+    # result array
+    φ = zeros(T, size(Ξ))
+
+    # vector-like views for downstream use
+    φvec = vec(φ)
+    Ξvec = vec(Ξ)
 
     # φ  = -[W ⋅ u](ξ)
-    Rjasanow.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, bem.u)
-    rmul!(φ, -1)
+    Rjasanow.laplacecoll!(DoubleLayer, φvec, bem.model.elements, Ξvec, bem.u)
+    rmul!(φvec, -1)
 
     # φ += [Vtilde ⋅ q](ξ)
-    Rjasanow.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, bem.q)
+    Rjasanow.laplacecoll!(SingleLayer, φvec, bem.model.elements, Ξvec, bem.q)
 
     # φ *= 1/4π
     # (W and Vtilde were premultiplied by 4π! 4π⋅ε0 from u and q still to be applied)
-    rmul!(φ, T(1 / 4π))
+    rmul!(φvec, T(1 / 4π))
 
     # Apply remaining prefactors:
     # ▶ 4π⋅ε0     for u and q
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    rmul!(φ, potprefactor(T))
+    rmul!(φvec, potprefactor(T))
+
+    φ
 end
 
 @inline function _rfpotential_Ω(Ξ::Base.Generator, bem:: BEMResult{T}) where T
@@ -359,7 +365,7 @@ end
 # =========================================================================================
 """
     _espotential_Σ(ξ::Vector{T}, bem::BEMResult{T})
-    _espotential_Σ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    _espotential_Σ(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 in the solvent domain.
@@ -368,43 +374,51 @@ in the solvent domain.
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 function _espotential_Σ(
-    Ξ::AbstractVector{Vector{T}},
+    Ξ::AbstractArray{Vector{T}},
     bem::LocalBEMResult{T}
 ) where T
-    # result vector
-    φ = zeros(T, length(Ξ))
+    # result array
+    φ = zeros(T, size(Ξ))
     buf = Array{T}(undef, length(bem.model.elements))
+
+    # vector-like views for downstream use
+    φvec = vec(φ)
+    Ξvec = vec(Ξ)
 
     # φ  = -εΩ/εΣ ⋅ [Vtilde ⋅ (q + qmol)](ξ)
     copyto!(buf, bem.q)
     _axpy!(1, bem.qmol, buf)
-    Rjasanow.laplacecoll!(SingleLayer, φ, bem.model.elements, Ξ, buf)
-    rmul!(φ, -bem.model.params.εΩ/bem.model.params.εΣ)
+    Rjasanow.laplacecoll!(SingleLayer, φvec, bem.model.elements, Ξvec, buf)
+    rmul!(φvec, -bem.model.params.εΩ/bem.model.params.εΣ)
 
     # φ += [W ⋅ (u + umol)](ξ)
     copyto!(buf, bem.u)
     _axpy!(1, bem.umol, buf)
-    Rjasanow.laplacecoll!(DoubleLayer, φ, bem.model.elements, Ξ, buf)
+    Rjasanow.laplacecoll!(DoubleLayer, φvec, bem.model.elements, Ξvec, buf)
 
     # Apply remaining prefactors:
     # ▶ 4π        for Vtilde, W
     # ▶ 4π⋅ε0     for u, q, umol, and qmol
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    rmul!(φ, potprefactor(T) / T(4π))
+    rmul!(φvec, potprefactor(T) / T(4π))
 
     φ
 end
 
 function _espotential_Σ(
-    Ξ::AbstractVector{Vector{T}},
+    Ξ::AbstractArray{Vector{T}},
     bem::NonlocalBEMResult{T}
 ) where T
-    # result vector
+    # result array
     φ = zeros(T, length(Ξ))
+
+    # vector-like views for downstream use
+    φvec = vec(φ)
+    Ξvec = vec(Ξ)
 
     # convenience aliases
     εΩ  = bem.model.params.εΩ
@@ -418,30 +432,30 @@ function _espotential_Σ(
     # φ  = -V[εΩ/ε∞ ⋅ (q + qmol)](ξ)
     copyto!(buf, bem.q)
     _axpy!(1, bem.qmol, buf)
-    Rjasanow.laplacecoll!(SingleLayer, φ, elements, Ξ, buf)
-    rmul!(φ, -εΩ/ε∞)
+    Rjasanow.laplacecoll!(SingleLayer, φvec, elements, Ξvec, buf)
+    rmul!(φvec, -εΩ/ε∞)
 
     # φ += (Vʸ-V)[εΩ(1/εΣ - 1/ε∞) ⋅ (q + qmol)](ξ)
     rmul!(buf, εΩ * (1/εΣ - 1/ε∞))
-    Radon.regularyukawacoll!(SingleLayer, φ, elements, Ξ, yuk, buf)
+    Radon.regularyukawacoll!(SingleLayer, φvec, elements, Ξvec, yuk, buf)
 
     # φ += K[u + umol](ξ)
     copyto!(buf, bem.u)
     _axpy!(1, bem.umol, buf)
-    Rjasanow.laplacecoll!(DoubleLayer, φ, elements, Ξ, buf)
+    Rjasanow.laplacecoll!(DoubleLayer, φvec, elements, Ξvec, buf)
 
     # φ += (Kʸ-K)[u + (1-εΩ/εΣ) ⋅ umol - ε∞/εΣ ⋅ w](ξ)
     copyto!(buf, bem.u)
     _axpy!(1-εΩ/εΣ, bem.umol, buf)
     _axpy!(-ε∞/εΣ, bem.w, buf)
-    Radon.regularyukawacoll!(DoubleLayer, φ, elements, Ξ, yuk, buf)
+    Radon.regularyukawacoll!(DoubleLayer, φvec, elements, Ξvec, yuk, buf)
 
     # Apply remaining prefactors:
     # ▶ 4π        for V, K, (Vʸ-V), and (Kʸ-K)
     # ▶ 4π⋅ε0     for u, q, w, umol, and qmol
     # ▶ 1.602e-19 for elemental charge e; [e] = C
     # ▶ 1e10      for the conversion Å → m; [ε0] = F/m
-    rmul!(φ, potprefactor(T) / T(4π))
+    rmul!(φvec, potprefactor(T) / T(4π))
 
     φ
 end
@@ -458,7 +472,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Σ(ξ::Vector{T}, bem::BEMResult{T})
-    _rfpotential_Σ(Ξ::AbstractVector{Vector{T}}, bem::BEMResult{T})
+    _rfpotential_Σ(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 in the solvent domain.
@@ -470,10 +484,10 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function _rfpotential_Σ(
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     bem::BEMResult{T};
     kwargs...
 ) where T

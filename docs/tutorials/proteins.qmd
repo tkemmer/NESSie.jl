@@ -51,7 +51,7 @@ Finally, we use the Marching Cubes algorithm to extract isosurfaces at potential
 ```{julia}
 using MarchingCubes
 
-pot = reshape(espotential(reshape(Ξ, length(Ξ)), bem), size(Ξ))
+pot = espotential(Ξ, bem)
 
 mc1 = MC(pot; x, y, z)
 march(mc1, 0.3)

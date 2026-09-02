@@ -16,7 +16,7 @@ f, ax, plt = mesh(GeometryBasics.mesh(model); color = :gray)
 
 ![](proteins_files/figure-commonmark/cell-3-output-1.png)
 
-We read the protein structure from an `.hmo` file using [`Format.readhmo`](@ref), which loads the surface mesh and embedded point charges in a single step. The electrostatic problem is then solved via the BEM with `solve(NonlocalES, model)`. The resulting `bem` object can then be used to evaluate the electrostatic potential anywhere in space.
+We read the protein structure from an `.hmo` file using [`Format.readhmo`](@ref), which loads the surface mesh and embedded point charges in a single step. The electrostatic problem is then solved via the BEM with `solve(NonlocalES, model)`. The resulting `bem` object can be used to evaluate the electrostatic potential anywhere in space.
 
 The protein surface is rendered in gray to give context for the potential visualization that follows.
 
@@ -38,7 +38,7 @@ Finally, we use the Marching Cubes algorithm to extract isosurfaces at potential
 ``` julia
 using MarchingCubes
 
-pot = reshape(espotential(reshape(Ξ, length(Ξ)), bem), size(Ξ))
+pot = espotential(Ξ, bem)
 
 mc1 = MC(pot; x, y, z)
 march(mc1, 0.3)

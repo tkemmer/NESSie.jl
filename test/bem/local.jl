@@ -14,6 +14,14 @@ using NESSie.BEM, NESSie.TestModel
         @test res isa Vector{T}
         @test res == molpotential(Ξ, ion)
 
+        res = molpotential(reshape(Ξ, 1, length(Ξ)), bem)
+        @test res isa Matrix{T}
+        @test res == transpose(molpotential(Ξ, ion))
+
+        res = molpotential((ξ for ξ in Ξ), bem)
+        @test res isa Vector{T}
+        @test res == molpotential(Ξ, ion)
+
         res = rfpotential(ξΩ, bem)
         @test res isa T
         @test res ≈ rfpotential(:Ω, LocalES, ξΩ, ion) rtol=0.05
@@ -31,10 +39,16 @@ using NESSie.BEM, NESSie.TestModel
         @test res ≈ rfpotential(:Σ, LocalES, ξΣ, ion) rtol=0.05
         @test res == rfpotential(:Σ, ξΣ, bem)
         @test res == only(rfpotential(:Σ, [ξΣ], bem))
+        @test res == only(rfpotential(:Σ, reshape([ξΣ], 1, 1), bem))
+        @test res == only(rfpotential(:Σ, (ξ for ξ in [ξΣ]), bem))
 
         res = rfpotential(Ξ, bem)
         @test res isa Vector{T}
         @test res ≈ rfpotential(LocalES, Ξ, ion) rtol=0.05
+
+        res = rfpotential(reshape(Ξ, 1, length(Ξ)), bem)
+        @test res isa Matrix{T}
+        @test res ≈ transpose(rfpotential(LocalES, Ξ, ion)) rtol=0.05
 
         res = rfpotential((ξ for ξ in Ξ), bem)
         @test res isa Vector{T}
@@ -57,11 +71,18 @@ using NESSie.BEM, NESSie.TestModel
         @test res ≈ espotential(:Σ, LocalES, ξΣ, ion) rtol=0.05
         @test res == espotential(:Σ, ξΣ, bem)
         @test res == only(espotential(:Σ, [ξΣ], bem))
+        @test res == only(espotential(:Σ, reshape([ξΣ], 1, 1), bem))
+        @test res == only(espotential(:Σ, (ξ for ξ in [ξΣ]), bem))
 
         res = espotential(Ξ, bem)
         @test res isa Vector{T}
         @test res ≈ espotential(LocalES, Ξ, ion) rtol=0.05
         @test res ≈ rfpotential(Ξ, bem) .+ molpotential(Ξ, bem)
+
+        res = espotential(reshape(Ξ, 1, length(Ξ)), bem)
+        @test res isa Matrix{T}
+        @test res ≈ transpose(espotential(LocalES, Ξ, ion)) rtol=0.05
+        @test res ≈ transpose(rfpotential(Ξ, bem) .+ molpotential(Ξ, bem))
 
         res = espotential((ξ for ξ in Ξ), bem)
         @test res isa Vector{T}
