@@ -31,12 +31,9 @@ lval = 2.0   # grid size [-lval, lval]² in xy-plane
 gres = 40    # grid resolution (gres x gres)
 
 # generate observation points
-Ξ = collect(Iterators.flatten(obspoints_plane(
-    [-lval, lval, zero(lval)],
-    [-lval, -lval, zero(lval)],
-    [ lval, -lval, zero(lval)],
-    gres, gres
-)))
+x = range(-lval, lval, length=gres)
+y = range(-lval, lval, length=gres)
+Ξ = [[xi, yi, zero(xi)] for xi in x for yi in y]
 
 # coordinate shorthand for plotting
 plot_x = getindex.(Ξ, 1)

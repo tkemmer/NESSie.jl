@@ -42,12 +42,9 @@ const fpqr = "xie/2LZX.pqr" # PQR file (ignored when given as argument)
 end
 
 # generate observation points
-Ξ = collect(Iterators.flatten(obspoints_plane(
-    [-lval,  lval, zero(lval)],
-    [-lval, -lval, zero(lval)],
-    [ lval, -lval, zero(lval)],
-    grid, grid
-)))
+x = range(-lval, lval, length=grid)
+y = range(-lval, lval, length=grid)
+Ξ = [[xi, yi, zero(xi)] for xi in x for yi in y]
 plot_x = getindex.(Ξ, 1)
 plot_y = getindex.(Ξ, 2)
 
