@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Poisson test models · NESSie.jl</title><meta name="title" content="Poisson test models · NESSie.jl"/><meta property="og:title" content="Poisson test models · NESSie.jl"/><meta property="twitter:title" content="Poisson test models · NESSie.jl"/><meta name="description" content="Documentation for NESSie.jl."/><meta property="og:description" content="Documentation for NESSie.jl."/><meta property="twitter:description" content="Documentation for NESSie.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">NESSie.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../born/">Born ions</a></li><li class="is-active"><a class="tocitem" href>Poisson test models</a><ul class="internal"><li><a class="tocitem" href="#Local-electrostatics"><span>Local electrostatics</span></a></li><li><a class="tocitem" href="#Nonlocal-electrostatics"><span>Nonlocal electrostatics</span></a></li></ul></li><li><a class="tocitem" href="../proteins/">Protein electrostatics</a></li></ul></li><li><span class="tocitem">Data formats</span><ul><li><a class="tocitem" href="../../formats/input/">Input formats</a></li><li><a class="tocitem" href="../../formats/output/">Output formats</a></li></ul></li><li><span class="tocitem">Library</span><ul><li><a class="tocitem" href="../../lib/constants/">Constants</a></li><li><a class="tocitem" href="../../lib/electrostatics/">Electrostatics</a></li><li><a class="tocitem" href="../../lib/models/">Models</a></li><li><a class="tocitem" href="../../lib/quadrature/">Quadrature</a></li><li><a class="tocitem" href="../../lib/solvers/">Solvers</a></li><li><a class="tocitem" href="../../lib/util/">Utility functions</a></li><li><input class="collapse-toggle" id="menuitem-4-7" type="checkbox"/><label class="tocitem" for="menuitem-4-7"><span class="docs-label">Internals</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../intern/base/"><code>NESSie</code></a></li><li><a class="tocitem" href="../../intern/bem/"><code>NESSie.BEM</code></a></li><li><a class="tocitem" href="../../intern/format/"><code>NESSie.Format</code></a></li><li><a class="tocitem" href="../../intern/radon/"><code>NESSie.Radon</code></a></li><li><a class="tocitem" href="../../intern/rjasanow/"><code>NESSie.Rjasanow</code></a></li><li><a class="tocitem" href="../../intern/testmodel/"><code>NESSie.TestModel</code></a></li></ul></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials</a></li><li class="is-active"><a href>Poisson test models</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Poisson test models</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/tkemmer/NESSie.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/tkemmer/NESSie.jl/blob/develop/docs/src/tutorials/xie.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Poisson-test-models"><a class="docs-heading-anchor" href="#Poisson-test-models">Poisson test models</a><a id="Poisson-test-models-1"></a><a class="docs-heading-anchor-permalink" href="#Poisson-test-models" title="Permalink"></a></h1><p>This tutorial demonstrates the Poisson test models provided by NESSie, which are based on the local and nonlocal Poisson dielectric models introduced in <a href="../../#Bibliography">[Xie16]</a>. These test models represent a protein structure embedded within a dielectric sphere. The corresponding point charges are automatically translated and rescaled to fit inside the sphere, providing a simple test system for validating our electrostatic solvers.</p><pre><code class="language-julia hljs">using NESSie.TestModel
+
+opt = Option(2.0, 80.0, 2.0, 20.0)
+xie = TestModel.XieSphere(1.0, Format.readpqr(nessie_data_path(&quot;xie/2LZX.pqr&quot;)), opt)</code></pre><pre><code class="nohighlight hljs">NESSie.TestModel.XieSphere{Float64}(charges = 479, radius = 1.0)</code></pre><p>The setup above creates a <a href="../../lib/models/#NESSie.TestModel.XieSphere"><code>TestModel.XieSphere</code></a> model with radius 1 Å, loaded from the 2LZX PQR file shipped with NESSie, with dielectric parameters specified by <a href="../../lib/constants/#NESSie.Option"><code>Option</code></a>: solvent dielectric constant <span>$\varepsilon_\Sigma = 80$</span>, solute dielectric constant <span>$\varepsilon_\Omega = 2$</span>, high-frequency dielectric constant <span>$\varepsilon_\infty = 2$</span>, and correlation length <span>$\lambda = 20$</span> Å.</p><p>Let’s also generate a grid of observation points <code>Ξ</code> in the xy-plane (z = 0) spanning the square region [-2, 2]² Å, used for plotting the electrostatic potentials:</p><pre><code class="language-julia hljs">lval = 2.0   # grid size [-lval, lval]² in xy-plane
+gres = 40    # grid resolution (gres x gres)
+
+# generate observation points
+Ξ = collect(Iterators.flatten(obspoints_plane(
+    [-lval, lval, zero(lval)],
+    [-lval, -lval, zero(lval)],
+    [ lval, -lval, zero(lval)],
+    gres, gres
+)))
+
+# coordinate shorthand for plotting
+plot_x = getindex.(Ξ, 1)
+plot_y = getindex.(Ξ, 2);</code></pre><h2 id="Local-electrostatics"><a class="docs-heading-anchor" href="#Local-electrostatics">Local electrostatics</a><a id="Local-electrostatics-1"></a><a class="docs-heading-anchor-permalink" href="#Local-electrostatics" title="Permalink"></a></h2><p>In the local Poisson dielectric model, the solvent response at any point depends only on the local electric field. The <a href="../../lib/models/#NESSie.TestModel.LocalXieModel"><code>TestModel.LocalXieModel</code></a> provides an analytical series solution to the local Poisson equation for a sphere containing embedded point charges. The number of terms <code>len = 20</code> (second constructor argument below) in the series controls the approximation accuracy.</p><pre><code class="language-julia hljs">using Plots
+
+xie_local = LocalXieModel(xie, 20)
+
+surface(plot_x, plot_y, rfpotential(Ξ, xie_local);
+    title = &quot;Local Poisson test model&quot;,
+    xlabel = &quot;x (Å)&quot;,
+    ylabel = &quot;y (Å)&quot;,
+    zlabel = &quot;Reaction field potential (V)&quot;,
+    cmap = :viridis
+)</code></pre><p><img src="../xie_files/figure-commonmark/cell-5-output-1.svg" alt/></p><p>The surface plot above shows the <strong>reaction field potential</strong> computed from the analytical local model. The reaction field potential <span>$\varphi^* = \varphi − \varphi_{mol}$</span> (the total electrostatic potential minus the molecular/Coulombic potential) captures the dielectric medium’s response to the embedded charges. The pattern shows the potential strongest near the charge locations projected onto the xy-plane, decaying toward the edges of the plot region.</p><p>Now, let’s move on to the BEM approximation:</p><pre><code class="language-julia hljs">using NESSie.BEM
+
+bem_local = solve(LocalES, Model(xie); method = :blas)
+
+surface(plot_x, plot_y, rfpotential(Ξ, bem_local);
+    title = &quot;Local Poisson test model (BEM approximation)&quot;,
+    xlabel = &quot;x (Å)&quot;,
+    ylabel = &quot;y (Å)&quot;,
+    zlabel = &quot;Reaction field potential (V)&quot;,
+    cmap = :viridis
+)</code></pre><pre><code class="nohighlight hljs">Info    : Meshing 1D...
+Info    : [ 40%] Meshing curve 2 (Circle)
+Info    : Done meshing 1D (Wall 9.0909e-05s, CPU 9.6e-05s)
+Info    : Meshing 2D...
+Info    : Meshing surface 1 (Sphere, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 0.0248435s, CPU 0.024791s)
+Info    : 976 nodes 1975 elements
+Info    : Writing &#39;/tmp/jl_2Vk1Mn6XYF.msh&#39;...
+Info    : Done writing &#39;/tmp/jl_2Vk1Mn6XYF.msh&#39;</code></pre><p><img src="../xie_files/figure-commonmark/cell-6-output-2.svg" alt/></p><p>The BEM solver provides a numerical approximation to the same local electrostatic problem. We first convert the <a href="../../lib/models/#NESSie.TestModel.XieSphere"><code>TestModel.XieSphere</code></a> into a triangle mesh via the <a href="../../lib/models/#NESSie.Model"><code>Model</code></a> constructor, then solve the boundary integral equation for the local electrostatic problem. As can be seen from the surface plot, the resulting reaction field potential closely matches the analytical solution.</p><h2 id="Nonlocal-electrostatics"><a class="docs-heading-anchor" href="#Nonlocal-electrostatics">Nonlocal electrostatics</a><a id="Nonlocal-electrostatics-1"></a><a class="docs-heading-anchor-permalink" href="#Nonlocal-electrostatics" title="Permalink"></a></h2><p>The nonlocal Poisson dielectric model accounts for short-range solvent–solvent correlations beyond the classical local description. In this framework, the solvent polarization at one point depends on the electric field in a neighborhood, not just at that single point. This is captured by an additional parameter, the correlation length <span>$\lambda$</span>, and a high-frequency dielectric constant <span>$\varepsilon_\infty$</span>.</p><p>The <a href="../../lib/models/#NESSie.TestModel.NonlocalXieModel2"><code>TestModel.NonlocalXieModel2</code></a> implements the second nonlocal Poisson dielectric model from <a href="../../#Bibliography">[Xie16]</a>. Let’s once again start with the analytical reaction field potentials:</p><pre><code class="language-julia hljs">xie_nonlocal = NonlocalXieModel2(xie, 20)
+
+surface(plot_x, plot_y, rfpotential(Ξ, xie_nonlocal);
+    title = &quot;Nonlocal Poisson test model&quot;,
+    xlabel = &quot;x (Å)&quot;,
+    ylabel = &quot;y (Å)&quot;,
+    zlabel = &quot;Reaction field potential (V)&quot;,
+    cmap = :viridis
+)</code></pre><p><img src="../xie_files/figure-commonmark/cell-7-output-1.svg" alt/></p><p>Using the same workflow as in the local case, we can compute the corresponding BEM approximation:</p><pre><code class="language-julia hljs">bem_nonlocal = solve(NonlocalES, Model(xie); method = :blas)
+
+surface(plot_x, plot_y, rfpotential(Ξ, bem_nonlocal; surface_margin = 0.05);
+    title = &quot;Nonlocal Poisson test model (BEM approximation)&quot;,
+    xlabel = &quot;x (Å)&quot;,
+    ylabel = &quot;y (Å)&quot;,
+    zlabel = &quot;Reaction field potential (V)&quot;,
+    cmap = :viridis
+)</code></pre><pre><code class="nohighlight hljs">Info    : Meshing 1D...
+Info    : [ 40%] Meshing curve 2 (Circle)
+Info    : Done meshing 1D (Wall 8.1993e-05s, CPU 8.6e-05s)
+Info    : Meshing 2D...
+Info    : Meshing surface 1 (Sphere, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 0.0256041s, CPU 0.025579s)
+Info    : 976 nodes 1975 elements
+Info    : Writing &#39;/tmp/jl_I5IPSjqhoJ.msh&#39;...
+Info    : Done writing &#39;/tmp/jl_I5IPSjqhoJ.msh&#39;</code></pre><p><img src="../xie_files/figure-commonmark/cell-8-output-2.svg" alt/></p><p>The <code>surface_margin = 0.05</code> parameter offsets the evaluation grid slightly above the molecular surface to avoid singularities when computing the BEM reaction field potential outside the domain. Again, the approximation resembles the analytical solution, albeit less closely as in the local case. The differences nearly vanish, however, in the full electrostatic potentials, which are dominated by the molecular potentials:</p><pre><code class="language-julia hljs">surface(plot_x, plot_y, espotential(Ξ, xie_nonlocal);
+    title = &quot;Nonlocal Poisson test model (side view)&quot;,
+    xlabel = &quot;x (Å)&quot;,
+    zlabel = &quot;Electrostatic potential (V)&quot;,
+    camera = (0, 0),
+    yticks = []
+)</code></pre><p><img src="../xie_files/figure-commonmark/cell-9-output-1.svg" alt/></p><pre><code class="language-julia hljs">surface(plot_x, plot_y, espotential(Ξ, bem_nonlocal);
+    title = &quot;Nonlocal Poisson test model (BEM approximation, side view)&quot;,
+    xlabel = &quot;x (Å)&quot;,
+    zlabel = &quot;Electrostatic potential (V)&quot;,
+    camera = (0, 0),
+    yticks = []
+)</code></pre><p><img src="../xie_files/figure-commonmark/cell-10-output-1.svg" alt/></p><p>We can also compare the polar solvation free energy (reaction field energy) between the analytical models and their BEM approximations. NESSie provides the <a href="../../lib/electrostatics/#NESSie.rfenergy"><code>rfenergy</code></a> function for this:</p><pre><code class="language-julia hljs">using Printf
+
+@printf &quot;Analytical local:     %.4f kJ/mol\n&quot; rfenergy(xie_local)
+@printf &quot;BEM local:            %.4f kJ/mol\n&quot; rfenergy(bem_local)
+@printf &quot;Analytical nonlocal:  %.4f kJ/mol\n&quot; rfenergy(xie_nonlocal)
+@printf &quot;BEM nonlocal:         %.4f kJ/mol\n&quot; rfenergy(bem_nonlocal)</code></pre><pre><code class="nohighlight hljs">Analytical local:     -9288.3464 kJ/mol
+BEM local:            -9319.9194 kJ/mol
+Analytical nonlocal:  -2198.7490 kJ/mol
+BEM nonlocal:         -2030.8937 kJ/mol</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../born/">« Born ions</a><a class="docs-footer-nextpage" href="../proteins/">Protein electrostatics »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Wednesday 2 September 2026 09:12">Wednesday 2 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
