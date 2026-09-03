@@ -48,7 +48,7 @@ model.
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function molpotential(ξ::Vector{T}, model::Model{T}; kwargs...) where T
     _molpotential(ξ, model.charges; kwargs...) / model.params.εΩ * potprefactor(T)
@@ -80,7 +80,7 @@ structureless medium for the given observation point(s) ξ (Ξ):
    charge. Closer distances are replaced by this value.
 
 ## Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 
 ## Aliases
     _molpotential(model::Model{T, Triangle{T}})
@@ -118,7 +118,7 @@ end
 # =========================================================================================
 """
     _molpotential_dn(ξ::Vector{T}, charges::AbstractVector{Charge{T}})
-    _molpotential_dn(Ξ::AbstractVector{Vector{T}}, charges::AbstractVector{Charge{T}})
+    _molpotential_dn(Ξ::AbstractArray{Vector{T}}, charges::AbstractVector{Charge{T}})
 
 Computes and returns the normal derivative(s) of the molecular potential(s) of the given
 system of point charges in a structureless medium for the given observation point(s) ξ (Ξ):
@@ -132,7 +132,7 @@ system of point charges in a structureless medium for the given observation poin
    point charge. Smaller values are replaced by this.
 
 ## Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 
 ## Aliases
     _molpotential_dn(model::Model{T, Triangle{T}})
