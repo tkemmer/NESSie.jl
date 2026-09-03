@@ -25,7 +25,7 @@ end
 # =========================================================================================
 """
     espotential(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
-    espotential(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
+    espotential(::Type{<: LocalityType}, Ξ::AbstractArray{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal electrostatic potential(s) at the given observation point(s)
 ξ (Ξ) for the given born ion. This function automatically locates the observation point(s).
@@ -40,11 +40,11 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 
 # Alias
     espotential(domain::Symbol, ::Type{<: LocalityType}, ξ::Vector{T}, ::BornIon{T})
-    espotential(domain::Symbol, ::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ::BornIon{T})
+    espotential(domain::Symbol, ::Type{<: LocalityType}, Ξ::AbstractArray{Vector{T}}, ::BornIon{T})
 
 Computes the electrostatic potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
@@ -52,7 +52,7 @@ given domain `:Ω`, `:Σ`, or `:Γ`.
 @inline function NESSie.espotential(
     domain::Symbol,
     lt::Type{<: LocalityType},
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     ion::BornIon{T};
     kwargs...
 ) where T
@@ -75,7 +75,7 @@ end
 
 @inline function NESSie.espotential(
     lt::Type{<: LocalityType},
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     ion::BornIon{T};
     kwargs...
 ) where T
@@ -86,7 +86,7 @@ end
 # =========================================================================================
 """
     molpotential(ξ::Vector{T}, ion::BornIon{T})
-    molpotential(Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
+    molpotential(Ξ::AbstractArray{Vector{T}}, ion::BornIon{T})
 
 Computes the molecular potential(s) at the given observation point(s) ξ (Ξ) for the given
 born ion.
@@ -99,10 +99,10 @@ born ion.
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function NESSie.molpotential(
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     ion::BornIon{T};
     kwargs...
 ) where T
@@ -113,7 +113,7 @@ end
 # =========================================================================================
 """
     rfpotential(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
-    rfpotential(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
+    rfpotential(::Type{<: LocalityType}, Ξ::AbstractArray{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal reaction field potential(s) at the given observation point(s)
 ξ (Ξ) for the given born ion. This function automatically locates the observation point(s).
@@ -125,11 +125,11 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 
 # Alias
     rfpotential(domain::Symbol, ::Type{<: LocalityType}, ξ::Vector{T}, ::BornIon{T})
-    rfpotential(domain::Symbol, ::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ::BornIon{T})
+    rfpotential(domain::Symbol, ::Type{<: LocalityType}, Ξ::AbstractArray{Vector{T}}, ::BornIon{T})
 
 Computes the reaction field potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
@@ -137,7 +137,7 @@ given domain `:Ω`, `:Σ`, or `:Γ`.
 @inline function NESSie.rfpotential(
     domain::Symbol,
     lt::Type{<: LocalityType},
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     ion::BornIon{T};
     kwargs...
 ) where T
@@ -160,7 +160,7 @@ end
 
 @inline function NESSie.rfpotential(
     lt::Type{<: LocalityType},
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     ion::BornIon{T};
     kwargs...
 ) where T
@@ -171,7 +171,7 @@ end
 # =========================================================================================
 """
     _espotential_Ω(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
-    _espotential_Ω(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
+    _espotential_Ω(::Type{<: LocalityType}, Ξ::AbstractArray{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 inside the Born sphere.
@@ -183,11 +183,11 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function _espotential_Ω(
     lt::Type{<: LocalityType},
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     ion::BornIon{T};
     kwargs...
 ) where T
@@ -198,7 +198,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Ω(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
-    _rfpotential_Ω(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
+    _rfpotential_Ω(::Type{<: LocalityType}, Ξ::AbstractArray{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 inside the Born sphere.
@@ -207,7 +207,7 @@ inside the Born sphere.
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 function _rfpotential_Ω(
     ::Type{LocalES},
@@ -230,7 +230,7 @@ end
 
 @inline function _rfpotential_Ω(
     lt::Type{<: LocalityType},
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     ion::BornIon{T}
 ) where T
     collect(T, _rfpotential_Ω(lt, ξ, ion) for ξ in Ξ)
@@ -240,7 +240,7 @@ end
 # =========================================================================================
 """
     _espotential_Σ(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
-    _espotential_Σ(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
+    _espotential_Σ(::Type{<: LocalityType}, Ξ::AbstractArray{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 outside the Born sphere.
@@ -252,7 +252,7 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function _espotential_Σ(
     ::Type{LocalES},
@@ -278,7 +278,7 @@ end
 
 @inline function _espotential_Σ(
     lt::Type{<: LocalityType},
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     ion::BornIon{T};
     kwargs...
 ) where T
@@ -289,7 +289,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Σ(::Type{<: LocalityType}, ξ::Vector{T}, ion::BornIon{T})
-    _rfpotential_Σ(::Type{<: LocalityType}, Ξ::AbstractVector{Vector{T}}, ion::BornIon{T})
+    _rfpotential_Σ(::Type{<: LocalityType}, Ξ::AbstractArray{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 outside the Born sphere.
@@ -301,7 +301,7 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 function _rfpotential_Σ(
     ::Type{LocalES},
@@ -327,7 +327,7 @@ end
 
 @inline function _rfpotential_Σ(
     lt::Type{<: LocalityType},
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     ion::BornIon{T};
     kwargs...
 ) where T
