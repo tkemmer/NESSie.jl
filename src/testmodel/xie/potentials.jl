@@ -25,7 +25,7 @@ end
 # =========================================================================================
 """
     espotential(ξ::Vector{T}, xie::XieTestModel{T})
-    espotential(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+    espotential(Ξ::AbstractArray{Vector{T}}, xie::XieTestModel{T})
 
 Computes the local or nonlocal electrostatic potential(s) at the given observation point(s)
 ξ (Ξ) for the given Xie test model.
@@ -40,18 +40,18 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 
 # Alias
     espotential(domain::Symbol, ξ::Vector{T}, xie::XieTestModel{T})
-    espotential(domain::Symbol, Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+    espotential(domain::Symbol, Ξ::AbstractArray{Vector{T}}, xie::XieTestModel{T})
 
 Computes the electrostatic potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
 """
 @inline function NESSie.espotential(
     domain::Symbol,
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     xie::XieTestModel{T};
     kwargs...
 ) where T
@@ -72,7 +72,7 @@ end
 end
 
 @inline function NESSie.espotential(
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     xie::XieTestModel{T};
     kwargs...
 ) where T
@@ -84,8 +84,8 @@ end
 """
     molpotential(ξ::Vector{T}, xie::XieSphere{T})
     molpotential(ξ::Vector{T}, xie::XieTestModel{T})
-    molpotential(Ξ::AbstractVector{Vector{T}}, xie::XieSphere{T})
-    molpotential(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+    molpotential(Ξ::AbstractArray{Vector{T}}, xie::XieSphere{T})
+    molpotential(Ξ::AbstractArray{Vector{T}}, xie::XieTestModel{T})
 
 Computes the molecular potential(s) at the given observation point(s) ξ (Ξ) for the given
 Xie sphere or Xie test model.
@@ -98,10 +98,10 @@ Xie sphere or Xie test model.
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function NESSie.molpotential(
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     xie::Union{XieSphere{T}, <: XieTestModel{T}};
     kwargs...
 ) where T
@@ -112,7 +112,7 @@ end
 # =========================================================================================
 """
     rfpotential(ξ::Vector{T}, xie::XieTestModel{T})
-    rfpotential(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+    rfpotential(Ξ::AbstractArray{Vector{T}}, xie::XieTestModel{T})
 
 Computes the local or nonlocal reaction field potential(s) at the given observation point(s)
 ξ (Ξ) for the given Xie test model.
@@ -124,18 +124,18 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 
 # Alias
     rfpotential(domain::Symbol, ξ::Vector{T}, xie::XieTestModel{T})
-    rfpotential(domain::Symbol, Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+    rfpotential(domain::Symbol, Ξ::AbstractArray{Vector{T}}, xie::XieTestModel{T})
 
 Computes the reaction field potential(s) for the given observation point(s) ξ (Ξ) and the
 given domain `:Ω`, `:Σ`, or `:Γ`.
 """
 @inline function NESSie.rfpotential(
     domain::Symbol,
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     xie::XieTestModel{T};
     kwargs...
 ) where T
@@ -156,7 +156,7 @@ end
 end
 
 @inline function NESSie.rfpotential(
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     xie::XieTestModel{T};
     kwargs...
 ) where T
@@ -167,7 +167,7 @@ end
 # =========================================================================================
 """
     _espotential_Ω(ξ::Vector{T}, xie::XieTestModel{T})
-    _espotential_Ω(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+    _espotential_Ω(Ξ::AbstractArray{Vector{T}}, xie::XieTestModel{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 inside the test model sphere.
@@ -179,10 +179,10 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function _espotential_Ω(
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     xie::XieTestModel{T};
     kwargs...
 ) where T
@@ -193,7 +193,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Ω(ξ::Vector{T}, xie::XieTestModel{T})
-    _rfpotential_Ω(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+    _rfpotential_Ω(Ξ::AbstractArray{Vector{T}}, xie::XieTestModel{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 inside the test model sphere.
@@ -202,7 +202,7 @@ inside the test model sphere.
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 function _rfpotential_Ω(
     ξ::Vector{T},
@@ -250,7 +250,7 @@ function _rfpotential_Ω(
 end
 
 @inline function _rfpotential_Ω(
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     xie::XieTestModel{T}
 ) where T
     collect(T, _rfpotential_Ω(ξ, xie) for ξ in Ξ)
@@ -260,7 +260,7 @@ end
 # =========================================================================================
 """
     _espotential_Σ(ξ::Vector{T}, xie::XieTestModel{T})
-    _espotential_Σ(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+    _espotential_Σ(Ξ::AbstractArray{Vector{T}}, xie::XieTestModel{T})
 
 Computes the local or nonlocal electrostatic potential for (an) observation point(s) ξ (Ξ)
 outside the test model sphere.
@@ -272,7 +272,7 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 function _espotential_Σ(
     ξ::Vector{T},
@@ -319,7 +319,7 @@ function _espotential_Σ(
 end
 
 @inline function _espotential_Σ(
-    Ξ::Union{<: AbstractVector{Vector{T}}, <: Base.Generator},
+    Ξ::Union{<: AbstractArray{Vector{T}}, <: Base.Generator},
     xie::XieTestModel{T};
     kwargs...
 ) where T
@@ -330,7 +330,7 @@ end
 # =========================================================================================
 """
     _rfpotential_Σ(ξ::Vector{T}, xie::XieTestModel{T})
-    _rfpotential_Σ(Ξ::AbstractVector{Vector{T}}, xie::XieTestModel{T})
+    _rfpotential_Σ(Ξ::AbstractArray{Vector{T}}, xie::XieTestModel{T})
 
 Computes the local or nonlocal reaction field potential for (an) observation point(s) ξ (Ξ)
 outside the test model sphere.
@@ -342,10 +342,10 @@ See [`molpotential`](@ref)
 ``V = \\frac{C}{F}``
 
 # Return type
-`T` or `Vector{T}`
+`T` or `Array{T}`
 """
 @inline function _rfpotential_Σ(
-    ξorΞ::Union{Vector{T}, <: AbstractVector{Vector{T}}, <: Base.Generator},
+    ξorΞ::Union{Vector{T}, <: AbstractArray{Vector{T}}, <: Base.Generator},
     xie::XieTestModel{T};
     kwargs...
 ) where T
