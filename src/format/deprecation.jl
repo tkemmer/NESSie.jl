@@ -1,29 +1,62 @@
-# =========================================================================================
-"""
-    writexml3d_json(
+# deprecated in v1.6 (to be removed in v2.0)
+export writexml3d_json
+
+@inline function writexml3d_json(
         stream::IOStream,
-        model ::Union{Vector{Vector{T}}, Model{T, Triangle{T}}}
+        model::Union{Vector{Vector{T}}, Model{T, Triangle{T}}}
+    ) where T
+    Base.depwarn(
+        "`writexml3d_json` is deprecated and will be removed in the next major version (v2.0). " *
+        "Please update your code to use alternative functionality before upgrading.",
+        :writexml3d_json
     )
+    # Call original implementation
+    _writexml3d_json(stream, model)
+end
 
-Creates a XML3D-specific JSON file either from a given collection of nodes (representing the
-latter as point cloud) or from a given surface model.
-
-# Specification
-<https://github.com/xml3d/xml3d.js/wiki/External-resources>
-
-# Return type
-`Nothing`
-
-# Alias
-
-    writexml3d_json(
+@inline function writexml3d_json(
         fname::AbstractString,
-        nodes::Union{Vector{Vector{T}}), Model{T, Triangle{T}}}
+        model::Union{Vector{Vector{T}}, Model{T, Triangle{T}}}
+    ) where T
+    Base.depwarn(
+        "`writexml3d_json` is deprecated and will be removed in the next major version (v2.0). " *
+        "Please update your code to use alternative functionality before upgrading.",
+        :writexml3d_json
     )
+    # Call original implementation
+    _writexml3d_json(fname, model)
+end
 
-Creates the JSON file by name rather than `IOStream` object.
-"""
-function writexml3d_json(
+# deprecated in v1.6 (to be removed in v2.0)
+export writexml3d_xml
+
+@inline function writexml3d_xml(
+        stream::IOStream,
+        nodes::Vector{Vector{T}}
+    ) where T
+    Base.depwarn(
+        "`writexml3d_xml` is deprecated and will be removed in the next major version (v2.0). " *
+        "Please update your code to use alternative functionality before upgrading.",
+        :writexml3d_xml
+    )
+    # Call original implementation
+    _writexml3d_xml(stream, nodes)
+end
+
+@inline function writexml3d_xml(
+        fname::AbstractString,
+        nodes::Vector{Vector{T}}
+    ) where T
+    Base.depwarn(
+        "`writexml3d_xml` is deprecated and will be removed in the next major version (v2.0). " *
+        "Please update your code to use alternative functionality before upgrading.",
+        :writexml3d_xml
+    )
+    # Call original implementation
+    _writexml3d_xml(fname, nodes)
+end
+
+function _writexml3d_json(
         stream::IOStream,
         nodes ::Vector{Vector{T}}
     ) where T
@@ -40,7 +73,7 @@ function writexml3d_json(
     nothing
 end
 
-function writexml3d_json(
+function _writexml3d_json(
         stream::IOStream,
         model ::Model{T, Triangle{T}}
     ) where T
@@ -74,40 +107,14 @@ function writexml3d_json(
     nothing
 end
 
-@inline function writexml3d_json(
+@inline function _writexml3d_json(
         fname::AbstractString,
         model::Union{Vector{Vector{T}},Model{T, Triangle{T}}}
     ) where T
     open(fh -> writexml3d_json(fh, model), fname, "w")
 end
 
-
-# =========================================================================================
-"""
-    writexml3d_xml(
-        stream::IOStream,
-        nodes ::Vector{Vector{T}}
-    )
-
-Creates a XML3D-specific XML file from a given collection of nodes, representing the latter
-as point cloud.
-
-# Specification
-<https://github.com/xml3d/xml3d.js/wiki/External-resources>
-
-# Return type
-`Nothing`
-
-# Alias
-
-    writexml3d_xml(
-        fname::AbstractString,
-        nodes::Vector{Vector{T}}
-    )
-
-Creates the XML file by name rather than `IOStream` object.
-"""
-function writexml3d_xml(
+function _writexml3d_xml(
         stream::IOStream,
         nodes ::Vector{Vector{T}}
     ) where T
@@ -123,7 +130,7 @@ function writexml3d_xml(
     nothing
 end
 
-@inline function writexml3d_xml(
+@inline function _writexml3d_xml(
         fname::AbstractString,
         nodes::Vector{Vector{T}}
     ) where T

@@ -32,7 +32,6 @@ export readstl, writestl
 include("format/vtk.jl")
 export writevtk
 
-include("format/xml3d.jl")
-export writexml3d_json, writexml3d_xml
+include("format/deprecation.jl")
 
 end # module
