@@ -371,7 +371,7 @@ to the points ``A``, ``B``, and ``C``, respectively.
  * `nbc`   Number of observation points along ``\\overline{BC}``
 
 # Return type
-`Generator -> Vector{T}`
+`Generator -> LinRange{Vector{T}, Int}`
 
 # Example
 ```julia

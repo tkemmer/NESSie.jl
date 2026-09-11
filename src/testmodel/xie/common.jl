@@ -31,11 +31,11 @@ function legendre(maxn::Int, x::T) where T <: AbstractFloat
     maxn == 1 && return n::Int -> [one(T)][n+1]
 
     P = Array{T}(undef, maxn)
-    P[1] = one(T) # P₀(x) = 0
+    P[1] = one(T) # P₀(x) = 1
     P[2] = x      # P₁(x) = x
 
     # Use Bonnet's recursion formula for remaining values:
-    # Pₙ₊₁(x) = 1/(n+1) ⋅ [(2n + 1)⋅x⋅Pₙ(x) - n⋅Pₙ₋₁}(x)]
+    # Pₙ₊₁(x) = 1/(n+1) ⋅ [(2n + 1)⋅x⋅Pₙ(x) - n⋅Pₙ₋₁(x)]
     @inbounds for n in 1:maxn-2
         P[n + 2] = (n + 1) \ ((2n + 1) * x * P[n + 1] - n * P[n])
     end

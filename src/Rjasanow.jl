@@ -26,7 +26,7 @@ struct InSpace <: ObservationPosition end
 
 # =========================================================================================
 """
-    function _laplacepot(
+    _laplacepot(
         ptype::Type{<: PotentialType},
         ξ    ::AbstractVector{T},
         elem ::Triangle{T},

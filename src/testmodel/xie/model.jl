@@ -10,7 +10,7 @@ System model of a dielectric sphere containing multiple point charges. On constr
 given point charge model will be translated and rescaled to fit inside an origin-centered
 sphere with the specified radius.
 
-# Special contructors
+# Special constructors
 ```julia
 XieSphere(
     radius ::T,
