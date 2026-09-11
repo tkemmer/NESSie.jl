@@ -30,18 +30,14 @@ jobs:
       matrix:
         version:
           - 'lts'
-          - '1.12'
-          - 'pre'
+          - '1.13'
         os:
           - ubuntu-latest
         arch:
           - x64
           - x86
-        include:
-          - version: 'pre'
-            experimental: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: julia-actions/setup-julia@v3
         with:
           version: ${{ matrix.version }}
@@ -61,7 +57,7 @@ jobs:
       contents: write
       statuses: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: julia-actions/setup-julia@v3
         with:
           version: '1'
