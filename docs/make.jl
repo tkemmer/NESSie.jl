@@ -42,13 +42,12 @@ makedocs(
     ],
     clean     = true,
     doctest   = true,
-    linkcheck = true,
+    linkcheck = get(ENV, "CI", nothing) == "true",
     linkcheck_timeout = 30,
     checkdocs = :all,
     pages     = pages,
     format    = Documenter.HTML(
-        edit_link  = "develop",
-        prettyurls = get(ENV, "CI", nothing) == "true"
+        edit_link  = "develop"
     ),
     sitename  = "NESSie.jl",
     repo      = Remotes.GitHub("tkemmer", "NESSie.jl"),
