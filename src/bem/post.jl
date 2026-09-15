@@ -49,8 +49,8 @@ end
     espotential(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal electrostatic potential(s) at the given observation point(s)
-ξ (Ξ) for the given BEM result. This function tries to automatically locate the observation
-point(s) using [`guess_domain`](@ref).
+ξ (Ξ). This function tries to automatically locate the observation point(s) using
+[`guess_domain`](@ref).
 
 The electrostatic potential is computed as the sum of the corresponding
 [reaction field potential](@ref rfpotential) and the [molecular potential](@ref molpotential).
@@ -126,8 +126,7 @@ end
     molpotential(ξ::Vector{T}, bem::BEMResult{T})
     molpotential(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
-Computes the molecular potential(s) at the given observation point(s) ξ (Ξ) for the given
-BEM result.
+Computes the molecular potential(s) at the given observation point(s) ξ (Ξ).
 
 # Supported keyword arguments
  - `tolerance::T = 1e-10` minimum distance assumed between any observation point and point
@@ -154,8 +153,8 @@ end
     rfpotential(Ξ::AbstractArray{Vector{T}}, bem::BEMResult{T})
 
 Computes the local or nonlocal reaction field potential(s) at the given observation point(s)
-ξ (Ξ) for the given BEM result. This function tries to automatically locate the observation
-point(s) using [`guess_domain`](@ref).
+ξ (Ξ). This function tries to automatically locate the observation point(s) using
+[`guess_domain`](@ref).
 
 # Supported keyword arguments
  - `surface_margin::T = 1e-6` see [`guess_domain`](@ref)

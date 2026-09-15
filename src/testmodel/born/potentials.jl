@@ -28,7 +28,7 @@ end
     espotential(::Type{<: LocalityType}, Ξ::AbstractArray{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal electrostatic potential(s) at the given observation point(s)
-ξ (Ξ) for the given born ion. This function automatically locates the observation point(s).
+ξ (Ξ). This function automatically locates the observation point(s).
 
 The electrostatic potential is computed as the sum of the corresponding
 [reaction field potential](@ref rfpotential) and the [molecular potential](@ref molpotential).
@@ -88,8 +88,7 @@ end
     molpotential(ξ::Vector{T}, ion::BornIon{T})
     molpotential(Ξ::AbstractArray{Vector{T}}, ion::BornIon{T})
 
-Computes the molecular potential(s) at the given observation point(s) ξ (Ξ) for the given
-born ion.
+Computes the molecular potential(s) at the given observation point(s) ξ (Ξ).
 
 # Supported keyword arguments
  - `tolerance::T = 1e-10` minimum distance assumed between any observation point and point
@@ -116,7 +115,7 @@ end
     rfpotential(::Type{<: LocalityType}, Ξ::AbstractArray{Vector{T}}, ion::BornIon{T})
 
 Computes the local or nonlocal reaction field potential(s) at the given observation point(s)
-ξ (Ξ) for the given born ion. This function automatically locates the observation point(s).
+ξ (Ξ). This function automatically locates the observation point(s).
 
 # Supported keyword arguments
 See [`molpotential`](@ref)
