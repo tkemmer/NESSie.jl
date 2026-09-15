@@ -65,18 +65,13 @@ More examples are available in the `docs/examples/` directory.
 A detailed documentation of `NESSie.jl` is available
 [online](https://tkemmer.github.io/NESSie.jl/dev/).
 
-You can also build the same documentation manually using the following command in the
-`docs/` directory:
+You can also build and view the same documentation locally using the following command in the
+`NESSie.jl` directory:
 ```sh
-shell> julia make.jl
+shell> julia --project=docs -ie 'using NESSie, LiveServer; servedocs()
 ```
 Please note that this additionally requires the
-[`Documenter.jl`](http://github.com/JuliaDocs/Documenter.jl) package to be installed. This can be achieved by using the following command in the `Pkg` shell:
-```sh
-pkg> add Documenter
-```
-After the build process has finished successfully, the documentation can be
-found in the `docs/build/` directory.
+[`LiveServer.jl`](https://github.com/JuliaDocs/LiveServer.jl) package to be installed.
 
 
 ## Testing
