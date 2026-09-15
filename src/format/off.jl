@@ -31,3 +31,34 @@ end
 @inline function _readoff(f, ::Type{T}) where T <: AbstractFloat
     Model(load(f; pointtype = _pointtype(T)))
 end
+
+
+# =========================================================================================
+"""
+    writeoff(stream::IOStream, model::Model{T, Triangle{T}})
+
+Creates an OFF file from a given surface model.
+
+# Specification
+<http://www.geomview.org/docs/html/OFF.html>
+
+# Return type
+`Nothing`
+
+# Alias
+
+    writeoff(fname::AbstractString, model::Model{T, Triangle{T}})
+
+Creates the OFF file by name rather than `IOStream` object.
+"""
+@inline function writeoff(stream::IOStream, model::Model{T, Triangle{T}}) where T
+    _writeoff(Stream{format"OFF"}(stream), model)
+end
+
+@inline function writeoff(fname::AbstractString, model::Model{T, Triangle{T}}) where T
+    _writeoff(File{format"OFF"}(fname), model)
+end
+
+@inline function _writeoff(f, model::Model{T, Triangle{T}}) where T
+    save(f, GeometryBasics.mesh(model))
+end

@@ -10,6 +10,7 @@ Currently supported output file formats with different models:
 |--------------------|:-------------:|:------------:|:----------------:|
 | [HMO](@ref hmoout) | ✓             |              | ✓                |
 | [OBJ](@ref)        | ✓             |              |                  |
+| [OFF](@ref offout) | ✓             |              |                  |
 | [SKEL](@ref)       | ✓             | ✓            |                  |
 | [STL](@ref stlout) | ✓             |              |                  |
 | [VTK](@ref)        | ✓             | ✓            |                  |
@@ -22,6 +23,11 @@ writehmo
 ## OBJ
 ```@docs
 writeobj
+```
+
+## [OFF](@id offout)
+```@docs
+writeoff
 ```
 
 ## SKEL

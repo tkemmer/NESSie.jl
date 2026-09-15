@@ -6,6 +6,8 @@ using JSON
 using LightXML: XMLDocument, create_root, new_child, add_text, set_attribute
 using FileIO, MeshIO
 
+import GeometryBasics
+
 include("format/hmo.jl")
 export readhmo, writehmo
 
@@ -19,7 +21,7 @@ include("format/obj.jl")
 export writeobj
 
 include("format/off.jl")
-export readoff
+export readoff, writeoff
 
 include("format/pqr.jl")
 export readpqr
