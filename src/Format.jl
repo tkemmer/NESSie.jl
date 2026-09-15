@@ -1,9 +1,10 @@
 module Format
 
 using ..NESSie
-using ..NESSie: _reverseindex, _seek, vertexnormals
+using ..NESSie: _pointtype, _reverseindex, _seek, vertexnormals
 using JSON
 using LightXML: XMLDocument, create_root, new_child, add_text, set_attribute
+using FileIO, MeshIO
 
 include("format/hmo.jl")
 export readhmo, writehmo
