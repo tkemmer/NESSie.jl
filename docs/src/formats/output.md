@@ -9,7 +9,7 @@ Currently supported output file formats with different models:
 | File type          | Surface model | Volume model | Charges included |
 |--------------------|:-------------:|:------------:|:----------------:|
 | [HMO](@ref hmoout) | ✓             |              | ✓                |
-| [OBJ](@ref)        | ✓             |              |                  |
+| [OBJ](@ref objout) | ✓             |              |                  |
 | [OFF](@ref offout) | ✓             |              |                  |
 | [SKEL](@ref)       | ✓             | ✓            |                  |
 | [STL](@ref stlout) | ✓             |              |                  |
@@ -20,7 +20,7 @@ Currently supported output file formats with different models:
 writehmo
 ```
 
-## OBJ
+## [OBJ](@id objout)
 ```@docs
 writeobj
 ```

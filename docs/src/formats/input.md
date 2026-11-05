@@ -11,6 +11,7 @@ Currently supported input file formats with different models:
 | [HMO](@ref)        | ✓             |              | ✓                |
 | [Mcsf](@ref)       |               | ✓            |                  |
 | [MSMS](@ref)       | ✓             |              |                  |
+| [OBJ](@ref)        | ✓             |              |                  |
 | [OFF](@ref)        | ✓             |              |                  |
 | [PQR](@ref)        |               |              | ✓ (charges only) |
 | [STL](@ref)        | ✓             |              |                  |
@@ -28,6 +29,11 @@ readmcsf
 ## MSMS
 ```@docs
 readmsms
+```
+
+## OBJ
+```@docs
+readobj
 ```
 
 ## OFF

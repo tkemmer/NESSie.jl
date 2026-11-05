@@ -18,7 +18,7 @@ include("format/msms.jl")
 export readmsms
 
 include("format/obj.jl")
-export writeobj
+export readobj, writeobj
 
 include("format/off.jl")
 export readoff, writeoff
