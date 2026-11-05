@@ -29,5 +29,34 @@
 end
 
 @testset "writeobj" begin
-    @test_skip writeobj
+    for T in testtypes
+        # empty model
+        model = Model{T, Triangle{T}}()
+        mktemp() do fname, fh
+            Format.writeobj(fh, model)
+            model2 = Format.readobj(fname, T)
+            @test model == model2
+        end
+
+        # small model
+        nodes = Vector{T}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        elements = Triangle{T}[
+            Triangle(nodes[1], nodes[2], nodes[3]),
+            Triangle(nodes[1], nodes[3], nodes[4])
+        ]
+        model = Model(nodes, elements)
+
+        mktemp() do fname, fh
+            Format.writeobj(fh, model)
+            flush(fh)
+            model2 = Format.readobj(fname, T)
+            @test model == model2
+        end
+
+        mktemp() do fname, _
+            Format.writeobj(fname, model)
+            model2 = Format.readobj(fname, T)
+            @test model == model2
+        end
+    end
 end
