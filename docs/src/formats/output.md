@@ -6,13 +6,13 @@ CurrentModule = NESSie.Format
 
 Currently supported output file formats with different models:
 
-| File type          | Surface model | Volume model | Charges included |
-|--------------------|:-------------:|:------------:|:----------------:|
-| [HMO](@ref hmoout) | ✓             |              | ✓                |
-| [OBJ](@ref objout) | ✓             |              |                  |
-| [OFF](@ref offout) | ✓             |              |                  |
-| [STL](@ref stlout) | ✓             |              |                  |
-| [VTK](@ref)        | ✓             | ✓            |                  |
+| File type          | Surface model | Charges included |
+|--------------------|:-------------:|:----------------:|
+| [HMO](@ref hmoout) | ✓             | ✓                |
+| [OBJ](@ref objout) | ✓             |                  |
+| [OFF](@ref offout) | ✓             |                  |
+| [STL](@ref stlout) | ✓             |                  |
+| [VTK](@ref)        | ✓             |                  |
 
 ## [HMO](@id hmoout)
 ```@docs
