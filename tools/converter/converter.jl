@@ -16,7 +16,7 @@ const formats = Dict{String, String}(
 
 const fin = Dict{String, Tuple{DataType, Function, String}}(
     "hmo"   =>  (Surface, readhmo,  "HyperMesh/.hmo"),
-    "mcsf"  =>  (Volume,  readmcsf, "GAMer/.m"),
+    "mcsf"  =>  (Volume,  readmcsf, "GAMer/.m (deprecated)"),
     "msms"  =>  (Surface, readmsms, "MSMS/.{face,vert}"),
     "obj"   =>  (Surface, readobj,  "Wavefront OBJ/.obj"),
     "off"   =>  (Surface, readoff,  "GAMer/.off"),
