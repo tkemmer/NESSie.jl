@@ -23,8 +23,8 @@ function readpqr(
     charges = Charge{T}[]
     for line in eachline(stream)
         startswith(line, "ATOM") || continue # skip remarks and water molecules
-        vals = map(e -> parse(T, e), split(line)[end-4:end-1])
-        vals[4] == 0 && continue             # skip zero charges
+        vals = parse.(T, split(line)[end-4:end-1])
+        iszero(vals[4]) && continue          # skip zero charges
         push!(charges, Charge(vals...))
     end
     charges
