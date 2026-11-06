@@ -14,8 +14,12 @@ appended automatically if not present.
 # Return type
 `Nothing`
 """
-@inline function writevtk(fname::AbstractString, model::Model{T, Triangle{T}}; kwargs...) where T
-    vtk_save(_vtk_grid(fname, model; kwargs...))
+@inline function writevtk(
+    fname::AbstractString,
+    model::Model{T, Triangle{T}};
+    ascii::Bool = true
+) where T
+    vtk_save(_vtk_grid(fname, model; ascii))
     nothing
 end
 
@@ -31,13 +35,12 @@ end
         points[:, i] = node
     end
 
-    cells = Vector{MeshCell{PolyData.Polys, Vector{Int32}}}(undef, length(model.elements))
-    for (i, elem) in enumerate(model.elements)
-        cells[i] = MeshCell(
+    cells = [
+        MeshCell(
             PolyData.Polys(),
             Int32[revidx[elem.v1], revidx[elem.v2], revidx[elem.v3]]
-        )
-    end
+        ) for elem in model.elements
+    ]
 
     vtk_grid(fname, points, cells; append = false, ascii)
 end
