@@ -136,3 +136,70 @@ end
     ) where T
     open(fh -> writexml3d_xml(fh, nodes), fname, "w")
 end
+
+# deprecated in v1.6 (to be removed in v2.0)
+export writeskel
+
+function writeskel(
+        stream::IOStream,
+        model ::Model{T}
+    ) where T
+    Base.depwarn(
+        "`writeskel` is deprecated and will be removed in the next major version (v2.0). " *
+        "Please update your code to use alternative functionality before upgrading.",
+        :writeskel
+    )
+    # Call original implementation
+    _writeskel(stream, model)
+end
+
+function _writeskel(
+        stream::IOStream,
+        model ::Model{T, Triangle{T}}
+    ) where T
+    println(stream, "SKEL")
+    println(stream, "$(length(model.nodes))\t$(length(model.elements))")
+    for node in model.nodes
+        println(stream, "$(node[1])\t$(node[2])\t$(node[3])")
+    end
+    revidx = _reverseindex(model.nodes)
+    for elem in model.elements
+        (v1, v2, v3) = (revidx[elem.v1] - 1,
+                        revidx[elem.v2] - 1,
+                        revidx[elem.v3] - 1)
+        println(stream, "4\t$v1\t$v2\t$v3\t$v1")
+    end
+    nothing
+end
+
+function _writeskel(
+        stream::IOStream,
+        model ::Model{T, Tetrahedron{T}}
+    ) where T
+    println(stream, "SKEL")
+    println(stream, "$(length(model.nodes))\t$(length(model.elements))")
+    for node in model.nodes
+        println(stream, "$(node[1])\t$(node[2])\t$(node[3])")
+    end
+    revidx = _reverseindex(model.nodes)
+    for elem in model.elements
+        (v1, v2, v3, v4) = (revidx[elem.v1] - 1,
+                            revidx[elem.v2] - 1,
+                            revidx[elem.v3] - 1,
+                            revidx[elem.v4] - 1)
+        println(stream, "7\t$v1\t$v2\t$v3\t$v4\t$v2\t$v4\t$v1")
+    end
+    nothing
+end
+
+@inline function writeskel(
+        fname::AbstractString,
+        model::M
+    ) where {T, M <: Model{T}}
+    Base.depwarn(
+        "`writeskel` is deprecated and will be removed in the next major version (v2.0). " *
+        "Please update your code to use alternative functionality before upgrading.",
+        :writeskel
+    )
+    open(fh -> writeskel(fh, model), fname, "w")
+end

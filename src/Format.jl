@@ -26,9 +26,6 @@ export readoff, writeoff
 include("format/pqr.jl")
 export readpqr
 
-include("format/skel.jl")
-export writeskel
-
 include("format/stl.jl")
 export readstl, writestl
 
