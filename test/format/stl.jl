@@ -1,5 +1,36 @@
 @testset "readstl" begin
-    @test_skip readstl
+    for T in testtypes
+        # empty system
+        model = Model{T, Triangle{T}}()
+        mktemp() do fname, fh
+            Format.writestl(fh, model)
+            seekstart(fh)
+            model2 = Format.readstl(fh, T)
+            @test model == model2
+        end
+
+        # small system
+        nodes = Vector{T}[[0, 0, 0], [0, 0, 3], [0, 3, 0], [1, -3, 3]]
+        model = Model(
+            nodes,
+            Triangle{T}[
+                Triangle(nodes[1], nodes[2], nodes[3]),
+                Triangle(nodes[1], nodes[4], nodes[2])
+            ]
+        )
+        mktemp() do fname, fh
+            Format.writestl(fh, model)
+            seekstart(fh)
+            model2 = Format.readstl(fh, T)
+            @test model == model2
+        end
+
+        mktemp() do fname, _
+            Format.writestl(fname, model)
+            model2 = Format.readstl(fname, T)
+            @test model == model2
+        end
+    end
 end
 
 @testset "writestl" begin
