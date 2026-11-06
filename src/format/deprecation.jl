@@ -344,3 +344,23 @@ end
     ) where {T, M <: Model{T}}
     open(fh -> writevtk(fh, model), fname, "w")
 end
+
+# deprecated in v1.6 (to be removed in v2.0)
+function writevtk(
+        stream::IOStream,
+        model ::Model{T, Triangle{T}}
+    ) where T
+    Base.depwarn(
+        "The `IOStream`-based `writevtk` function is deprecated and will be removed in the next major " *
+        "version (v2.0). Please update your code to use alternative functionality before upgrading.",
+        :writevtk
+    )
+    mktempdir() do dir
+        fname = joinpath(dir, "mesh")
+        outfiles = vtk_save(_vtk_grid(fname, model))
+        open(only(outfiles), "r") do io
+            write(stream, io)
+        end
+    end
+    nothing
+end
