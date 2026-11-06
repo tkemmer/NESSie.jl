@@ -337,3 +337,10 @@ function writevtk(
     println(stream, string(xdoc))
     nothing
 end
+
+@inline function writevtk(
+        fname::AbstractString,
+        model::M
+    ) where {T, M <: Model{T}}
+    open(fh -> writevtk(fh, model), fname, "w")
+end

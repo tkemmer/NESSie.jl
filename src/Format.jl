@@ -4,6 +4,7 @@ using ..NESSie
 using ..NESSie: _pointtype, _reverseindex, _seek, vertexnormals
 using JSON
 using LightXML: XMLDocument, create_root, new_child, add_text, set_attribute
+using WriteVTK: vtk_grid, vtk_save, MeshCell, PolyData
 using FileIO, MeshIO
 
 import GeometryBasics

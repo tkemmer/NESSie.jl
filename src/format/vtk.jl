@@ -14,60 +14,49 @@ Creates a VTK PolyData file from a given surface Model.
 
     writevtk(fname::AbstractString, model::Model{T, Triangle{T}})
 
-Creates the VTK file by name rather than `IOStream` object.
+Creates the VTK file by name rather than `IOStream` object. The file extension (`.vtp`) is
+appended automatically if not present.
 """
 function writevtk(
         stream::IOStream,
         model ::Model{T, Triangle{T}}
     ) where T
-    xdoc = XMLDocument()
-    revidx = _reverseindex(model.nodes)
-
-    # VTKFile
-    xroot = create_root(xdoc, "VTKFile")
-    set_attribute(xroot, "type", "PolyData")
-
-    # PolyData/Piece
-    xpiece = new_child(new_child(xroot, "PolyData"), "Piece")
-    set_attribute(xpiece, "NumberOfPoints", length(model.nodes))
-    set_attribute(xpiece, "NumberOfVerts",  0)
-    set_attribute(xpiece, "NumberOfLines",  0)
-    set_attribute(xpiece, "NumberOfStrips", 0)
-    set_attribute(xpiece, "NumberOfPolys", length(model.elements))
-
-    # Points
-    xpoints = new_child(new_child(xpiece, "Points"), "DataArray")
-    set_attribute(xpoints, "type", "$T")
-    set_attribute(xpoints, "NumberOfComponents", "3")
-    set_attribute(xpoints, "format", "ascii")
-    add_text(xpoints, join(Iterators.flatten(model.nodes), " "))
-
-    # Polys
-    xpolys = new_child(xpiece, "Polys")
-
-    # Polys/connectivity
-    xconn = new_child(xpolys, "DataArray")
-    set_attribute(xconn, "type", "Int32")
-    set_attribute(xconn, "Name", "connectivity")
-    set_attribute(xconn, "format", "ascii")
-    add_text(xconn, join([revidx[n]-1 for n in
-        Iterators.flatten(Vector{T}[o.v1, o.v2, o.v3] for o in model.elements)], " "))
-
-    # Polys/offsets
-    xoffs = new_child(xpolys, "DataArray")
-    set_attribute(xoffs, "type", "Int32")
-    set_attribute(xoffs, "Name", "offsets")
-    set_attribute(xoffs, "format", "ascii")
-    add_text(xoffs, join([3i for i in 1:length(model.elements)], " "))
-
-    # create .vtp file
-    println(stream, string(xdoc))
+    mktempdir() do dir
+        fname = joinpath(dir, "mesh")
+        outfiles = vtk_save(_vtk_grid(fname, model))
+        open(only(outfiles), "r") do io
+            write(stream, io)
+        end
+    end
     nothing
 end
 
 @inline function writevtk(
         fname::AbstractString,
-        model::M
-    ) where {T, M <: Model{T}}
-    open(fh -> writevtk(fh, model), fname, "w")
+        model::Model{T, Triangle{T}}
+    ) where T
+    vtk_save(_vtk_grid(fname, model))
+    nothing
+end
+
+@inline function _vtk_grid(
+        fname::AbstractString,
+        model ::Model{T, Triangle{T}}
+    ) where T
+    revidx = _reverseindex(model.nodes)
+
+    points = Matrix{T}(undef, 3, length(model.nodes))
+    for (i, node) in enumerate(model.nodes)
+        points[:, i] = node
+    end
+
+    cells = Vector{MeshCell{PolyData.Polys, Vector{Int32}}}(undef, length(model.elements))
+    for (i, elem) in enumerate(model.elements)
+        cells[i] = MeshCell(
+            PolyData.Polys(),
+            Int32[revidx[elem.v1], revidx[elem.v2], revidx[elem.v3]]
+        )
+    end
+
+    vtk_grid(fname, points, cells; append = false, ascii = true)
 end

@@ -20,11 +20,14 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MeshIO = "7269a6da-0436-5bbc-96c2-40638cbb6118"
 Preconditioners = "af69fa37-3177-5a40-98ee-561f696e4fcd"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
 [weakdeps]
+FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
 SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
 
 [extensions]
+NESSieFillArraysExt = "FillArrays"
 NESSieSciMLBaseExt = "SciMLBase"
 
 [compat]
@@ -33,6 +36,7 @@ AutoHashEquals = "2.2.0"
 ChunkSplitters = "3.1.2"
 Distances = "0.10"
 FileIO = "1.16.6"
+FillArrays = "1"
 GeometryBasics = "0.5.5"
 Gmsh = "0.3.1"
 ImplicitArrays = "0.3"
@@ -46,6 +50,7 @@ Preconditioners = "0.6"
 SpecialFunctions = "2"
 Test = "1.10"
 SciMLBase = "3.15"
+WriteVTK = "1.22"
 julia = "1.10"
 
 [extras]

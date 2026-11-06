@@ -16,9 +16,6 @@ using LightXML: parse_string, root, name, child_elements, attribute, content
             @test length(xgrid) == 1
             @test name(xgrid[1]) == "Piece"
             @test attribute(xgrid[1], "NumberOfPoints") == "0"
-            @test attribute(xgrid[1], "NumberOfVerts") == "0"
-            @test attribute(xgrid[1], "NumberOfLines") == "0"
-            @test attribute(xgrid[1], "NumberOfStrips") == "0"
             @test attribute(xgrid[1], "NumberOfPolys") == "0"
             xpiece = collect(child_elements(xgrid[1]))
             @test length(xpiece) == 2
@@ -69,9 +66,6 @@ using LightXML: parse_string, root, name, child_elements, attribute, content
             @test length(xgrid) == 1
             @test name(xgrid[1]) == "Piece"
             @test attribute(xgrid[1], "NumberOfPoints") == "4"
-            @test attribute(xgrid[1], "NumberOfVerts") == "0"
-            @test attribute(xgrid[1], "NumberOfLines") == "0"
-            @test attribute(xgrid[1], "NumberOfStrips") == "0"
             @test attribute(xgrid[1], "NumberOfPolys") == "2"
             xpiece = collect(child_elements(xgrid[1]))
             @test length(xpiece) == 2
