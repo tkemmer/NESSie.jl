@@ -68,7 +68,7 @@ A detailed documentation of `NESSie.jl` is available
 You can also build and view the same documentation locally using the following command in the
 `NESSie.jl` directory:
 ```sh
-shell> julia --project=docs -ie 'using NESSie, LiveServer; servedocs()
+julia --project=docs -ie 'using NESSie, LiveServer; servedocs()'
 ```
 Please note that this additionally requires the
 [`LiveServer.jl`](https://github.com/JuliaDocs/LiveServer.jl) package to be installed.
