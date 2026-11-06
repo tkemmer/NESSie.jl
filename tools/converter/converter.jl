@@ -30,10 +30,10 @@ const fout = Dict{String, Tuple{DataType, Function, String}}(
     "surface.json"  =>  (Surface, writexml3d_json, "XML3D/.json (deprecated)"),
     "surface.obj"   =>  (Surface, writeobj,        "Wavefront OBJ/.obj"),
     "surface.off"   =>  (Surface, writeoff,        "GAMer/.off"),
-    "surface.skel"  =>  (Surface, writeskel,       "SKEL/.skel"),
+    "surface.skel"  =>  (Surface, writeskel,       "SKEL/.skel (deprecated)"),
     "surface.stl"   =>  (Surface, writestl,        "STL/.stl"),
     "surface.vtp"   =>  (Surface, writevtk,        "VTK/.vtp"),
-    "volume.skel"   =>  (Volume,  writeskel,       "SKEL/.skel"),
+    "volume.skel"   =>  (Volume,  writeskel,       "SKEL/.skel (deprecated)"),
     "volume.vtu"    =>  (Volume,  writevtk,        "VTK/.vtu")
 )
 
