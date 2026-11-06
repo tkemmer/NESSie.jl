@@ -34,7 +34,7 @@ const fout = Dict{String, Tuple{DataType, Function, String}}(
     "surface.stl"   =>  (Surface, writestl,        "STL/.stl"),
     "surface.vtp"   =>  (Surface, writevtk,        "VTK/.vtp"),
     "volume.skel"   =>  (Volume,  writeskel,       "SKEL/.skel (deprecated)"),
-    "volume.vtu"    =>  (Volume,  writevtk,        "VTK/.vtu")
+    "volume.vtu"    =>  (Volume,  writevtk,        "VTK/.vtu (deprecated)")
 )
 
 iformat = ""; ifname = ""; oformat = ""; ofname = ""
