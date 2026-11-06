@@ -8,7 +8,6 @@ Pages = ["util.md"]
 GeometryBasics.Rect
 GeometryBasics.mesh
 guess_domain
-meshunion
 nessie_data_path
 obspoints_plane
 ```

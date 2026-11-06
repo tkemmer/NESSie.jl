@@ -80,3 +80,37 @@ end
     )
     collect(Vector{T}, ∇φmol(ξ, charges) for ξ in Ξ)
 end
+
+# deprecated in v1.6 (to be removed in v2.0)
+export meshunion
+
+function meshunion(
+        model1::Model{T, Tetrahedron{T}},
+        model2::Model{T, Tetrahedron{T}}
+    ) where T
+    Base.depwarn(
+        "`meshunion` is deprecated and will be removed in the next major version (v2.0). " *
+        "Please update your code to use alternative functionality before upgrading.",
+        :meshunion
+    )
+    # find nodes that are to be replaced (tbr)
+    obsolete = model1.nodes ∩ model2.nodes
+    indices = something.(indexin(obsolete, model1.nodes)) # Vector{Union{Nothing, Int}} -> Vector{Int}
+    tbr = Dict{Vector{T}, Int}(zip(obsolete, indices))
+
+    elements = copy(model1.elements)
+    for elem in model2.elements
+        v1 = haskey(tbr, elem.v1) ? model1.nodes[tbr[elem.v1]] : elem.v1
+        v2 = haskey(tbr, elem.v2) ? model1.nodes[tbr[elem.v2]] : elem.v2
+        v3 = haskey(tbr, elem.v3) ? model1.nodes[tbr[elem.v3]] : elem.v3
+        v4 = haskey(tbr, elem.v4) ? model1.nodes[tbr[elem.v4]] : elem.v4
+        push!(elements, Tetrahedron(v1, v2, v3, v4, elem.domain))
+    end
+
+    Model(
+        collect(Vector{T}, Set(model2.nodes) ∪ Set(model1.nodes)),
+        elements,
+        model1.charges ∪ model2.charges,
+        model1.params
+    )
+end

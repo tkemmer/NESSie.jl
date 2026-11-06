@@ -34,50 +34,6 @@ end
 
 # =========================================================================================
 """
-    meshunion(
-        model1::Model{T, Tetrahedron{T}},
-        model2::Model{T, Tetrahedron{T}}
-    )
-
-Merges two volume models, e.g., the models of a protein and the solvent. Duplicate nodes
-(e.g., the nodes on the protein surface) are merged into a single node, duplicate elements
-and charges (if any) are retained as well as the system constants of the first model.
-
-# Return type
-[`Model{T, Tetrahedron{T}}`](@ref)
-
-!!! note
-    This function assumes that there are no duplicates within either of the node lists!
-"""
-function meshunion(
-        model1::Model{T, Tetrahedron{T}},
-        model2::Model{T, Tetrahedron{T}}
-    ) where T
-    # find nodes that are to be replaced (tbr)
-    obsolete = model1.nodes ∩ model2.nodes
-    indices = something.(indexin(obsolete, model1.nodes)) # Vector{Union{Nothing, Int}} -> Vector{Int}
-    tbr = Dict{Vector{T}, Int}(zip(obsolete, indices))
-
-    elements = copy(model1.elements)
-    for elem in model2.elements
-        v1 = haskey(tbr, elem.v1) ? model1.nodes[tbr[elem.v1]] : elem.v1
-        v2 = haskey(tbr, elem.v2) ? model1.nodes[tbr[elem.v2]] : elem.v2
-        v3 = haskey(tbr, elem.v3) ? model1.nodes[tbr[elem.v3]] : elem.v3
-        v4 = haskey(tbr, elem.v4) ? model1.nodes[tbr[elem.v4]] : elem.v4
-        push!(elements, Tetrahedron(v1, v2, v3, v4, elem.domain))
-    end
-
-    Model(
-        collect(Vector{T}, Set(model2.nodes) ∪ Set(model1.nodes)),
-        elements,
-        model1.charges ∪ model2.charges,
-        model1.params
-    )
-end
-
-
-# =========================================================================================
-"""
     vertexnormals(model::Model{T, Triangle{T}})
 
 Returns a vector containing the normal vectors of the given model's vertices.
