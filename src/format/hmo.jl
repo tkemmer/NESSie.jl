@@ -128,13 +128,13 @@ function writehmo(
     end
     write(stream, "END_NODL_DATA\n\n")
 
-    getidx = v -> findfirst(isequal(v), model.nodes)
+    revidx = _reverseindex(model.nodes)
 
     write(stream, "BEG_ELEM_DATA\n")
     join(stream, [length(model.elements), zeros(Int, 12)...], "\t")
     write(stream, "\n")
     for (i, elem) in enumerate(model.elements)
-        join(stream, Any[i, 1, 103, getidx(elem.v1), getidx(elem.v2), getidx(elem.v3)], "\t")
+        join(stream, Any[i, 1, 103, revidx[elem.v1], revidx[elem.v2], revidx[elem.v3]], "\t")
         write(stream, "\n")
     end
     write(stream, "END_ELEM_DATA\n\n")

@@ -74,5 +74,39 @@ END_CHARGE_DATA
 end
 
 @testset "writehmo" begin
-    @test_skip writehmo
+    for T in testtypes
+        # empty model
+        model = Model{T, Triangle{T}}()
+        mktemp() do fname, fh
+            Format.writehmo(fh, model)
+            seekstart(fh)
+            model2 = Format.readhmo(fh, T)
+            @test model == model2
+        end
+
+        # small model
+        nodes = Vector{T}[[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        elements = Triangle{T}[
+            Triangle(nodes[1], nodes[2], nodes[3]),
+            Triangle(nodes[1], nodes[3], nodes[4])
+        ]
+        charges = Charge{T}[
+            Charge(T[0, 0, 0, 1]...),
+            Charge(T[1, 1, 1, -1]...)
+        ]
+        model = Model(nodes, elements, charges)
+
+        mktemp() do fname, fh
+            Format.writehmo(fh, model)
+            seekstart(fh)
+            model2 = Format.readhmo(fh, T)
+            @test model == model2
+        end
+
+        mktemp() do fname, _
+            Format.writehmo(fname, model)
+            model2 = Format.readhmo(fname, T)
+            @test model == model2
+        end
+    end
 end
