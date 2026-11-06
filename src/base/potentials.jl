@@ -97,10 +97,10 @@ structureless medium for the given observation point(s) ξ (Ξ):
  - `tolerance::T = 1e-10` minimum distance assumed between any observation point and point
    charge. Closer distances are replaced by this value.
 
-## Return type
+# Return type
 `T` or `Array{T}`
 
-## Aliases
+# Aliases
     _molpotential(model::Model{T, Triangle{T}})
 
 Computes the molecular potentials for the given surface model, using each triangle center
@@ -149,10 +149,10 @@ system of point charges in a structureless medium for the given observation poin
  - `tolerance::T = 1e-10` minimum distance cubed assumed between any observation point and
    point charge. Smaller values are replaced by this.
 
-## Return type
+# Return type
 `T` or `Array{T}`
 
-## Aliases
+# Aliases
     _molpotential_dn(model::Model{T, Triangle{T}})
 
 Computes the molecular potentials for the given surface model, using each triangle center

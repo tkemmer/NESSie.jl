@@ -9,7 +9,7 @@
 Single Born ion, that is, a monoatomic ion represented as a spherically symmetric domain
 with a single point charge located at its center (``ε_Ω = 1``).
 
-## Special constructors
+# Special constructors
 
     BornIon(charge::T, radius::T, params::Option{T} = defaultopt(BornIon{T}))
 
@@ -94,7 +94,7 @@ Generator function for built-in Born ions
 | Sr   | +2     | 1.195                               |
 | Ba   | +2     | 1.385                               |
 
-## Return type
+# Return type
 [`BornIon{T}`](@ref)
 """ bornion
 for T in [:Float64, :Float32]

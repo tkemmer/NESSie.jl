@@ -342,7 +342,7 @@ centroid.
 # Return type
 `Symbol` (`:Ω`, `:Σ`, or `:Γ`)
 
-## Alias
+# Alias
     guess_domain(Ξ::AbstractArray{Vector{T}}, model::Model{T, Triangle{T}})
 
 Determines the domain of each observation point `ξ` ∈ `Ξ`.
