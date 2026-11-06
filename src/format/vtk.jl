@@ -9,7 +9,7 @@ appended automatically if not present.
 <https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf>
 
 # Supported keyword arguments
- - `ascii::Bool = true`: use "ascii" or "binary" as data array format
+ - `ascii::Bool = true`: use `ascii` instead of `binary` as data array format
 
 # Return type
 `Nothing`

@@ -1,3 +1,8 @@
+using ..NESSie: vertexnormals
+
+using JSON
+using LightXML: XMLDocument, create_root, new_child, add_text, set_attribute
+
 # deprecated in v1.6 (to be removed in v2.0)
 export writexml3d_json
 
