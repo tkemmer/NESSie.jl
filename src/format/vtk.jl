@@ -8,15 +8,22 @@ appended automatically if not present.
 # Specification
 <https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf>
 
+# Supported keyword arguments
+ - `ascii::Bool = true`: use "ascii" or "binary" as data array format
+
 # Return type
 `Nothing`
 """
-@inline function writevtk(fname::AbstractString, model::Model{T, Triangle{T}}) where T
-    vtk_save(_vtk_grid(fname, model))
+@inline function writevtk(fname::AbstractString, model::Model{T, Triangle{T}}; kwargs...) where T
+    vtk_save(_vtk_grid(fname, model; kwargs...))
     nothing
 end
 
-@inline function _vtk_grid(fname::AbstractString, model ::Model{T, Triangle{T}}) where T
+@inline function _vtk_grid(
+    fname::AbstractString,
+    model ::Model{T, Triangle{T}};
+    ascii::Bool = true
+) where T
     revidx = _reverseindex(model.nodes)
 
     points = Matrix{T}(undef, 3, length(model.nodes))
@@ -32,5 +39,5 @@ end
         )
     end
 
-    vtk_grid(fname, points, cells; append = false, ascii = true)
+    vtk_grid(fname, points, cells; append = false, ascii)
 end
