@@ -1,5 +1,3 @@
-push!(LOAD_PATH, "../../src/")
-
 using NESSie
 using NESSie.Format
 
@@ -20,16 +18,18 @@ const fin = Dict{String, Tuple{DataType, Function, String}}(
     "hmo"   =>  (Surface, readhmo,  "HyperMesh/.hmo"),
     "mcsf"  =>  (Volume,  readmcsf, "GAMer/.m"),
     "msms"  =>  (Surface, readmsms, "MSMS/.{face,vert}"),
+    "obj"   =>  (Surface, readobj,  "Wavefront OBJ/.obj"),
     "off"   =>  (Surface, readoff,  "GAMer/.off"),
     "stl"   =>  (Surface, readstl,  "STL/.stl")
 )
 
 const fout = Dict{String, Tuple{DataType, Function, String}}(
-    "nodes.json"    =>  (Nodes,   writexml3d_json, "XML3D/.json"),
-    "nodes.xml"     =>  (Nodes,   writexml3d_xml,  "XML3D/.xml"),
+    "nodes.json"    =>  (Nodes,   writexml3d_json, "XML3D/.json (deprecated)"),
+    "nodes.xml"     =>  (Nodes,   writexml3d_xml,  "XML3D/.xml (deprecated)"),
     "surface.hmo"   =>  (Surface, writehmo,        "HyperMesh/.hmo"),
-    "surface.json"  =>  (Surface, writexml3d_json, "XML3D/.json"),
-    "surface.obj"   =>  (Surface, writeobj,        "Wavefront/.obj"),
+    "surface.json"  =>  (Surface, writexml3d_json, "XML3D/.json (deprecated)"),
+    "surface.obj"   =>  (Surface, writeobj,        "Wavefront OBJ/.obj"),
+    "surface.off"   =>  (Surface, writeoff,        "GAMer/.off"),
     "surface.skel"  =>  (Surface, writeskel,       "SKEL/.skel"),
     "surface.stl"   =>  (Surface, writestl,        "STL/.stl"),
     "surface.vtp"   =>  (Surface, writevtk,        "VTK/.vtp"),
