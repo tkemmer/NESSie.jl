@@ -31,7 +31,11 @@ end
         fname::AbstractString,
              ::Type{T}=Float64
     ) where T <: AbstractFloat
-    open(ff -> open(fv -> readmsms(fv, ff, T), "$fname.vert"), "$fname.face")
+    open("$fname.face") do ff
+        open("$fname.vert") do fv
+            readmsms(fv, ff, T)
+        end
+    end
 end
 
 
@@ -50,7 +54,9 @@ function readmsms_nodes(
     ) where T <: AbstractFloat
     nodes = Vector{T}[]
     # skip header lines
-    [readline(stream) for i in 1:3]
+    for _ in 1:3
+        readline(stream)
+    end
     for line in eachline(stream)
         push!(nodes, [parse(T, e) for e in split(line)[1:3]])
     end
@@ -73,7 +79,9 @@ function readmsms_elements(
     ) where T <: AbstractFloat
     elements = Triangle{T}[]
     # skip header lines
-    [readline(stream) for i in 1:3]
+    for _ in 1:3
+        readline(stream)
+    end
     for line in eachline(stream)
         push!(elements, Triangle([nodes[parse(Int, e)] for e in split(line)[1:3]]...))
     end
