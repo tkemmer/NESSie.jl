@@ -6,24 +6,18 @@ CurrentModule = NESSie.Format
 
 Currently supported input file formats with different models:
 
-| File type          | Surface model | Volume model | Charges included |
-|--------------------|:-------------:|:------------:|:----------------:|
-| [HMO](@ref)        | ✓             |              | ✓                |
-| [Mcsf](@ref)       |               | ✓            |                  |
-| [MSMS](@ref)       | ✓             |              |                  |
-| [OBJ](@ref)        | ✓             |              |                  |
-| [OFF](@ref)        | ✓             |              |                  |
-| [PQR](@ref)        |               |              | ✓ (charges only) |
-| [STL](@ref)        | ✓             |              |                  |
+| File type          | Surface model | Charges included |
+|--------------------|:-------------:|:----------------:|
+| [HMO](@ref)        | ✓            | ✓                |
+| [MSMS](@ref)       | ✓            |                  |
+| [OBJ](@ref)        | ✓            |                  |
+| [OFF](@ref)        | ✓            |                  |
+| [PQR](@ref)        |               | ✓ (charges only) |
+| [STL](@ref)        | ✓            |                  |
 
 ## HMO
 ```@docs
 readhmo
-```
-
-## Mcsf
-```@docs
-readmcsf
 ```
 
 ## MSMS

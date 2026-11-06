@@ -203,3 +203,78 @@ end
     )
     open(fh -> writeskel(fh, model), fname, "w")
 end
+
+# deprecated in v1.6 (to be removed in v2.0)
+export readmcsf
+
+function readmcsf(
+        stream::IOStream,
+              ::Type{T}=Float64;
+        domain::Symbol=:none
+    ) where T <: AbstractFloat
+    Base.depwarn(
+        "`readmcsf` is deprecated and will be removed in the next major version (v2.0). " *
+        "Please update your code to use alternative functionality before upgrading.",
+        :readmcsf
+    )
+    nodes = readmcsf_nodes(stream, T)
+    Model(nodes, readmcsf_elements(stream, nodes, domain=domain))
+end
+
+@inline function readmcsf(
+        fname ::AbstractString,
+              ::Type{T}=Float64;
+        domain::Symbol=:none
+    ) where T
+    Base.depwarn(
+        "`readmcsf` is deprecated and will be removed in the next major version (v2.0). " *
+        "Please update your code to use alternative functionality before upgrading.",
+        :readmcsf
+    )
+    open(fh -> readmcsf(fh, T, domain=domain), fname)
+end
+
+@inline function readmcsf(
+        fnameΩ::AbstractString,
+        fnameΣ::AbstractString,
+              ::Type{T}=Float64
+    ) where T
+    Base.depwarn(
+        "`readmcsf` is deprecated and will be removed in the next major version (v2.0). " *
+        "Please update your code to use alternative functionality before upgrading.",
+        :readmcsf
+    )
+    meshunion(readmcsf(fnameΩ, T, domain=:Ω), readmcsf(fnameΣ, T, domain=:Σ))
+end
+
+function readmcsf_nodes(
+        stream::IOStream,
+              ::Type{T}=Float64
+    ) where T <: AbstractFloat
+    nodes = Vector{T}[]
+    _seek(stream, "vert=[")
+    for line in eachline(stream)
+        startswith(line, "%") && continue        # skip comments
+        startswith(line, "];") && break          # all nodes read
+        push!(nodes, [parse(T, e) for e in split(line)[3:5]])
+    end
+    nodes
+end
+
+function readmcsf_elements(
+        stream::IOStream,
+        nodes ::Vector{Vector{T}};
+        domain::Symbol=:none
+    ) where T <: AbstractFloat
+    elements = Tetrahedron{T}[]
+    _seek(stream, "simp=[")
+    for line in eachline(stream)
+        startswith(line, "%") && continue        # skip comments
+        startswith(line, "];") && break          # all simplices read
+        push!(
+            elements,
+            Tetrahedron([nodes[parse(Int, e)+1] for e in split(line)[8:end]]..., domain)
+        )
+    end
+    elements
+end
