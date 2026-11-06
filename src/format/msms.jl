@@ -1,10 +1,6 @@
 # =========================================================================================
 """
-    readmsms(
-        vertstream::IOStream,
-        facestream::IOStream,
-                  ::Type{T}=Float64
-    )
+    readmsms(vertstream::IOStream, facestream::IOStream, ::Type{T}=Float64)
 
 Reads a surface model from the given MSMS-generated `.face` and `.vert` files.
 
@@ -21,7 +17,6 @@ Reads a surface model from the given MSMS-generated `.face` and `.vert` files.
 
 Reads the model using a common file name prefix (`fname.{vert,face}`) for both files
 rather than `IOStream` objects.
-
 """
 function readmsms(
         vertstream::IOStream,
@@ -42,10 +37,7 @@ end
 
 # =========================================================================================
 """
-    readmsms_nodes(
-        stream::IOStream,
-              ::Type{T}=Float64
-    )
+    readmsms_nodes(stream::IOStream, ::Type{T}=Float64)
 
 Reads all nodes from the given MSMS-generated `.vert` file.
 
@@ -68,10 +60,7 @@ end
 
 # =========================================================================================
 """
-    readmsms_elements(
-        stream::IOStream,
-        nodes ::Vector{Vector{T}}
-    )
+    readmsms_elements(stream::IOStream, nodes ::Vector{Vector{T}})
 
 Reads all elements from the given MSMS-generated `.face` file.
 

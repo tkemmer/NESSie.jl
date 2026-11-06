@@ -1,11 +1,6 @@
 # =========================================================================================
 """
-    readmcsf(
-        stream::IOStream,
-              ::Type{T}=Float64;
-        # kwargs
-        domain::Symbol=:none
-    )
+    readmcsf(stream::IOStream, ::Type{T}=Float64)
 
 Reads a volume model from the given GAMer-generated mcsf file.
 
@@ -13,28 +8,19 @@ Reads a volume model from the given GAMer-generated mcsf file.
     This file type does not support charge models! Hence, the charge list of the returning
     `Model` object is empty and has to be set separately.
 
-# Arguments
- * `domain` Element domain (solute `:Ω`, solvent `:Σ`, or `:none`)
+# Supported keyword arguments
+ * `domain::Symbol=:none` Element domain (solute `:Ω`, solvent `:Σ`, or `:none`)
 
 # Return type
 [`Model{T, Tetrahedron{T}}`](@ref)
 
 # Aliases
 
-    readmcsf(
-        fname ::AbstractString,
-              ::Type{T}=Float64;
-        # kwargs
-        domain::Symbol=:none
-    )
+    readmcsf(fname ::AbstractString, ::Type{T}=Float64)
 
 Reads the model using a file name rather than a `IOStream` object.
 
-    readmcsf(
-        fnameΩ::AbstractString,
-        fnameΣ::AbstractString,
-              ::Type{T}=Float64
-    )
+    readmcsf(fnameΩ::AbstractString, fnameΣ::AbstractString, ::Type{T}=Float64)
 
 Reads the contents of two separate files (given by name), sets the element domains to `:Ω`
 or `:Σ`, respectively, and returns a single (merged) `Model` object.
@@ -67,10 +53,7 @@ end
 
 # =========================================================================================
 """
-    readmcsf_nodes(
-        stream::IOStream,
-              ::Type{T}=Float64
-    )
+    readmcsf_nodes(stream::IOStream, ::Type{T}=Float64)
 
 Reads all nodes from the given GAMer-generated mcsf file.
 
@@ -94,14 +77,12 @@ end
 
 # =========================================================================================
 """
-    readmcsf_elements(
-        stream::IOStream,
-        nodes ::Vector{Vector{T}};
-        # kwargs
-        domain::Symbol=:none
-    )
+    readmcsf_elements(stream::IOStream, nodes ::Vector{Vector{T}})
 
 Reads all elements from the given GAMer-generated mcsf file.
+
+# Supported keyword arguments
+ * `domain::Symbol=:none` Element domain (solute `:Ω`, solvent `:Σ`, or `:none`)
 
 # Return type
 [`Vector{Tetrahedron{T}}`](@ref Tetrahedron)

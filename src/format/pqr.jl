@@ -1,9 +1,6 @@
 # =========================================================================================
 """
-    readpqr(
-        stream::IOStream,
-              ::Type{T}=Float64
-    )
+    readpqr(stream::IOStream, ::Type{T}=Float64)
 
 Reads a charge model from the given PQR file.
 

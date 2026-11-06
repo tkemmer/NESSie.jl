@@ -1,14 +1,12 @@
 # =========================================================================================
 """
-    readstl(
-        stream::IOStream,
-              ::Type{T}=Float64
-    )
+    readstl(stream::IOStream, ::Type{T}=Float64)
 
 Reads a surface model from the given STL file.
 
 !!! note
-    This file type does not support charge models! Hence, the charge list of the returning `Model` object is empty and has to be set separately.
+    This file type does not support charge models! Hence, the charge list of the returning
+    `Model` object is empty and has to be set separately.
 
 # Specification
 <https://fabbers.com/tech/STL_Format>
@@ -18,10 +16,7 @@ Reads a surface model from the given STL file.
 
 # Alias
 
-    readstl(
-        fname::AbstractString,
-             ::Type{T}=Float64
-    )
+    readstl(fname::AbstractString, ::Type{T}=Float64)
 
 Reads the model using a file name rather than an `IOStream` object.
 """
@@ -67,10 +62,7 @@ end
 
 # =========================================================================================
 """
-    writestl(
-        stream::IOStream,
-        model ::Model{T, Triangle{T}}
-    )
+    writestl(stream::IOStream, model ::Model{T, Triangle{T}})
 
 Creates a binary STL file from a given surface model.
 
@@ -82,10 +74,7 @@ Creates a binary STL file from a given surface model.
 
 # Alias
 
-    writestl(
-        fname::AbstractString,
-        model::Model{T, Triangle{T}}
-    )
+    writestl(fname::AbstractString, model::Model{T, Triangle{T}})
 
 Creates the STL file by name rather than `IOStream` object.
 """
