@@ -34,28 +34,6 @@ end
 
 # =========================================================================================
 """
-    vertexnormals(model::Model{T, Triangle{T}})
-
-Returns a vector containing the normal vectors of the given model's vertices.
-
-# Return type
-`Vector{Vector{T}}`
-"""
-function vertexnormals(model::Model{T, Triangle{T}}) where T
-    revidx = _reverseindex(model.nodes)
-    normals = Vector{T}[zeros(T, 3) for _ in 1:length(model.nodes)]
-    count = zeros(T, length(model.nodes))
-    @inbounds for elem in model.elements, node in (elem.v1, elem.v2, elem.v3)
-        idx = revidx[node]
-        count[idx] += 1
-        normals[idx] .+= (elem.normal .- normals[idx]) ./ count[idx]
-    end
-    normals
-end
-
-
-# =========================================================================================
-"""
     _pluseye!(
         m::AbstractMatrix{T},
         α::T=one(T)

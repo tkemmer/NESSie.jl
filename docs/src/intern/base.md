@@ -38,5 +38,4 @@ ddot
 distance
 isdegenerate
 props
-vertexnormals
 ```

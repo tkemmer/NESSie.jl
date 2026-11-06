@@ -114,3 +114,18 @@ function meshunion(
         model1.params
     )
 end
+
+# deprecated in v1.6 (to be removed in v2.0)
+# (as part of the XML3D file format deprecation in NESSie.Format)
+
+function vertexnormals(model::Model{T, Triangle{T}}) where T
+    revidx = _reverseindex(model.nodes)
+    normals = Vector{T}[zeros(T, 3) for _ in 1:length(model.nodes)]
+    count = zeros(T, length(model.nodes))
+    @inbounds for elem in model.elements, node in (elem.v1, elem.v2, elem.v3)
+        idx = revidx[node]
+        count[idx] += 1
+        normals[idx] .+= (elem.normal .- normals[idx]) ./ count[idx]
+    end
+    normals
+end
